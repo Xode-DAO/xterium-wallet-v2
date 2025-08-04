@@ -1,0 +1,40 @@
+.wallet-toolbar {
+  padding: 5px 8px;
+  --background: #1a1a1a;
+
+  ion-button {
+    color: white;
+  }
+
+  .wallet-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    margin-left: 5px;
+  }
+
+  ion-icon {
+    font-size: 24px;
+    color: white;
+  }
+}
+
+ion-tab-bar {
+  --color: gray;
+  --color-selected: white;
+
+  height: 70px;
+}
+
+ion-tab-button {
+  --ripple-color: transparent;
+  padding: 20px 0;
+
+  &:hover {
+    color: white;
+  }
+
+  ion-icon {
+    font-size: 24px;
+  }
+}

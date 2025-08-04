@@ -46,4 +46,8 @@ export const routes: Routes = [
     path: 'xterium/explore',
     loadComponent: () => import('./xterium/explore/explore.page').then(m => m.ExplorePage)
   },
+  {
+    path: 'xterium',
+    loadComponent: () => import('./xterium/xterium.page').then( m => m.XteriumPage)
+  },
 ];

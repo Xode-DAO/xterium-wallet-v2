@@ -1,0 +1,65 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonTabs,
+  IonTab,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonModal
+} from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import { menu, close, briefcase, swapHorizontal, qrCode, timer, compass } from 'ionicons/icons';
+
+@Component({
+  selector: 'app-xterium',
+  templateUrl: './xterium.page.html',
+  styleUrls: ['./xterium.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonTabs,
+    IonTab,
+    IonTabBar,
+    IonTabButton,
+    IonIcon,
+    IonModal
+  ]
+})
+export class XteriumPage implements OnInit {
+
+  constructor() {
+    addIcons({
+      menu,
+      close,
+      briefcase,
+      swapHorizontal,
+      qrCode,
+      timer,
+      compass,
+    });
+  }
+
+  presentingElement!: HTMLElement | null;
+
+  ngOnInit() {
+    this.presentingElement = document.querySelector('.xterium-content');
+  }
+
+}

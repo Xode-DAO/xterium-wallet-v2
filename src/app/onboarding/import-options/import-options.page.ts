@@ -15,7 +15,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline } from 'ionicons/icons';
+import { arrowBackOutline, close } from 'ionicons/icons';
 
 import { HeaderComponent } from "../shared/header/header.component";
 
@@ -42,7 +42,10 @@ import { HeaderComponent } from "../shared/header/header.component";
 export class ImportOptionsPage implements OnInit {
 
   constructor() {
-    addIcons({ arrowBackOutline });
+    addIcons({
+      arrowBackOutline,
+      close
+    });
   }
 
   presentingElement!: HTMLElement | null;
