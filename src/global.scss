@@ -145,7 +145,7 @@ ion-content.onboarding-content::part(scroll) {
   border-radius: 50px;
   transition: background-size 0.2s ease;
   border: 3px solid rgb(207, 207, 207);
-  font-weight: bold;
+  font-weight: 900;
 }
 
 .primary-button:active {
@@ -160,7 +160,11 @@ ion-content.onboarding-content::part(scroll) {
   height: 100%;
   width: 100%;
   background: rgba(255, 255, 255, 0.1);
-  /* subtle light overlay */
   pointer-events: none;
   border-radius: 50px;
+}
+
+.button-controls {
+  margin-top: 20px;
+  padding: 0px 20px;
 }

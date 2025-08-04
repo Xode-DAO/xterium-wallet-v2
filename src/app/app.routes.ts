@@ -11,15 +11,15 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'oboarding/welcome',
+    path: 'onboarding/welcome',
     loadComponent: () => import('./onboarding/welcome/welcome.page').then(m => m.WelcomePage)
   },
   {
-    path: 'oboarding/create-new-wallet',
+    path: 'onboarding/create-new-wallet',
     loadComponent: () => import('./onboarding/create-new-wallet/create-new-wallet.page').then(m => m.CreateNewWalletPage)
   },
   {
-    path: 'oboarding/import-options',
+    path: 'onboarding/import-options',
     loadComponent: () => import('./onboarding/import-options/import-options.page').then(m => m.ImportOptionsPage)
   },
   {
