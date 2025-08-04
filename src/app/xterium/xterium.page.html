@@ -44,34 +44,37 @@
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="balances">
         <ion-icon name="briefcase"></ion-icon>
+        Assets
       </ion-tab-button>
       <ion-tab-button tab="swap">
         <ion-icon name="swap-horizontal"></ion-icon>
+        Swap
       </ion-tab-button>
       <ion-tab-button tab="pay" class="qr-pay">
         <ion-icon name="qr-code"></ion-icon>
+        Pay
       </ion-tab-button>
       <ion-tab-button tab="transaction-history">
         <ion-icon name="timer"></ion-icon>
+        History
       </ion-tab-button>
       <ion-tab-button tab="explore">
         <ion-icon name="compass"></ion-icon>
+        Explore
       </ion-tab-button>
     </ion-tab-bar>
   </ion-tabs>
 
   <ion-modal #importSeedPhrase trigger="my-wallets" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Wallets</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="importSeedPhrase.dismiss()">
-              <ion-icon name="close" style="color: white;"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Wallets</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="importSeedPhrase.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
       <ion-content>
 
       </ion-content>

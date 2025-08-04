@@ -20,19 +20,14 @@
 }
 
 ion-tab-bar {
-  --color: gray;
-  --color-selected: white;
+  --color: white;
+  --color-selected: #0bbab5;
 
   height: 70px;
 }
 
 ion-tab-button {
-  --ripple-color: transparent;
-  padding: 20px 0;
-
-  &:hover {
-    color: white;
-  }
+  padding: 16px 0;
 
   ion-icon {
     font-size: 24px;

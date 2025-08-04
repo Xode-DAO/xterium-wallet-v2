@@ -26,16 +26,14 @@
 
   <ion-modal #importSeedPhrase trigger="import-seed-phrase" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Import</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="importSeedPhrase.dismiss()">
-              <ion-icon name="close" style="color: white;"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Import</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="importSeedPhrase.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
       <ion-content>
         <div class="ion-text-center ion-padding">
           <h1 style="font-weight: bold">Import Seed Phrase</h1>
@@ -47,16 +45,14 @@
 
   <ion-modal #importPrivateKey trigger="import-private-key" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Import</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="importPrivateKey.dismiss()">
-              <ion-icon name="close" style="color: white;"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Import</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="importPrivateKey.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
       <ion-content>
         <div class="ion-text-center ion-padding">
           <h1 style="font-weight: bold">Import Private Key</h1>
@@ -68,16 +64,14 @@
 
   <ion-modal #importFromBackup trigger="import-from-backup" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Import</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="importFromBackup.dismiss()">
-              <ion-icon name="close" style="color: white;"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Import</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="importFromBackup.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
       <ion-content>
         <div class="ion-text-center ion-padding">
           <h1 style="font-weight: bold">Import From Backup</h1>
