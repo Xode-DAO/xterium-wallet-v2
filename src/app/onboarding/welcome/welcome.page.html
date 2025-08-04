@@ -1,13 +1,18 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>welcome</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="onboarding-content">
+  <div class="ion-text-center">
+    <app-header></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">welcome</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <div class="ion-padding" style="margin-top: -60px;">
+      <h1 style="font-weight: bold">Welcome</h1>
+      <span>Get started by creating a new wallet or importing an existing one</span>
+    </div>
+    <div class="ion-padding">
+      <ion-checkbox>I agree to the <a href="https://xterium.app">terms and conditions</a></ion-checkbox>
+    </div>
+  </div>
+
+  <div class="ion-padding" style="margin-top: 20px;">
+    <ion-button expand="block" size="default" class="primary-button ion-margin-bottom">CREATE A NEW WALLET</ion-button>
+    <ion-button expand="block" size="default" class="primary-button">I ALREADY HAVE A WALLET</ion-button>
+  </div>
 </ion-content>
