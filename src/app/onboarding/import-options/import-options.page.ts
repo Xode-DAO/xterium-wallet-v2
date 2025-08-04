@@ -7,7 +7,11 @@ import {
   IonContent,
   IonButton,
   IonButtons,
-  IonIcon
+  IonIcon,
+  IonHeader,
+  IonModal,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -28,6 +32,10 @@ import { HeaderComponent } from "../shared/header/header.component";
     IonButton,
     IonButtons,
     IonIcon,
+    IonHeader,
+    IonModal,
+    IonTitle,
+    IonToolbar,
     HeaderComponent
   ]
 })
@@ -37,7 +45,10 @@ export class ImportOptionsPage implements OnInit {
     addIcons({ arrowBackOutline });
   }
 
+  presentingElement!: HTMLElement | null;
+
   ngOnInit() {
+    this.presentingElement = document.querySelector('.onboarding-content');
   }
 
 }
