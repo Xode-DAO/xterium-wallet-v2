@@ -1,0 +1,95 @@
+.total-balance h1 {
+  font-weight: 700;
+  font-size: 48px;
+  margin-top: 80px;
+  color: #ffffff;
+}
+
+.action-buttons {
+  padding-bottom: 5px;
+
+  .icon-button {
+    --background: #333333;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: 700;
+    margin-top: 15px;
+  }
+
+  .button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 5px;
+
+    .icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+      color: #0bbab5;
+    }
+
+    .label {
+      font-size: 15px;
+      color: white;
+    }
+  }
+}
+
+.token-list {
+  .token-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 15px 10px 15px;
+  }
+
+  .token-list-header h3 {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .token-list-manage-link {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00bcd4;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  ion-list {
+    background: transparent;
+    margin: 0px 10px 0px 10px;
+  }
+
+  .token-list-item {
+    --background: #333333;
+
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+  }
+
+  h2 {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0px;
+    padding: 8px 0px 2px 0px;
+  }
+
+  p {
+    color: #bdbdbd;
+    font-size: 15px;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+  }
+}

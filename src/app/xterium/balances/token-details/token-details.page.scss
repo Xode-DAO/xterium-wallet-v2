@@ -1,0 +1,177 @@
+.back-button {
+  --color: white;
+
+  padding: 0px 18px;
+  position: absolute;
+  z-index: 100;
+  font-size: 24px;
+  margin-top: 75px;
+}
+
+.token-title {
+  margin-top: 45px;
+  margin-left: 30px;
+  margin-right: 20px;
+
+  .token-title-item {
+    --background: transparent;
+
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+
+    ion-avatar {
+      height: 65px;
+      width: 65px;
+    }
+  }
+
+  h1 {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0px;
+    padding: 8px 0px 2px 0px;
+  }
+
+  p {
+    color: #bdbdbd;
+    font-size: 17px;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+  }
+
+  .token-price h1 {
+    font-weight: 700;
+    font-size: 35px;
+    color: #ffffff;
+  }
+}
+
+.action-buttons {
+  padding-bottom: 15px;
+
+  .icon-button {
+    --background: #333333;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: 700;
+    margin-top: 15px;
+  }
+
+  .button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 5px;
+
+    .icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+      color: #0bbab5;
+    }
+
+    .label {
+      font-size: 15px;
+      color: white;
+    }
+  }
+}
+
+.token-balance {
+  padding: 5px 18px;
+
+  .token-balance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 15px 10px 15px;
+  }
+
+  .token-balance-header h3 {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  ion-list {
+    background: transparent;
+    margin: 0px 10px 0px 10px;
+  }
+
+  .token-balance-item {
+    --background: #333333;
+
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+  }
+
+  h2 {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0px;
+    padding: 8px 0px 2px 0px;
+  }
+
+  p {
+    color: #bdbdbd;
+    font-size: 15px;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+  }
+}
+
+.token-details {
+  padding: 5px 18px;
+
+  .token-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 15px 10px 15px;
+  }
+
+  .token-details-header h3 {
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  ion-list {
+    background: transparent;
+    margin: 0px 10px 0px 10px;
+  }
+
+  .token-details-item {
+    --background: #333333;
+
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+    padding: 0;
+  }
+
+  h2 {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0px;
+  }
+
+  p {
+    color: #bdbdbd;
+    font-size: 17px;
+    margin: 0px;
+  }
+}

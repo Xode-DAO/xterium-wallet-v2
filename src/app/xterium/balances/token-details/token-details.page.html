@@ -1,0 +1,132 @@
+<ion-content [fullscreen]="true">
+  <ion-button fill="clear" class="back-button" [routerLink]="['/xterium']">
+    <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+
+  <div class="token-title ion-padding">
+    <ion-item detail="false" lines="none" class="token-title-item">
+      <ion-avatar slot="start">
+        <img src="./../../../assets/images/tokens/xon.png" />
+      </ion-avatar>
+      <ion-label>
+        <h1>Xode Native Token</h1>
+        <p>XON</p>
+      </ion-label>
+    </ion-item>
+
+    <div class="ion-text-center token-price">
+      <h1>$0.1702034120000</h1>
+    </div>
+  </div>
+
+  <div class="action-buttons ion-padding-horizontal">
+    <ion-grid>
+      <ion-row class="ion-justify-content-between">
+        <ion-col size="4" class="ion-text-center">
+          <ion-button fill="clear" class="icon-button" expand="block">
+            <div class="button-content">
+              <ion-icon name="qr-code" class="icon"></ion-icon>
+              <span class="label">Receive</span>
+            </div>
+          </ion-button>
+        </ion-col>
+        <ion-col size="4" class="ion-text-center">
+          <ion-button fill="clear" class="icon-button" expand="block">
+            <div class="button-content">
+              <ion-icon name="send" class="icon"></ion-icon>
+              <span class="label">Send</span>
+            </div>
+          </ion-button>
+        </ion-col>
+        <ion-col size="4" class="ion-text-center">
+          <ion-button fill="clear" class="icon-button" expand="block">
+            <div class="button-content">
+              <ion-icon name="swap-horizontal" class="icon"></ion-icon>
+              <span class="label">Swap</span>
+            </div>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <div class="token-balance ion-padding">
+    <div class="token-balance-header">
+      <h3>Your Balance:</h3>
+    </div>
+
+    <ion-list>
+      <ion-item detail="false" lines="none" class="token-balance-item">
+        <ion-avatar slot="start">
+          <img src="./../../../assets/images/tokens/xon.png" />
+        </ion-avatar>
+        <ion-label>
+          <h2>Xode Native Token</h2>
+          <p>17,000 XON</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>$2,890.00</h2>
+          <p>-</p>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div class="token-details ion-padding">
+    <div class="token-details-header">
+      <h3>Token Details:</h3>
+    </div>
+
+    <ion-list>
+      <ion-item detail="false" lines="none" class="token-details-item">
+        <ion-label slot="start">
+          <p>Name</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>Xode Native Token</h2>
+        </div>
+      </ion-item>
+      <ion-item detail="false" lines="none" class="token-details-item">
+        <ion-label slot="start">
+          <p>Symbol</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>XON</h2>
+        </div>
+      </ion-item>
+      <ion-item detail="false" lines="none" class="token-details-item">
+        <ion-label slot="start">
+          <p>Network</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>Xode</h2>
+        </div>
+      </ion-item>
+      <ion-item detail="false" lines="none" class="token-details-item">
+        <ion-label slot="start">
+          <p>Decimal</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>12</h2>
+        </div>
+      </ion-item>
+      <ion-item detail="false" lines="none" class="token-details-item">
+        <ion-label slot="start">
+          <p>Total Supply</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>1B</h2>
+        </div>
+      </ion-item>
+      <ion-item detail="false" lines="none" class="token-details-item">
+        <ion-label slot="start">
+          <p>Reference Id</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>1</h2>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+
+</ion-content>

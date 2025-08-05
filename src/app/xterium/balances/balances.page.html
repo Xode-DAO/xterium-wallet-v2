@@ -1,13 +1,87 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>balances</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="wallet-content">
+  <div class="ion-text-center total-balance">
+    <h1>$6,290.00</h1>
+  </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">balances</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="action-buttons ion-padding-horizontal">
+    <ion-grid>
+      <ion-row class="ion-justify-content-between">
+        <ion-col size="4" class="ion-text-center">
+          <ion-button fill="clear" class="icon-button" expand="block">
+            <div class="button-content">
+              <ion-icon name="qr-code" class="icon"></ion-icon>
+              <span class="label">Receive</span>
+            </div>
+          </ion-button>
+        </ion-col>
+        <ion-col size="4" class="ion-text-center">
+          <ion-button fill="clear" class="icon-button" expand="block">
+            <div class="button-content">
+              <ion-icon name="send" class="icon"></ion-icon>
+              <span class="label">Send</span>
+            </div>
+          </ion-button>
+        </ion-col>
+        <ion-col size="4" class="ion-text-center">
+          <ion-button fill="clear" class="icon-button" expand="block">
+            <div class="button-content">
+              <ion-icon name="swap-horizontal" class="icon"></ion-icon>
+              <span class="label">Swap</span>
+            </div>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <div class="token-list ion-padding">
+    <div class="token-list-header">
+      <h3>Tokens</h3>
+      <a class="token-list-manage-link">Manage</a>
+    </div>
+
+    <ion-list>
+      <ion-item button detail="false" lines="none" class="token-list-item" (click)="goToTokenDetails()">
+        <ion-avatar slot="start">
+          <img src="./../../../assets/images/tokens/xon.png" />
+        </ion-avatar>
+        <ion-label>
+          <h2>Xode Native Token</h2>
+          <p>17,000 XON</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>$2,890.00</h2>
+          <p>$0.17</p>
+        </div>
+      </ion-item>
+
+      <ion-item button detail="false" lines="none" class="token-list-item" (click)="goToTokenDetails()">
+        <ion-avatar slot="start">
+          <img src="./../../../assets/images/tokens/usdt.png" />
+        </ion-avatar>
+        <ion-label>
+          <h2>Tether USD</h2>
+          <p>1,000 USDT</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>$1,120.00</h2>
+          <p>$1.12</p>
+        </div>
+      </ion-item>
+
+      <ion-item button detail="false" lines="none" class="token-list-item" (click)="goToTokenDetails()">
+        <ion-avatar slot="start">
+          <img src="./../../../assets/images/tokens/dot.png" />
+        </ion-avatar>
+        <ion-label>
+          <h2>Polkadot</h2>
+          <p>500 DOT</p>
+        </ion-label>
+        <div slot="end" class="ion-text-right">
+          <h2>$2,890.00</h2>
+          <p>$4.58</p>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

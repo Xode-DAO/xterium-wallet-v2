@@ -63,6 +63,10 @@ export const routes: Routes = [
         loadComponent: () => import('./xterium/balances/balances.page').then(m => m.BalancesPage)
       },
       {
+        path: 'token-details',
+        loadComponent: () => import('./xterium/balances/token-details/token-details.page').then(m => m.TokenDetailsPage)
+      },
+      {
         path: 'swap',
         loadComponent: () => import('./xterium/swap/swap.page').then(m => m.SwapPage)
       },

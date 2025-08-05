@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -17,14 +17,15 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { qrCode, send, swapHorizontal } from 'ionicons/icons';
+import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-balances',
-  templateUrl: './balances.page.html',
-  styleUrls: ['./balances.page.scss'],
+  selector: 'app-token-details',
+  templateUrl: './token-details.page.html',
+  styleUrls: ['./token-details.page.scss'],
   standalone: true,
   imports: [
+    RouterModule,
     CommonModule,
     FormsModule,
     IonContent,
@@ -39,20 +40,15 @@ import { qrCode, send, swapHorizontal } from 'ionicons/icons';
     IonLabel,
   ]
 })
-export class BalancesPage implements OnInit {
+export class TokenDetailsPage implements OnInit {
 
-  constructor(
-    private router: Router
-  ) {
+  constructor() {
     addIcons({
+      arrowBackOutline,
       qrCode,
       send,
       swapHorizontal,
     });
-  }
-
-  goToTokenDetails() {
-    this.router.navigate(['/xterium/token-details']);
   }
 
   ngOnInit() {
