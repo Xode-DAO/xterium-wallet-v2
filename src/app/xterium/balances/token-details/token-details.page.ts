@@ -9,11 +9,15 @@ import {
   IonRow,
   IonCol,
   IonButton,
+  IonButtons,
   IonIcon,
   IonList,
   IonItem,
   IonAvatar,
   IonLabel,
+  IonModal,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -33,11 +37,15 @@ import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
     IonRow,
     IonCol,
     IonButton,
+    IonButtons,
     IonIcon,
     IonList,
     IonItem,
     IonAvatar,
     IonLabel,
+    IonModal,
+    IonTitle,
+    IonToolbar,
   ]
 })
 export class TokenDetailsPage implements OnInit {
@@ -51,7 +59,10 @@ export class TokenDetailsPage implements OnInit {
     });
   }
 
+  presentingElement!: HTMLElement | null;
+
   ngOnInit() {
+    this.presentingElement = document.querySelector('.xterium-content');
   }
 
 }

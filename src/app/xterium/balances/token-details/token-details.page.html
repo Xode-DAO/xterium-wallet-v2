@@ -23,7 +23,7 @@
     <ion-grid>
       <ion-row class="ion-justify-content-between">
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block">
+          <ion-button fill="clear" class="icon-button" expand="block" id="token-details-receive">
             <div class="button-content">
               <ion-icon name="qr-code" class="icon"></ion-icon>
               <span class="label">Receive</span>
@@ -31,7 +31,7 @@
           </ion-button>
         </ion-col>
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block">
+          <ion-button fill="clear" class="icon-button" expand="block" id="token-details-send">
             <div class="button-content">
               <ion-icon name="send" class="icon"></ion-icon>
               <span class="label">Send</span>
@@ -39,7 +39,7 @@
           </ion-button>
         </ion-col>
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block">
+          <ion-button fill="clear" class="icon-button" expand="block" id="token-details-swap">
             <div class="button-content">
               <ion-icon name="swap-horizontal" class="icon"></ion-icon>
               <span class="label">Swap</span>
@@ -52,7 +52,7 @@
 
   <div class="token-balance ion-padding">
     <div class="token-balance-header">
-      <h3>Your Balance:</h3>
+      <h3>Your Balance</h3>
     </div>
 
     <ion-list>
@@ -66,7 +66,7 @@
         </ion-label>
         <div slot="end" class="ion-text-right">
           <h2>$2,890.00</h2>
-          <p>-</p>
+          <p style="color: #333333">-</p>
         </div>
       </ion-item>
     </ion-list>
@@ -74,7 +74,7 @@
 
   <div class="token-details ion-padding">
     <div class="token-details-header">
-      <h3>Token Details:</h3>
+      <h3>Token Details</h3>
     </div>
 
     <ion-list>
@@ -129,4 +129,57 @@
     </ion-list>
   </div>
 
+  <ion-modal #tokenDetailsReceive trigger="token-details-receive" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Receive</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="tokenDetailsReceive.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-text-center ion-padding">
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #tokenDetailsSend trigger="token-details-send" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Send</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="tokenDetailsSend.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-text-center ion-padding">
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #tokenDetailsSwap trigger="token-details-swap" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Swap</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="tokenDetailsSwap.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-text-center ion-padding">
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

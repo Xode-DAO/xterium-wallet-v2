@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" class="wallet-content">
+<ion-content [fullscreen]="true" class="balances-content">
   <div class="ion-text-center total-balance">
     <h1>$6,290.00</h1>
   </div>
@@ -7,7 +7,7 @@
     <ion-grid>
       <ion-row class="ion-justify-content-between">
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block">
+          <ion-button fill="clear" class="icon-button" expand="block" id="balances-receive">
             <div class="button-content">
               <ion-icon name="qr-code" class="icon"></ion-icon>
               <span class="label">Receive</span>
@@ -15,7 +15,7 @@
           </ion-button>
         </ion-col>
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block">
+          <ion-button fill="clear" class="icon-button" expand="block" id="balances-select-token">
             <div class="button-content">
               <ion-icon name="send" class="icon"></ion-icon>
               <span class="label">Send</span>
@@ -23,7 +23,7 @@
           </ion-button>
         </ion-col>
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block">
+          <ion-button fill="clear" class="icon-button" expand="block" id="balances-swap">
             <div class="button-content">
               <ion-icon name="swap-horizontal" class="icon"></ion-icon>
               <span class="label">Swap</span>
@@ -84,4 +84,118 @@
       </ion-item>
     </ion-list>
   </div>
+
+  <ion-modal #balancesRceive trigger="balances-receive" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Receive</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="balancesRceive.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-text-center ion-padding">
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #balancesSelectToken trigger="balances-select-token" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Select Token</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="balancesSelectToken.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="token-list ion-padding">
+          <ion-list>
+            <ion-item button detail="false" lines="none" class="token-list-item">
+              <ion-avatar slot="start">
+                <img src="./../../../assets/images/tokens/xon.png" />
+              </ion-avatar>
+              <ion-label>
+                <h2>Xode Native Token</h2>
+                <p>17,000 XON</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>$2,890.00</h2>
+                <p>$0.17</p>
+              </div>
+            </ion-item>
+
+            <ion-item button detail="false" lines="none" class="token-list-item">
+              <ion-avatar slot="start">
+                <img src="./../../../assets/images/tokens/usdt.png" />
+              </ion-avatar>
+              <ion-label>
+                <h2>Tether USD</h2>
+                <p>1,000 USDT</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>$1,120.00</h2>
+                <p>$1.12</p>
+              </div>
+            </ion-item>
+
+            <ion-item button detail="false" lines="none" class="token-list-item">
+              <ion-avatar slot="start">
+                <img src="./../../../assets/images/tokens/dot.png" />
+              </ion-avatar>
+              <ion-label>
+                <h2>Polkadot</h2>
+                <p>500 DOT</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>$2,890.00</h2>
+                <p>$4.58</p>
+              </div>
+            </ion-item>
+          </ion-list>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #balancesSend trigger="balances-send" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Send</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="balancesSend.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-text-center ion-padding">
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #balancesSwap trigger="balances-swap" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Swap</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="balancesSwap.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-text-center ion-padding">
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
