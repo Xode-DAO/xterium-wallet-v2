@@ -8,7 +8,7 @@
 .action-buttons {
   padding-bottom: 5px;
 
-  .icon-button {
+  ion-button {
     --padding-start: 0;
     --padding-end: 0;
     --padding-top: 0;
@@ -34,7 +34,7 @@
     align-items: center;
     padding: 15px 5px;
 
-    .icon {
+    ion-icon {
       font-size: 30px;
       margin-bottom: 10px;
       color: white;
@@ -60,7 +60,7 @@
     margin: 0;
   }
 
-  .token-list-manage-link {
+  a {
     font-size: 18px;
     font-weight: 700;
     color: #00bcd4;

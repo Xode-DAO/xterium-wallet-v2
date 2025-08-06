@@ -60,6 +60,10 @@ export class BalancesPage implements OnInit {
     this.router.navigate(['/xterium/token-details']);
   }
 
+  goToSwap() {
+    this.router.navigate(['/xterium/swap']);
+  }
+
   ngOnInit() {
     this.presentingElement = document.querySelector('.xterium-content');
   }

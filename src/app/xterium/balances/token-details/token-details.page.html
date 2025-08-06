@@ -4,7 +4,7 @@
   </ion-button>
 
   <div class="token-title ion-padding">
-    <ion-item detail="false" lines="none" class="token-title-item">
+    <ion-item detail="false" lines="none">
       <ion-avatar slot="start">
         <img src="./../../../assets/images/tokens/xon.png" />
       </ion-avatar>
@@ -23,25 +23,25 @@
     <ion-grid>
       <ion-row class="ion-justify-content-between">
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block" id="token-details-receive">
+          <ion-button fill="clear" expand="block" id="token-details-receive">
             <div class="button-content">
-              <ion-icon name="qr-code" class="icon"></ion-icon>
+              <ion-icon name="qr-code"></ion-icon>
               <span class="label">Receive</span>
             </div>
           </ion-button>
         </ion-col>
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block" id="token-details-send">
+          <ion-button fill="clear" expand="block" id="token-details-send">
             <div class="button-content">
-              <ion-icon name="send" class="icon"></ion-icon>
+              <ion-icon name="send"></ion-icon>
               <span class="label">Send</span>
             </div>
           </ion-button>
         </ion-col>
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block" id="token-details-swap">
+          <ion-button fill="clear" expand="block" id="token-details-swap">
             <div class="button-content">
-              <ion-icon name="swap-horizontal" class="icon"></ion-icon>
+              <ion-icon name="swap-horizontal"></ion-icon>
               <span class="label">Swap</span>
             </div>
           </ion-button>
@@ -56,7 +56,7 @@
     </div>
 
     <ion-list>
-      <ion-item detail="false" lines="none" class="token-balance-item">
+      <ion-item detail="false" lines="none">
         <ion-avatar slot="start">
           <img src="./../../../assets/images/tokens/xon.png" />
         </ion-avatar>
@@ -78,7 +78,7 @@
     </div>
 
     <ion-list>
-      <ion-item detail="false" lines="none" class="token-details-item">
+      <ion-item detail="false" lines="none">
         <ion-label slot="start">
           <p>Name</p>
         </ion-label>
@@ -86,7 +86,7 @@
           <h2>Xode Native Token</h2>
         </div>
       </ion-item>
-      <ion-item detail="false" lines="none" class="token-details-item">
+      <ion-item detail="false" lines="none">
         <ion-label slot="start">
           <p>Symbol</p>
         </ion-label>
@@ -94,7 +94,7 @@
           <h2>XON</h2>
         </div>
       </ion-item>
-      <ion-item detail="false" lines="none" class="token-details-item">
+      <ion-item detail="false" lines="none">
         <ion-label slot="start">
           <p>Network</p>
         </ion-label>
@@ -102,7 +102,7 @@
           <h2>Xode</h2>
         </div>
       </ion-item>
-      <ion-item detail="false" lines="none" class="token-details-item">
+      <ion-item detail="false" lines="none">
         <ion-label slot="start">
           <p>Decimal</p>
         </ion-label>
@@ -110,7 +110,7 @@
           <h2>12</h2>
         </div>
       </ion-item>
-      <ion-item detail="false" lines="none" class="token-details-item">
+      <ion-item detail="false" lines="none">
         <ion-label slot="start">
           <p>Total Supply</p>
         </ion-label>
@@ -118,7 +118,7 @@
           <h2>1B</h2>
         </div>
       </ion-item>
-      <ion-item detail="false" lines="none" class="token-details-item">
+      <ion-item detail="false" lines="none">
         <ion-label slot="start">
           <p>Reference Id</p>
         </ion-label>
@@ -131,7 +131,7 @@
 
   <ion-modal #tokenDetailsReceive trigger="token-details-receive" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-title>Receive</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="tokenDetailsReceive.dismiss()">
@@ -149,7 +149,7 @@
 
   <ion-modal #tokenDetailsSend trigger="token-details-send" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-title>Send</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="tokenDetailsSend.dismiss()">
@@ -167,7 +167,7 @@
 
   <ion-modal #tokenDetailsSwap trigger="token-details-swap" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-title>Swap</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="tokenDetailsSwap.dismiss()">

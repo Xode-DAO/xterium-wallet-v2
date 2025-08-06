@@ -12,21 +12,21 @@
     </div>
   </div>
 
-  <div class="button-controls">
-    <ion-button expand="block" size="default" class="primary-button ion-margin-bottom" id="import-seed-phrase">
+  <div class="primary-button-controls">
+    <ion-button expand="block" size="default" class="ion-margin-bottom" id="import-seed-phrase">
       IMPORT SEED PHRASE
     </ion-button>
-    <ion-button expand="block" size="default" class="primary-button ion-margin-bottom" id="import-private-key">
+    <ion-button expand="block" size="default" class="ion-margin-bottom" id="import-private-key">
       IMPORT PRIVATE KEY
     </ion-button>
-    <ion-button expand="block" size="default" class="primary-button" id="import-from-backup">
+    <ion-button expand="block" size="default" id="import-from-backup">
       IMPORT FROM BACKUP
     </ion-button>
   </div>
 
   <ion-modal #importSeedPhrase trigger="import-seed-phrase" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-title>Import</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="importSeedPhrase.dismiss()">
@@ -45,7 +45,7 @@
 
   <ion-modal #importPrivateKey trigger="import-private-key" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-title>Import</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="importPrivateKey.dismiss()">
@@ -64,7 +64,7 @@
 
   <ion-modal #importFromBackup trigger="import-from-backup" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-title>Import</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="importFromBackup.dismiss()">

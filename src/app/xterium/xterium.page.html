@@ -14,7 +14,7 @@
   </ion-toolbar>
 
   <ion-tabs>
-    <ion-tab-bar slot="bottom">
+    <ion-tab-bar slot="bottom" class="xterium-tab-bar">
       <ion-tab-button tab="balances">
         <ion-icon name="briefcase"></ion-icon>
         Assets
@@ -40,7 +40,7 @@
 
   <ion-modal #myWallets trigger="my-wallets" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-buttons slot="start">
           <ion-button id="create-wallet">
             <ion-icon name="add-circle" style="color: white;"></ion-icon>
@@ -50,7 +50,7 @@
           <ion-modal #createWallet trigger="create-wallet" class="create-wallet-modal" [initialBreakpoint]="1"
             [breakpoints]="[0, 1]">
             <ng-template>
-              <ion-toolbar class="modal-toolbar toolbar">
+              <ion-toolbar class="main-modal-toolbar toolbar">
                 <ion-title>Create Wallet</ion-title>
                 <ion-buttons slot="end">
                   <ion-button (click)="createWallet.dismiss()">
@@ -69,7 +69,7 @@
                   Import account from pre-existing seed
                 </ion-item>
                 <ion-item button lines="none" class="create-wallet-item">
-                  Import using Private Key
+                  Import using private key
                 </ion-item>
                 <ion-item button lines="none" class="create-wallet-item">
                   Restore account from a backup file
@@ -93,7 +93,7 @@
 
   <ion-modal #settings trigger="settings" [presentingElement]="presentingElement">
     <ng-template>
-      <ion-toolbar class="modal-toolbar">
+      <ion-toolbar class="main-modal-toolbar">
         <ion-title>Settings</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="settings.dismiss()">

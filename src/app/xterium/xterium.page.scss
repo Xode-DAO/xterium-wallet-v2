@@ -1,4 +1,4 @@
-.wallet-toolbar {
+ion-toolbar.wallet-toolbar {
   padding: 5px 8px;
   --background: #1a1a1a;
 
@@ -19,22 +19,22 @@
   }
 }
 
-ion-tab-bar {
+ion-tab-bar.xterium-tab-bar {
   --color: white;
   --color-selected: #0bbab5;
 
   height: 70px;
-}
 
-ion-tab-button {
-  padding: 16px 0;
+  ion-tab-button {
+    padding: 16px 0;
 
-  ion-icon {
-    font-size: 24px;
+    ion-icon {
+      font-size: 24px;
+    }
   }
 }
 
-.create-wallet-modal {
+ion-modal.create-wallet-modal {
   --height: auto;
 
   .toolbar {
@@ -54,7 +54,7 @@ ion-tab-button {
     color: #7d7d7d;
   }
 
-  .create-wallet-new-account-item {
+  ion-item.create-wallet-new-account-item {
     --background: transparent;
 
     background-image: url("./../../assets/images/backgrounds/main-button.png");
@@ -68,7 +68,7 @@ ion-tab-button {
     font-weight: 700;
   }
 
-  .create-wallet-item {
+  ion-item.create-wallet-item {
     --background: #333333;
 
     border-radius: 15px;

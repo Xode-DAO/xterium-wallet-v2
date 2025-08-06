@@ -117,56 +117,50 @@ ion-content.onboarding-content::part(scroll) {
   height: 100%;
 }
 
-.primary-button {
-  --background: transparent;
-  --background-hover: transparent;
-  --background-activated: transparent;
-  --background-focused: transparent;
-  --color: white;
-  --border-radius: 50px;
-  --padding-top: 20px;
-  --padding-bottom: 20px;
-  --padding-start: 20px;
-  --padding-end: 20px;
-  --box-shadow: none;
-
-  position: relative;
-  overflow: hidden;
-  transform: scale(1);
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-}
-
-.primary-button::part(native) {
-  background-image: url("assets/images/backgrounds/main-button.png");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  transition: background-size 0.2s ease;
-  border-radius: 50px;
-  font-weight: 900;
-}
-
-.primary-button:active {
-  transform: scale(0.98);
-}
-
-.primary-button:active::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  pointer-events: none;
-  border-radius: 50px;
-}
-
-.button-controls {
+.primary-button-controls {
   padding: 0px 20px;
   margin: 20px auto;
+
+  ion-button {
+    --background: transparent;
+    --background-hover: transparent;
+    --background-activated: transparent;
+    --background-focused: transparent;
+    --color: white;
+    --border-radius: 50px;
+    --padding-top: 20px;
+    --padding-bottom: 20px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --box-shadow: none;
+  }
+
+  ion-button::part(native) {
+    background-image: url("assets/images/backgrounds/main-button.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-size 0.2s ease;
+    font-weight: 900;
+  }
+
+  ion-button:active {
+    transform: scale(0.98);
+  }
+
+  ion-button:active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+    border-radius: 50px;
+  }
 }
 
-.modal-toolbar {
+ion-toolbar.main-modal-toolbar {
   --background: #1B1B1B;
 }
