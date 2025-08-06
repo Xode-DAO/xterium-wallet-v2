@@ -2,6 +2,8 @@
   font-weight: 700;
   margin-top: 65px;
   color: #ffffff;
+  padding-left: 25px;
+  padding-right: 25px;
 
   ion-segment {
     --background: #333333;
@@ -27,8 +29,10 @@
 .payment-history-segment-content {
   ion-row.date-as-of {
     --border-radius: 15px;
-    padding: 10px;
-    margin-bottom: -15px;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 
     ion-label {
       font-weight: 700;
@@ -43,7 +47,7 @@
   .transaction-date {
     margin-top: 25px;
     margin-bottom: 10px;
-    padding: 0px 17px;
+    padding: 0px 22px;
     font-weight: 700;
   }
 
@@ -56,7 +60,7 @@
     background: #0b0b0b;
 
     .transaction-note {
-      padding: 0px 10px;
+      padding: 0px 12px;
       font-size: 14px;
       background: #0b0b0b;
     }
@@ -69,8 +73,9 @@
       --background: #0b0b0b;
 
       .transaction-item-details {
-        padding: 0px 10px;
-        font-size: 19px;
+        padding-left: 11px;
+        padding-right: 11px;
+        font-size: 22px;
         font-weight: 900;
         background: #0b0b0b;
       }
@@ -80,11 +85,11 @@
       --background: #0b0b0b;
 
       ion-avatar {
-        margin-left: 10px;
+        margin-left: 12px;
       }
 
       .token-amount {
-        margin-right: 10px;
+        margin-right: 12px;
         margin-bottom: 7px;
       }
 
