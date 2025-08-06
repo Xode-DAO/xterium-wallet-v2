@@ -42,10 +42,41 @@
     <ng-template>
       <ion-toolbar class="modal-toolbar">
         <ion-buttons slot="start">
-          <ion-button>
+          <ion-button id="create-wallet">
             <ion-icon name="add-circle" style="color: white;"></ion-icon>
             <span style="margin-left: 4px; color: white;">Create</span>
           </ion-button>
+
+          <ion-modal #createWallet trigger="create-wallet" class="create-wallet-modal" [initialBreakpoint]="1"
+            [breakpoints]="[0, 1]">
+            <ng-template>
+              <ion-toolbar class="modal-toolbar toolbar">
+                <ion-title>Create Wallet</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button (click)="createWallet.dismiss()">
+                    <ion-icon name="close" style="color: white;"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <ion-list>
+                <ion-item button detail="false" lines="none" class="create-wallet-new-account-item ">
+                  New Account
+                </ion-item>
+                <ion-item-divider>
+                  <ion-label>Import Options</ion-label>
+                </ion-item-divider>
+                <ion-item button lines="none" class="create-wallet-item">
+                  Import account from pre-existing seed
+                </ion-item>
+                <ion-item button lines="none" class="create-wallet-item">
+                  Import using Private Key
+                </ion-item>
+                <ion-item button lines="none" class="create-wallet-item">
+                  Restore account from a backup file
+                </ion-item>
+              </ion-list>
+            </ng-template>
+          </ion-modal>
         </ion-buttons>
         <ion-title>Wallets</ion-title>
         <ion-buttons slot="end">

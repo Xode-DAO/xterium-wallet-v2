@@ -33,3 +33,47 @@ ion-tab-button {
     font-size: 24px;
   }
 }
+
+.create-wallet-modal {
+  --height: auto;
+
+  .toolbar {
+    padding-top: 10px;
+  }
+
+  ion-list {
+    background: transparent;
+    padding: 25px;
+  }
+
+  ion-item-divider {
+    margin-top: 25px;
+    margin-bottom: 12px;
+    margin-left: -10px;
+
+    color: #7d7d7d;
+  }
+
+  .create-wallet-new-account-item {
+    --background: transparent;
+
+    margin-bottom: 10px;
+    transition: background 0.2s;
+    font-weight: 700;
+    background-image: url("./../../assets/images/backgrounds/main-button.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 15px;
+    transition: background-size 0.2s ease;
+  }
+
+  .create-wallet-item {
+    --background: #333333;
+
+    border-radius: 15px;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+    font-weight: 700;
+  }
+}

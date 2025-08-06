@@ -12,7 +12,12 @@ import {
   IonTabBar,
   IonTabButton,
   IonIcon,
-  IonModal
+  IonModal,
+  IonPopover,
+  IonList,
+  IonItem,
+  IonItemDivider,
+  IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -38,6 +43,11 @@ import { WalletsComponent } from "./shared/wallets/wallets.component"
     IonTabButton,
     IonIcon,
     IonModal,
+    IonPopover,
+    IonList,
+    IonItem,
+    IonItemDivider,
+    IonLabel,
     WalletsComponent
   ]
 })
