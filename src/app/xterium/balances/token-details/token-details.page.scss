@@ -52,7 +52,6 @@
   padding-bottom: 15px;
 
   .icon-button {
-    --background: #333333;
     --padding-start: 0;
     --padding-end: 0;
     --padding-top: 0;
@@ -64,6 +63,13 @@
     text-align: center;
     font-weight: 700;
     margin-top: 15px;
+
+    background-image: url("./../../../../assets/images/backgrounds/main-button.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 15px;
+    transition: background-size 0.2s ease;
   }
 
   .button-content {
@@ -75,7 +81,7 @@
     .icon {
       font-size: 30px;
       margin-bottom: 10px;
-      color: #0bbab5;
+      color: white;
     }
 
     .label {

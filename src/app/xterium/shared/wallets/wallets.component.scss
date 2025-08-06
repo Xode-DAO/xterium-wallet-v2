@@ -1,0 +1,31 @@
+.wallets-list {
+  border: none;
+
+  ion-list {
+    background: transparent;
+    margin: 0px 10px 0px 10px;
+  }
+
+  .wallets-list-item {
+    --background: #333333;
+
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+  }
+
+  h2 {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0px;
+    padding: 8px 0px 2px 0px;
+  }
+
+  p {
+    color: #bdbdbd;
+    font-size: 15px;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+  }
+}

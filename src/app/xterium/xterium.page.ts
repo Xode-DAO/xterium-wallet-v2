@@ -16,7 +16,9 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { menu, close, briefcase, swapHorizontal, qrCode, timer, compass } from 'ionicons/icons';
+import { addCircle, settingsOutline, close, briefcase, swapHorizontal, qrCode, timer, compass } from 'ionicons/icons';
+
+import { WalletsComponent } from "./shared/wallets/wallets.component"
 
 @Component({
   selector: 'app-xterium',
@@ -35,14 +37,16 @@ import { menu, close, briefcase, swapHorizontal, qrCode, timer, compass } from '
     IonTabBar,
     IonTabButton,
     IonIcon,
-    IonModal
+    IonModal,
+    WalletsComponent
   ]
 })
 export class XteriumPage implements OnInit {
 
   constructor() {
     addIcons({
-      menu,
+      addCircle,
+      settingsOutline,
       close,
       briefcase,
       swapHorizontal,

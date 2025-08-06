@@ -34,56 +34,12 @@
     </ion-grid>
   </div>
 
-  <div class="token-list ion-padding">
-    <div class="token-list-header">
-      <h3>Tokens</h3>
-      <a class="token-list-manage-link">Manage</a>
-    </div>
-
-    <ion-list>
-      <ion-item button detail="false" lines="none" class="token-list-item" (click)="goToTokenDetails()">
-        <ion-avatar slot="start">
-          <img src="./../../../assets/images/tokens/xon.png" />
-        </ion-avatar>
-        <ion-label>
-          <h2>Xode Native Token</h2>
-          <p>17,000 XON</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>$2,890.00</h2>
-          <p>$0.17</p>
-        </div>
-      </ion-item>
-
-      <ion-item button detail="false" lines="none" class="token-list-item" (click)="goToTokenDetails()">
-        <ion-avatar slot="start">
-          <img src="./../../../assets/images/tokens/usdt.png" />
-        </ion-avatar>
-        <ion-label>
-          <h2>Tether USD</h2>
-          <p>1,000 USDT</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>$1,120.00</h2>
-          <p>$1.12</p>
-        </div>
-      </ion-item>
-
-      <ion-item button detail="false" lines="none" class="token-list-item" (click)="goToTokenDetails()">
-        <ion-avatar slot="start">
-          <img src="./../../../assets/images/tokens/dot.png" />
-        </ion-avatar>
-        <ion-label>
-          <h2>Polkadot</h2>
-          <p>500 DOT</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>$2,890.00</h2>
-          <p>$4.58</p>
-        </div>
-      </ion-item>
-    </ion-list>
+  <div class="token-list-header">
+    <h3>Tokens</h3>
+    <a class="token-list-manage-link" id="manage-tokens">Manage</a>
   </div>
+
+  <app-tokens></app-tokens>
 
   <ion-modal #balancesRceive trigger="balances-receive" [presentingElement]="presentingElement">
     <ng-template>
@@ -114,51 +70,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="token-list ion-padding">
-          <ion-list>
-            <ion-item button detail="false" lines="none" class="token-list-item">
-              <ion-avatar slot="start">
-                <img src="./../../../assets/images/tokens/xon.png" />
-              </ion-avatar>
-              <ion-label>
-                <h2>Xode Native Token</h2>
-                <p>17,000 XON</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>$2,890.00</h2>
-                <p>$0.17</p>
-              </div>
-            </ion-item>
-
-            <ion-item button detail="false" lines="none" class="token-list-item">
-              <ion-avatar slot="start">
-                <img src="./../../../assets/images/tokens/usdt.png" />
-              </ion-avatar>
-              <ion-label>
-                <h2>Tether USD</h2>
-                <p>1,000 USDT</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>$1,120.00</h2>
-                <p>$1.12</p>
-              </div>
-            </ion-item>
-
-            <ion-item button detail="false" lines="none" class="token-list-item">
-              <ion-avatar slot="start">
-                <img src="./../../../assets/images/tokens/dot.png" />
-              </ion-avatar>
-              <ion-label>
-                <h2>Polkadot</h2>
-                <p>500 DOT</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>$2,890.00</h2>
-                <p>$4.58</p>
-              </div>
-            </ion-item>
-          </ion-list>
-        </div>
+        <app-tokens></app-tokens>
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -187,6 +99,24 @@
         <ion-title>Swap</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="balancesSwap.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-text-center ion-padding">
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #manageTokens trigger="manage-tokens" [presentingElement]="presentingElement">
+    <ng-template>
+      <ion-toolbar class="modal-toolbar">
+        <ion-title>Manage Tokens</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="manageTokens.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
           </ion-button>
         </ion-buttons>
