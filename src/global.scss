@@ -122,7 +122,6 @@ ion-content.onboarding-content::part(scroll) {
   --background-hover: transparent;
   --background-activated: transparent;
   --background-focused: transparent;
-
   --color: white;
   --border-radius: 50px;
   --padding-top: 20px;
@@ -142,8 +141,8 @@ ion-content.onboarding-content::part(scroll) {
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
-  border-radius: 50px;
   transition: background-size 0.2s ease;
+  border-radius: 50px;
   font-weight: 900;
 }
 

@@ -14,19 +14,18 @@
     --padding-top: 0;
     --padding-bottom: 0;
 
+    background-image: url("./../../../assets/images/backgrounds/main-button.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-size 0.2s ease;
+    border-radius: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     font-weight: 700;
     margin-top: 15px;
-
-    background-image: url("./../../../assets/images/backgrounds/main-button.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 15px;
-    transition: background-size 0.2s ease;
   }
 
   .button-content {
