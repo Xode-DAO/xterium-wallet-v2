@@ -1,0 +1,98 @@
+.segments {
+  font-weight: 700;
+  margin-top: 65px;
+  color: #ffffff;
+
+  ion-segment {
+    --background: #333333;
+
+    ion-segment-button {
+      --color: white;
+      --indicator-color: #0bbab5;
+      --padding-top: 10px;
+      --padding-bottom: 10px;
+
+      font-size: 14px;
+
+      &.segment-button-checked {
+        --background: #0bbab5;
+        --color: white;
+
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.payment-history-segment-content {
+  ion-row.date-as-of {
+    --border-radius: 15px;
+    padding: 10px;
+    margin-bottom: -15px;
+
+    ion-label {
+      font-weight: 700;
+    }
+
+    ion-item {
+      --background: #333333;
+      --border-radius: 15px;
+    }
+  }
+
+  .transaction-date {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    padding: 0px 17px;
+    font-weight: 700;
+  }
+
+  ion-card.transaction-card {
+    border-radius: 0;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    margin-left: -6px;
+    margin-right: -6px;
+    background: #0b0b0b;
+
+    .transaction-note {
+      padding: 0px 10px;
+      font-size: 14px;
+      background: #0b0b0b;
+    }
+
+    ion-item {
+      --background: #0b0b0b;
+    }
+
+    ion-item.transaction-item {
+      --background: #0b0b0b;
+
+      .transaction-item-details {
+        padding: 0px 10px;
+        font-size: 19px;
+        font-weight: 900;
+        background: #0b0b0b;
+      }
+    }
+
+    ion-item.token-info {
+      --background: #0b0b0b;
+
+      ion-avatar {
+        margin-left: 10px;
+      }
+
+      .token-amount {
+        margin-right: 10px;
+        margin-bottom: 7px;
+      }
+
+      h2 {
+        color: #ffffff;
+        font-size: 15px;
+      }
+    }
+
+  }
+}

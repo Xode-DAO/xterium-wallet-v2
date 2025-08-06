@@ -1,13 +1,123 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>transaction-history</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="transaction-history-content">
+  <div class="segments ion-padding-horizontal">
+    <ion-segment value="default">
+      <ion-segment-button value="default" content-id="payment-history">
+        <ion-label>Payment History</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="segment" content-id="block-scanner">
+        <ion-label>Block Scanner</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">transaction-history</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-segment-view>
+    <ion-segment-content id="payment-history" class="payment-history-segment-content">
+      <ion-grid>
+        <ion-row class="date-as-of">
+          <ion-col size="12">
+            <ion-item lines="none">
+              <div slot="start">
+                <ion-label>Date as of:</ion-label>
+              </div>
+              <div slot="end" class="ion-text-right">
+                <ion-datetime-button datetime="datetime" style="margin-right: -10px;"></ion-datetime-button>
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="datetime" presentation="date" prefer-wheel="false"
+                      show-default-buttons="true"></ion-datetime>
+                  </ng-template>
+                </ion-modal>
+              </div>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <div class="transaction-date">July 26, 2025</div>
+        <ion-card class="transaction-card">
+          <ion-item lines="none">
+            <ion-label>
+              <div class="transaction-note">5:28 PM QR Pay · Gcash</div>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="transaction-item">
+            <ion-label>
+              <div class="transaction-item-details">JO****NP</div>
+            </ion-label>
+            <div class="transaction-item-details">Php 1,515.00</div>
+          </ion-item>
+
+          <ion-item lines="none" class="token-info">
+            <ion-avatar slot="start">
+              <img src="../../../assets/images/tokens/usdt.png" alt="USDT Token" />
+            </ion-avatar>
+            <ion-label>
+              <h2>USDT</h2>
+            </ion-label>
+            <div slot="end" class="ion-text-right token-amount">
+              <h2>23.64</h2>
+            </div>
+          </ion-item>
+        </ion-card>
+
+        <div class="transaction-date">July 27, 2025</div>
+        <ion-card class="transaction-card">
+          <ion-item lines="none">
+            <ion-label>
+              <div class="transaction-note">5:28 PM QR Pay · Gcash</div>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="transaction-item">
+            <ion-label>
+              <div class="transaction-item-details">JO****NP</div>
+            </ion-label>
+            <div class="transaction-item-details">Php 1,515.00</div>
+          </ion-item>
+
+          <ion-item lines="none" class="token-info">
+            <ion-avatar slot="start">
+              <img src="../../../assets/images/tokens/usdt.png" alt="USDT Token" />
+            </ion-avatar>
+            <ion-label>
+              <h2>USDT</h2>
+            </ion-label>
+            <div slot="end" class="ion-text-right token-amount">
+              <h2>23.64</h2>
+            </div>
+          </ion-item>
+        </ion-card>
+        <ion-card class="transaction-card">
+          <ion-item lines="none">
+            <ion-label>
+              <div class="transaction-note">5:28 PM QR Pay · Gcash</div>
+            </ion-label>
+          </ion-item>
+
+          <ion-item lines="none" class="transaction-item">
+            <ion-label>
+              <div class="transaction-item-details">JO****NP</div>
+            </ion-label>
+            <div class="transaction-item-details">Php 1,515.00</div>
+          </ion-item>
+
+          <ion-item lines="none" class="token-info">
+            <ion-avatar slot="start">
+              <img src="../../../assets/images/tokens/usdt.png" alt="USDT Token" />
+            </ion-avatar>
+            <ion-label>
+              <h2>USDT</h2>
+            </ion-label>
+            <div slot="end" class="ion-text-right token-amount">
+              <h2>23.64</h2>
+            </div>
+          </ion-item>
+        </ion-card>
+
+      </ion-grid>
+    </ion-segment-content>
+    <ion-segment-content id="block-scanner">
+
+    </ion-segment-content>
+  </ion-segment-view>
 </ion-content>
