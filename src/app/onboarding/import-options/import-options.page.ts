@@ -16,6 +16,8 @@ import {
   IonCol,
   IonItem,
   IonInput,
+  IonTextarea,
+  IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -44,6 +46,8 @@ import { HeaderComponent } from "../shared/header/header.component";
     IonCol,
     IonItem,
     IonInput,
+    IonTextarea,
+    IonLabel,
     HeaderComponent
   ]
 })
@@ -58,7 +62,10 @@ export class ImportOptionsPage implements OnInit {
   }
 
   presentingElement!: HTMLElement | null;
+
+  mnemonicName: string = '';
   mnemonicWords: string[] = new Array(12).fill('Sample');
+  privateKeyInput: string = '';
 
   pasteFromClipboard() {
 

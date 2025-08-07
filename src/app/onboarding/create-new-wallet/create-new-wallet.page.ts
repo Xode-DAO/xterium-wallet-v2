@@ -12,6 +12,7 @@ import {
   IonCol,
   IonItem,
   IonInput,
+  IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -36,6 +37,7 @@ import { HeaderComponent } from "../shared/header/header.component";
     IonCol,
     IonItem,
     IonInput,
+    IonLabel,
     HeaderComponent
   ]
 })
@@ -49,6 +51,7 @@ export class CreateNewWalletPage implements OnInit {
     });
   }
 
+  mnemonicName: string = '';
   mnemonicWords: string[] = new Array(12).fill('Sample');
 
   copyToClipboard() {
