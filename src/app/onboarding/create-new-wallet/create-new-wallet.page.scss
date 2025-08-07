@@ -61,28 +61,28 @@
   ion-input {
     border: none;
   }
+}
 
-  .copy-button-wrapper {
-    ion-button {
-      --background: transparent;
-      --background-hover: transparent;
-      --background-activated: transparent;
-      --background-focused: transparent;
-      --color: white;
-      --color-activated: #c2c2c2;
-      --border-radius: 30px;
-      --border-color: white;
-      --padding-top: 10px;
-      --padding-bottom: 10px;
-      --padding-start: 30px;
-      --padding-end: 30px;
+.copy-button-wrapper {
+  ion-button {
+    --background: transparent;
+    --background-hover: transparent;
+    --background-activated: transparent;
+    --background-focused: transparent;
+    --color: white;
+    --color-activated: #c2c2c2;
+    --border-radius: 30px;
+    --border-color: white;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    --padding-start: 30px;
+    --padding-end: 30px;
 
-      font-size: 16px;
-    }
+    font-size: 16px;
+  }
 
-    ion-button::part(native) {
-      transition: background-size 0.2s ease;
-      font-weight: 900;
-    }
+  ion-button::part(native) {
+    transition: background-size 0.2s ease;
+    font-weight: 900;
   }
 }
