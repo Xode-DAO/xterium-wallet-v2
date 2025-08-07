@@ -129,7 +129,7 @@
     </ion-list>
   </div>
 
-  <ion-modal #tokenDetailsReceive trigger="token-details-receive" [presentingElement]="presentingElement">
+  <ion-modal #tokenDetailsReceive trigger="token-details-receive" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Receive</ion-title>
@@ -147,7 +147,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #tokenDetailsSend trigger="token-details-send" [presentingElement]="presentingElement">
+  <ion-modal #tokenDetailsSend trigger="token-details-send" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Send</ion-title>
@@ -165,7 +165,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #tokenDetailsSwap trigger="token-details-swap" [presentingElement]="presentingElement">
+  <ion-modal #tokenDetailsSwap trigger="token-details-swap" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Swap</ion-title>

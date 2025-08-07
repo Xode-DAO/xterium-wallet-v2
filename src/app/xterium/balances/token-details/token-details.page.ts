@@ -62,10 +62,10 @@ export class TokenDetailsPage implements OnInit {
     });
   }
 
-  presentingElement!: HTMLElement | null;
+  mainPresentingElement!: HTMLElement | null;
 
   ngOnInit() {
-    this.presentingElement = document.querySelector('.xterium-content');
+    this.mainPresentingElement = document.querySelector('.xterium-content');
   }
 
 }

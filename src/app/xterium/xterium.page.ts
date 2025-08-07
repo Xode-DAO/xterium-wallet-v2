@@ -15,12 +15,7 @@ import {
   IonModal,
   IonList,
   IonItemDivider,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonItem,
-  IonInput,
-  IonTextarea,
   IonLabel
 } from '@ionic/angular/standalone';
 
@@ -34,11 +29,13 @@ import {
   qrCode,
   timer,
   compass,
-  copyOutline,
-  clipboardOutline
 } from 'ionicons/icons';
 
 import { WalletsComponent } from "./shared/wallets/wallets.component"
+import { NewWalletComponent } from "./../onboarding/shared/new-wallet/new-wallet.component"
+import { ImportSeedPhraseComponent } from "./../onboarding/shared/import-seed-phrase/import-seed-phrase.component"
+import { ImportPrivateKeyComponent } from "./../onboarding/shared/import-private-key/import-private-key.component"
+import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-backup/import-from-backup.component"
 
 @Component({
   selector: 'app-xterium',
@@ -60,14 +57,13 @@ import { WalletsComponent } from "./shared/wallets/wallets.component"
     IonModal,
     IonList,
     IonItemDivider,
-    IonGrid,
-    IonRow,
-    IonCol,
     IonItem,
-    IonInput,
-    IonTextarea,
     IonLabel,
-    WalletsComponent
+    WalletsComponent,
+    NewWalletComponent,
+    ImportSeedPhraseComponent,
+    ImportPrivateKeyComponent,
+    ImportFromBackupComponent,
   ]
 })
 export class XteriumPage implements OnInit {
@@ -81,30 +77,16 @@ export class XteriumPage implements OnInit {
       swapHorizontal,
       qrCode,
       timer,
-      compass,
-      copyOutline,
-      clipboardOutline
+      compass
     });
   }
 
-  presentingElement!: HTMLElement | null;
-  importPresentingElement!: HTMLElement | null;
-
-  mnemonicName: string = '';
-  mnemonicWords: string[] = new Array(12).fill('Sample');
-  privateKeyInput: string = '';
-
-  copyToClipboard() {
-
-  }
-
-  pasteFromClipboard() {
-
-  }
+  mainPresentingElement!: HTMLElement | null;
+  myWalletsPresentingElement!: HTMLElement | null;
 
   ngOnInit() {
-    this.presentingElement = document.querySelector('.xterium-content');
-    this.importPresentingElement = document.querySelector('.my-wallets');
+    this.mainPresentingElement = document.querySelector('.xterium-content');
+    this.myWalletsPresentingElement = document.querySelector('.my-wallets');
   }
 
 }

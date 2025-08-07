@@ -1,0 +1,52 @@
+.mnemonic-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  ion-item.name-item {
+    --background: #fff;
+    --color: #000;
+    --border-radius: 50px;
+    --border-style: none;
+    --border-width: 0;
+    --inner-border-width: 0;
+    --highlight-height: 0;
+
+    width: 100%;
+    padding-left: 9px;
+    padding-right: 9px;
+    margin-bottom: 20px;
+    border-bottom: none !important;
+    box-shadow: none !important;
+
+    ion-label {
+      font-weight: 700;
+    }
+  }
+
+  ion-grid {
+    max-width: 500px;
+    width: 100%;
+  }
+
+  ion-col {
+    padding: 3px;
+  }
+
+  ion-item.mnemonic-item {
+    --background: #fff;
+    --color: #000;
+    --border-radius: 50px;
+    --border-style: none;
+    --border-width: 0;
+    --inner-border-width: 0;
+    --highlight-height: 0;
+
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+
+  ion-input {
+    border: none;
+  }
+}

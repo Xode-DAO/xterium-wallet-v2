@@ -56,7 +56,7 @@ export class BalancesPage implements OnInit {
     });
   }
 
-  presentingElement!: HTMLElement | null;
+  mainPresentingElement!: HTMLElement | null;
 
   goToTokenDetails() {
     this.router.navigate(['/xterium/token-details']);
@@ -67,7 +67,7 @@ export class BalancesPage implements OnInit {
   }
 
   ngOnInit() {
-    this.presentingElement = document.querySelector('.xterium-content');
+    this.mainPresentingElement = document.querySelector('.xterium-content');
   }
 
 }

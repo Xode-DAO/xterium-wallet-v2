@@ -11,19 +11,15 @@ import {
   IonModal,
   IonTitle,
   IonToolbar,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonItem,
-  IonInput,
-  IonTextarea,
-  IonLabel
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
+import { arrowBackOutline, close } from 'ionicons/icons';
 
 import { HeaderComponent } from "../shared/header/header.component";
+import { ImportSeedPhraseComponent } from "../shared/import-seed-phrase/import-seed-phrase.component";
+import { ImportPrivateKeyComponent } from "../shared/import-private-key/import-private-key.component";
+import { ImportFromBackupComponent } from "../shared/import-from-backup/import-from-backup.component";
 
 @Component({
   selector: 'app-import-options',
@@ -41,14 +37,10 @@ import { HeaderComponent } from "../shared/header/header.component";
     IonModal,
     IonTitle,
     IonToolbar,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonItem,
-    IonInput,
-    IonTextarea,
-    IonLabel,
-    HeaderComponent
+    HeaderComponent,
+    ImportSeedPhraseComponent,
+    ImportPrivateKeyComponent,
+    ImportFromBackupComponent
   ]
 })
 export class ImportOptionsPage implements OnInit {
@@ -56,23 +48,14 @@ export class ImportOptionsPage implements OnInit {
   constructor() {
     addIcons({
       arrowBackOutline,
-      clipboardOutline,
       close
     });
   }
 
-  presentingElement!: HTMLElement | null;
-
-  mnemonicName: string = '';
-  mnemonicWords: string[] = new Array(12).fill('Sample');
-  privateKeyInput: string = '';
-
-  pasteFromClipboard() {
-
-  }
+  mainPresentingElement!: HTMLElement | null;
 
   ngOnInit() {
-    this.presentingElement = document.querySelector('.onboarding-content');
+    this.mainPresentingElement = document.querySelector('.onboarding-content');
   }
 
 }

@@ -12,33 +12,5 @@
     </div>
   </div>
 
-  <div class="mnemonic-container ion-padding">
-    <ion-item class="name-item" lines="none">
-      <ion-label position="">Name:</ion-label>
-      <ion-input type="text" [(ngModel)]="mnemonicName" placeholder="e.g. My Wallet Name"></ion-input>
-    </ion-item>
-
-    <ion-grid>
-      <ion-row>
-        <ion-col size="6" *ngFor="let word of mnemonicWords; index as i">
-          <ion-item class="mnemonic-item">
-            <ion-input type="text" [(ngModel)]="mnemonicWords[i]" autocomplete="off" readonly="true"></ion-input>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
-    <div class="copy-button-wrapper ion-text-center ion-margin-top">
-      <ion-button fill="outline" size="small" (click)="copyToClipboard()">
-        <ion-icon name="copy-outline" slot="start"></ion-icon>
-        Copy to Clipboard
-      </ion-button>
-    </div>
-  </div>
-
-  <div class="primary-button-controls">
-    <ion-button expand="block" size="default" class="ion-margin-bottom">
-      OK, I SAVED IT SOMEWHERE
-    </ion-button>
-  </div>
+  <app-new-wallet></app-new-wallet>
 </ion-content>

@@ -41,7 +41,7 @@
 
   <app-tokens></app-tokens>
 
-  <ion-modal #balancesRceive trigger="balances-receive" [presentingElement]="presentingElement">
+  <ion-modal #balancesRceive trigger="balances-receive" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Receive</ion-title>
@@ -59,7 +59,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #balancesSelectToken trigger="balances-select-token" [presentingElement]="presentingElement">
+  <ion-modal #balancesSelectToken trigger="balances-select-token" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Select Token</ion-title>
@@ -75,7 +75,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #balancesSend trigger="balances-send" [presentingElement]="presentingElement">
+  <ion-modal #balancesSend trigger="balances-send" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Send</ion-title>
@@ -93,7 +93,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #manageTokens trigger="manage-tokens" [presentingElement]="presentingElement">
+  <ion-modal #manageTokens trigger="manage-tokens" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Manage Tokens</ion-title>
