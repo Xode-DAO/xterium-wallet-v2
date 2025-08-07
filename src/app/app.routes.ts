@@ -40,16 +40,12 @@ export const routes: Routes = [
     loadComponent: () => import('./security/security.page').then(m => m.SecurityPage),
     children: [
       {
-        path: 'login-pin',
-        loadComponent: () => import('./security/login-pin/login-pin.page').then(m => m.LoginPinPage)
-      },
-      {
-        path: 'login-password',
-        loadComponent: () => import('./security/login-password/login-password.page').then(m => m.LoginPasswordPage)
+        path: 'login',
+        loadComponent: () => import('./security/login/login.page').then(m => m.LoginPage)
       },
       {
         path: '',
-        redirectTo: '/security/login-pin',
+        redirectTo: '/security/login',
         pathMatch: 'full',
       },
     ]
