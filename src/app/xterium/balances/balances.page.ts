@@ -20,6 +20,7 @@ import { addIcons } from 'ionicons';
 import { qrCode, send, swapHorizontal } from 'ionicons/icons';
 
 import { TokensComponent } from "./../shared/tokens/tokens.component"
+import { ReceiveComponent } from "./../shared/receive/receive.component";
 
 @Component({
   selector: 'app-balances',
@@ -39,7 +40,8 @@ import { TokensComponent } from "./../shared/tokens/tokens.component"
     IonModal,
     IonTitle,
     IonToolbar,
-    TokensComponent
+    TokensComponent,
+    ReceiveComponent
   ]
 })
 export class BalancesPage implements OnInit {

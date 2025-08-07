@@ -1,0 +1,67 @@
+.back-button {
+  --color: white;
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+  --padding-start: 18px;
+  --padding-end: 18px;
+
+  position: absolute;
+  z-index: 100;
+  font-size: 24px;
+}
+
+.mnemonic-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  ion-grid {
+    max-width: 500px;
+    width: 100%;
+  }
+
+  ion-col {
+    padding: 3px;
+  }
+
+  ion-item.mnemonic-item {
+    --background: #fff;
+    --color: #000;
+    --border-radius: 50px;
+    --border-style: none;
+    --border-width: 0;
+    --inner-border-width: 0;
+    --highlight-height: 0;
+
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+
+  ion-input {
+    border: none;
+  }
+
+  .copy-button-wrapper {
+    ion-button {
+      --background: transparent;
+      --background-hover: transparent;
+      --background-activated: transparent;
+      --background-focused: transparent;
+      --color: white;
+      --color-activated: #c2c2c2;
+      --border-radius: 30px;
+      --border-color: white;
+      --padding-top: 10px;
+      --padding-bottom: 10px;
+      --padding-start: 30px;
+      --padding-end: 30px;
+
+      font-size: 16px;
+    }
+
+    ion-button::part(native) {
+      transition: background-size 0.2s ease;
+      font-weight: 900;
+    }
+  }
+}

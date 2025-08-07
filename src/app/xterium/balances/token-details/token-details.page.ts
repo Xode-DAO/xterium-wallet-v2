@@ -23,6 +23,8 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
 
+import { ReceiveComponent } from "./../../shared/receive/receive.component";
+
 @Component({
   selector: 'app-token-details',
   templateUrl: './token-details.page.html',
@@ -46,6 +48,7 @@ import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
     IonModal,
     IonTitle,
     IonToolbar,
+    ReceiveComponent
   ]
 })
 export class TokenDetailsPage implements OnInit {

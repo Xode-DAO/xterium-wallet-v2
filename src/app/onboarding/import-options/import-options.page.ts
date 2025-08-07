@@ -11,10 +11,15 @@ import {
   IonModal,
   IonTitle,
   IonToolbar,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonItem,
+  IonInput,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, close } from 'ionicons/icons';
+import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
 
 import { HeaderComponent } from "../shared/header/header.component";
 
@@ -34,6 +39,11 @@ import { HeaderComponent } from "../shared/header/header.component";
     IonModal,
     IonTitle,
     IonToolbar,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonItem,
+    IonInput,
     HeaderComponent
   ]
 })
@@ -42,11 +52,17 @@ export class ImportOptionsPage implements OnInit {
   constructor() {
     addIcons({
       arrowBackOutline,
+      clipboardOutline,
       close
     });
   }
 
   presentingElement!: HTMLElement | null;
+  mnemonicWords: string[] = new Array(12).fill('Sample');
+
+  pasteFromClipboard() {
+
+  }
 
   ngOnInit() {
     this.presentingElement = document.querySelector('.onboarding-content');
