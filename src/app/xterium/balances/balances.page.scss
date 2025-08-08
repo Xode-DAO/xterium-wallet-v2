@@ -1,50 +1,8 @@
 .total-balance h1 {
   font-weight: 700;
-  font-size: 48px;
+  font-size: 42px;
   margin-top: 80px;
   color: #ffffff;
-}
-
-.action-buttons {
-  padding-bottom: 5px;
-
-  ion-button {
-    --padding-start: 0;
-    --padding-end: 0;
-    --padding-top: 0;
-    --padding-bottom: 0;
-
-    background-image: url("./../../../assets/images/backgrounds/main-button.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    transition: background-size 0.2s ease;
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-weight: 700;
-    margin-top: 15px;
-  }
-
-  .button-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 15px 5px;
-
-    ion-icon {
-      font-size: 30px;
-      margin-bottom: 10px;
-      color: white;
-    }
-
-    .label {
-      font-size: 15px;
-      color: white;
-    }
-  }
 }
 
 .token-list-header {
@@ -55,13 +13,13 @@
 
   h3 {
     color: white;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
     margin: 0;
   }
 
   a {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
     color: #00bcd4;
     cursor: pointer;
