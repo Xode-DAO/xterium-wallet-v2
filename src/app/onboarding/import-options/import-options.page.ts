@@ -55,7 +55,7 @@ export class ImportOptionsPage implements OnInit {
   mainPresentingElement!: HTMLElement | null;
 
   ngOnInit() {
-    this.mainPresentingElement = document.querySelector('.onboarding-content');
+    this.mainPresentingElement = document.querySelector('.import-wallet-content');
   }
 
 }
