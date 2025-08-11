@@ -1,0 +1,48 @@
+<ion-content [fullscreen]="true" class="select-network-content">
+  <div class="ion-text-center">
+    <app-header></app-header>
+
+    <div class="ion-padding" style="margin-top: -60px;">
+      <h1 style="font-weight: bold">Welcome!</h1>
+      <p style="margin-top: 8px; font-size: 15px; color: var(--ion-color-medium);">
+        Choose the network you want to connect with.
+      </p>
+      <p style="margin-top: 3px; font-size: 15px; color: var(--ion-color-medium);">
+        This will be the blockchain your wallet operates on. You can change this anytime later in Settings.
+      </p>
+    </div>
+  </div>
+
+  <ion-list lines="none">
+    <ion-card button class="network-card" [class.active]="selectedNetwork === 'assethub'"
+      (click)="selectNetwork('assethub')">
+      <ion-item lines="none">
+        <ion-avatar slot="start">
+          <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
+        </ion-avatar>
+        <ion-label>
+          <h2>Polkadot AssetHub</h2>
+          <p>Manage your assets on the AssetHub parachain with ease.</p>
+        </ion-label>
+      </ion-item>
+    </ion-card>
+
+    <ion-card button class="network-card" [class.active]="selectedNetwork === 'xode'" (click)="selectNetwork('xode')">
+      <ion-item lines="none">
+        <ion-avatar slot="start">
+          <img src="../../../assets/images/networks/xode.png" alt="Xode" />
+        </ion-avatar>
+        <ion-label>
+          <h2>Xode</h2>
+          <p>Experience fast transactions with the Xode blockchain.</p>
+        </ion-label>
+      </ion-item>
+    </ion-card>
+  </ion-list>
+
+  <div class="primary-button-controls" [routerLink]="['/onboarding']">
+    <ion-button expand="block" size="default" class="ion-margin-bottom">
+      GET STARTED
+    </ion-button>
+  </div>
+</ion-content>

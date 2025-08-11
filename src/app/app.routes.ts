@@ -6,8 +6,12 @@ export const routes: Routes = [
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
     children: [
       {
+        path: 'select-network',
+        loadComponent: () => import('./home/select-network/select-network.page').then(m => m.SelectNetworkPage)
+      },
+      {
         path: '',
-        redirectTo: '/onboarding/welcome',
+        redirectTo: '/home/select-network',
         pathMatch: 'full',
       },
     ]
