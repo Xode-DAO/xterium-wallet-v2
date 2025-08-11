@@ -10,10 +10,11 @@ import {
   IonLabel,
   IonCard,
   IonAvatar,
-  IonButton
+  IonButton,
+  IonCheckbox,
 } from '@ionic/angular/standalone';
 
-import { HeaderComponent } from "./../../onboarding/shared/header/header.component";
+import { HeaderComponent } from "../shared/header/header.component";
 
 @Component({
   selector: 'app-select-network',
@@ -31,6 +32,7 @@ import { HeaderComponent } from "./../../onboarding/shared/header/header.compone
     IonCard,
     IonAvatar,
     IonButton,
+    IonCheckbox,
     HeaderComponent
   ]
 })
@@ -38,11 +40,10 @@ export class SelectNetworkPage implements OnInit {
 
   constructor() { }
 
-  selectedNetwork = ''; // holds chosen network
+  selectedNetwork = 'assethub';
 
   selectNetwork(network: string) {
     this.selectedNetwork = network;
-    // next action: navigate / open create wallet modal / save choice etc.
   }
 
   ngOnInit() {

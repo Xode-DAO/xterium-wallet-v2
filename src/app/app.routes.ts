@@ -6,12 +6,8 @@ export const routes: Routes = [
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
     children: [
       {
-        path: 'select-network',
-        loadComponent: () => import('./home/select-network/select-network.page').then(m => m.SelectNetworkPage)
-      },
-      {
         path: '',
-        redirectTo: '/home/select-network',
+        redirectTo: '/onboarding/select-network',
         pathMatch: 'full',
       },
     ]
@@ -21,8 +17,12 @@ export const routes: Routes = [
     loadComponent: () => import('./onboarding/onboarding.page').then(m => m.OnboardingPage),
     children: [
       {
-        path: 'welcome',
-        loadComponent: () => import('./onboarding/welcome/welcome.page').then(m => m.WelcomePage)
+        path: 'select-network',
+        loadComponent: () => import('./onboarding/select-network/select-network.page').then(m => m.SelectNetworkPage)
+      },
+      {
+        path: 'setup-wallet',
+        loadComponent: () => import('./onboarding/setup-wallet/setup-wallet.page').then(m => m.SetupWalletPage)
       },
       {
         path: 'create-new-wallet',
@@ -34,7 +34,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/onboarding/welcome',
+        redirectTo: '/onboarding/select-network',
         pathMatch: 'full',
       },
     ]

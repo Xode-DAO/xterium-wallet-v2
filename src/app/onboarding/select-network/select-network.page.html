@@ -5,10 +5,11 @@
     <div class="ion-padding" style="margin-top: -60px;">
       <h1 style="font-weight: bold">Welcome!</h1>
       <p style="margin-top: 8px; font-size: 15px; color: var(--ion-color-medium);">
-        Choose the network you want to connect with.
+        Get started by choosing a network you want to connect with.
+        This will be the blockchain your wallet operates on.
       </p>
       <p style="margin-top: 3px; font-size: 15px; color: var(--ion-color-medium);">
-        This will be the blockchain your wallet operates on. You can change this anytime later in Settings.
+        You can change this anytime later in Settings.
       </p>
     </div>
   </div>
@@ -22,7 +23,7 @@
         </ion-avatar>
         <ion-label>
           <h2>Polkadot AssetHub</h2>
-          <p>Manage your assets on the AssetHub parachain with ease.</p>
+          <p>Manage your assets easily on the AssetHub parachain.</p>
         </ion-label>
       </ion-item>
     </ion-card>
@@ -34,13 +35,29 @@
         </ion-avatar>
         <ion-label>
           <h2>Xode</h2>
-          <p>Experience fast transactions with the Xode blockchain.</p>
+          <p>Experience smooth and fast transactions with Xode.</p>
+        </ion-label>
+      </ion-item>
+    </ion-card>
+
+    <ion-card button class="network-card" [class.active]="selectedNetwork === 'solana'" (click)="selectNetwork('solana')">
+      <ion-item lines="none">
+        <ion-avatar slot="start">
+          <img src="../../../assets/images/networks/solana.png" alt="Solana" />
+        </ion-avatar>
+        <ion-label>
+          <h2>Solana</h2>
+          <p>Make low-cost transactions on the high-performance Solana blockchain.</p>
         </ion-label>
       </ion-item>
     </ion-card>
   </ion-list>
 
-  <div class="primary-button-controls" [routerLink]="['/onboarding']">
+  <div class="ion-text-center ion-padding">
+    <ion-checkbox>I agree to the <a [routerLink]="['/xterium']">terms and conditions</a></ion-checkbox>
+  </div>
+
+  <div class="primary-button-controls" [routerLink]="['/onboarding/setup-wallet']">
     <ion-button expand="block" size="default" class="ion-margin-bottom">
       GET STARTED
     </ion-button>

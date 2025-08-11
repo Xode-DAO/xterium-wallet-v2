@@ -5,30 +5,38 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonContent,
-  IonCheckbox,
-  IonButton
+  IonButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import { arrowBackOutline, close } from 'ionicons/icons';
 
 import { HeaderComponent } from "../shared/header/header.component";
 
 @Component({
-  selector: 'app-welcome',
-  templateUrl: './welcome.page.html',
-  styleUrls: ['./welcome.page.scss'],
+  selector: 'app-setup-wallet',
+  templateUrl: './setup-wallet.page.html',
+  styleUrls: ['./setup-wallet.page.scss'],
   standalone: true,
   imports: [
     RouterModule,
     CommonModule,
     FormsModule,
     IonContent,
-    IonCheckbox,
     IonButton,
+    IonIcon,
     HeaderComponent
-]
+  ]
 })
-export class WelcomePage implements OnInit {
+export class SetupWalletPage implements OnInit {
 
-  constructor() { }
+  constructor() {
+    addIcons({
+      arrowBackOutline,
+      close
+    });
+  }
 
   ngOnInit() {
   }
