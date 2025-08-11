@@ -109,14 +109,6 @@ ion-content {
   --background: #1B1B1B !important;
 }
 
-ion-content.onboarding-content::part(scroll) {
-  background-image: url("assets/images/backgrounds/onboarding-page.png");
-  background-repeat: no-repeat;
-  background-position: center calc(100% - 50px);
-  background-size: 200px auto;
-  height: 100%;
-}
-
 .primary-back-button {
   --color: white;
   --padding-top: 0px;

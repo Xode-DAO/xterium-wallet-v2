@@ -9,6 +9,7 @@ import {
   IonSegmentView,
   IonSegmentContent,
   IonLabel,
+  IonText,
   IonGrid,
   IonRow,
   IonCol,
@@ -17,8 +18,23 @@ import {
   IonDatetimeButton,
   IonCard,
   IonAvatar,
-  IonModal
+  IonModal,
+  IonIcon,
+  IonChip,
+  IonInput,
+  IonButton
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import {
+  searchOutline,
+  arrowUpOutline,
+  arrowDownOutline,
+  cashOutline,
+  cubeOutline,
+  swapHorizontalOutline,
+  timeOutline
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-transaction-history',
@@ -34,6 +50,7 @@ import {
     IonSegmentView,
     IonSegmentContent,
     IonLabel,
+    IonText,
     IonGrid,
     IonRow,
     IonCol,
@@ -42,12 +59,26 @@ import {
     IonDatetimeButton,
     IonCard,
     IonAvatar,
-    IonModal
+    IonModal,
+    IonIcon,
+    IonChip,
+    IonInput,
+    IonButton
   ]
 })
 export class TransactionHistoryPage implements OnInit {
 
-  constructor() { }
+  constructor() {
+    addIcons({
+      searchOutline,
+      arrowUpOutline,
+      arrowDownOutline,
+      cashOutline,
+      cubeOutline,
+      swapHorizontalOutline,
+      timeOutline
+    });
+  }
 
   selectedDate: string = new Date().toISOString();
 
