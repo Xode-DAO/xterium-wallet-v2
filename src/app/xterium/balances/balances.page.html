@@ -1,4 +1,10 @@
 <ion-content [fullscreen]="true" class="balances-content">
+  <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="130" [pullMax]="300" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content pullingIcon="chevron-down-circle-outline" pullingText="Pull to refresh"
+      refreshingSpinner="circles" refreshingText="Refreshing...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <div class="ion-text-center total-balance">
     <h1>$6,290.00</h1>
   </div>

@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonContent,
+  IonRefresher,
+  IonRefresherContent,
+  RefresherCustomEvent,
   IonGrid,
   IonRow,
   IonCol,
@@ -31,6 +34,8 @@ import { ReceiveComponent } from "./../shared/receive/receive.component";
     CommonModule,
     FormsModule,
     IonContent,
+    IonRefresher,
+    IonRefresherContent,
     IonGrid,
     IonRow,
     IonCol,
@@ -57,6 +62,12 @@ export class BalancesPage implements OnInit {
   }
 
   mainPresentingElement!: HTMLElement | null;
+
+  handleRefresh(event: RefresherCustomEvent) {
+    setTimeout(() => {
+      event.target.complete();
+    }, 1000);
+  }
 
   goToTokenDetails() {
     this.router.navigate(['/xterium/token-details']);
