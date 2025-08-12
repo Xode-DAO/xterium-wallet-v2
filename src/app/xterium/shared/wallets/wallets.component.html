@@ -1,6 +1,6 @@
 <div class="wallets-list">
   <ion-list>
-    <ion-item button detail="false" lines="none">
+    <ion-item button detail="false" lines="none" id="wallet-details">
       <ion-avatar slot="start">
         <img src="./../../../../assets/icon/xterium-logo.png" />
       </ion-avatar>
@@ -13,7 +13,7 @@
       </div>
     </ion-item>
 
-    <ion-item button detail="false" lines="none">
+    <ion-item button detail="false" lines="none" id="wallet-details">
       <ion-avatar slot="start">
         <img src="./../../../../assets/icon/xterium-logo.png" />
       </ion-avatar>
@@ -26,7 +26,7 @@
       </div>
     </ion-item>
 
-    <ion-item button detail="false" lines="none">
+    <ion-item button detail="false" lines="none" id="wallet-details">
       <ion-avatar slot="start">
         <img src="./../../../../assets/icon/xterium-logo.png" />
       </ion-avatar>
@@ -40,3 +40,19 @@
     </ion-item>
   </ion-list>
 </div>
+
+<ion-modal #settings trigger="wallet-details" [presentingElement]="mainPresentingElement">
+  <ng-template>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>My Wallet</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="settings.dismiss()">
+          <ion-icon name="close" style="color: white;"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-content>
+      <app-wallet-details></app-wallet-details>
+    </ion-content>
+  </ng-template>
+</ion-modal>

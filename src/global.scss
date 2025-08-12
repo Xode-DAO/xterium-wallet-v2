@@ -151,6 +151,14 @@ ion-refresher {
     font-weight: 900;
   }
 
+  ion-button.success-button::part(native) {
+    background-image: url("assets/images/backgrounds/success-button.png");
+  }
+
+  ion-button.danger-button::part(native) {
+    background-image: url("assets/images/backgrounds/danger-button.png");
+  }
+
   ion-button:active {
     transform: scale(0.98);
   }
