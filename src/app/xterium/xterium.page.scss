@@ -2,20 +2,37 @@ ion-toolbar.wallet-toolbar {
   --background: #1a1a1a;
   padding: 5px 8px;
 
-  ion-button {
-    color: white;
-  }
-
-  .wallet-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: white;
-    margin-left: 5px;
-  }
-
   ion-icon {
-    font-size: 24px;
+    font-size: 27px;
     color: white;
+  }
+
+  .wallet-button {
+    --padding-start: 0;
+    --padding-end: 0;
+
+    img {
+      display: block;
+    }
+
+    .wallet-text {
+      margin-left: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.3;
+    }
+
+    .wallet-title {
+      font-weight: bold;
+      font-size: 15px;
+      color: white;
+    }
+
+    .wallet-details {
+      font-size: 13px;
+      color: white;
+    }
   }
 }
 
