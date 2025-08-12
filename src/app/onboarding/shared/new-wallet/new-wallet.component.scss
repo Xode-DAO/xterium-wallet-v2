@@ -3,20 +3,6 @@
   flex-direction: column;
   align-items: center;
 
-  ion-item.name-item {
-    --background: #333333;
-    --color: #ffffff;
-
-    border: 3px solid #777777;
-    border-radius: 50px;
-    box-shadow: none !important;
-    margin-bottom: 20px;
-
-    ion-label {
-      font-weight: 700;
-    }
-  }
-
   ion-grid {
     max-width: 500px;
     width: 100%;
@@ -26,16 +12,7 @@
     padding: 3px;
   }
 
-  ion-item.mnemonic-item {
-    --background: #333333;
-    --color: #ffffff;
-
-    border: 3px solid #777777;
-    border-radius: 50px;
-    box-shadow: none !important;
-  }
-
-  ion-input {
-    border: none;
+  ion-item.name-item {
+    margin-bottom: 10px;
   }
 }

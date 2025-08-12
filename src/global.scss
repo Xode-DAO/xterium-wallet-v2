@@ -236,3 +236,37 @@ ion-toolbar.main-modal-toolbar {
     }
   }
 }
+
+ion-item.primary-input-item {
+  --background: #333333;
+  --color: #ffffff;
+
+  border: 3px solid #777777;
+  border-radius: 50px;
+  box-shadow: none !important;
+
+  ion-label {
+    font-weight: 700;
+  }
+
+  ion-input {
+    border: none;
+  }
+}
+
+ion-item.primary-textarea-item {
+  --background: #333333;
+  --color: #ffffff;
+
+  border: 3px solid #777777;
+  border-radius: 25px;
+  box-shadow: none !important;
+
+  ion-label {
+    font-weight: 700;
+  }
+
+  ion-textarea {
+    border: none;
+  }
+}
