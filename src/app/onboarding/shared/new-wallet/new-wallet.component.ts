@@ -43,8 +43,8 @@ export class NewWalletComponent implements OnInit {
     });
   }
 
-  mnemonicName: string = '';
-  mnemonicWords: string[] = new Array(12).fill('Sample');
+  walletName: string = '';
+  mnemonicPhrase: string[] = new Array(12).fill('Sample');
 
   copyToClipboard() {
 

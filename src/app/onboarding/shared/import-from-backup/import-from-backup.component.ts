@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonItem,
   IonInput,
   IonLabel
@@ -20,6 +23,9 @@ import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
     CommonModule,
     FormsModule,
     IonButton,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonItem,
     IonInput,
     IonLabel,

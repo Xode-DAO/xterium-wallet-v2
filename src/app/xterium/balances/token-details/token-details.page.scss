@@ -9,13 +9,11 @@ ion-button.back-button {
   z-index: 100;
   font-size: 24px;
 
-  margin-top: 75px;
+  margin-top: 70px;
 }
 
 .token-title {
   margin-top: 45px;
-  margin-left: 30px;
-  margin-right: 20px;
 
   ion-item {
     --background: transparent;
@@ -27,6 +25,7 @@ ion-button.back-button {
     ion-avatar {
       height: 65px;
       width: 65px;
+      margin-left: 15px;
     }
   }
 
@@ -53,13 +52,11 @@ ion-button.back-button {
 }
 
 .token-balance {
-  padding: 5px 18px;
-
   .token-balance-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 15px 10px 15px;
+    margin: 17px 5px 10px 5px;
 
     h3 {
       color: white;
@@ -71,7 +68,6 @@ ion-button.back-button {
 
   ion-list {
     background: transparent;
-    margin: 0px 10px 0px 10px;
   }
 
   ion-item {
@@ -99,13 +95,11 @@ ion-button.back-button {
 }
 
 .token-details {
-  padding: 5px 18px;
-
   .token-details-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 15px 10px 15px;
+    margin: 5px 5px 10px 5px;
 
     h3 {
       color: white;
@@ -117,7 +111,6 @@ ion-button.back-button {
 
   ion-list {
     background: transparent;
-    margin: 0px 10px 0px 10px;
   }
 
   ion-item {

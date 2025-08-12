@@ -1,13 +1,24 @@
 <div class="upload-backup-container ion-padding">
-  <ion-item class="name-item" lines="none">
-    <ion-label>Name:</ion-label>
-    <ion-input type="text" [(ngModel)]="walletName" placeholder="e.g. My Wallet Name"></ion-input>
-  </ion-item>
-  <div class="upload-input-wrapper ion-margin-top">
-    <label for="fileUpload" class="upload-label">Choose Backup File</label>
-    <input id="fileUpload" type="file" accept=".json,.txt" />
-  </div>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-item class="name-item" lines="none">
+          <ion-label>Name:</ion-label>
+          <ion-input type="text" [(ngModel)]="walletName" placeholder="e.g. My Wallet Name"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <div class="upload-input-wrapper ion-margin-top">
+          <label for="fileUpload" class="upload-label">Choose Backup File</label>
+          <input id="fileUpload" type="file" accept=".json,.txt" />
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </div>
+
 <div class="primary-button-controls">
   <ion-button expand="block" size="default" class="ion-margin-bottom">
     IMPORT WALLET

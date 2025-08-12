@@ -4,20 +4,13 @@
   align-items: center;
 
   ion-item.name-item {
-    --background: #fff;
-    --color: #000;
-    --border-radius: 50px;
-    --border-style: none;
-    --border-width: 0;
-    --inner-border-width: 0;
-    --highlight-height: 0;
+    --background: #333333;
+    --color: #ffffff;
 
-    width: 100%;
-    padding-left: 9px;
-    padding-right: 9px;
-    margin-bottom: 20px;
-    border-bottom: none !important;
+    border: 3px solid #777777;
+    border-radius: 50px;
     box-shadow: none !important;
+    margin-bottom: 20px;
 
     ion-label {
       font-weight: 700;
@@ -34,15 +27,11 @@
   }
 
   ion-item.mnemonic-item {
-    --background: #fff;
-    --color: #000;
-    --border-radius: 50px;
-    --border-style: none;
-    --border-width: 0;
-    --inner-border-width: 0;
-    --highlight-height: 0;
+    --background: #333333;
+    --color: #ffffff;
 
-    border-bottom: none !important;
+    border: 3px solid #777777;
+    border-radius: 50px;
     box-shadow: none !important;
   }
 

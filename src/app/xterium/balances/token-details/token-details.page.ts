@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -53,7 +53,9 @@ import { ReceiveComponent } from "./../../shared/receive/receive.component";
 })
 export class TokenDetailsPage implements OnInit {
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     addIcons({
       arrowBackOutline,
       qrCode,
@@ -63,6 +65,10 @@ export class TokenDetailsPage implements OnInit {
   }
 
   mainPresentingElement!: HTMLElement | null;
+
+  goToSwap() {
+    this.router.navigate(['/xterium/swap']);
+  }
 
   ngOnInit() {
     this.mainPresentingElement = document.querySelector('.xterium-content');

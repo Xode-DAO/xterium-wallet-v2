@@ -3,25 +3,27 @@
     <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
   </ion-button>
 
-  <div class="token-title ion-padding">
-    <ion-item detail="false" lines="none">
-      <ion-avatar slot="start">
-        <img src="./../../../assets/images/tokens/xon.png" />
-      </ion-avatar>
-      <ion-label>
-        <h1>Xode Native Token</h1>
-        <p>XON</p>
-      </ion-label>
-    </ion-item>
-
-    <div class="ion-text-center token-price">
-      <h1>$0.1702034120000</h1>
-    </div>
-  </div>
-
-  <div class="token-action-buttons ion-padding-horizontal">
+  <div class="ion-padding-horizontal">
     <ion-grid>
-      <ion-row class="ion-justify-content-between">
+      <ion-row>
+        <ion-col size="12">
+          <div class="token-title">
+            <ion-item detail="false" lines="none">
+              <ion-avatar slot="start">
+                <img src="./../../../assets/images/tokens/xon.png" />
+              </ion-avatar>
+              <ion-label>
+                <h1>Xode Native Token</h1>
+                <p>XON</p>
+              </ion-label>
+            </ion-item>
+            <div class="ion-text-center token-price">
+              <h1>$0.1702034120000</h1>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="token-action-buttons">
         <ion-col size="4" class="ion-text-center">
           <ion-button fill="clear" expand="block" id="token-details-receive">
             <div class="button-content">
@@ -39,7 +41,7 @@
           </ion-button>
         </ion-col>
         <ion-col size="4" class="ion-text-center">
-          <ion-button fill="clear" expand="block" id="token-details-swap">
+          <ion-button fill="clear" expand="block" (click)="goToSwap()">
             <div class="button-content">
               <ion-icon name="swap-horizontal"></ion-icon>
               <span class="label">Swap</span>
@@ -47,86 +49,88 @@
           </ion-button>
         </ion-col>
       </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div class="token-balance">
+            <div class="token-balance-header">
+              <h3>Your Balance</h3>
+            </div>
+            <ion-list>
+              <ion-item detail="false" lines="none">
+                <ion-avatar slot="start">
+                  <img src="./../../../assets/images/tokens/xon.png" />
+                </ion-avatar>
+                <ion-label>
+                  <h2>Xode Native Token</h2>
+                  <p>17,000 XON</p>
+                </ion-label>
+                <div slot="end" class="ion-text-right">
+                  <h2>$2,890.00</h2>
+                  <p style="color: #333333">-</p>
+                </div>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="token-details">
+        <ion-col size="12">
+          <div class="token-details-header">
+            <h3>Token Details</h3>
+          </div>
+          <ion-list>
+            <ion-item detail="false" lines="none">
+              <ion-label slot="start">
+                <p>Name</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>Xode Native Token</h2>
+              </div>
+            </ion-item>
+            <ion-item detail="false" lines="none">
+              <ion-label slot="start">
+                <p>Symbol</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>XON</h2>
+              </div>
+            </ion-item>
+            <ion-item detail="false" lines="none">
+              <ion-label slot="start">
+                <p>Network</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>Xode</h2>
+              </div>
+            </ion-item>
+            <ion-item detail="false" lines="none">
+              <ion-label slot="start">
+                <p>Decimal</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>12</h2>
+              </div>
+            </ion-item>
+            <ion-item detail="false" lines="none">
+              <ion-label slot="start">
+                <p>Total Supply</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>1B</h2>
+              </div>
+            </ion-item>
+            <ion-item detail="false" lines="none">
+              <ion-label slot="start">
+                <p>Reference Id</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>1</h2>
+              </div>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
     </ion-grid>
-  </div>
-
-  <div class="token-balance ion-padding">
-    <div class="token-balance-header">
-      <h3>Your Balance</h3>
-    </div>
-
-    <ion-list>
-      <ion-item detail="false" lines="none">
-        <ion-avatar slot="start">
-          <img src="./../../../assets/images/tokens/xon.png" />
-        </ion-avatar>
-        <ion-label>
-          <h2>Xode Native Token</h2>
-          <p>17,000 XON</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>$2,890.00</h2>
-          <p style="color: #333333">-</p>
-        </div>
-      </ion-item>
-    </ion-list>
-  </div>
-
-  <div class="token-details ion-padding">
-    <div class="token-details-header">
-      <h3>Token Details</h3>
-    </div>
-
-    <ion-list>
-      <ion-item detail="false" lines="none">
-        <ion-label slot="start">
-          <p>Name</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>Xode Native Token</h2>
-        </div>
-      </ion-item>
-      <ion-item detail="false" lines="none">
-        <ion-label slot="start">
-          <p>Symbol</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>XON</h2>
-        </div>
-      </ion-item>
-      <ion-item detail="false" lines="none">
-        <ion-label slot="start">
-          <p>Network</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>Xode</h2>
-        </div>
-      </ion-item>
-      <ion-item detail="false" lines="none">
-        <ion-label slot="start">
-          <p>Decimal</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>12</h2>
-        </div>
-      </ion-item>
-      <ion-item detail="false" lines="none">
-        <ion-label slot="start">
-          <p>Total Supply</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>1B</h2>
-        </div>
-      </ion-item>
-      <ion-item detail="false" lines="none">
-        <ion-label slot="start">
-          <p>Reference Id</p>
-        </ion-label>
-        <div slot="end" class="ion-text-right">
-          <h2>1</h2>
-        </div>
-      </ion-item>
-    </ion-list>
   </div>
 
   <ion-modal #tokenDetailsReceive trigger="token-details-receive" [presentingElement]="mainPresentingElement">
@@ -140,7 +144,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-text-center ion-padding">
+        <div class="ion-padding-horizontal">
           <app-receive></app-receive>
         </div>
       </ion-content>
@@ -153,24 +157,6 @@
         <ion-title>Send</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="tokenDetailsSend.dismiss()">
-            <ion-icon name="close" style="color: white;"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-      <ion-content>
-        <div class="ion-text-center ion-padding">
-
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-  <ion-modal #tokenDetailsSwap trigger="token-details-swap" [presentingElement]="mainPresentingElement">
-    <ng-template>
-      <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Swap</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="tokenDetailsSwap.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
           </ion-button>
         </ion-buttons>

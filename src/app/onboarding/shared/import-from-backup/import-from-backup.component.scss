@@ -1,18 +1,10 @@
 .upload-backup-container {
   ion-item.name-item {
-    --background: #fff;
-    --color: #000;
-    --border-radius: 50px;
-    --border-style: none;
-    --border-width: 0;
-    --inner-border-width: 0;
-    --highlight-height: 0;
+    --background: #333333;
+    --color: #ffffff;
 
-    width: 100%;
-    padding-left: 9px;
-    padding-right: 9px;
-    margin-bottom: 20px;
-    border-bottom: none !important;
+    border: 3px solid #777777;
+    border-radius: 50px;
     box-shadow: none !important;
 
     ion-label {
@@ -24,11 +16,6 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    width: 100%;
-    padding-left: 9px;
-    padding-right: 9px;
-    margin-bottom: 20px;
-    border-bottom: none !important;
     box-shadow: none !important;
 
     .upload-label {
@@ -41,10 +28,10 @@
     }
 
     input[type='file'] {
-      border: 1px solid #ccc;
+      border: 3px solid #777777;
+      border-radius: 50px;
+      box-shadow: none !important;
       padding: 10px;
-      border-radius: 20px;
-      background: #fff;
     }
   }
 }

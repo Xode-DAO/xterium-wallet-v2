@@ -9,9 +9,9 @@
     <h1>$6,290.00</h1>
   </div>
 
-  <div class="token-action-buttons ion-padding-horizontal">
+  <div class="ion-padding-horizontal">
     <ion-grid>
-      <ion-row class="ion-justify-content-between">
+      <ion-row class="token-action-buttons">
         <ion-col size="4" class="ion-text-center">
           <ion-button fill="clear" class="icon-button" expand="block" id="balances-receive">
             <div class="button-content">
@@ -37,15 +37,17 @@
           </ion-button>
         </ion-col>
       </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div class="token-list-header">
+            <h3>Tokens</h3>
+            <a id="manage-tokens">Manage</a>
+          </div>
+          <app-tokens></app-tokens>
+        </ion-col>
+      </ion-row>
     </ion-grid>
   </div>
-
-  <div class="token-list-header">
-    <h3>Tokens</h3>
-    <a id="manage-tokens">Manage</a>
-  </div>
-
-  <app-tokens></app-tokens>
 
   <ion-modal #balancesRceive trigger="balances-receive" [presentingElement]="mainPresentingElement">
     <ng-template>
@@ -76,7 +78,9 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-tokens></app-tokens>
+        <div class="ion-padding-horizontal">
+          <app-tokens></app-tokens>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
