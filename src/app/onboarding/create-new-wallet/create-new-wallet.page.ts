@@ -3,6 +3,9 @@ import { RouterModule } from '@angular/router';
 
 import {
   IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
@@ -21,6 +24,9 @@ import { NewWalletComponent } from "../shared/new-wallet/new-wallet.component";
   imports: [
     RouterModule,
     IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonButton,
     IonIcon,
     HeaderComponent,

@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonButton,
   IonButtons,
   IonIcon,
@@ -31,6 +34,9 @@ import { ImportFromBackupComponent } from "../shared/import-from-backup/import-f
     CommonModule,
     FormsModule,
     IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonButton,
     IonButtons,
     IonIcon,

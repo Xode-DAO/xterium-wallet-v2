@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
@@ -24,6 +27,9 @@ import { HeaderComponent } from "../shared/header/header.component";
     CommonModule,
     FormsModule,
     IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonButton,
     IonIcon,
     HeaderComponent

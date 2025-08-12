@@ -1,65 +1,85 @@
 <ion-content [fullscreen]="true" class="select-network-content">
   <div class="ion-text-center">
     <app-header></app-header>
-
-    <div class="ion-padding" style="margin-top: -60px;">
-      <h1 style="font-weight: bold">Welcome!</h1>
-      <p style="margin-top: 8px; font-size: 15px; color: var(--ion-color-medium);">
-        Get started by choosing a network you want to connect with.
-        This will be the blockchain your wallet operates on.
-      </p>
-      <p style="margin-top: 3px; font-size: 15px; color: var(--ion-color-medium);">
-        You can change this anytime later in Settings.
-      </p>
-    </div>
   </div>
 
-  <ion-list lines="none">
-    <ion-card button class="network-card" [class.active]="selectedNetwork === 'assethub'"
-      (click)="selectNetwork('assethub')">
-      <ion-item lines="none">
-        <ion-avatar slot="start">
-          <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
-        </ion-avatar>
-        <ion-label>
-          <h2>Polkadot AssetHub</h2>
-          <p>Manage your assets easily on the AssetHub parachain.</p>
-        </ion-label>
-      </ion-item>
-    </ion-card>
+  <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <div class="ion-text-center" style="margin-top: -75px;">
+            <h1 style="font-weight: bold">Welcome!</h1>
+            <span>
+              Get started by choosing a network you want to connect with.
+              This will be the blockchain your wallet operates on.
+            </span>
+            <br /><br />
+            <span>
+              You can change this anytime later in Settings.
+            </span>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-list lines="none">
+            <ion-card button class="network-card" [class.active]="selectedNetwork === 'assethub'"
+              (click)="selectNetwork('assethub')">
+              <ion-item lines="none">
+                <ion-avatar slot="start">
+                  <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
+                </ion-avatar>
+                <ion-label>
+                  <h2>Polkadot AssetHub</h2>
+                  <p>Manage your assets easily on the AssetHub parachain.</p>
+                </ion-label>
+              </ion-item>
+            </ion-card>
 
-    <ion-card button class="network-card" [class.active]="selectedNetwork === 'xode'" (click)="selectNetwork('xode')">
-      <ion-item lines="none">
-        <ion-avatar slot="start">
-          <img src="../../../assets/images/networks/xode.png" alt="Xode" />
-        </ion-avatar>
-        <ion-label>
-          <h2>Xode</h2>
-          <p>Experience smooth and fast transactions with Xode.</p>
-        </ion-label>
-      </ion-item>
-    </ion-card>
+            <ion-card button class="network-card" [class.active]="selectedNetwork === 'xode'"
+              (click)="selectNetwork('xode')">
+              <ion-item lines="none">
+                <ion-avatar slot="start">
+                  <img src="../../../assets/images/networks/xode.png" alt="Xode" />
+                </ion-avatar>
+                <ion-label>
+                  <h2>Xode</h2>
+                  <p>Experience smooth and fast transactions with Xode.</p>
+                </ion-label>
+              </ion-item>
+            </ion-card>
 
-    <ion-card button class="network-card" [class.active]="selectedNetwork === 'solana'" (click)="selectNetwork('solana')">
-      <ion-item lines="none">
-        <ion-avatar slot="start">
-          <img src="../../../assets/images/networks/solana.png" alt="Solana" />
-        </ion-avatar>
-        <ion-label>
-          <h2>Solana</h2>
-          <p>Make low-cost transactions on the high-performance Solana blockchain.</p>
-        </ion-label>
-      </ion-item>
-    </ion-card>
-  </ion-list>
-
-  <div class="ion-text-center ion-padding">
-    <ion-checkbox>I agree to the <a [routerLink]="['/xterium']">terms and conditions</a></ion-checkbox>
-  </div>
-
-  <div class="primary-button-controls" [routerLink]="['/onboarding/setup-wallet']">
-    <ion-button expand="block" size="default" class="ion-margin-bottom">
-      GET STARTED
-    </ion-button>
+            <ion-card button class="network-card" [class.active]="selectedNetwork === 'solana'"
+              (click)="selectNetwork('solana')">
+              <ion-item lines="none">
+                <ion-avatar slot="start">
+                  <img src="../../../assets/images/networks/solana.png" alt="Solana" />
+                </ion-avatar>
+                <ion-label>
+                  <h2>Solana</h2>
+                  <p>Make low-cost transactions on the high-performance Solana blockchain.</p>
+                </ion-label>
+              </ion-item>
+            </ion-card>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div class="ion-text-center ion-margin-top ion-margin-bottom">
+            <ion-checkbox>I agree to the <a [routerLink]="['/xterium']">terms and conditions</a></ion-checkbox>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div class="primary-button-controls" [routerLink]="['/onboarding/setup-wallet']">
+            <ion-button expand="block" size="default" class="ion-margin-bottom">
+              GET STARTED
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 </ion-content>
