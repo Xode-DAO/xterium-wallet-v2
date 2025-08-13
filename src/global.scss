@@ -140,39 +140,33 @@ ion-refresher {
     --padding-start: 20px;
     --padding-end: 20px;
     --box-shadow: none;
-  }
 
-  ion-button::part(native) {
-    background-image: url("assets/images/backgrounds/main-button.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    transition: background-size 0.2s ease;
-    font-weight: 900;
-  }
+    &::part(native) {
+      background: center / 100% 100% no-repeat url("assets/images/backgrounds/main-button.png");
+      transition: background-size 0.2s ease;
+      font-weight: 900;
+    }
 
-  ion-button.success-button::part(native) {
-    background-image: url("assets/images/backgrounds/success-button.png");
-  }
+    &.success-button::part(native) {
+      background-image: url("assets/images/backgrounds/success-button.png");
+    }
 
-  ion-button.danger-button::part(native) {
-    background-image: url("assets/images/backgrounds/danger-button.png");
-  }
+    &.danger-button::part(native) {
+      background-image: url("assets/images/backgrounds/danger-button.png");
+    }
 
-  ion-button:active {
-    transform: scale(0.98);
-  }
+    &:active {
+      transform: scale(0.98);
 
-  ion-button:active::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    pointer-events: none;
-    border-radius: 50px;
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0; // shorthand for top, right, bottom, left = 0
+        background: rgba(255, 255, 255, 0.1);
+        pointer-events: none;
+        border-radius: 50px;
+      }
+    }
   }
 }
 
@@ -196,11 +190,11 @@ ion-toolbar.main-modal-toolbar {
     --padding-end: 30px;
 
     font-size: 15px;
-  }
 
-  ion-button::part(native) {
-    transition: background-size 0.2s ease;
-    font-weight: 900;
+    &::part(native) {
+      transition: background-size 0.2s ease;
+      font-weight: 900;
+    }
   }
 }
 
@@ -244,45 +238,39 @@ ion-toolbar.main-modal-toolbar {
   }
 }
 
-ion-item.primary-input-item {
+ion-item.primary-input-item,
+ion-item.primary-textarea-item {
   --background: #333333;
   --color: #ffffff;
-
-  border: 3px solid #777777;
-  border-radius: 50px;
   box-shadow: none !important;
 
   ion-label {
     font-weight: 700;
   }
+}
+
+ion-item.primary-input-item {
+  border-radius: 50px;
 
   ion-input {
     border: none;
   }
 }
 
-ion-item.primary-input-item:focus-within:not(:has(ion-input[readonly])) {
-  --background: #272727;
-  border-color: #0bbab5;
-}
-
 ion-item.primary-textarea-item {
-  --background: #333333;
-  --color: #ffffff;
-
-  border: 3px solid #777777;
   border-radius: 25px;
-  box-shadow: none !important;
-
-  ion-label {
-    font-weight: 700;
-  }
 
   ion-textarea {
     border: none;
   }
 }
 
+ion-item.primary-input-item:not(:has(ion-input[readonly])),
+ion-item.primary-textarea-item:not(:has(ion-textarea[readonly])) {
+  border: 3px solid #777777;
+}
+
+ion-item.primary-input-item:focus-within:not(:has(ion-input[readonly])),
 ion-item.primary-textarea-item:focus-within:not(:has(ion-textarea[readonly])) {
   --background: #272727;
   border-color: #0bbab5;
