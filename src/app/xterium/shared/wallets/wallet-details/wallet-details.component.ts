@@ -4,14 +4,19 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonButton,
+  IonIcon,
   IonGrid,
   IonRow,
   IonCol,
   IonList,
   IonItem,
   IonInput,
+  IonTextarea,
   IonLabel,
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import { copyOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-wallet-details',
@@ -21,18 +26,24 @@ import {
     CommonModule,
     FormsModule,
     IonButton,
+    IonIcon,
     IonGrid,
     IonRow,
     IonCol,
     IonList,
     IonItem,
     IonInput,
+    IonTextarea,
     IonLabel,
   ]
 })
 export class WalletDetailsComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+    addIcons({
+      copyOutline,
+    });
+  }
 
   ngOnInit() { }
 

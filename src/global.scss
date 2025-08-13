@@ -261,6 +261,11 @@ ion-item.primary-input-item {
   }
 }
 
+ion-item.primary-input-item:focus-within:not(:has(ion-input[readonly])) {
+  --background: #272727;
+  border-color: #0bbab5;
+}
+
 ion-item.primary-textarea-item {
   --background: #333333;
   --color: #ffffff;
@@ -276,4 +281,9 @@ ion-item.primary-textarea-item {
   ion-textarea {
     border: none;
   }
+}
+
+ion-item.primary-textarea-item:focus-within:not(:has(ion-textarea[readonly])) {
+  --background: #272727;
+  border-color: #0bbab5;
 }
