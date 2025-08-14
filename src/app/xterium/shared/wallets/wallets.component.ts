@@ -77,14 +77,20 @@ export class WalletsComponent implements OnInit {
     this.walletDetailsModal.present();
   }
 
+  async onWalletDeleted() {
+    await this.getWallets();
+    this.walletDetailsModal.dismiss();
+  }
+
   ngOnInit() {
     this.mainPresentingElement = document.querySelector('.my-wallets');
     this.getWallets();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['newWallet'] && changes['newWallet'].currentValue != null) {
-      this.wallets.push(changes['newWallet'].currentValue);
+    const wallet = changes['newlyAddedWallet']?.currentValue;
+    if (wallet && Object.keys(wallet).length > 0) {
+      this.wallets.push(wallet);
     }
   }
 }

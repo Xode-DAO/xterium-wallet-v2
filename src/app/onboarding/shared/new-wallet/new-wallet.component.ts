@@ -78,7 +78,7 @@ export class NewWalletComponent implements OnInit {
   }
 
   async saveWallet() {
-    if (this.walletName == "") {
+    if (this.walletName === "") {
       const toast = await this.toastController.create({
         message: 'Wallet name is required!',
         color: 'warning',

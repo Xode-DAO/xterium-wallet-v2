@@ -59,9 +59,9 @@ export class WalletsService {
     return false;
   }
 
-  async delete(publicKey: string): Promise<boolean> {
+  async delete(privateKey: string): Promise<boolean> {
     const wallets = await this.getAll();
-    const newWallets = wallets.filter(w => w.public_key !== publicKey);
+    const newWallets = wallets.filter(w => w.private_key !== privateKey);
 
     if (newWallets.length !== wallets.length) {
       await Preferences.set({

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -14,7 +14,8 @@ import {
   IonTextarea,
   IonLabel,
   IonToast,
-  ToastController
+  ToastController,
+  ActionSheetController,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -47,11 +48,13 @@ import { WalletsService } from './../../../../api/wallets/wallets.service';
 })
 export class WalletDetailsComponent implements OnInit {
   @Input() wallet: Wallet = {} as Wallet;
+  @Output() onWalletDeleted = new EventEmitter<boolean>();
 
   constructor(
     private polkadotjsService: PolkadotjsService,
     private walletsService: WalletsService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private actionSheetController: ActionSheetController
   ) {
     addIcons({
       copyOutline,
@@ -83,33 +86,69 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   async updateWalletOnModelChange() {
-    if (this.wallet.name == "") {
-      const toast = await this.toastController.create({
-        message: 'Wallet name is required!',
-        color: 'warning',
-        duration: 1500,
-        position: 'bottom',
-      });
-
-      await toast.present();
-
-      return;
-    }
-
     clearTimeout(this.updateTimeOut);
 
     this.updateTimeOut = setTimeout(async () => {
-      await this.walletsService.update(this.wallet.private_key, this.wallet);
+      if (this.wallet.name !== "") {
+        await this.walletsService.update(this.wallet.private_key, this.wallet);
 
-      const toast = await this.toastController.create({
-        message: 'Wallet updated successfully!',
-        color: 'success',
-        duration: 1500,
-        position: 'bottom',
-      });
+        const toast = await this.toastController.create({
+          message: 'Wallet updated successfully!',
+          color: 'success',
+          duration: 1500,
+          position: 'bottom',
+        });
 
-      await toast.present();
+        await toast.present();
+      } else {
+        const toast = await this.toastController.create({
+          message: 'Wallet name is required!',
+          color: 'warning',
+          duration: 1500,
+          position: 'bottom',
+        });
+
+        await toast.present();
+      }
     }, 1000);
+  }
+
+  async deleteWallet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Are you sure you want to delete?',
+      subHeader: 'This action cannot be undone.',
+      buttons: [
+        {
+          text: 'Delete',
+          role: 'destructive',
+          data: {
+            action: 'delete',
+          },
+          handler: async () => {
+            await this.walletsService.delete(this.wallet.private_key);
+            this.onWalletDeleted.emit(true);
+
+            const toast = await this.toastController.create({
+              message: 'Wallet deleted successfully!',
+              color: 'success',
+              duration: 1500,
+              position: 'bottom',
+            });
+
+            await toast.present();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ],
+    });
+
+    await actionSheet.present();
   }
 
   ngOnInit() {

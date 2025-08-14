@@ -24,7 +24,7 @@
       </ion-buttons>
     </ion-toolbar>
     <ion-content>
-      <app-wallet-details [wallet]="selectedWallet"></app-wallet-details>
+      <app-wallet-details [wallet]="selectedWallet" (onWalletDeleted)="onWalletDeleted()"></app-wallet-details>
     </ion-content>
   </ng-template>
 </ion-modal>
