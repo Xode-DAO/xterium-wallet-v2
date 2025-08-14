@@ -4,7 +4,8 @@
       <ion-col size="12">
         <ion-item class="primary-input-item" lines="none">
           <ion-label>Name:</ion-label>
-          <ion-input type="text" placeholder="e.g. My Wallet Name"></ion-input>
+          <ion-input type="text" placeholder="e.g. My Wallet Name" [(ngModel)]="wallet.name"
+            (ngModelChange)="updateWalletOnModelChange()"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -12,14 +13,15 @@
       <ion-col size="12">
         <ion-item class="primary-textarea-item" lines="none">
           <ion-label position="stacked">Public Address:</ion-label>
-          <ion-textarea auto-grow="true" rows="6" placeholder="" readonly="true"></ion-textarea>
+          <ion-textarea auto-grow="true" rows="3" placeholder="" readonly="true"
+            [(ngModel)]="walletPublicKey"></ion-textarea>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="12">
         <div class="copy-paste-button-wrapper ion-text-center">
-          <ion-button fill="outline" size="small">
+          <ion-button fill="outline" size="small" (click)="copyToClipboard()">
             <ion-icon name="copy-outline" slot="start"></ion-icon>
             Copy Address
           </ion-button>
@@ -55,4 +57,6 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-toast [duration]="5000"></ion-toast>
 </div>

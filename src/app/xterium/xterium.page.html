@@ -1,7 +1,7 @@
 <ion-content [fullscreen]="true" class="xterium-content">
   <ion-toolbar class="wallet-toolbar">
     <ion-buttons slot="start">
-      <ion-button fill="clear" class="wallet-button" id="my-wallets">
+      <ion-button fill="clear" class="wallet-button" (click)="openMyWalletsModal()">
         <img src="./../../assets/icon/xterium-logo.png" height="40" />
         <div class="wallet-text">
           <span class="wallet-title">XTERIUM</span>
@@ -10,7 +10,7 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button fill="clear" id="settings">
+      <ion-button fill="clear" (click)="openSettingsModal()">
         <ion-icon name="settings-outline" size=""></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -41,52 +41,50 @@
     </ion-tab-bar>
   </ion-tabs>
 
-  <ion-modal #myWallets trigger="my-wallets" class="my-wallets" [presentingElement]="mainPresentingElement">
+  <ion-modal #myWalletsModal class="my-wallets" [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-buttons slot="start">
-          <ion-button id="create-wallet">
+          <ion-button (click)="openCreateWalletModal()">
             <ion-icon name="add-circle" style="color: white;"></ion-icon>
             <span style="margin-left: 4px; color: white;">Create</span>
           </ion-button>
 
-          <ion-modal #createWallet trigger="create-wallet" class="create-wallet-modal" [initialBreakpoint]="1"
-            [breakpoints]="[0, 1]">
+          <ion-modal #createWalletModal class="create-wallet-modal" [initialBreakpoint]="1" [breakpoints]="[0, 1]">
             <ng-template>
               <ion-toolbar class="main-modal-toolbar toolbar">
                 <ion-title>Create Wallet</ion-title>
                 <ion-buttons slot="end">
-                  <ion-button (click)="createWallet.dismiss()">
+                  <ion-button (click)="createWalletModal.dismiss()">
                     <ion-icon name="close" style="color: white;"></ion-icon>
                   </ion-button>
                 </ion-buttons>
               </ion-toolbar>
               <ion-list>
                 <ion-item button detail="false" lines="none" class="create-wallet-new-account-item"
-                  id="create-new-account">
+                  (click)="openCreateNewAccountModal()">
                   New Account
                 </ion-item>
                 <ion-item-divider>
                   <ion-label>Import Options</ion-label>
                 </ion-item-divider>
-                <ion-item button lines="none" class="create-wallet-item" id="import-seed-phrase">
+                <ion-item button lines="none" class="create-wallet-item" (click)="openImportSeedPhraseModal()">
                   Import account from pre-existing seed
                 </ion-item>
-                <ion-item button lines="none" class="create-wallet-item" id="import-private-key">
+                <ion-item button lines="none" class="create-wallet-item" (click)="openImportPrivateKeyModal()">
                   Import using private key
                 </ion-item>
-                <ion-item button lines="none" class="create-wallet-item" id="import-from-backup">
+                <ion-item button lines="none" class="create-wallet-item" (click)="openImportFromBackupModal()">
                   Restore account from a backup file
                 </ion-item>
               </ion-list>
 
-              <ion-modal #createNewAccount trigger="create-new-account"
-                [presentingElement]="myWalletsPresentingElement">
+              <ion-modal #createNewAccountModal [presentingElement]="myWalletsPresentingElement">
                 <ng-template>
                   <ion-toolbar class="main-modal-toolbar">
                     <ion-title>New Account</ion-title>
                     <ion-buttons slot="end">
-                      <ion-button (click)="createNewAccount.dismiss()">
+                      <ion-button (click)="createNewAccountModal.dismiss()">
                         <ion-icon name="close" style="color: white;"></ion-icon>
                       </ion-button>
                     </ion-buttons>
@@ -97,18 +95,17 @@
                       <span>Write down this mnemonic phrase and store it securely. It will be required to restore your
                         wallet.</span>
                     </div>
-                    <app-new-wallet></app-new-wallet>
+                    <app-new-wallet (onWalletCreated)="onWalletCreated($event)"></app-new-wallet>
                   </ion-content>
                 </ng-template>
               </ion-modal>
 
-              <ion-modal #importSeedPhrase trigger="import-seed-phrase"
-                [presentingElement]="myWalletsPresentingElement">
+              <ion-modal #importSeedPhraseModal [presentingElement]="myWalletsPresentingElement">
                 <ng-template>
                   <ion-toolbar class="main-modal-toolbar">
                     <ion-title>Import</ion-title>
                     <ion-buttons slot="end">
-                      <ion-button (click)="importSeedPhrase.dismiss()">
+                      <ion-button (click)="importSeedPhraseModal.dismiss()">
                         <ion-icon name="close" style="color: white;"></ion-icon>
                       </ion-button>
                     </ion-buttons>
@@ -123,13 +120,12 @@
                 </ng-template>
               </ion-modal>
 
-              <ion-modal #importPrivateKey trigger="import-private-key"
-                [presentingElement]="myWalletsPresentingElement">
+              <ion-modal #importPrivateKeyModal [presentingElement]="myWalletsPresentingElement">
                 <ng-template>
                   <ion-toolbar class="main-modal-toolbar">
                     <ion-title>Import</ion-title>
                     <ion-buttons slot="end">
-                      <ion-button (click)="importPrivateKey.dismiss()">
+                      <ion-button (click)="importPrivateKeyModal.dismiss()">
                         <ion-icon name="close" style="color: white;"></ion-icon>
                       </ion-button>
                     </ion-buttons>
@@ -144,13 +140,12 @@
                 </ng-template>
               </ion-modal>
 
-              <ion-modal #importFromBackup trigger="import-from-backup"
-                [presentingElement]="myWalletsPresentingElement">
+              <ion-modal #importFromBackupModal [presentingElement]="myWalletsPresentingElement">
                 <ng-template>
                   <ion-toolbar class="main-modal-toolbar">
                     <ion-title>Import</ion-title>
                     <ion-buttons slot="end">
-                      <ion-button (click)="importFromBackup.dismiss()">
+                      <ion-button (click)="importFromBackupModal.dismiss()">
                         <ion-icon name="close" style="color: white;"></ion-icon>
                       </ion-button>
                     </ion-buttons>
@@ -169,25 +164,25 @@
         </ion-buttons>
         <ion-title>Wallets</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="myWallets.dismiss()">
+          <ion-button (click)="myWalletsModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
         <div class="ion-padding-horizontal">
-          <app-wallets></app-wallets>
+          <app-wallets [newlyAddedWallet]="newlyAddedWallet"></app-wallets>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
 
-  <ion-modal #settings trigger="settings" [presentingElement]="mainPresentingElement">
+  <ion-modal #settingsModal [presentingElement]="mainPresentingElement">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Settings</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="settings.dismiss()">
+          <ion-button (click)="settingsModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
           </ion-button>
         </ion-buttons>

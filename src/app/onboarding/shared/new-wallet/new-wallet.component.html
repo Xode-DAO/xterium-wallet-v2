@@ -9,9 +9,9 @@
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="6" *ngFor="let word of mnemonicPhrase; index as i">
+      <ion-col size="6" *ngFor="let word of walletMnemonicPhrase; index as i">
         <ion-item class="primary-input-item">
-          <ion-input type="text" [(ngModel)]="mnemonicPhrase[i]" autocomplete="off" readonly="true"></ion-input>
+          <ion-input type="text" [(ngModel)]="walletMnemonicPhrase[i]" autocomplete="off" readonly="true"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -28,11 +28,14 @@
     <ion-row>
       <ion-col size="12">
         <div class="primary-button-controls">
-          <ion-button expand="block" size="default" class="ion-margin-bottom">
+          <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="saveWallet()"
+            [disabled]="isProcessing">
             OK, I SAVED IT SOMEWHERE
           </ion-button>
         </div>
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-toast [duration]="5000"></ion-toast>
 </div>

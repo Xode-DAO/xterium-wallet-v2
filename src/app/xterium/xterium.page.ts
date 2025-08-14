@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -37,6 +37,8 @@ import { ImportSeedPhraseComponent } from "./../onboarding/shared/import-seed-ph
 import { ImportPrivateKeyComponent } from "./../onboarding/shared/import-private-key/import-private-key.component"
 import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-backup/import-from-backup.component"
 
+import { Wallet } from 'src/models/wallet.model';
+
 @Component({
   selector: 'app-xterium',
   templateUrl: './xterium.page.html',
@@ -67,6 +69,13 @@ import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-ba
   ]
 })
 export class XteriumPage implements OnInit {
+  @ViewChild('myWalletsModal', { read: IonModal }) myWalletsModal!: IonModal;
+  @ViewChild('createWalletModal', { read: IonModal }) createWalletModal!: IonModal;
+  @ViewChild('createNewAccountModal', { read: IonModal }) createNewAccountModal!: IonModal;
+  @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
+  @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
+  @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
+  @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
 
   constructor() {
     addIcons({
@@ -81,12 +90,49 @@ export class XteriumPage implements OnInit {
     });
   }
 
-  mainPresentingElement!: HTMLElement | null;
-  myWalletsPresentingElement!: HTMLElement | null;
+  mainPresentingElement!: HTMLElement | undefined;
+  myWalletsPresentingElement!: HTMLElement | undefined;
+
+  newlyAddedWallet: Wallet = {} as Wallet;
+
+  openMyWalletsModal() {
+    this.myWalletsModal.present();
+  }
+
+  openCreateWalletModal() {
+    this.createWalletModal.present();
+  }
+
+  openCreateNewAccountModal() {
+    this.createNewAccountModal.present();
+  }
+
+  onWalletCreated(wallet: Wallet) {
+    this.newlyAddedWallet = wallet;
+
+    this.createNewAccountModal.dismiss();
+    this.createWalletModal.dismiss();
+  }
+
+  openImportSeedPhraseModal() {
+    this.importSeedPhraseModal.present();
+  }
+
+  openImportPrivateKeyModal() {
+    this.importPrivateKeyModal.present();
+  }
+
+  openImportFromBackupModal() {
+    this.importFromBackupModal.present();
+  }
+
+  openSettingsModal() {
+    this.settingsModal.present();
+  }
 
   ngOnInit() {
-    this.mainPresentingElement = document.querySelector('.xterium-content');
-    this.myWalletsPresentingElement = document.querySelector('.my-wallets');
+    this.mainPresentingElement = document.querySelector('.xterium-content') as HTMLElement | undefined;
+    this.myWalletsPresentingElement = document.querySelector('.my-wallets') as HTMLElement | undefined;
   }
 
 }
