@@ -3,8 +3,12 @@ import { CommonModule } from '@angular/common';
 
 import {
   IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonList,
   IonItem,
+  IonChip,
   IonAvatar,
   IonLabel,
   IonModal,
@@ -14,6 +18,9 @@ import {
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import { ellipsisVerticalOutline } from 'ionicons/icons';
 
 import { WalletDetailsComponent } from "./wallet-details/wallet-details.component";
 
@@ -29,8 +36,12 @@ import { WalletsService } from './../../../api/wallets/wallets.service';
   imports: [
     CommonModule,
     IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonList,
     IonItem,
+    IonChip,
     IonAvatar,
     IonLabel,
     IonModal,
@@ -49,7 +60,11 @@ export class WalletsComponent implements OnInit {
   constructor(
     private polkadotjsService: PolkadotjsService,
     private walletsService: WalletsService,
-  ) { }
+  ) {
+    addIcons({
+      ellipsisVerticalOutline,
+    });
+  }
 
   mainPresentingElement!: HTMLElement | null;
 

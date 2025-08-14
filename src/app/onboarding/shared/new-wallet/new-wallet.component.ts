@@ -57,7 +57,7 @@ export class NewWalletComponent implements OnInit {
   }
 
   walletName: string = '';
-  walletNetwork: string = 'Polkadot'; // this should be an object. Get from preferences
+  walletNetwork: string = 'Xode'; // this should be an object. Get from preferences
   walletMnemonicPhrase: string[] = new Array(12).fill('');
 
   isProcessing: boolean = false;
@@ -70,7 +70,7 @@ export class NewWalletComponent implements OnInit {
         message: 'Mnemonic phrase copied to clipboard!',
         color: 'success',
         duration: 1500,
-        position: 'bottom',
+        position: 'top',
       });
 
       await toast.present();
@@ -83,7 +83,7 @@ export class NewWalletComponent implements OnInit {
         message: 'Wallet name is required!',
         color: 'warning',
         duration: 1500,
-        position: 'bottom',
+        position: 'top',
       });
 
       await toast.present();
@@ -114,7 +114,7 @@ export class NewWalletComponent implements OnInit {
           message: 'Wallet with this private key already exists!',
           color: 'danger',
           duration: 1500,
-          position: 'bottom',
+          position: 'top',
         });
 
         await toast.present();
@@ -126,7 +126,7 @@ export class NewWalletComponent implements OnInit {
           message: 'Wallet created successfully!',
           color: 'success',
           duration: 1500,
-          position: 'bottom',
+          position: 'top',
         });
 
         await toast.present();

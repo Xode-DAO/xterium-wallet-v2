@@ -78,7 +78,7 @@ export class WalletDetailsComponent implements OnInit {
         message: 'Public key copied to clipboard!',
         color: 'success',
         duration: 1500,
-        position: 'bottom',
+        position: 'top',
       });
 
       await toast.present();
@@ -96,7 +96,7 @@ export class WalletDetailsComponent implements OnInit {
           message: 'Wallet updated successfully!',
           color: 'success',
           duration: 1500,
-          position: 'bottom',
+          position: 'top',
         });
 
         await toast.present();
@@ -105,7 +105,7 @@ export class WalletDetailsComponent implements OnInit {
           message: 'Wallet name is required!',
           color: 'warning',
           duration: 1500,
-          position: 'bottom',
+          position: 'top',
         });
 
         await toast.present();
@@ -128,11 +128,13 @@ export class WalletDetailsComponent implements OnInit {
             await this.walletsService.delete(this.wallet.private_key);
             this.onWalletDeleted.emit(true);
 
+            actionSheet.dismiss();
+
             const toast = await this.toastController.create({
               message: 'Wallet deleted successfully!',
               color: 'success',
               duration: 1500,
-              position: 'bottom',
+              position: 'top',
             });
 
             await toast.present();

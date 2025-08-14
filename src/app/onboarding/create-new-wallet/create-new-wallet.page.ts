@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 import {
   IonContent,
@@ -15,6 +15,8 @@ import { arrowBackOutline, close } from 'ionicons/icons';
 
 import { HeaderComponent } from "../shared/header/header.component";
 import { NewWalletComponent } from "../shared/new-wallet/new-wallet.component";
+
+import { Wallet } from './../../../models/wallet.model';
 
 @Component({
   selector: 'app-create-new-wallet',
@@ -35,14 +37,19 @@ import { NewWalletComponent } from "../shared/new-wallet/new-wallet.component";
 })
 export class CreateNewWalletPage implements OnInit {
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     addIcons({
       arrowBackOutline,
       close
     });
   }
 
-  ngOnInit() {
+  onWalletCreated(wallet: Wallet) {
+    this.router.navigate(['/xterium']);
   }
 
+  ngOnInit() {
+  }
 }

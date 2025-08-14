@@ -11,6 +11,15 @@
     </ion-row>
     <ion-row>
       <ion-col size="12">
+        <ion-item class="primary-input-item" lines="none">
+          <ion-label>Network:</ion-label>
+          <ion-input type="text" placeholder="" [(ngModel)]="wallet.network" readonly="true"
+            (ngModelChange)="updateWalletOnModelChange()"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
         <ion-item class="primary-textarea-item" lines="none">
           <ion-label position="stacked">Public Address:</ion-label>
           <ion-textarea auto-grow="true" rows="3" placeholder="" readonly="true"
