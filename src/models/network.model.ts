@@ -1,4 +1,5 @@
 export class Network {
+  id: number = 2;
   name: string = "Xode - Polkadot";
   description: string = "Experience smooth and fast transactions with Xode."
   unit: string = "XON";

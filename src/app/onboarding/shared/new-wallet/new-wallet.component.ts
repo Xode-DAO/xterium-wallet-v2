@@ -108,13 +108,13 @@ export class NewWalletComponent implements OnInit {
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
-        network: this.selectedNetwork.name,
+        network_id: this.selectedNetwork.id,
         mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
         public_key: keypair.publicKey.toString(),
         private_key: keypair.secretKey.toString()
       };
 
-      let getExistingPublicAddress = await this.walletsService.getById(newId);
+      let getExistingPublicAddress = await this.walletsService.getWalletById(newId);
       if (getExistingPublicAddress) {
         this.isProcessing = false;
 
@@ -130,7 +130,7 @@ export class NewWalletComponent implements OnInit {
         await this.walletsService.create(wallet);
         this.onCreatedWallet.emit({ ...wallet });
 
-        const wallets = await this.walletsService.getAll();
+        const wallets = await this.walletsService.getAllWallets();
         if (wallets.length === 1) {
           await this.walletsService.setCurrentWallet(newId);
         }

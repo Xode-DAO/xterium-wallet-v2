@@ -23,8 +23,7 @@
       <ion-row>
         <ion-col size="12">
           <ion-list lines="none">
-            <ion-card button class="network-card" [class.active]="selectedNetworkName === 'assethub'"
-              (click)="selectNetwork('assethub')">
+            <ion-card button class="network-card" [class.active]="selectedNetworkId === 1" (click)="selectNetwork(1)">
               <ion-item lines="none">
                 <ion-avatar slot="start">
                   <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
@@ -36,8 +35,7 @@
               </ion-item>
             </ion-card>
 
-            <ion-card button class="network-card" [class.active]="selectedNetworkName === 'xode'"
-              (click)="selectNetwork('xode')">
+            <ion-card button class="network-card" [class.active]="selectedNetworkId === 2" (click)="selectNetwork(2)">
               <ion-item lines="none">
                 <ion-avatar slot="start">
                   <img src="../../../assets/images/networks/xode.png" alt="Xode" />
@@ -49,8 +47,7 @@
               </ion-item>
             </ion-card>
 
-            <ion-card button class="network-card" [class.active]="selectedNetworkName === 'solana'"
-              (click)="selectNetwork('solana')">
+            <ion-card button class="network-card" [class.active]="selectedNetworkId === 3" (click)="selectNetwork(3)">
               <ion-item lines="none">
                 <ion-avatar slot="start">
                   <img src="../../../assets/images/networks/solana.png" alt="Solana" />

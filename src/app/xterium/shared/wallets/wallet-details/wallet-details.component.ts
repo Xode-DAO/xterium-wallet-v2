@@ -21,9 +21,11 @@ import {
 import { addIcons } from 'ionicons';
 import { copyOutline } from 'ionicons/icons';
 
+import { Network } from '../../../../../models/network.model';
 import { Wallet } from '../../../../../models/wallet.model';
 
 import { PolkadotjsService } from '../../../../api/polkadotjs/polkadotjs.service';
+import { NetworksService } from './../../../../api/networks/networks.service';
 import { WalletsService } from './../../../../api/wallets/wallets.service';
 
 @Component({
@@ -54,6 +56,7 @@ export class WalletDetailsComponent implements OnInit {
 
   constructor(
     private polkadotjsService: PolkadotjsService,
+    private networksService: NetworksService,
     private walletsService: WalletsService,
     private toastController: ToastController,
     private actionSheetController: ActionSheetController
@@ -64,16 +67,25 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   walletPublicKey: string = '';
+  walletNetwork: Network = {} as Network;
   updateTimeOut: any = null;
 
   currentWallet: Wallet = {} as Wallet;
 
-  async encodePublicAddressByChainFormat(publicKey: string): Promise<string> {
+  getWalletNetwork(): void {
+    const network = this.networksService.getNetworkById(this.wallet.network_id);
+    if (network) {
+      this.walletNetwork = network;
+    }
+  }
+
+  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, 42);
+    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async copyToClipboard() {
@@ -179,7 +191,8 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.encodePublicAddressByChainFormat(this.wallet.public_key.toString()).then(encodedAddress => {
+    this.getWalletNetwork();
+    this.encodePublicAddressByChainFormat(this.wallet.public_key, this.walletNetwork).then(encodedAddress => {
       this.walletPublicKey = encodedAddress;
     });
 

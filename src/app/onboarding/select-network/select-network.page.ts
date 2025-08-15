@@ -57,41 +57,17 @@ export class SelectNetworkPage implements OnInit {
     private onboardingService: OnboardingService
   ) { }
 
-  selectedNetworkName: string = "assethub";
+  selectedNetworkId: number = 0;
   selectedNetwork: Network | null = null;
 
   isAgreed: boolean = false;
 
-  selectNetwork(network: string) {
-    this.selectedNetworkName = network;
+  selectNetwork(id: number) {
+    this.selectedNetworkId = id;
 
-    switch (network) {
-      case 'assethub':
-        const assethubNetwork = this.networksService.getNetworkByName('Polkadot AssetHub');
-        if (assethubNetwork) {
-          this.selectedNetwork = assethubNetwork;
-        }
-
-        break;
-      case 'xode':
-        const xodeNetwork = this.networksService.getNetworkByName('Xode - Polkadot');
-        if (xodeNetwork) {
-          this.selectedNetwork = xodeNetwork;
-        }
-
-        break;
-      case 'solana':
-        const solanaNetwork = this.networksService.getNetworkByName('Solana - Mainnet');
-        if (solanaNetwork) {
-          this.selectedNetwork = solanaNetwork;
-        }
-
-        break;
-      default:
-        const defaultNetwork = this.networksService.getNetworkByName('Polkadot AssetHub');
-        if (defaultNetwork) {
-          this.selectedNetwork = defaultNetwork;
-        }
+    const networkByName = this.networksService.getNetworkById(id);
+    if (networkByName) {
+      this.selectedNetwork = networkByName;
     }
   }
 
@@ -109,7 +85,7 @@ export class SelectNetworkPage implements OnInit {
   }
 
   ngOnInit() {
-    const defaultNetwork = this.networksService.getNetworkByName('Polkadot AssetHub');
+    const defaultNetwork = this.networksService.getNetworkById(1);
     if (defaultNetwork) {
       this.selectedNetwork = defaultNetwork;
     }

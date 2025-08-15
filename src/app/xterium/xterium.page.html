@@ -6,7 +6,7 @@
         <div class="wallet-text">
           <span class="wallet-title">XTERIUM</span>
           <span class="wallet-details">{{currentWallet.name | slice:0:20}}
-            ({{truncateAddress(currentWalletPublicAddress)}})</span>
+            ({{currentWalletPublicAddress === '' ? "Loading..." : truncateAddress(currentWalletPublicAddress)}})</span>
         </div>
       </ion-button>
     </ion-buttons>

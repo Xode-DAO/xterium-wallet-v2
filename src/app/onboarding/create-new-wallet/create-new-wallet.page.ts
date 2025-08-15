@@ -53,7 +53,7 @@ export class CreateNewWalletPage implements OnInit {
   selectedNetwork: Network = {} as Network;
 
   onCreatedWallet(wallet: Wallet) {
-    this.router.navigate(['/xterium']);
+    this.router.navigate(['/xterium/balances']);
   }
 
   ngOnInit() {

@@ -115,12 +115,13 @@ export class XteriumPage implements OnInit {
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
 
-  async encodePublicAddressByChainFormat(publicKey: string): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, 42);
+    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   truncateAddress(address: string): string {
@@ -131,7 +132,7 @@ export class XteriumPage implements OnInit {
     const currentWallet = await this.walletsService.getCurrentWallet();
     if (currentWallet) {
       this.currentWallet = currentWallet;
-      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key.toString())
+      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.selectedNetwork)
     }
   }
 
@@ -196,6 +197,8 @@ export class XteriumPage implements OnInit {
 
     this.selectedNetwork = this.networksService.getNetworksByCategory('Live')[0];
 
-    this.getCurrentWallet();
+    setTimeout(() => {
+      this.getCurrentWallet();
+    }, 500);
   }
 }

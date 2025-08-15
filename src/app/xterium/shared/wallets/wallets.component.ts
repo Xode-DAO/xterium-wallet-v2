@@ -94,10 +94,10 @@ export class WalletsComponent implements OnInit {
     this.networks = [...allNetworks, ...liveNetworks];
     this.selectedNetwork = this.networks[0];
 
-    this.getNetworkByName();
+    this.loadNetworkByName();
   }
 
-  getNetworkByName(): void {
+  loadNetworkByName(): void {
     this.networksByName = {};
 
     if (this.selectedNetwork.name === "All Networks") {
@@ -109,22 +109,22 @@ export class WalletsComponent implements OnInit {
   }
 
   async getWallets(): Promise<void> {
-    this.wallets = await this.walletsService.getAll();
-    this.getWalletsByNetwork();
+    this.wallets = await this.walletsService.getAllWallets();
+    this.loadWalletsByNetwork();
   }
 
-  async getWalletsByNetwork(): Promise<void> {
+  async loadWalletsByNetwork(): Promise<void> {
     this.walletsByNetwork = {};
 
     for (const network of this.networks) {
       const filtered = this.wallets.filter(
-        w => w.network.toLowerCase() === network.name.toLowerCase()
+        w => w.network_id === network.id
       );
 
       const mapped = await Promise.all(
         filtered.map(async wallet => ({
           ...wallet,
-          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key.toString())
+          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, network)
         }))
       );
 
@@ -139,12 +139,13 @@ export class WalletsComponent implements OnInit {
     }
   }
 
-  async encodePublicAddressByChainFormat(publicKey: string): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, 42);
+    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   truncateAddress(address: string): string {
@@ -158,8 +159,8 @@ export class WalletsComponent implements OnInit {
   onSelectedNetwork(network: Network) {
     this.selectedNetwork = network;
 
-    this.getNetworkByName();
-    this.getWalletsByNetwork();
+    this.loadNetworkByName();
+    this.loadWalletsByNetwork();
 
     this.selectNetworkModal.dismiss();
 
@@ -167,7 +168,7 @@ export class WalletsComponent implements OnInit {
   }
 
   async setCurrentWallet(wallet: Wallet) {
-    const walletById = await this.walletsService.getById(wallet.id);
+    const walletById = await this.walletsService.getWalletById(wallet.id);
     if (walletById) {
       this.selectedWallet = walletById;
 
@@ -177,7 +178,7 @@ export class WalletsComponent implements OnInit {
   }
 
   async openWalletDetailsModal(wallet: Wallet) {
-    const walletById = await this.walletsService.getById(wallet.id);
+    const walletById = await this.walletsService.getWalletById(wallet.id);
     if (walletById) {
       this.selectedWallet = walletById;
       this.walletDetailsModal.present();

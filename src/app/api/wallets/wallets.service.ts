@@ -13,7 +13,7 @@ export class WalletsService {
   constructor() { }
 
   async create(wallet: Wallet): Promise<void> {
-    const wallets = await this.getAll();
+    const wallets = await this.getAllWallets();
     wallets.push(wallet);
 
     await Preferences.set({
@@ -22,23 +22,23 @@ export class WalletsService {
     });
   }
 
-  async getAll(): Promise<Wallet[]> {
+  async getAllWallets(): Promise<Wallet[]> {
     const { value } = await Preferences.get({ key: this.WALLETS_STORAGE_KEY });
     return value ? JSON.parse(value) : [];
   }
 
-  async getAllByNetwork(network: string): Promise<Wallet[]> {
-    const wallets = await this.getAll();
-    return wallets.filter(w => w.network.toLowerCase() === network.toLowerCase());
+  async getWalletsByNetworkId(networkId: number): Promise<Wallet[]> {
+    const wallets = await this.getAllWallets();
+    return wallets.filter(w => w.network_id === networkId);
   }
 
-  async getByPublicKey(publicKey: string): Promise<Wallet | undefined> {
-    const wallets = await this.getAll();
+  async getWalletByPublicKey(publicKey: string): Promise<Wallet | undefined> {
+    const wallets = await this.getAllWallets();
     return wallets.find(w => w.public_key === publicKey);
   }
 
-  async getById(id: string): Promise<Wallet | undefined> {
-    const wallets = await this.getAll();
+  async getWalletById(id: string): Promise<Wallet | undefined> {
+    const wallets = await this.getAllWallets();
     return wallets.find(w => w.id === id);
   }
 
@@ -48,7 +48,7 @@ export class WalletsService {
   }
 
   async update(id: string, updatedWallet: Partial<Wallet>): Promise<boolean> {
-    const wallets = await this.getAll();
+    const wallets = await this.getAllWallets();
     const index = wallets.findIndex(w => w.id === id);
 
     if (index !== -1) {
@@ -66,7 +66,7 @@ export class WalletsService {
   }
 
   async delete(id: string): Promise<boolean> {
-    const wallets = await this.getAll();
+    const wallets = await this.getAllWallets();
     const newWallets = wallets.filter(w => w.id !== id);
 
     if (newWallets.length !== wallets.length) {
@@ -82,7 +82,7 @@ export class WalletsService {
   }
 
   async setCurrentWallet(id: string): Promise<boolean> {
-    const wallet = await this.getById(id);
+    const wallet = await this.getWalletById(id);
     if (wallet) {
       await Preferences.set({
         key: this.CURRENT_WALLET_STORAGE_KEY,
