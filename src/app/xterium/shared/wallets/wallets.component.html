@@ -4,7 +4,7 @@
       <ion-col size="12">
         <ion-item class="primary-select-button-item" (click)="openSelectNetworkModal()">
           @if (selectedNetwork) {
-          <ion-avatar slot="start">
+          <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
             <img [src]="'./../assets/images/networks/' + selectedNetwork.image" alt="Network Logo" />
           </ion-avatar>
           }
