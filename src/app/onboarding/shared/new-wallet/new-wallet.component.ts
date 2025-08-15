@@ -2,6 +2,8 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   IonButton,
   IonIcon,
@@ -99,7 +101,10 @@ export class NewWalletComponent implements OnInit {
       const seed: Uint8Array = await this.polkadotjsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
       const keypair = await this.polkadotjsService.createKeypairFromSeed(seed);
 
+      const newId = uuidv4();
+
       const wallet: Wallet = {
+        id: newId,
         name: this.walletName,
         network: this.selectedNetwork.name,
         mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
@@ -107,12 +112,12 @@ export class NewWalletComponent implements OnInit {
         private_key: keypair.secretKey.toString()
       };
 
-      let getExistingPublicAddress = await this.walletsService.getByPrivateKey(keypair.secretKey.toString());
+      let getExistingPublicAddress = await this.walletsService.getById(newId);
       if (getExistingPublicAddress) {
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
-          message: 'Wallet with this private key already exists!',
+          message: 'Wallet already exists!',
           color: 'danger',
           duration: 1500,
           position: 'top',
@@ -122,6 +127,11 @@ export class NewWalletComponent implements OnInit {
       } else {
         await this.walletsService.create(wallet);
         this.onCreatedWallet.emit({ ...wallet });
+
+        const wallets = await this.walletsService.getAll();
+        if (wallets.length === 1) {
+          await this.walletsService.setCurrentWallet(newId);
+        }
 
         const toast = await this.toastController.create({
           message: 'Wallet created successfully!',

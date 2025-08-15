@@ -59,7 +59,8 @@
           <ion-button expand="block" size="default" class="ion-margin-bottom success-button">
             EXPORT WALLET
           </ion-button>
-          <ion-button expand="block" size="default" class="ion-margin-bottom danger-button" (click)="deleteWallet()">
+          <ion-button expand="block" size="default" class="ion-margin-bottom danger-button" (click)="deleteWallet()"
+            [disabled]="this.currentWallet.id === wallet.id">
             DELETE WALLET
           </ion-button>
         </div>

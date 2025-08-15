@@ -77,12 +77,15 @@ export class WalletsComponent implements OnInit {
   mainPresentingElement!: HTMLElement | null;
 
   networks: Network[] = [];
-  networksByName: Record<string, Network[]> = {};
-  selectedNetwork: Network = {} as Network;
-
   wallets: Wallet[] = [];
+
+  networksByName: Record<string, Network[]> = {};
   walletsByNetwork: Record<string, Wallet[]> = {};
+
+  selectedNetwork: Network = {} as Network;
   selectedWallet: Wallet = {} as Wallet;
+
+  currentWallet: Wallet = {} as Wallet;
 
   getNetworks(): void {
     const allNetworks = this.networksService.getNetworksByCategory('All');
@@ -129,6 +132,13 @@ export class WalletsComponent implements OnInit {
     }
   }
 
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+    }
+  }
+
   async encodePublicAddressByChainFormat(publicKey: string): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
@@ -156,27 +166,27 @@ export class WalletsComponent implements OnInit {
     this.onFilteredNetwork.emit(network);
   }
 
-  async selectWallet(wallet: Wallet) {
-    const walletByPrivateKey = await this.walletsService.getByPrivateKey(wallet.private_key);
-    if (walletByPrivateKey) {
-      this.selectedWallet = walletByPrivateKey;
+  async setCurrentWallet(wallet: Wallet) {
+    const walletById = await this.walletsService.getById(wallet.id);
+    if (walletById) {
+      this.selectedWallet = walletById;
 
-      await this.walletsService.selectCurrentWallet(walletByPrivateKey.private_key);
-      this.onSelectedCurrentWallet.emit(walletByPrivateKey);
+      await this.walletsService.setCurrentWallet(walletById.id);
+      this.onSelectedCurrentWallet.emit(walletById);
     }
   }
 
   async openWalletDetailsModal(wallet: Wallet) {
-    const walletByPrivateKey = await this.walletsService.getByPrivateKey(wallet.private_key);
-    if (walletByPrivateKey) {
-      this.selectedWallet = walletByPrivateKey;
+    const walletById = await this.walletsService.getById(wallet.id);
+    if (walletById) {
+      this.selectedWallet = walletById;
       this.walletDetailsModal.present();
     }
   }
 
   async onDeletedWallet() {
     await this.getWallets();
-    this.getWalletsByNetwork();
+    await this.getCurrentWallet();
 
     this.walletDetailsModal.dismiss();
   }
@@ -186,13 +196,14 @@ export class WalletsComponent implements OnInit {
 
     this.getNetworks();
     this.getWallets();
+    this.getCurrentWallet();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     const wallet = changes['newlyAddedWallet']?.currentValue;
     if (wallet && Object.keys(wallet).length > 0) {
       this.getWallets();
-      this.getWalletsByNetwork();
+      this.getCurrentWallet();
     }
   }
 }

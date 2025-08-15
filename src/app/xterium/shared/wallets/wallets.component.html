@@ -47,7 +47,8 @@
       @for (wallet of walletsByNetwork[network.name]; track wallet) {
       <ion-col size="6">
         <ion-list>
-          <ion-item class="wallet-item" button detail="false" lines="none" (click)="selectWallet(wallet)">
+          <ion-item class="wallet-item" [ngClass]="{ 'selected-wallet': wallet.id === currentWallet.id }" button
+            detail="false" lines="none" (click)="setCurrentWallet(wallet)">
             <ion-label>
               <div class="wallet-header">
                 <img [src]="'./../../../../assets/images/networks/' + network.image" height="25" />

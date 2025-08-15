@@ -37,14 +37,19 @@ export class WalletsService {
     return wallets.find(w => w.public_key === publicKey);
   }
 
-  async getByPrivateKey(privateKey: string): Promise<Wallet | undefined> {
+  async getById(id: string): Promise<Wallet | undefined> {
     const wallets = await this.getAll();
-    return wallets.find(w => w.private_key === privateKey);
+    return wallets.find(w => w.id === id);
   }
 
-  async update(privateKey: string, updatedWallet: Partial<Wallet>): Promise<boolean> {
+  async getCurrentWallet(): Promise<Wallet | undefined> {
+    const { value } = await Preferences.get({ key: this.CURRENT_WALLET_STORAGE_KEY });
+    return value ? JSON.parse(value) : undefined;
+  }
+
+  async update(id: string, updatedWallet: Partial<Wallet>): Promise<boolean> {
     const wallets = await this.getAll();
-    const index = wallets.findIndex(w => w.private_key === privateKey);
+    const index = wallets.findIndex(w => w.id === id);
 
     if (index !== -1) {
       wallets[index] = { ...wallets[index], ...updatedWallet };
@@ -60,9 +65,9 @@ export class WalletsService {
     return false;
   }
 
-  async delete(privateKey: string): Promise<boolean> {
+  async delete(id: string): Promise<boolean> {
     const wallets = await this.getAll();
-    const newWallets = wallets.filter(w => w.private_key !== privateKey);
+    const newWallets = wallets.filter(w => w.id !== id);
 
     if (newWallets.length !== wallets.length) {
       await Preferences.set({
@@ -76,8 +81,8 @@ export class WalletsService {
     return false;
   }
 
-  async selectCurrentWallet(privateKey: string): Promise<boolean> {
-    const wallet = await this.getByPrivateKey(privateKey);
+  async setCurrentWallet(id: string): Promise<boolean> {
+    const wallet = await this.getById(id);
     if (wallet) {
       await Preferences.set({
         key: this.CURRENT_WALLET_STORAGE_KEY,

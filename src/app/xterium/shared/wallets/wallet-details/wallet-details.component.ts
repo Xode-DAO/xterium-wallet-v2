@@ -64,6 +64,8 @@ export class WalletDetailsComponent implements OnInit {
   walletPublicKey: string = '';
   updateTimeOut: any = null;
 
+  currentWallet: Wallet = {} as Wallet;
+
   async encodePublicAddressByChainFormat(publicKey: string): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
@@ -85,12 +87,19 @@ export class WalletDetailsComponent implements OnInit {
     });
   }
 
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+    }
+  }
+
   async updateWalletOnModelChange() {
     clearTimeout(this.updateTimeOut);
 
     this.updateTimeOut = setTimeout(async () => {
       if (this.wallet.name !== "") {
-        await this.walletsService.update(this.wallet.private_key, this.wallet);
+        await this.walletsService.update(this.wallet.id, this.wallet);
 
         const toast = await this.toastController.create({
           message: 'Wallet updated successfully!',
@@ -125,19 +134,32 @@ export class WalletDetailsComponent implements OnInit {
             action: 'delete',
           },
           handler: async () => {
-            await this.walletsService.delete(this.wallet.private_key);
-            this.onDeletedWallet.emit(true);
+            await this.getCurrentWallet();
 
-            actionSheet.dismiss();
+            if (this.currentWallet.id === this.wallet.id) {
+              const toast = await this.toastController.create({
+                message: 'You cannot delete your current wallet!',
+                color: 'warning',
+                duration: 1500,
+                position: 'top',
+              });
 
-            const toast = await this.toastController.create({
-              message: 'Wallet deleted successfully!',
-              color: 'success',
-              duration: 1500,
-              position: 'top',
-            });
+              await toast.present();
+            } else {
+              await this.walletsService.delete(this.wallet.id);
+              this.onDeletedWallet.emit(true);
 
-            await toast.present();
+              actionSheet.dismiss();
+
+              const toast = await this.toastController.create({
+                message: 'Wallet deleted successfully!',
+                color: 'success',
+                duration: 1500,
+                position: 'top',
+              });
+
+              await toast.present();
+            }
           }
         },
         {
@@ -157,5 +179,7 @@ export class WalletDetailsComponent implements OnInit {
     this.encodePublicAddressByChainFormat(this.wallet.public_key.toString()).then(encodedAddress => {
       this.walletPublicKey = encodedAddress;
     });
+
+    this.getCurrentWallet();
   }
 }
