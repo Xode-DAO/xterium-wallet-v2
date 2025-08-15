@@ -43,7 +43,9 @@ import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-ba
 import { Wallet } from './../../models/wallet.model';
 import { Network } from './../..//models/network.model';
 
+import { PolkadotjsService } from '../api/polkadotjs/polkadotjs.service';
 import { NetworksService } from './../api/networks/networks.service';
+import { WalletsService } from './../api/wallets/wallets.service';
 
 @Component({
   selector: 'app-xterium',
@@ -87,7 +89,9 @@ export class XteriumPage implements OnInit {
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
 
   constructor(
+    private polkadotjsService: PolkadotjsService,
     private networksService: NetworksService,
+    private walletsService: WalletsService
   ) {
     addIcons({
       addCircle,
@@ -108,11 +112,35 @@ export class XteriumPage implements OnInit {
   selectedNetwork: Network = {} as Network;
   newlyAddedWallet: Wallet = {} as Wallet;
 
+  currentWallet: Wallet = {} as Wallet;
+  currentWalletPublicAddress: string = '';
+
+  async encodePublicAddressByChainFormat(publicKey: string): Promise<string> {
+    const publicKeyUint8 = new Uint8Array(
+      publicKey.split(',').map(byte => Number(byte.trim()))
+    );
+
+    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, 42);
+  }
+
+  truncateAddress(address: string): string {
+    return this.polkadotjsService.truncateAddress(address);
+  }
+
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key.toString())
+    }
+  }
+
   openMyWalletsModal() {
     this.myWalletsModal.present();
   }
 
-  onSelectedCurrentWallet(wallet: Wallet) {
+  onSetCurrentWallet(wallet: Wallet) {
+    this.getCurrentWallet();
     this.myWalletsModal.dismiss();
   }
 
@@ -167,5 +195,7 @@ export class XteriumPage implements OnInit {
     this.myWalletsPresentingElement = document.querySelector('.my-wallets') as HTMLElement | undefined;
 
     this.selectedNetwork = this.networksService.getNetworksByCategory('Live')[0];
+
+    this.getCurrentWallet();
   }
 }

@@ -80,7 +80,8 @@
       </ion-buttons>
     </ion-toolbar>
     <ion-content>
-      <app-wallet-details [wallet]="selectedWallet" (onDeletedWallet)="onDeletedWallet()"></app-wallet-details>
+      <app-wallet-details [wallet]="selectedWallet" (onUpdatedWallet)="onUpdatedWallet()"
+        (onDeletedWallet)="onDeletedWallet()"></app-wallet-details>
     </ion-content>
   </ng-template>
 </ion-modal>

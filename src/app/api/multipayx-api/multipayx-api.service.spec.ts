@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MultipayxService } from './multipayx.service';
+import { MultipayxApiService } from './multipayx-api.service';
 
-describe('MultipayxService', () => {
-  let service: MultipayxService;
+describe('MultipayxApiService', () => {
+  let service: MultipayxApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(MultipayxService);
+    service = TestBed.inject(MultipayxApiService);
   });
 
   it('should be created', () => {

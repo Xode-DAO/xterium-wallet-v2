@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BanksService } from './banks.service';
+import { XteriumApiService } from './xterium-api.service';
 
-describe('BanksService', () => {
-  let service: BanksService;
+describe('XteriumApiService', () => {
+  let service: XteriumApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(BanksService);
+    service = TestBed.inject(XteriumApiService);
   });
 
   it('should be created', () => {

@@ -48,6 +48,8 @@ import { WalletsService } from './../../../../api/wallets/wallets.service';
 })
 export class WalletDetailsComponent implements OnInit {
   @Input() wallet: Wallet = {} as Wallet;
+
+  @Output() onUpdatedWallet = new EventEmitter<boolean>();
   @Output() onDeletedWallet = new EventEmitter<boolean>();
 
   constructor(
@@ -100,6 +102,7 @@ export class WalletDetailsComponent implements OnInit {
     this.updateTimeOut = setTimeout(async () => {
       if (this.wallet.name !== "") {
         await this.walletsService.update(this.wallet.id, this.wallet);
+        this.onUpdatedWallet.emit(true);
 
         const toast = await this.toastController.create({
           message: 'Wallet updated successfully!',

@@ -5,7 +5,8 @@
         <img src="./../../assets/icon/xterium-logo.png" height="40" />
         <div class="wallet-text">
           <span class="wallet-title">XTERIUM</span>
-          <span class="wallet-details">My Wallet (CJ6J...Pm7cTY)</span>
+          <span class="wallet-details">{{currentWallet.name | slice:0:20}}
+            ({{truncateAddress(currentWalletPublicAddress)}})</span>
         </div>
       </ion-button>
     </ion-buttons>
@@ -202,7 +203,7 @@
       <ion-content>
         <div class="ion-padding-horizontal">
           <app-wallets [newlyAddedWallet]="newlyAddedWallet" (onFilteredNetwork)="onFilteredNetwork($event)"
-            (onSelectedCurrentWallet)="onSelectedCurrentWallet($event)"></app-wallets>
+            (onSetCurrentWallet)="onSetCurrentWallet($event)"></app-wallets>
         </div>
       </ion-content>
     </ng-template>

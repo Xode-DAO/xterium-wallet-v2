@@ -62,7 +62,7 @@ export class WalletsComponent implements OnInit {
   @Input() newlyAddedWallet: Wallet = {} as Wallet;
 
   @Output() onFilteredNetwork = new EventEmitter<Network>();
-  @Output() onSelectedCurrentWallet = new EventEmitter<Wallet>();
+  @Output() onSetCurrentWallet = new EventEmitter<Wallet>();
 
   constructor(
     private polkadotjsService: PolkadotjsService,
@@ -172,7 +172,7 @@ export class WalletsComponent implements OnInit {
       this.selectedWallet = walletById;
 
       await this.walletsService.setCurrentWallet(walletById.id);
-      this.onSelectedCurrentWallet.emit(walletById);
+      this.onSetCurrentWallet.emit(walletById);
     }
   }
 
@@ -182,6 +182,11 @@ export class WalletsComponent implements OnInit {
       this.selectedWallet = walletById;
       this.walletDetailsModal.present();
     }
+  }
+
+  async onUpdatedWallet() {
+    await this.getWallets();
+    await this.getCurrentWallet();
   }
 
   async onDeletedWallet() {
