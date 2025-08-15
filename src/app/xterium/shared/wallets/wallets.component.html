@@ -36,27 +36,28 @@
     </ion-row>
   </ion-grid>
 
-  @for (network of getNetworkByName(selectedNetwork.name); track network) {
+  @for (network of networksByName[selectedNetwork.name]; track network) {
   <ion-grid class="wallet-grid">
-    @if (getWalletsByNetwork(network.name).length) {
+    @if (walletsByNetwork[network.name].length) {
     <div class="network-label">
-      {{network.name}}
+      {{ network.name }}
     </div>
     }
     <ion-row>
-      @for (wallet of getWalletsByNetwork(network.name); track wallet) {
+      @for (wallet of walletsByNetwork[network.name]; track wallet) {
       <ion-col size="6">
         <ion-list>
-          <ion-item class="wallet-item" button detail="false" lines="none">
+          <ion-item class="wallet-item" button detail="false" lines="none" (click)="selectWallet(wallet)">
             <ion-label>
               <div class="wallet-header">
                 <img [src]="'./../../../../assets/images/networks/' + network.image" height="25" />
-                <ion-button fill="clear" size="small" class="menu-button" (click)="openWalletDetailsModal(wallet)">
+                <ion-button fill="clear" size="small" class="menu-button"
+                  (click)="openWalletDetailsModal(wallet); $event.stopPropagation()">
                   <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
                 </ion-button>
               </div>
               <h2>{{ wallet.name }}</h2>
-              <p>{{ truncateAddress(encodePublicAddressByChainFormat(wallet.public_key.toString())) }}</p>
+              <p>{{ truncateAddress(wallet.public_key) }}</p>
             </ion-label>
           </ion-item>
         </ion-list>

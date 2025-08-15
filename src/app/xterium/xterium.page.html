@@ -201,8 +201,8 @@
       </ion-toolbar>
       <ion-content>
         <div class="ion-padding-horizontal">
-          <app-wallets (onFilteredNetwork)="onFilteredNetwork($event)"
-            [newlyAddedWallet]="newlyAddedWallet"></app-wallets>
+          <app-wallets [newlyAddedWallet]="newlyAddedWallet" (onFilteredNetwork)="onFilteredNetwork($event)"
+            (onSelectedCurrentWallet)="onSelectedCurrentWallet($event)"></app-wallets>
         </div>
       </ion-content>
     </ng-template>

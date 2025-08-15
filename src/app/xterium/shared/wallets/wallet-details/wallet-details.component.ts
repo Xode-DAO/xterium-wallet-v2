@@ -64,12 +64,12 @@ export class WalletDetailsComponent implements OnInit {
   walletPublicKey: string = '';
   updateTimeOut: any = null;
 
-  encodePublicAddressByChainFormat(publicKey: string): string {
+  async encodePublicAddressByChainFormat(publicKey: string): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    return this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, 42);
+    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, 42);
   }
 
   async copyToClipboard() {
@@ -154,6 +154,8 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.walletPublicKey = this.encodePublicAddressByChainFormat(this.wallet.public_key.toString());
+    this.encodePublicAddressByChainFormat(this.wallet.public_key.toString()).then(encodedAddress => {
+      this.walletPublicKey = encodedAddress;
+    });
   }
 }

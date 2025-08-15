@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import {
+  cryptoWaitReady,
   mnemonicGenerate,
   mnemonicToMiniSecret,
   mnemonicValidate,
@@ -14,30 +15,43 @@ import { encodeAddress } from '@polkadot/keyring';
 })
 export class PolkadotjsService {
 
-  constructor() { }
+  private cryptoReady: Promise<boolean>;
 
-  generateMnemonic(): string {
+  constructor() {
+    this.cryptoReady = cryptoWaitReady();
+  }
+
+  async ensureReady() {
+    await this.cryptoReady;
+  }
+
+  async generateMnemonic(): Promise<string> {
+    await this.ensureReady();
     return mnemonicGenerate();
   }
 
-  validateMnemonic(mnemonic: string): boolean {
+  async validateMnemonic(mnemonic: string): Promise<boolean> {
+    await this.ensureReady();
     return mnemonicValidate(mnemonic);
   }
 
-  generateMnemonicToMiniSecret(mnemonic: string): Uint8Array {
+  async generateMnemonicToMiniSecret(mnemonic: string): Promise<Uint8Array> {
+    await this.ensureReady();
     return mnemonicToMiniSecret(mnemonic);
   }
 
-  createKeypairFromSeed(seed: Uint8Array): { publicKey: Uint8Array; secretKey: Uint8Array } {
-    const keypair = sr25519PairFromSeed(seed);
+  async createKeypairFromSeed(seed: Uint8Array): Promise<{ publicKey: Uint8Array; secretKey: Uint8Array }> {
+    await this.ensureReady();
 
+    const keypair = sr25519PairFromSeed(seed);
     return {
       publicKey: keypair.publicKey,
       secretKey: keypair.secretKey
     };
   }
 
-  encodePublicAddressByChainFormat(publicKey: Uint8Array, ss58Format: number): string {
+  async encodePublicAddressByChainFormat(publicKey: Uint8Array, ss58Format: number): Promise<string> {
+    await this.ensureReady();
     return encodeAddress(publicKey, ss58Format);
   }
 

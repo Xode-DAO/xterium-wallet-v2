@@ -94,10 +94,10 @@ export class NewWalletComponent implements OnInit {
 
     this.isProcessing = true;
 
-    let isMnemonicPhraseValid = this.polkadotjsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
+    let isMnemonicPhraseValid = await this.polkadotjsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
     if (isMnemonicPhraseValid) {
-      const seed: Uint8Array = this.polkadotjsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
-      const keypair = this.polkadotjsService.createKeypairFromSeed(seed);
+      const seed: Uint8Array = await this.polkadotjsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
+      const keypair = await this.polkadotjsService.createKeypairFromSeed(seed);
 
       const wallet: Wallet = {
         name: this.walletName,
@@ -136,7 +136,8 @@ export class NewWalletComponent implements OnInit {
   }
 
   ngOnInit() {
-    let mnemonicPhrase = this.polkadotjsService.generateMnemonic();
-    this.walletMnemonicPhrase = mnemonicPhrase.split(' ');
+    this.polkadotjsService.generateMnemonic().then(mnemonicPhrase => {
+      this.walletMnemonicPhrase = mnemonicPhrase.split(' ');
+    });
   }
 }

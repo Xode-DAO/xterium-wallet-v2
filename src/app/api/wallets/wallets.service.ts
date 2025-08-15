@@ -7,7 +7,8 @@ import { Wallet } from "./../../../models/wallet.model"
   providedIn: 'root'
 })
 export class WalletsService {
-  private readonly STORAGE_KEY = 'wallets';
+  private readonly WALLETS_STORAGE_KEY = 'wallets';
+  private readonly CURRENT_WALLET_STORAGE_KEY = 'current_wallet';
 
   constructor() { }
 
@@ -16,13 +17,13 @@ export class WalletsService {
     wallets.push(wallet);
 
     await Preferences.set({
-      key: this.STORAGE_KEY,
+      key: this.WALLETS_STORAGE_KEY,
       value: JSON.stringify(wallets)
     });
   }
 
   async getAll(): Promise<Wallet[]> {
-    const { value } = await Preferences.get({ key: this.STORAGE_KEY });
+    const { value } = await Preferences.get({ key: this.WALLETS_STORAGE_KEY });
     return value ? JSON.parse(value) : [];
   }
 
@@ -49,7 +50,7 @@ export class WalletsService {
       wallets[index] = { ...wallets[index], ...updatedWallet };
 
       await Preferences.set({
-        key: this.STORAGE_KEY,
+        key: this.WALLETS_STORAGE_KEY,
         value: JSON.stringify(wallets)
       });
 
@@ -65,8 +66,22 @@ export class WalletsService {
 
     if (newWallets.length !== wallets.length) {
       await Preferences.set({
-        key: this.STORAGE_KEY,
+        key: this.WALLETS_STORAGE_KEY,
         value: JSON.stringify(newWallets)
+      });
+
+      return true;
+    }
+
+    return false;
+  }
+
+  async selectCurrentWallet(privateKey: string): Promise<boolean> {
+    const wallet = await this.getByPrivateKey(privateKey);
+    if (wallet) {
+      await Preferences.set({
+        key: this.CURRENT_WALLET_STORAGE_KEY,
+        value: JSON.stringify(wallet)
       });
 
       return true;

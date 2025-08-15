@@ -112,6 +112,10 @@ export class XteriumPage implements OnInit {
     this.myWalletsModal.present();
   }
 
+  onSelectedCurrentWallet(wallet: Wallet) {
+    this.myWalletsModal.dismiss();
+  }
+
   openCreateWalletModal() {
     this.createWalletModal.present();
   }
