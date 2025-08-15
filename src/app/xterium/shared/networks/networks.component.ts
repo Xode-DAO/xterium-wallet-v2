@@ -1,4 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import {
   IonGrid,
@@ -10,11 +11,17 @@ import {
   IonAvatar
 } from '@ionic/angular/standalone';
 
+import { Network } from './../../../../models/network.model';
+
+import { PolkadotjsService } from '../../../api/polkadotjs/polkadotjs.service';
+import { NetworksService } from './../../../api/networks/networks.service';
+
 @Component({
   selector: 'app-networks',
   templateUrl: './networks.component.html',
   styleUrls: ['./networks.component.scss'],
   imports: [
+    CommonModule,
     IonGrid,
     IonRow,
     IonCol,
@@ -25,13 +32,34 @@ import {
   ]
 })
 export class NetworksComponent implements OnInit {
-  @Output() onSelectedNetwork = new EventEmitter<string>();
+  @Input() isAllNetworkIncluded: boolean = false;
+  @Output() onSelectedNetwork = new EventEmitter<Network>();
 
-  constructor() { }
+  constructor(
+    private polkadotjsService: PolkadotjsService,
+    private networksService: NetworksService,
+  ) { }
 
-  selectNetwork(network: string) {
+  networks: Network[] = [];
+
+  getNetworks(): void {
+    if (this.isAllNetworkIncluded) {
+      this.networks = this.networksService.getNetworksByCategory('All');
+
+      const liveNetworks = this.networksService.getNetworksByCategory('Live');
+      if (liveNetworks.length > 0) {
+        this.networks.push(...liveNetworks);
+      }
+    } else {
+      this.networks = this.networksService.getNetworksByCategory('Live');
+    }
+  }
+
+  selectNetwork(network: Network) {
     this.onSelectedNetwork.emit(network);
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.getNetworks();
+  }
 }

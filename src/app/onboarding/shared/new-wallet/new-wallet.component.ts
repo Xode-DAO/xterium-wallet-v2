@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -18,6 +18,7 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, copyOutline, close } from 'ionicons/icons';
 
+import { Network } from './../../../../models/network.model';
 import { Wallet } from './../../../../models/wallet.model'
 
 import { PolkadotjsService } from '../../../api/polkadotjs/polkadotjs.service';
@@ -42,6 +43,7 @@ import { WalletsService } from './../../../api/wallets/wallets.service';
   ]
 })
 export class NewWalletComponent implements OnInit {
+  @Input() selectedNetwork: Network = {} as Network;
   @Output() onCreatedWallet = new EventEmitter<Wallet>();
 
   constructor(
@@ -57,7 +59,6 @@ export class NewWalletComponent implements OnInit {
   }
 
   walletName: string = '';
-  walletNetwork: string = 'Xode'; // this should be an object. Get from preferences
   walletMnemonicPhrase: string[] = new Array(12).fill('');
 
   isProcessing: boolean = false;
@@ -100,7 +101,7 @@ export class NewWalletComponent implements OnInit {
 
       const wallet: Wallet = {
         name: this.walletName,
-        network: this.walletNetwork,
+        network: this.selectedNetwork.name,
         mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
         public_key: keypair.publicKey.toString(),
         private_key: keypair.secretKey.toString()

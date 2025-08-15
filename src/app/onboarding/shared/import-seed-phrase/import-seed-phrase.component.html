@@ -9,11 +9,13 @@
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="6" *ngFor="let word of mnemonicPhrase; index as i">
+      @for (word of walletMnemonicPhrase; track word; let index = $index) {
+      <ion-col size="6">
         <ion-item class="primary-input-item">
-          <ion-input type="text" [(ngModel)]="mnemonicPhrase[i]" autocomplete="off"></ion-input>
+          <ion-input type="text" [(ngModel)]="walletMnemonicPhrase[index]" autocomplete="off"></ion-input>
         </ion-item>
       </ion-col>
+      }
     </ion-row>
     <ion-row>
       <ion-col size="12">

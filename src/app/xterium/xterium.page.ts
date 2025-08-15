@@ -40,7 +40,10 @@ import { ImportSeedPhraseComponent } from "./../onboarding/shared/import-seed-ph
 import { ImportPrivateKeyComponent } from "./../onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-backup/import-from-backup.component";
 
-import { Wallet } from 'src/models/wallet.model';
+import { Wallet } from './../../models/wallet.model';
+import { Network } from './../..//models/network.model';
+
+import { NetworksService } from './../api/networks/networks.service';
 
 @Component({
   selector: 'app-xterium',
@@ -83,7 +86,9 @@ export class XteriumPage implements OnInit {
   @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
 
-  constructor() {
+  constructor(
+    private networksService: NetworksService,
+  ) {
     addIcons({
       addCircle,
       settingsOutline,
@@ -100,9 +105,7 @@ export class XteriumPage implements OnInit {
   mainPresentingElement!: HTMLElement | undefined;
   myWalletsPresentingElement!: HTMLElement | undefined;
 
-  selectedNetwork: string = '';
-  selectedNetworkName: string = '';
-  selectedNetworkLogo: string | null = null;
+  selectedNetwork: Network = {} as Network;
   newlyAddedWallet: Wallet = {} as Wallet;
 
   openMyWalletsModal() {
@@ -117,27 +120,15 @@ export class XteriumPage implements OnInit {
     this.selectNetworkModal.present();
   }
 
-  onSelectedNetwork(network: string) {
+  onSelectedNetwork(network: Network) {
     this.selectedNetwork = network;
-
-    switch (network) {
-      case 'assethub':
-        this.selectedNetworkName = "Polkadot AssetHub";
-        this.selectedNetworkLogo = '../../../assets/images/networks/assethub.png';
-        break;
-      case 'xode':
-        this.selectedNetworkName = "Xode Network";
-        this.selectedNetworkLogo = '../../../assets/images/networks/xode.png';
-        break;
-      case 'solana':
-        this.selectedNetworkName = "Solana";
-        this.selectedNetworkLogo = '../../../assets/images/networks/solana.png';
-        break;
-      default:
-        this.selectedNetworkLogo = null;
-    }
-
     this.selectNetworkModal.dismiss();
+  }
+
+  onFilteredNetwork(network: Network) {
+    if (network.name !== "All Networks") {
+      this.selectedNetwork = network;
+    }
   }
 
   openCreateNewAccountModal() {
@@ -170,6 +161,7 @@ export class XteriumPage implements OnInit {
   ngOnInit() {
     this.mainPresentingElement = document.querySelector('.xterium-content') as HTMLElement | undefined;
     this.myWalletsPresentingElement = document.querySelector('.my-wallets') as HTMLElement | undefined;
-  }
 
+    this.selectedNetwork = this.networksService.getNetworksByCategory('Live')[0];
+  }
 }

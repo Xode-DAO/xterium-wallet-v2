@@ -44,7 +44,7 @@ export class ImportSeedPhraseComponent implements OnInit {
   }
 
   walletName: string = '';
-  mnemonicPhrase: string[] = new Array(12).fill('Sample');
+  walletMnemonicPhrase: string[] = new Array(12).fill('Sample');
 
   pasteFromClipboard() {
 

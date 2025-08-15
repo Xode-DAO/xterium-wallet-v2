@@ -1,39 +1,21 @@
 <div class="networks-list">
   <ion-grid>
     <ion-row>
+      @for (network of networks; track network;) {
       <ion-col size="12">
         <ion-list>
-          <ion-item button detail="false" lines="none" (click)="selectNetwork('assethub')">
+          <ion-item button detail="false" lines="none" (click)="selectNetwork(network)">
             <ion-avatar slot="start">
-              <img src="../../../assets/images/networks/assethub.png" />
+              <img [src]="'/../../../../assets/images/networks/' + network.image" />
             </ion-avatar>
             <ion-label>
-              <h2>Polkadot AssetHub</h2>
-              <p>Manage your assets easily on the AssetHub parachain.</p>
-            </ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" lines="none" (click)="selectNetwork('xode')">
-            <ion-avatar slot="start">
-              <img src="../../../assets/images/networks/xode.png" />
-            </ion-avatar>
-            <ion-label>
-              <h2>Xode</h2>
-              <p>Experience smooth and fast transactions with Xode.</p>
-            </ion-label>
-          </ion-item>
-
-          <ion-item button detail="false" lines="none" (click)="selectNetwork('solana')">
-            <ion-avatar slot="start">
-              <img src="../../../assets/images/networks/solana.png" />
-            </ion-avatar>
-            <ion-label>
-              <h2>Solana</h2>
-              <p>Make low-cost transactions on the high-performance Solana blockchain.</p>
+              <h2>{{ network.name }}</h2>
+              <p>{{ network.description }}</p>
             </ion-label>
           </ion-item>
         </ion-list>
       </ion-col>
+      }
     </ion-row>
   </ion-grid>
 </div>
