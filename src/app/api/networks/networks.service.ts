@@ -88,6 +88,10 @@ export class NetworksService {
     return [...this.networks];
   }
 
+  getNetworkByName(name: string): Network | undefined {
+    return this.networks.find(network => network.name.toLowerCase() === name.toLowerCase());
+  }
+
   getNetworksByCategory(category: string): Network[] {
     return this.networks.filter(
       net => net.category.toLowerCase() === category.toLowerCase()

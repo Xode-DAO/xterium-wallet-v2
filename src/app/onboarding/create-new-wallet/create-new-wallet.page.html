@@ -21,5 +21,5 @@
     </ion-grid>
   </div>
 
-  <app-new-wallet (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
+  <app-new-wallet [selectedNetwork]="selectedNetwork" (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
 </ion-content>

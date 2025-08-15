@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { IonRouterOutlet } from '@ionic/angular/standalone';
+
+import { OnboardingService } from './../api/onboarding/onboarding.service';
 
 @Component({
   selector: 'app-onboarding',
@@ -12,9 +16,21 @@ import { IonRouterOutlet } from '@ionic/angular/standalone';
 })
 export class OnboardingPage implements OnInit {
 
-  constructor() { }
+  constructor(
+    private router: Router,
+    private onboardingService: OnboardingService
+  ) { }
 
   ngOnInit() {
+    this.onboardingService.get().then(onboarding => {
+      if (onboarding) {
+        if (onboarding.step1_selected_network !== null &&
+          onboarding.step2_accepted_terms !== false &&
+          onboarding.step3_created_wallet !== null &&
+          onboarding.step4_completed === true) {
+          this.router.navigate(['/xterium']);
+        }
+      }
+    });
   }
-
 }

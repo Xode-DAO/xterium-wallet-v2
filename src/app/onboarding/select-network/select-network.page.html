@@ -23,7 +23,7 @@
       <ion-row>
         <ion-col size="12">
           <ion-list lines="none">
-            <ion-card button class="network-card" [class.active]="selectedNetwork === 'assethub'"
+            <ion-card button class="network-card" [class.active]="selectedNetworkName === 'assethub'"
               (click)="selectNetwork('assethub')">
               <ion-item lines="none">
                 <ion-avatar slot="start">
@@ -36,7 +36,7 @@
               </ion-item>
             </ion-card>
 
-            <ion-card button class="network-card" [class.active]="selectedNetwork === 'xode'"
+            <ion-card button class="network-card" [class.active]="selectedNetworkName === 'xode'"
               (click)="selectNetwork('xode')">
               <ion-item lines="none">
                 <ion-avatar slot="start">
@@ -49,7 +49,7 @@
               </ion-item>
             </ion-card>
 
-            <ion-card button class="network-card" [class.active]="selectedNetwork === 'solana'"
+            <ion-card button class="network-card" [class.active]="selectedNetworkName === 'solana'"
               (click)="selectNetwork('solana')">
               <ion-item lines="none">
                 <ion-avatar slot="start">
@@ -67,14 +67,17 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center ion-margin-top ion-margin-bottom">
-            <ion-checkbox>I agree to the <a [routerLink]="['/xterium']">terms and conditions</a></ion-checkbox>
+            <ion-checkbox (ionChange)="isAgreed = $event.detail.checked" [checked]="isAgreed">
+              I agree to the <a [routerLink]="['/xterium']">terms and conditions</a>
+            </ion-checkbox>
           </div>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="12">
-          <div class="primary-button-controls" [routerLink]="['/onboarding/setup-wallet']">
-            <ion-button expand="block" size="default" class="ion-margin-bottom">
+          <div class="primary-button-controls">
+            <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="getStarted()"
+              [disabled]="!isAgreed">
               GET STARTED
             </ion-button>
           </div>
@@ -82,4 +85,6 @@
       </ion-row>
     </ion-grid>
   </div>
+
+  <ion-toast [duration]="5000"></ion-toast>
 </ion-content>

@@ -24,6 +24,7 @@ import { Network } from './../../../../models/network.model';
 import { Wallet } from './../../../../models/wallet.model'
 
 import { PolkadotjsService } from '../../../api/polkadotjs/polkadotjs.service';
+import { OnboardingService } from './../../../api/onboarding/onboarding.service';
 import { WalletsService } from './../../../api/wallets/wallets.service';
 
 @Component({
@@ -50,6 +51,7 @@ export class NewWalletComponent implements OnInit {
 
   constructor(
     private polkadotjsService: PolkadotjsService,
+    private onboardingService: OnboardingService,
     private walletsService: WalletsService,
     private toastController: ToastController
   ) {
@@ -131,6 +133,13 @@ export class NewWalletComponent implements OnInit {
         const wallets = await this.walletsService.getAll();
         if (wallets.length === 1) {
           await this.walletsService.setCurrentWallet(newId);
+        }
+
+        const onboarding = await this.onboardingService.get();
+        if (onboarding) {
+          if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
+            await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
+          }
         }
 
         const toast = await this.toastController.create({
