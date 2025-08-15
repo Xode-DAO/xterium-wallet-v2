@@ -48,7 +48,7 @@ import { WalletsService } from './../../../../api/wallets/wallets.service';
 })
 export class WalletDetailsComponent implements OnInit {
   @Input() wallet: Wallet = {} as Wallet;
-  @Output() onWalletDeleted = new EventEmitter<boolean>();
+  @Output() onDeletedWallet = new EventEmitter<boolean>();
 
   constructor(
     private polkadotjsService: PolkadotjsService,
@@ -126,7 +126,7 @@ export class WalletDetailsComponent implements OnInit {
           },
           handler: async () => {
             await this.walletsService.delete(this.wallet.private_key);
-            this.onWalletDeleted.emit(true);
+            this.onDeletedWallet.emit(true);
 
             actionSheet.dismiss();
 

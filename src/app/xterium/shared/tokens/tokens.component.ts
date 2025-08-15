@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
 import {
+  IonGrid,
+  IonRow,
+  IonCol,
   IonList,
   IonItem,
-  IonAvatar,
   IonLabel,
+  IonAvatar
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -12,10 +15,13 @@ import {
   templateUrl: './tokens.component.html',
   styleUrls: ['./tokens.component.scss'],
   imports: [
+    IonGrid,
+    IonRow,
+    IonCol,
     IonList,
     IonItem,
-    IonAvatar,
     IonLabel,
+    IonAvatar
   ]
 })
 export class TokensComponent implements OnInit {

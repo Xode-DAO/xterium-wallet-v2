@@ -239,7 +239,8 @@ ion-toolbar.main-modal-toolbar {
 }
 
 ion-item.primary-input-item,
-ion-item.primary-textarea-item {
+ion-item.primary-textarea-item,
+ion-item.primary-select-button-item {
   --background: #333333;
   --color: #ffffff;
   box-shadow: none !important;
@@ -265,13 +266,24 @@ ion-item.primary-textarea-item {
   }
 }
 
+ion-item.primary-select-button-item {
+  border-radius: 25px;
+
+  ion-button {
+    border: none;
+    color: white;
+  }
+}
+
 ion-item.primary-input-item:not(:has(ion-input[readonly])),
-ion-item.primary-textarea-item:not(:has(ion-textarea[readonly])) {
+ion-item.primary-textarea-item:not(:has(ion-textarea[readonly])),
+ion-item.primary-select-button-item:not(:has(ion-select[readonly])) {
   border: 3px solid #777777;
 }
 
 ion-item.primary-input-item:focus-within:not(:has(ion-input[readonly])),
-ion-item.primary-textarea-item:focus-within:not(:has(ion-textarea[readonly])) {
+ion-item.primary-textarea-item:focus-within:not(:has(ion-textarea[readonly])),
+ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly])) {
   --background: #272727;
   border-color: #0bbab5;
 }

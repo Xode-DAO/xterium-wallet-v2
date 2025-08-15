@@ -46,7 +46,7 @@ export class CreateNewWalletPage implements OnInit {
     });
   }
 
-  onWalletCreated(wallet: Wallet) {
+  onCreatedWallet(wallet: Wallet) {
     this.router.navigate(['/xterium']);
   }
 

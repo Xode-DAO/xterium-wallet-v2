@@ -42,7 +42,7 @@ import { WalletsService } from './../../../api/wallets/wallets.service';
   ]
 })
 export class NewWalletComponent implements OnInit {
-  @Output() onWalletCreated = new EventEmitter<Wallet>();
+  @Output() onCreatedWallet = new EventEmitter<Wallet>();
 
   constructor(
     private polkadotjsService: PolkadotjsService,
@@ -120,7 +120,7 @@ export class NewWalletComponent implements OnInit {
         await toast.present();
       } else {
         await this.walletsService.create(wallet);
-        this.onWalletCreated.emit({ ...wallet });
+        this.onCreatedWallet.emit({ ...wallet });
 
         const toast = await this.toastController.create({
           message: 'Wallet created successfully!',

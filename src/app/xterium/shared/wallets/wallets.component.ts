@@ -8,8 +8,6 @@ import {
   IonCol,
   IonList,
   IonItem,
-  IonChip,
-  IonAvatar,
   IonLabel,
   IonModal,
   IonTitle,
@@ -41,8 +39,6 @@ import { WalletsService } from './../../../api/wallets/wallets.service';
     IonCol,
     IonList,
     IonItem,
-    IonChip,
-    IonAvatar,
     IonLabel,
     IonModal,
     IonTitle,
@@ -92,7 +88,7 @@ export class WalletsComponent implements OnInit {
     this.walletDetailsModal.present();
   }
 
-  async onWalletDeleted() {
+  async onDeletedWallet() {
     await this.getWallets();
     this.walletDetailsModal.dismiss();
   }

@@ -16,7 +16,8 @@ import {
   IonList,
   IonItemDivider,
   IonItem,
-  IonLabel
+  IonAvatar,
+  IonLabel,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -29,13 +30,15 @@ import {
   qrCode,
   timer,
   compass,
+  chevronDownOutline
 } from 'ionicons/icons';
 
-import { WalletsComponent } from "./shared/wallets/wallets.component"
-import { NewWalletComponent } from "./../onboarding/shared/new-wallet/new-wallet.component"
-import { ImportSeedPhraseComponent } from "./../onboarding/shared/import-seed-phrase/import-seed-phrase.component"
-import { ImportPrivateKeyComponent } from "./../onboarding/shared/import-private-key/import-private-key.component"
-import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-backup/import-from-backup.component"
+import { WalletsComponent } from "./shared/wallets/wallets.component";
+import { NetworksComponent } from "./shared/networks/networks.component";
+import { NewWalletComponent } from "./../onboarding/shared/new-wallet/new-wallet.component";
+import { ImportSeedPhraseComponent } from "./../onboarding/shared/import-seed-phrase/import-seed-phrase.component";
+import { ImportPrivateKeyComponent } from "./../onboarding/shared/import-private-key/import-private-key.component";
+import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-backup/import-from-backup.component";
 
 import { Wallet } from 'src/models/wallet.model';
 
@@ -60,8 +63,10 @@ import { Wallet } from 'src/models/wallet.model';
     IonList,
     IonItemDivider,
     IonItem,
+    IonAvatar,
     IonLabel,
     WalletsComponent,
+    NetworksComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
     ImportPrivateKeyComponent,
@@ -71,6 +76,7 @@ import { Wallet } from 'src/models/wallet.model';
 export class XteriumPage implements OnInit {
   @ViewChild('myWalletsModal', { read: IonModal }) myWalletsModal!: IonModal;
   @ViewChild('createWalletModal', { read: IonModal }) createWalletModal!: IonModal;
+  @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
   @ViewChild('createNewAccountModal', { read: IonModal }) createNewAccountModal!: IonModal;
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
   @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
@@ -86,13 +92,17 @@ export class XteriumPage implements OnInit {
       swapHorizontal,
       qrCode,
       timer,
-      compass
+      compass,
+      chevronDownOutline
     });
   }
 
   mainPresentingElement!: HTMLElement | undefined;
   myWalletsPresentingElement!: HTMLElement | undefined;
 
+  selectedNetwork: string = '';
+  selectedNetworkName: string = '';
+  selectedNetworkLogo: string | null = null;
   newlyAddedWallet: Wallet = {} as Wallet;
 
   openMyWalletsModal() {
@@ -103,11 +113,38 @@ export class XteriumPage implements OnInit {
     this.createWalletModal.present();
   }
 
+  openSelectNetworkModal() {
+    this.selectNetworkModal.present();
+  }
+
+  onSelectedNetwork(network: string) {
+    this.selectedNetwork = network;
+
+    switch (network) {
+      case 'assethub':
+        this.selectedNetworkName = "Polkadot AssetHub";
+        this.selectedNetworkLogo = '../../../assets/images/networks/assethub.png';
+        break;
+      case 'xode':
+        this.selectedNetworkName = "Xode Network";
+        this.selectedNetworkLogo = '../../../assets/images/networks/xode.png';
+        break;
+      case 'solana':
+        this.selectedNetworkName = "Solana";
+        this.selectedNetworkLogo = '../../../assets/images/networks/solana.png';
+        break;
+      default:
+        this.selectedNetworkLogo = null;
+    }
+
+    this.selectNetworkModal.dismiss();
+  }
+
   openCreateNewAccountModal() {
     this.createNewAccountModal.present();
   }
 
-  onWalletCreated(wallet: Wallet) {
+  onCreatedWallet(wallet: Wallet) {
     this.newlyAddedWallet = wallet;
 
     this.createNewAccountModal.dismiss();

@@ -61,6 +61,33 @@
                 </ion-buttons>
               </ion-toolbar>
               <ion-list>
+                <ion-item class="primary-select-button-item ion-margin-bottom" (click)="openSelectNetworkModal()">
+                  <ion-avatar slot="start" *ngIf="selectedNetworkLogo">
+                    <img [src]="selectedNetworkLogo" alt="Network Logo" />
+                  </ion-avatar>
+                  <ion-label>{{ selectedNetworkName || 'Select Network' }}</ion-label>
+                  <ion-button size="small" fill="clear">
+                    <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
+                  </ion-button>
+
+                  <ion-modal #selectNetworkModal [presentingElement]="myWalletsPresentingElement">
+                    <ng-template>
+                      <ion-toolbar class="main-modal-toolbar">
+                        <ion-title>Select Network</ion-title>
+                        <ion-buttons slot="end">
+                          <ion-button (click)="createNewAccountModal.dismiss()">
+                            <ion-icon name="close" style="color: white;"></ion-icon>
+                          </ion-button>
+                        </ion-buttons>
+                      </ion-toolbar>
+                      <ion-content>
+                        <div class="ion-padding-horizontal">
+                          <app-networks (onSelectedNetwork)="onSelectedNetwork($event)"></app-networks>
+                        </div>
+                      </ion-content>
+                    </ng-template>
+                  </ion-modal>
+                </ion-item>
                 <ion-item button detail="false" lines="none" class="create-wallet-new-account-item"
                   (click)="openCreateNewAccountModal()">
                   New Account
@@ -95,7 +122,7 @@
                       <span>Write down this mnemonic phrase and store it securely. It will be required to restore your
                         wallet.</span>
                     </div>
-                    <app-new-wallet (onWalletCreated)="onWalletCreated($event)"></app-new-wallet>
+                    <app-new-wallet (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
                   </ion-content>
                 </ng-template>
               </ion-modal>
