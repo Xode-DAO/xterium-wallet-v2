@@ -1,4 +1,4 @@
 export class RPC {
-  network: string = "Xode";
+  network_id: number = 0;
   url: string = "";
 }

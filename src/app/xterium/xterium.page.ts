@@ -13,6 +13,9 @@ import {
   IonTabButton,
   IonIcon,
   IonModal,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonList,
   IonItemDivider,
   IonItem,
@@ -65,6 +68,9 @@ import { WalletsService } from './../api/wallets/wallets.service';
     IonTabButton,
     IonIcon,
     IonModal,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonList,
     IonItemDivider,
     IonItem,
@@ -105,9 +111,6 @@ export class XteriumPage implements OnInit {
       chevronDownOutline
     });
   }
-
-  mainPresentingElement!: HTMLElement | undefined;
-  myWalletsPresentingElement!: HTMLElement | undefined;
 
   selectedNetwork: Network = {} as Network;
   newlyAddedWallet: Wallet = {} as Wallet;
@@ -192,9 +195,6 @@ export class XteriumPage implements OnInit {
   }
 
   ngOnInit() {
-    this.mainPresentingElement = document.querySelector('.xterium-content') as HTMLElement | undefined;
-    this.myWalletsPresentingElement = document.querySelector('.my-wallets') as HTMLElement | undefined;
-
     this.selectedNetwork = this.networksService.getNetworksByCategory('Live')[0];
 
     setTimeout(() => {

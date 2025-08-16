@@ -51,7 +51,8 @@
     <app-tokens></app-tokens>
   </div>
 
-  <ion-modal #balancesRceive trigger="balances-receive" [presentingElement]="mainPresentingElement">
+  <ion-modal #balancesRceive trigger="balances-receive" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Receive</ion-title>
@@ -69,7 +70,8 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #balancesSelectToken trigger="balances-select-token" [presentingElement]="mainPresentingElement">
+  <ion-modal #balancesSelectToken trigger="balances-select-token" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Select Token</ion-title>
@@ -87,7 +89,8 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #balancesSend trigger="balances-send" [presentingElement]="mainPresentingElement">
+  <ion-modal #balancesSend trigger="balances-send" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Send</ion-title>
@@ -105,7 +108,8 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #manageTokens trigger="manage-tokens" [presentingElement]="mainPresentingElement">
+  <ion-modal #manageTokens trigger="manage-tokens" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Manage Tokens</ion-title>

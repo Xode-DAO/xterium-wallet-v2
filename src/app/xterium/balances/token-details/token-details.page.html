@@ -133,7 +133,8 @@
     </ion-grid>
   </div>
 
-  <ion-modal #tokenDetailsReceive trigger="token-details-receive" [presentingElement]="mainPresentingElement">
+  <ion-modal #tokenDetailsReceive trigger="token-details-receive" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Receive</ion-title>
@@ -151,7 +152,8 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #tokenDetailsSend trigger="token-details-send" [presentingElement]="mainPresentingElement">
+  <ion-modal #tokenDetailsSend trigger="token-details-send" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Send</ion-title>

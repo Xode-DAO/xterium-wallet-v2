@@ -55,13 +55,9 @@ ion-tab-bar.xterium-tab-bar {
 ion-modal.create-wallet-modal {
   --height: auto;
 
-  .toolbar {
-    padding-top: 10px;
-  }
-
   ion-list {
     background: transparent;
-    padding: 25px;
+    padding-bottom: 20px;
   }
 
   ion-item-divider {
@@ -80,7 +76,7 @@ ion-modal.create-wallet-modal {
     background-repeat: no-repeat;
     background-position: center;
     transition: background-size 0.2s ease;
-    border-radius: 15px;
+    border-radius: 50px;
     margin-bottom: 10px;
     transition: background 0.2s;
     font-weight: 700;
@@ -89,7 +85,7 @@ ion-modal.create-wallet-modal {
   ion-item.create-wallet-item {
     --background: #333333;
 
-    border-radius: 15px;
+    border-radius: 50px;
     margin-bottom: 10px;
     transition: background 0.2s;
     font-weight: 700;

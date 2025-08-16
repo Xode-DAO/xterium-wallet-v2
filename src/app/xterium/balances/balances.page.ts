@@ -61,8 +61,6 @@ export class BalancesPage implements OnInit {
     });
   }
 
-  mainPresentingElement!: HTMLElement | null;
-
   handleRefresh(event: RefresherCustomEvent) {
     setTimeout(() => {
       event.target.complete();
@@ -77,8 +75,6 @@ export class BalancesPage implements OnInit {
     this.router.navigate(['/xterium/swap']);
   }
 
-  ngOnInit() {
-    this.mainPresentingElement = document.querySelector('.xterium-content');
-  }
+  ngOnInit() { }
 
 }

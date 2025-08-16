@@ -64,14 +64,10 @@ export class TokenDetailsPage implements OnInit {
     });
   }
 
-  mainPresentingElement!: HTMLElement | null;
-
   goToSwap() {
     this.router.navigate(['/xterium/swap']);
   }
 
-  ngOnInit() {
-    this.mainPresentingElement = document.querySelector('.xterium-content');
-  }
+  ngOnInit() { }
 
 }

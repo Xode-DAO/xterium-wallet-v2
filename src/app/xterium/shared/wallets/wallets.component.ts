@@ -74,8 +74,6 @@ export class WalletsComponent implements OnInit {
     });
   }
 
-  mainPresentingElement!: HTMLElement | null;
-
   networks: Network[] = [];
   wallets: Wallet[] = [];
 
@@ -198,8 +196,6 @@ export class WalletsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.mainPresentingElement = document.querySelector('.my-wallets');
-
     this.getNetworks();
     this.getWallets();
     this.getCurrentWallet();

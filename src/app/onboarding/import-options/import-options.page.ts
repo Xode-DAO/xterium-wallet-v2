@@ -58,10 +58,6 @@ export class ImportOptionsPage implements OnInit {
     });
   }
 
-  mainPresentingElement!: HTMLElement | null;
-
-  ngOnInit() {
-    this.mainPresentingElement = document.querySelector('.import-wallet-content');
-  }
+  ngOnInit() { }
 
 }
