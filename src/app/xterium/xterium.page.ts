@@ -135,7 +135,11 @@ export class XteriumPage implements OnInit {
     const currentWallet = await this.walletsService.getCurrentWallet();
     if (currentWallet) {
       this.currentWallet = currentWallet;
-      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.selectedNetwork)
+
+      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
+      if (network) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+      }
     }
   }
 

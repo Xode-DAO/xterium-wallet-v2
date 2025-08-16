@@ -36,8 +36,8 @@
     </ion-row>
   </ion-grid>
 
-  @for (network of networksByName[selectedNetwork.name]; track network) {
   <ion-grid class="wallet-grid">
+    @for (network of networksByName[selectedNetwork.name]; track network) {
     @if (walletsByNetwork[network.name].length) {
     <div class="network-label">
       {{ network.name }}
@@ -65,8 +65,8 @@
       </ion-col>
       }
     </ion-row>
+    }
   </ion-grid>
-  }
 </div>
 
 <ion-modal #walletDetailsModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
