@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { BehaviorSubject } from 'rxjs';
+
 import { Preferences } from '@capacitor/preferences';
 import { Wallet } from "./../../../models/wallet.model"
 
@@ -9,6 +11,9 @@ import { Wallet } from "./../../../models/wallet.model"
 export class WalletsService {
   private readonly WALLETS_STORAGE_KEY = 'wallets';
   private readonly CURRENT_WALLET_STORAGE_KEY = 'current_wallet';
+
+  private currentWalletSubject = new BehaviorSubject<Wallet | undefined>(undefined);
+  public currentWalletObservable = this.currentWalletSubject.asObservable();
 
   constructor() { }
 
@@ -88,6 +93,8 @@ export class WalletsService {
         key: this.CURRENT_WALLET_STORAGE_KEY,
         value: JSON.stringify(wallet)
       });
+
+      this.currentWalletSubject.next(wallet);
 
       return true;
     }

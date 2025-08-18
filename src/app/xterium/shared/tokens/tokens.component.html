@@ -1,57 +1,27 @@
 <div class="tokens-list">
   <ion-grid>
     <ion-row>
+      @for (token of tokens; track token) {
       <ion-col size="12">
         <ion-list>
           <ion-item button detail="false" lines="none">
             <ion-avatar slot="start">
-              <img src="./../../../assets/images/tokens/xon.png" />
+              <img [src]="'./../../../assets/images/tokens/' + token.symbol.toLowerCase() + '.png'" />
             </ion-avatar>
             <ion-label>
-              <h2>Xode Native Token</h2>
-              <p>17,000 XON</p>
+              <h2>{{token.name}}</h2>
+              <p>
+                {{ balanceByToken[token.id] !== undefined ? balanceByToken[token.id].quantity : 0 }} {{token.symbol}}
+              </p>
             </ion-label>
             <div slot="end" class="ion-text-right">
-              <h2>$2,890.00</h2>
-              <p>$0.17</p>
+              <h2>{{ balanceByToken[token.id] !== undefined ? balanceByToken[token.id].amount : 0 }}</h2>
+              <p>${{ balanceByToken[token.id] !== undefined ? balanceByToken[token.id].price : 0 }}</p>
             </div>
           </ion-item>
         </ion-list>
       </ion-col>
-      <ion-col size="12">
-        <ion-list>
-          <ion-item button detail="false" lines="none">
-            <ion-avatar slot="start">
-              <img src="./../../../assets/images/tokens/usdt.png" />
-            </ion-avatar>
-            <ion-label>
-              <h2>Tether USD</h2>
-              <p>1,000 USDT</p>
-            </ion-label>
-            <div slot="end" class="ion-text-right">
-              <h2>$1,120.00</h2>
-              <p>$1.12</p>
-            </div>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-      <ion-col size="12">
-        <ion-list>
-          <ion-item button detail="false" lines="none">
-            <ion-avatar slot="start">
-              <img src="./../../../assets/images/tokens/dot.png" />
-            </ion-avatar>
-            <ion-label>
-              <h2>Polkadot</h2>
-              <p>500 DOT</p>
-            </ion-label>
-            <div slot="end" class="ion-text-right">
-              <h2>$2,890.00</h2>
-              <p>$4.58</p>
-            </div>
-          </ion-item>
-        </ion-list>
-      </ion-col>
+      }
     </ion-row>
   </ion-grid>
 </div>
