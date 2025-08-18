@@ -47,6 +47,7 @@ import { Wallet } from './../../models/wallet.model';
 import { Network } from './../..//models/network.model';
 
 import { PolkadotjsService } from '../api/polkadotjs/polkadotjs.service';
+import { XodePolkadotService } from '../api/polkadotjs/xode-polkadot/xode-polkadot.service';
 import { NetworksService } from './../api/networks/networks.service';
 import { WalletsService } from './../api/wallets/wallets.service';
 
@@ -96,6 +97,7 @@ export class XteriumPage implements OnInit {
 
   constructor(
     private polkadotjsService: PolkadotjsService,
+    private xodePolkadotService: XodePolkadotService,
     private networksService: NetworksService,
     private walletsService: WalletsService
   ) {
@@ -204,5 +206,7 @@ export class XteriumPage implements OnInit {
     setTimeout(() => {
       this.getCurrentWallet();
     }, 500);
+
+    this.xodePolkadotService.getBalances();
   }
 }

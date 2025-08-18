@@ -9,7 +9,11 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "xode-build": "npm run xode-generate:defs && npm run xode-generate:meta",
+    "xode-generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package xterium-mobile-v2/interfaces --input ./src/chains/xode-polkadot/interfaces --endpoint wss://polkadot-rpcnode.xode.net",
+    "xode-generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package xterium-mobile-v2/interfaces --endpoint wss://polkadot-rpcnode.xode.net --output ./src/chains/xode-polkadot/interfaces",
+    "xode-lint": "tsc --noEmit --pretty"
   },
   "private": true,
   "dependencies": {
@@ -31,13 +35,18 @@
     "@capacitor/status-bar": "^7.0.1",
     "@ionic/angular": "^8.0.0",
     "@polkadot/api": "^16.4.4",
+    "@polkadot/api-derive": "^16.4.4",
     "@polkadot/keyring": "^13.5.5",
+    "@polkadot/typegen": "^16.4.4",
+    "@polkadot/types": "^16.4.4",
+    "@polkadot/types-codec": "^16.4.4",
     "@polkadot/util-crypto": "^13.5.5",
     "angularx-qrcode": "^20.0.0",
     "buffer": "^6.0.3",
     "capacitor-native-biometric": "^4.2.2",
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",
+    "ts-node": "^10.9.2",
     "tslib": "^2.3.0",
     "uuid": "^11.1.0",
     "zone.js": "~0.15.0"
