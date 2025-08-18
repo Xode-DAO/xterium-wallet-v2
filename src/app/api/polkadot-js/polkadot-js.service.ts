@@ -13,7 +13,7 @@ import { encodeAddress } from '@polkadot/keyring';
 @Injectable({
   providedIn: 'root'
 })
-export class PolkadotjsService {
+export class PolkadotJsService {
 
   private cryptoReady: Promise<boolean>;
 

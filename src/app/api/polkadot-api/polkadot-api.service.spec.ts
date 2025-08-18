@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PapiService } from './papi.service';
+import { PolkadotApiService } from './polkadot-api.service';
 
-describe('PapiService', () => {
-  let service: PapiService;
+describe('PolkadotApiService', () => {
+  let service: PolkadotApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(PapiService);
+    service = TestBed.inject(PolkadotApiService);
   });
 
   it('should be created', () => {

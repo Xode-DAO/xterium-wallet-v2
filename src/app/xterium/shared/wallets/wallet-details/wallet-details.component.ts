@@ -24,7 +24,7 @@ import { copyOutline } from 'ionicons/icons';
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
 
-import { PolkadotjsService } from 'src/app/api/polkadotjs/polkadotjs.service';
+import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { NetworksService } from 'src/app/api/networks/networks.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
@@ -55,7 +55,7 @@ export class WalletDetailsComponent implements OnInit {
   @Output() onDeletedWallet = new EventEmitter<boolean>();
 
   constructor(
-    private polkadotjsService: PolkadotjsService,
+    private polkadotJsService: PolkadotJsService,
     private networksService: NetworksService,
     private walletsService: WalletsService,
     private toastController: ToastController,
@@ -85,7 +85,7 @@ export class WalletDetailsComponent implements OnInit {
     );
 
     const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
-    return await this.polkadotjsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async copyToClipboard() {

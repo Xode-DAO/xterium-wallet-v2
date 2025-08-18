@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PolkadotjsService } from './polkadotjs.service';
+import { PolkadotJsService } from './polkadot-js.service';
 
-describe('PolkadotjsService', () => {
-  let service: PolkadotjsService;
+describe('PolkadotJsService', () => {
+  let service: PolkadotJsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(PolkadotjsService);
+    service = TestBed.inject(PolkadotJsService);
   });
 
   it('should be created', () => {

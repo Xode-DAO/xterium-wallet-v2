@@ -23,7 +23,7 @@ import { arrowBackOutline, copyOutline, close } from 'ionicons/icons';
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model'
 
-import { PolkadotjsService } from 'src/app/api/polkadotjs/polkadotjs.service';
+import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
@@ -50,7 +50,7 @@ export class NewWalletComponent implements OnInit {
   @Output() onCreatedWallet = new EventEmitter<Wallet>();
 
   constructor(
-    private polkadotjsService: PolkadotjsService,
+    private polkadotJsService: PolkadotJsService,
     private onboardingService: OnboardingService,
     private walletsService: WalletsService,
     private toastController: ToastController
@@ -98,10 +98,10 @@ export class NewWalletComponent implements OnInit {
 
     this.isProcessing = true;
 
-    let isMnemonicPhraseValid = await this.polkadotjsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
+    let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
     if (isMnemonicPhraseValid) {
-      const seed: Uint8Array = await this.polkadotjsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
-      const keypair = await this.polkadotjsService.createKeypairFromSeed(seed);
+      const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
+      const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
 
       const newId = uuidv4();
 
@@ -155,7 +155,7 @@ export class NewWalletComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.polkadotjsService.generateMnemonic().then(mnemonicPhrase => {
+    this.polkadotJsService.generateMnemonic().then(mnemonicPhrase => {
       this.walletMnemonicPhrase = mnemonicPhrase.split(' ');
     });
   }

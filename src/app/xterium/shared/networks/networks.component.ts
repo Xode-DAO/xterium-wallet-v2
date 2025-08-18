@@ -13,7 +13,7 @@ import {
 
 import { Network } from 'src/models/network.model';
 
-import { PolkadotjsService } from 'src/app/api/polkadotjs/polkadotjs.service';
+import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { NetworksService } from 'src/app/api/networks/networks.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class NetworksComponent implements OnInit {
   @Output() onSelectedNetwork = new EventEmitter<Network>();
 
   constructor(
-    private polkadotjsService: PolkadotjsService,
+    private polkadotJsService: PolkadotJsService,
     private networksService: NetworksService,
   ) { }
 
