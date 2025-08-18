@@ -5,7 +5,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
 import { StatusBar, Style } from '@capacitor/status-bar';
 
-import { BiometricService } from "./api/biometric/biometric.service";
+import { BiometricService } from "src/app/api/biometric/biometric.service";
 
 @Component({
   selector: 'app-root',

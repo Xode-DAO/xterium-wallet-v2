@@ -36,19 +36,19 @@ import {
   chevronDownOutline
 } from 'ionicons/icons';
 
-import { WalletsComponent } from "./shared/wallets/wallets.component";
-import { NetworksComponent } from "./shared/networks/networks.component";
-import { NewWalletComponent } from "./../onboarding/shared/new-wallet/new-wallet.component";
-import { ImportSeedPhraseComponent } from "./../onboarding/shared/import-seed-phrase/import-seed-phrase.component";
-import { ImportPrivateKeyComponent } from "./../onboarding/shared/import-private-key/import-private-key.component";
-import { ImportFromBackupComponent } from "./../onboarding/shared/import-from-backup/import-from-backup.component";
+import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
+import { NetworksComponent } from "src/app/xterium/shared/networks/networks.component";
+import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
+import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
+import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
+import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 
-import { Wallet } from './../../models/wallet.model';
-import { Network } from './../..//models/network.model';
+import { Wallet } from 'src/models/wallet.model';
+import { Network } from 'src/models/network.model';
 
-import { PolkadotjsService } from '../api/polkadotjs/polkadotjs.service';
-import { NetworksService } from './../api/networks/networks.service';
-import { WalletsService } from './../api/wallets/wallets.service';
+import { PolkadotjsService } from 'src/app/api/polkadotjs/polkadotjs.service';
+import { NetworksService } from 'src/app/api/networks/networks.service';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
   selector: 'app-xterium',

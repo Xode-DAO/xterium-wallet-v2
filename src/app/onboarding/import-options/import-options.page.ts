@@ -19,10 +19,10 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { HeaderComponent } from "../shared/header/header.component";
-import { ImportSeedPhraseComponent } from "../shared/import-seed-phrase/import-seed-phrase.component";
-import { ImportPrivateKeyComponent } from "../shared/import-private-key/import-private-key.component";
-import { ImportFromBackupComponent } from "../shared/import-from-backup/import-from-backup.component";
+import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
+import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
+import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
+import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 
 @Component({
   selector: 'app-import-options',

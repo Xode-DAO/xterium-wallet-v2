@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { IonRouterOutlet } from '@ionic/angular/standalone';
 
-import { OnboardingService } from './../api/onboarding/onboarding.service';
+import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 
 @Component({
   selector: 'app-onboarding',

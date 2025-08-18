@@ -18,12 +18,12 @@ import {
   IonToast,
 } from '@ionic/angular/standalone';
 
-import { HeaderComponent } from "../shared/header/header.component";
+import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
 
-import { Network } from "../../../models/network.model"
+import { Network } from "src/models/network.model"
 
-import { NetworksService } from './../../api/networks/networks.service';
-import { OnboardingService } from './../../api/onboarding/onboarding.service';
+import { NetworksService } from 'src/app/api/networks/networks.service';
+import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 
 @Component({
   selector: 'app-select-network',

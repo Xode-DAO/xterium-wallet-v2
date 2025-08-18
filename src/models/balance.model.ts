@@ -1,4 +1,4 @@
-import { Token } from "./token.model";
+import { Token } from "src/models/token.model";
 
 export class Balance {
   id: string = "";

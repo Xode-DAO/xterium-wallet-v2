@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Network } from "./../../../models/network.model"
+import { Network } from "src/models/network.model"
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class NetworksService {
     },
     {
       id: 1,
-      name: "Polkadot AssetHub",
+      name: "AssetHub - Polkadot",
       description: "Manage your assets easily on the AssetHub parachain.",
       unit: "DOT",
       decimal: 10,
@@ -50,7 +50,7 @@ export class NetworksService {
     },
     {
       id: 4,
-      name: "Paseo AssetHub",
+      name: "AssetHub - Paseo",
       description: "Manage your assets easily on the Paseo AssetHub parachain.",
       unit: "PAS",
       decimal: 10,

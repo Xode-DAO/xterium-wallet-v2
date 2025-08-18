@@ -21,15 +21,15 @@ import {
 import { addIcons } from 'ionicons';
 import { ellipsisVerticalOutline } from 'ionicons/icons';
 
-import { NetworksComponent } from "./../../shared/networks/networks.component";
-import { WalletDetailsComponent } from "./wallet-details/wallet-details.component";
+import { NetworksComponent } from "src/app/xterium/shared/networks/networks.component";
+import { WalletDetailsComponent } from 'src/app/xterium/shared/wallets/wallet-details/wallet-details.component';
 
-import { Network } from './../../../../models/network.model';
-import { Wallet } from './../../../../models/wallet.model'
+import { Network } from 'src/models/network.model';
+import { Wallet } from 'src/models/wallet.model'
 
-import { PolkadotjsService } from '../../../api/polkadotjs/polkadotjs.service';
-import { NetworksService } from './../../../api/networks/networks.service';
-import { WalletsService } from './../../../api/wallets/wallets.service';
+import { PolkadotjsService } from 'src/app/api/polkadotjs/polkadotjs.service';
+import { NetworksService } from 'src/app/api/networks/networks.service';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
   selector: 'app-wallets',

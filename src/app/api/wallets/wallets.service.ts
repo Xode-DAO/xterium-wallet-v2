@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { Preferences } from '@capacitor/preferences';
-import { Wallet } from "./../../../models/wallet.model"
+import { Wallet } from "src/models/wallet.model"
 
 @Injectable({
   providedIn: 'root'

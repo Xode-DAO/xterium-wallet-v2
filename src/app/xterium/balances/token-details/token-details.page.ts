@@ -23,7 +23,7 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
 
-import { ReceiveComponent } from "./../../shared/receive/receive.component";
+import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.component";
 
 @Component({
   selector: 'app-token-details',

@@ -22,8 +22,8 @@ import {
 import { addIcons } from 'ionicons';
 import { qrCode, send, swapHorizontal } from 'ionicons/icons';
 
-import { TokensComponent } from "./../shared/tokens/tokens.component"
-import { ReceiveComponent } from "./../shared/receive/receive.component";
+import { TokensComponent } from "src/app/xterium/shared/tokens/tokens.component"
+import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.component";
 
 @Component({
   selector: 'app-balances',

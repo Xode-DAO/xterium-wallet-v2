@@ -1,5 +1,5 @@
-import { Network } from "./network.model"
-import { Wallet } from "./wallet.model"
+import { Network } from "src/models/network.model"
+import { Wallet } from "src/models/wallet.model"
 
 export class Onboarding {
   step1_selected_network: Network | null = null;

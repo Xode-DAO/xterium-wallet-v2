@@ -11,10 +11,10 @@ import {
   IonAvatar
 } from '@ionic/angular/standalone';
 
-import { Network } from './../../../../models/network.model';
+import { Network } from 'src/models/network.model';
 
-import { PolkadotjsService } from '../../../api/polkadotjs/polkadotjs.service';
-import { NetworksService } from './../../../api/networks/networks.service';
+import { PolkadotjsService } from 'src/app/api/polkadotjs/polkadotjs.service';
+import { NetworksService } from 'src/app/api/networks/networks.service';
 
 @Component({
   selector: 'app-networks',

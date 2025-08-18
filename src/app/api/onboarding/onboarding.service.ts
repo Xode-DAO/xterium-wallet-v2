@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Preferences } from '@capacitor/preferences';
-import { Onboarding } from "./../../../models/onboarding.model"
+import { Onboarding } from "src/models/onboarding.model"
 
 @Injectable({
   providedIn: 'root'

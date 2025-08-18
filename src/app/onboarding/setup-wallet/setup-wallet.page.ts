@@ -15,7 +15,7 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { HeaderComponent } from "../shared/header/header.component";
+import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
 
 @Component({
   selector: 'app-setup-wallet',
