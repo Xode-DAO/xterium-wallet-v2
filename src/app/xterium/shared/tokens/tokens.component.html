@@ -1,22 +1,32 @@
 <div class="tokens-list">
   <ion-grid>
     <ion-row>
-      @for (token of tokens; track token) {
+      @for (balance of balances; track balance) {
       <ion-col size="12">
         <ion-list>
           <ion-item button detail="false" lines="none">
-            <ion-avatar slot="start">
-              <img [src]="'./../../../assets/images/tokens/' + token.symbol.toLowerCase() + '.png'" />
+            <ion-avatar slot="start" style="text-align: center;">
+              @if (balance.token.image) {
+              <img [src]="balance.token.image" />
+              }
+              @else {
+              <ion-spinner name="lines-sharp-small"></ion-spinner>
+              }
             </ion-avatar>
             <ion-label>
-              <h2>{{token.name}}</h2>
+              <h2>{{balance.token.name}}</h2>
               <p>
-                {{ balanceByToken[token.id] !== undefined ? balanceByToken[token.id].quantity : 0 }} {{token.symbol}}
+                {{ balanceByToken[balance.token.id] !== undefined ? balanceByToken[balance.token.id].quantity : 0 }}
+                {{balance.token.symbol}}
               </p>
             </ion-label>
             <div slot="end" class="ion-text-right">
-              <h2>{{ balanceByToken[token.id] !== undefined ? balanceByToken[token.id].amount : 0 }}</h2>
-              <p>${{ balanceByToken[token.id] !== undefined ? balanceByToken[token.id].price : 0 }}</p>
+              <h2>
+                {{ balanceByToken[balance.token.id] !== undefined ? balanceByToken[balance.token.id].amount : 0 }}
+              </h2>
+              <p>
+                ${{ balanceByToken[balance.token.id] !== undefined ? balanceByToken[balance.token.id].price : 0 }}
+              </p>
             </div>
           </ion-item>
         </ion-list>

@@ -7,7 +7,8 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonAvatar
+  IonAvatar,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 
 import { Token } from 'src/models/token.model';
@@ -16,9 +17,12 @@ import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { XodePolkadotService } from 'src/app/api/polkadot-js/xode-polkadot/xode-polkadot.service';
+import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
+import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
+
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { NetworksService } from 'src/app/api/networks/networks.service';
+import { TokensService } from 'src/app/api/tokens/tokens.service';
 
 @Component({
   selector: 'app-tokens',
@@ -31,15 +35,18 @@ import { NetworksService } from 'src/app/api/networks/networks.service';
     IonList,
     IonItem,
     IonLabel,
-    IonAvatar
+    IonAvatar,
+    IonSpinner,
   ]
 })
 export class TokensComponent implements OnInit {
   constructor(
     private polkadotJsService: PolkadotJsService,
     private xodePolkadotService: XodePolkadotService,
+    private assethubPolkadotService: AssethubPolkadotService,
     private walletsService: WalletsService,
-    private networksService: NetworksService
+    private networksService: NetworksService,
+    private tokensService: TokensService
   ) { }
 
   tokens: Token[] = [];
@@ -59,11 +66,6 @@ export class TokensComponent implements OnInit {
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
-  async getTokenBalances(): Promise<void> {
-    this.tokens = await this.xodePolkadotService.getTokens();
-    this.getBalances();
-  }
-
   async getCurrentWallet(): Promise<void> {
     const currentWallet = await this.walletsService.getCurrentWallet();
     if (currentWallet) {
@@ -76,9 +78,28 @@ export class TokensComponent implements OnInit {
     }
   }
 
-  async getBalances(): Promise<void> {
+  async getTokenBalances(): Promise<void> {
     await this.getCurrentWallet();
+
+    let tokens: Token[] = [];
+
+    if (this.currentWallet.network_id === 1) tokens = await this.assethubPolkadotService.getTokens();
+    if (this.currentWallet.network_id === 2) tokens = await this.xodePolkadotService.getTokens();
+
+    this.tokens = tokens;
+
+    await this.getBalances();
+  }
+
+  async getBalances(): Promise<void> {
     this.balances = await this.xodePolkadotService.getBalances(this.tokens, this.currentWalletPublicAddress)
+
+    setTimeout(async () => {
+      if (this.balances.length > 0) {
+        let balanceTokens = this.balances.map(b => b.token);
+        await this.tokensService.attachIcons(balanceTokens);
+      }
+    }, 500);
 
     this.loadBalanceByToken();
   }
@@ -100,6 +121,17 @@ export class TokensComponent implements OnInit {
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
       this.getTokenBalances();
+    });
+
+    this.tokensService.tokenImagesObservable.subscribe(tokenImages => {
+      if (tokenImages.length > 0) {
+        for (let i = 0; i < tokenImages.length; i++) {
+          let balanceToken = this.balances.filter(d => d.token.id === tokenImages[i].id)[0];
+          if (balanceToken) {
+            balanceToken.token.image = tokenImages[i].image;
+          }
+        }
+      }
     });
   }
 }

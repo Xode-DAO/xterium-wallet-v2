@@ -6,4 +6,5 @@ export class Token {
   symbol: string = "";
   decimals: number = 0;
   type: string = "native";
+  image: string = "";
 }
