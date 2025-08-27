@@ -137,6 +137,20 @@ export class WalletDetailsComponent implements OnInit {
     }, 1000);
   }
 
+  async exportWallet() {
+    const walletData = JSON.stringify(this.wallet);
+    const blob = new Blob([walletData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${this.walletPublicKey}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   async deleteWallet() {
     const actionSheet = await this.actionSheetController.create({
       header: 'Are you sure you want to delete?',

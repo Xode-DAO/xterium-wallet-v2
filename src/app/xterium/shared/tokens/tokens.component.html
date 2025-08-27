@@ -27,13 +27,13 @@
             <ion-label>
               <h2>{{balance.token.name}}</h2>
               <p>
-                {{ formatBalance(balance.quantity, balance.token.decimals) }}
+                {{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}
                 {{balance.token.symbol}}
               </p>
             </ion-label>
             <div slot="end" class="ion-text-right">
               <h2>
-                {{ formatBalance(balance.amount, balance.token.decimals) }}
+                {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
               </h2>
               <p>
                 ${{ balance.price }}

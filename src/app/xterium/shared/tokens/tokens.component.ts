@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 
 import {
   IonGrid,
@@ -41,6 +41,8 @@ import { TokensService } from 'src/app/api/tokens/tokens.service';
 })
 export class TokensComponent implements OnInit {
   @Input() refreshCounter: number = 0;
+
+  @Output() onTotalAmount = new EventEmitter<number>();
 
   constructor(
     private polkadotJsService: PolkadotJsService,
@@ -111,6 +113,8 @@ export class TokensComponent implements OnInit {
   async loadBalanceByToken(): Promise<void> {
     this.balanceByToken = {};
 
+    let totalAmount = 0;
+
     for (const token of this.tokens) {
       const filtered = this.balances.find(
         w => w.token?.id === token.id
@@ -118,6 +122,11 @@ export class TokensComponent implements OnInit {
 
       if (filtered) {
         this.balanceByToken[token.id] = filtered;
+        let amount = filtered.amount;
+        let formattedAmount = this.formatBalance(amount, token.decimals);
+        totalAmount += Number(formattedAmount);
+
+        this.onTotalAmount.emit(totalAmount);
       }
     }
   }
@@ -131,7 +140,11 @@ export class TokensComponent implements OnInit {
     }, 500);
   }
 
-  formatBalance(amount: number, decimals: number): string {
+  formatBalance(amount: number, decimals: number): number {
+    return this.polkadotJsService.formatBalance(amount, decimals);
+  }
+
+  formatBalanceWithSuffix(amount: number, decimals: number): string {
     return this.polkadotJsService.formatBalanceWithSuffix(amount, decimals);
   }
 
@@ -139,7 +152,9 @@ export class TokensComponent implements OnInit {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
       this.loading = true;
 
+      this.onTotalAmount.emit(0);
       this.balances = [];
+
       this.getTokenBalances();
     });
 
@@ -160,7 +175,9 @@ export class TokensComponent implements OnInit {
     if (refreshCounter > 0) {
       this.loading = true;
 
+      this.onTotalAmount.emit(0);
       this.balances = [];
+
       this.getTokenBalances();
     }
   }

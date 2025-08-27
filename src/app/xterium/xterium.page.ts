@@ -197,8 +197,22 @@ export class XteriumPage implements OnInit {
     this.importPrivateKeyModal.present();
   }
 
+  openImportWalletPrivateKey(wallet: Wallet) {
+    this.newlyAddedWallet = wallet;
+
+    this.createNewAccountModal.dismiss();
+    this.importPrivateKeyModal.dismiss();
+  }
+
   openImportFromBackupModal() {
     this.importFromBackupModal.present();
+  }
+
+  openImportWalletFromBackup(wallet: Wallet) {
+    this.newlyAddedWallet = wallet;
+
+    this.createNewAccountModal.dismiss();
+    this.importFromBackupModal.dismiss();
   }
 
   openSettingsModal() {

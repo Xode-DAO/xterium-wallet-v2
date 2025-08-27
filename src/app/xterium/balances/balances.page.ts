@@ -62,6 +62,7 @@ export class BalancesPage implements OnInit {
   }
 
   refreshCounter: number = 0;
+  totalAmount: number = 0;
 
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;
@@ -77,6 +78,10 @@ export class BalancesPage implements OnInit {
 
   goToSwap() {
     this.router.navigate(['/xterium/swap']);
+  }
+
+  onTotalAmount(amount: number) {
+    this.totalAmount = amount;
   }
 
   ngOnInit() { }

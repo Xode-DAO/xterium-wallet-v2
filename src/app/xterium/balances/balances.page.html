@@ -4,7 +4,7 @@
   </ion-refresher>
 
   <div class="ion-text-center total-balance">
-    <h1>$6,290.00</h1>
+    <h1>$ {{ totalAmount | number: '1.2-2' }}</h1>
   </div>
 
   <div class="ion-padding-horizontal">
@@ -46,7 +46,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <app-tokens [refreshCounter]="refreshCounter"></app-tokens>
+    <app-tokens [refreshCounter]="refreshCounter" (onTotalAmount)="onTotalAmount($event)"></app-tokens>
   </div>
 
   <ion-modal #balancesRceive trigger="balances-receive" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"

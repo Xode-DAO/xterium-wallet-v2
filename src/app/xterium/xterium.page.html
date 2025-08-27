@@ -190,7 +190,8 @@
                     </div>
 
                     <div class="ion-padding-horizontal">
-                      <app-import-private-key></app-import-private-key>
+                      <app-import-private-key [selectedNetwork]="selectedNetwork"
+                        (onImportedWallet)="openImportWalletPrivateKey($event)"></app-import-private-key>
                     </div>
                   </ion-content>
                 </ng-template>
@@ -214,7 +215,8 @@
                     </div>
 
                     <div class="ion-padding-horizontal">
-                      <app-import-from-backup></app-import-from-backup>
+                      <app-import-from-backup [selectedNetwork]="selectedNetwork"
+                        (onImportedWallet)="openImportWalletFromBackup($event)"></app-import-from-backup>
                     </div>
                   </ion-content>
                 </ng-template>

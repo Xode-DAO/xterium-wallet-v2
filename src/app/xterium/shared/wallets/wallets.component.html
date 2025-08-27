@@ -38,7 +38,7 @@
 
   <ion-grid class="wallet-grid">
     @for (network of networksByName[selectedNetwork.name]; track network) {
-    @if (walletsByNetwork[network.name].length) {
+    @if (walletsByNetwork[network.name] && walletsByNetwork[network.name].length > 0) {
     <div class="network-label">
       {{ network.name }}
     </div>

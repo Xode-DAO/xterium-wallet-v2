@@ -102,70 +102,85 @@ export class ImportSeedPhraseComponent implements OnInit {
 
     this.isProcessing = true;
 
-    let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
-    if (isMnemonicPhraseValid) {
-      const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
-      const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
+    if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
+      let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
+      if (isMnemonicPhraseValid) {
+        const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
+        const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
 
-      const newId = uuidv4();
+        const newId = uuidv4();
 
-      const wallet: Wallet = {
-        id: newId,
-        name: this.walletName,
-        network_id: this.selectedNetwork.id,
-        mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
-        public_key: keypair.publicKey.toString(),
-        private_key: keypair.secretKey.toString()
-      };
+        const wallet: Wallet = {
+          id: newId,
+          name: this.walletName,
+          network_id: this.selectedNetwork.id,
+          mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
+          public_key: keypair.publicKey.toString(),
+          private_key: keypair.secretKey.toString()
+        };
 
-      let getExistingPublicAddress = await this.walletsService.getWalletById(newId);
-      if (getExistingPublicAddress) {
+        let getExistingWallet = await this.walletsService.getWalletById(newId);
+        if (getExistingWallet) {
+          this.isProcessing = false;
+
+          const toast = await this.toastController.create({
+            message: 'Wallet already exists!',
+            color: 'danger',
+            duration: 1500,
+            position: 'top',
+          });
+
+          await toast.present();
+        } else {
+          await this.walletsService.create(wallet);
+          this.onImportedWallet.emit({ ...wallet });
+
+          const wallets = await this.walletsService.getAllWallets();
+          if (wallets.length === 1) {
+            await this.walletsService.setCurrentWallet(newId);
+          }
+
+          const onboarding = await this.onboardingService.get();
+          if (onboarding) {
+            if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
+              await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
+            }
+          }
+
+          const toast = await this.toastController.create({
+            message: 'Wallet imported successfully!',
+            color: 'success',
+            duration: 1500,
+            position: 'top',
+          });
+
+          await toast.present();
+        }
+      } else {
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
-          message: 'Wallet already exists!',
+          message: 'Invalid mnemonic phrase!',
           color: 'danger',
           duration: 1500,
           position: 'top',
         });
 
         await toast.present();
-      } else {
-        await this.walletsService.create(wallet);
-        this.onImportedWallet.emit({ ...wallet });
-
-        const wallets = await this.walletsService.getAllWallets();
-        if (wallets.length === 1) {
-          await this.walletsService.setCurrentWallet(newId);
-        }
-
-        const onboarding = await this.onboardingService.get();
-        if (onboarding) {
-          if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
-            await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
-          }
-        }
-
-        const toast = await this.toastController.create({
-          message: 'Wallet imported successfully!',
-          color: 'success',
-          duration: 1500,
-          position: 'top',
-        });
-
-        await toast.present();
       }
-    } else {
+    } else if (this.selectedNetwork.id === 3) {
       this.isProcessing = false;
 
       const toast = await this.toastController.create({
-        message: 'Invalid mnemonic phrase!',
-        color: 'danger',
+        message: this.selectedNetwork.name + ' network is not yet supported.',
+        color: 'warning',
         duration: 1500,
         position: 'top',
       });
 
       await toast.present();
+    } else {
+
     }
   }
 
