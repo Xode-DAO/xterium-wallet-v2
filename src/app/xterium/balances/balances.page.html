@@ -1,8 +1,6 @@
 <ion-content [fullscreen]="true" class="balances-content">
-  <ion-refresher slot="fixed" [pullFactor]="0.5" [pullMin]="130" [pullMax]="300" (ionRefresh)="handleRefresh($event)">
-    <ion-refresher-content pullingIcon="chevron-down-circle-outline" pullingText="Pull to refresh"
-      refreshingSpinner="circles" refreshingText="Refreshing...">
-    </ion-refresher-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
   <div class="ion-text-center total-balance">
@@ -43,12 +41,12 @@
         <ion-col size="12">
           <div class="token-list-header">
             <h3>Tokens</h3>
-            <a id="manage-tokens">Manage</a>
+            <!-- <a id="manage-tokens">Manage</a> -->
           </div>
         </ion-col>
       </ion-row>
     </ion-grid>
-    <app-tokens></app-tokens>
+    <app-tokens [refreshCounter]="refreshCounter"></app-tokens>
   </div>
 
   <ion-modal #balancesRceive trigger="balances-receive" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"

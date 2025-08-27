@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 
 import {
   IonGrid,
@@ -40,6 +40,8 @@ import { TokensService } from 'src/app/api/tokens/tokens.service';
   ]
 })
 export class TokensComponent implements OnInit {
+  @Input() refreshCounter: number = 0;
+
   constructor(
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
@@ -48,6 +50,8 @@ export class TokensComponent implements OnInit {
     private walletsService: WalletsService,
     private tokensService: TokensService
   ) { }
+
+  loading: boolean = false;
 
   tokens: Token[] = [];
   balances: Balance[] = [];
@@ -98,6 +102,7 @@ export class TokensComponent implements OnInit {
     if (this.currentWallet.network_id === 2) balances = await this.xodePolkadotService.getBalances(this.tokens, this.currentWalletPublicAddress);
 
     this.balances = balances;
+    this.loading = false;
 
     await this.loadBalanceByToken();
     await this.loadBalanceTokenImages();
@@ -132,6 +137,8 @@ export class TokensComponent implements OnInit {
 
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
+      this.loading = true;
+
       this.balances = [];
       this.getTokenBalances();
     });
@@ -146,5 +153,15 @@ export class TokensComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    const refreshCounter = changes['refreshCounter']?.currentValue;
+    if (refreshCounter > 0) {
+      this.loading = true;
+
+      this.balances = [];
+      this.getTokenBalances();
+    }
   }
 }

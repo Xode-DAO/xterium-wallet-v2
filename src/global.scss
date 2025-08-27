@@ -288,3 +288,31 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
   --background: #272727;
   border-color: #0bbab5;
 }
+
+.global-loader-container {
+  padding-top: 2%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  h3.global-loader-text {
+    margin-top: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    animation: fadePulse 1.5s infinite;
+  }
+
+  @keyframes fadePulse {
+    0% {
+      opacity: 0.6;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0.6;
+    }
+  }
+}

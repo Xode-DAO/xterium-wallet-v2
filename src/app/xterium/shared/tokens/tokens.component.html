@@ -1,4 +1,15 @@
 <div class="tokens-list">
+  @if (loading) {
+  <ion-grid class="global-loader-container">
+    <ion-row class="ion-justify-content-center ion-align-items-center">
+      <ion-col size="12" class="ion-text-center">
+        <ion-spinner name="lines"></ion-spinner>
+        <h3 class="global-loader-text">Loading assets, please wait...</h3>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  }
+  @else {
   <ion-grid>
     <ion-row>
       @for (balance of balances; track balance) {
@@ -10,7 +21,7 @@
               <img [src]="balance.token.image" />
               }
               @else {
-              <ion-spinner name="lines-sharp-small"></ion-spinner>
+              <ion-spinner name="lines"></ion-spinner>
               }
             </ion-avatar>
             <ion-label>
@@ -34,4 +45,5 @@
       }
     </ion-row>
   </ion-grid>
+  }
 </div>

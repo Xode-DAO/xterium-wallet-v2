@@ -61,7 +61,11 @@ export class BalancesPage implements OnInit {
     });
   }
 
+  refreshCounter: number = 0;
+
   handleRefresh(event: RefresherCustomEvent) {
+    this.refreshCounter++;
+
     setTimeout(() => {
       event.target.complete();
     }, 1000);
