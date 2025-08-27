@@ -186,6 +186,13 @@ export class XteriumPage implements OnInit {
     this.importSeedPhraseModal.present();
   }
 
+  openImportWalletSeedPhrase(wallet: Wallet) {
+    this.newlyAddedWallet = wallet;
+
+    this.createNewAccountModal.dismiss();
+    this.importSeedPhraseModal.dismiss();
+  }
+
   openImportPrivateKeyModal() {
     this.importPrivateKeyModal.present();
   }

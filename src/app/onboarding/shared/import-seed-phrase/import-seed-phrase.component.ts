@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   IonButton,
@@ -10,11 +12,20 @@ import {
   IonCol,
   IonItem,
   IonInput,
-  IonLabel
+  IonLabel,
+  IonToast,
+  ToastController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
+
+import { Network } from 'src/models/network.model';
+import { Wallet } from 'src/models/wallet.model'
+
+import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
   selector: 'app-import-seed-phrase',
@@ -31,11 +42,19 @@ import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
     IonItem,
     IonInput,
     IonLabel,
+    IonToast,
   ]
 })
 export class ImportSeedPhraseComponent implements OnInit {
+  @Input() selectedNetwork: Network = {} as Network;
+  @Output() onImportedWallet = new EventEmitter<Wallet>();
 
-  constructor() {
+  constructor(
+    private polkadotJsService: PolkadotJsService,
+    private onboardingService: OnboardingService,
+    private walletsService: WalletsService,
+    private toastController: ToastController
+  ) {
     addIcons({
       arrowBackOutline,
       clipboardOutline,
@@ -44,12 +63,111 @@ export class ImportSeedPhraseComponent implements OnInit {
   }
 
   walletName: string = '';
-  walletMnemonicPhrase: string[] = new Array(12).fill('Sample');
+  walletMnemonicPhrase: string[] = new Array(12).fill('');
 
-  pasteFromClipboard() {
+  isProcessing: boolean = false;
 
+  async pasteFromClipboard() {
+    navigator.clipboard.readText().then(
+      async clipText => {
+        if (clipText.split(' ').length !== 12) {
+          const toast = await this.toastController.create({
+            message: 'Invalid mnemonic phrase length!',
+            color: 'danger',
+            duration: 1500,
+            position: 'top',
+          });
+
+          await toast.present();
+        } else {
+          this.walletMnemonicPhrase = clipText.split(' ')
+        }
+      }
+    );
+  }
+
+  async importWallet() {
+    if (this.walletName === "") {
+      const toast = await this.toastController.create({
+        message: 'Wallet name is required!',
+        color: 'warning',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+
+      return;
+    }
+
+    this.isProcessing = true;
+
+    let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
+    if (isMnemonicPhraseValid) {
+      const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
+      const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
+
+      const newId = uuidv4();
+
+      const wallet: Wallet = {
+        id: newId,
+        name: this.walletName,
+        network_id: this.selectedNetwork.id,
+        mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
+        public_key: keypair.publicKey.toString(),
+        private_key: keypair.secretKey.toString()
+      };
+
+      let getExistingPublicAddress = await this.walletsService.getWalletById(newId);
+      if (getExistingPublicAddress) {
+        this.isProcessing = false;
+
+        const toast = await this.toastController.create({
+          message: 'Wallet already exists!',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
+
+        await toast.present();
+      } else {
+        await this.walletsService.create(wallet);
+        this.onImportedWallet.emit({ ...wallet });
+
+        const wallets = await this.walletsService.getAllWallets();
+        if (wallets.length === 1) {
+          await this.walletsService.setCurrentWallet(newId);
+        }
+
+        const onboarding = await this.onboardingService.get();
+        if (onboarding) {
+          if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
+            await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
+          }
+        }
+
+        const toast = await this.toastController.create({
+          message: 'Wallet imported successfully!',
+          color: 'success',
+          duration: 1500,
+          position: 'top',
+        });
+
+        await toast.present();
+      }
+    } else {
+      this.isProcessing = false;
+
+      const toast = await this.toastController.create({
+        message: 'Invalid mnemonic phrase!',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+    }
   }
 
   ngOnInit() { }
-
 }

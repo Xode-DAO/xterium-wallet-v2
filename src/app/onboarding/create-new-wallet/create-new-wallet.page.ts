@@ -13,13 +13,13 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
-import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
-
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { OnboardingService } from "src/app/api/onboarding/onboarding.service"
+
+import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
+import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 
 @Component({
   selector: 'app-create-new-wallet',

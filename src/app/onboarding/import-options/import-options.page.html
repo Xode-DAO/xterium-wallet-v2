@@ -53,7 +53,8 @@
         </div>
 
         <div class="ion-padding-horizontal">
-          <app-import-seed-phrase></app-import-seed-phrase>
+          <app-import-seed-phrase [selectedNetwork]="selectedNetwork"
+            (onImportedWallet)="onImportedWallet($event)"></app-import-seed-phrase>
         </div>
       </ion-content>
     </ng-template>

@@ -16,16 +16,16 @@
             <ion-label>
               <h2>{{balance.token.name}}</h2>
               <p>
-                {{ balanceByToken[balance.token.id] !== undefined ? balanceByToken[balance.token.id].quantity : 0 }}
+                {{ formatBalance(balance.quantity, balance.token.decimals) }}
                 {{balance.token.symbol}}
               </p>
             </ion-label>
             <div slot="end" class="ion-text-right">
               <h2>
-                {{ balanceByToken[balance.token.id] !== undefined ? balanceByToken[balance.token.id].amount : 0 }}
+                {{ formatBalance(balance.amount, balance.token.decimals) }}
               </h2>
               <p>
-                ${{ balanceByToken[balance.token.id] !== undefined ? balanceByToken[balance.token.id].price : 0 }}
+                ${{ balance.price }}
               </p>
             </div>
           </ion-item>

@@ -17,8 +17,8 @@ import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
+import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
 
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { NetworksService } from 'src/app/api/networks/networks.service';
@@ -42,10 +42,10 @@ import { TokensService } from 'src/app/api/tokens/tokens.service';
 export class TokensComponent implements OnInit {
   constructor(
     private polkadotJsService: PolkadotJsService,
-    private xodePolkadotService: XodePolkadotService,
     private assethubPolkadotService: AssethubPolkadotService,
-    private walletsService: WalletsService,
+    private xodePolkadotService: XodePolkadotService,
     private networksService: NetworksService,
+    private walletsService: WalletsService,
     private tokensService: TokensService
   ) { }
 
@@ -92,16 +92,15 @@ export class TokensComponent implements OnInit {
   }
 
   async getBalances(): Promise<void> {
-    this.balances = await this.xodePolkadotService.getBalances(this.tokens, this.currentWalletPublicAddress)
+    let balances: Balance[] = [];
 
-    setTimeout(async () => {
-      if (this.balances.length > 0) {
-        let balanceTokens = this.balances.map(b => b.token);
-        await this.tokensService.attachIcons(balanceTokens);
-      }
-    }, 500);
+    if (this.currentWallet.network_id === 1) balances = await this.assethubPolkadotService.getBalances(this.tokens, this.currentWalletPublicAddress);
+    if (this.currentWallet.network_id === 2) balances = await this.xodePolkadotService.getBalances(this.tokens, this.currentWalletPublicAddress);
 
-    this.loadBalanceByToken();
+    this.balances = balances;
+
+    await this.loadBalanceByToken();
+    await this.loadBalanceTokenImages();
   }
 
   async loadBalanceByToken(): Promise<void> {
@@ -118,8 +117,22 @@ export class TokensComponent implements OnInit {
     }
   }
 
+  async loadBalanceTokenImages(): Promise<void> {
+    setTimeout(async () => {
+      if (this.balances.length > 0) {
+        let balanceTokens = this.balances.map(b => b.token);
+        await this.tokensService.attachIcons(balanceTokens);
+      }
+    }, 500);
+  }
+
+  formatBalance(amount: number, decimals: number): string {
+    return this.polkadotJsService.formatBalanceWithSuffix(amount, decimals);
+  }
+
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
+      this.balances = [];
       this.getTokenBalances();
     });
 

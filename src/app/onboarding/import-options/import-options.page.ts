@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -18,6 +18,11 @@ import {
 
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
+
+import { Network } from 'src/models/network.model';
+import { Wallet } from 'src/models/wallet.model';
+
+import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 
 import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
@@ -51,13 +56,30 @@ import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from
 })
 export class ImportOptionsPage implements OnInit {
 
-  constructor() {
+  constructor(
+    private router: Router,
+    private onboardingService: OnboardingService
+  ) {
     addIcons({
       arrowBackOutline,
       close
     });
   }
 
-  ngOnInit() { }
+  selectedNetwork: Network = {} as Network;
+
+  onImportedWallet(wallet: Wallet) {
+    this.router.navigate(['/xterium/balances']);
+  }
+
+  ngOnInit() {
+    this.onboardingService.get().then(onboarding => {
+      if (onboarding) {
+        if (onboarding.step1_selected_network) {
+          this.selectedNetwork = onboarding.step1_selected_network;
+        }
+      }
+    });
+  }
 
 }
