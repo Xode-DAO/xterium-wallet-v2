@@ -88,7 +88,6 @@ export class ImportPrivateKeyComponent implements OnInit {
       });
 
       await toast.present();
-
       return;
     }
 
@@ -96,57 +95,7 @@ export class ImportPrivateKeyComponent implements OnInit {
 
     if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
       let validatedKeypair = await this.polkadotJsService.validatePrivateKey(this.privateKey);
-      if (validatedKeypair && validatedKeypair.valid) {
-        const keypair = validatedKeypair;
-        const newId = uuidv4();
-
-        const wallet: Wallet = {
-          id: newId,
-          name: this.walletName,
-          network_id: this.selectedNetwork.id,
-          mnemonic_phrase: "-",
-          public_key: (keypair.publicKey?.toString() ?? ''),
-          private_key: (keypair.secretKey?.toString() ?? '')
-        };
-
-        let getExistingWallet = await this.walletsService.getWalletById(newId);
-        if (getExistingWallet) {
-          this.isProcessing = false;
-
-          const toast = await this.toastController.create({
-            message: 'Wallet already exists!',
-            color: 'danger',
-            duration: 1500,
-            position: 'top',
-          });
-
-          await toast.present();
-        } else {
-          await this.walletsService.create(wallet);
-          this.onImportedWallet.emit({ ...wallet });
-
-          const wallets = await this.walletsService.getAllWallets();
-          if (wallets.length === 1) {
-            await this.walletsService.setCurrentWallet(newId);
-          }
-
-          const onboarding = await this.onboardingService.get();
-          if (onboarding) {
-            if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
-              await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
-            }
-          }
-
-          const toast = await this.toastController.create({
-            message: 'Wallet imported successfully!',
-            color: 'success',
-            duration: 1500,
-            position: 'top',
-          });
-
-          await toast.present();
-        }
-      } else {
+      if (validatedKeypair && !validatedKeypair.valid) {
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
@@ -157,7 +106,59 @@ export class ImportPrivateKeyComponent implements OnInit {
         });
 
         await toast.present();
+        return;
       }
+
+      const keypair = validatedKeypair;
+      const newId = uuidv4();
+
+      let getExistingWallet = await this.walletsService.getWalletById(newId);
+      if (getExistingWallet) {
+        this.isProcessing = false;
+
+        const toast = await this.toastController.create({
+          message: 'Wallet already exists!',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
+
+        await toast.present();
+        return;
+      }
+
+      const wallet: Wallet = {
+        id: newId,
+        name: this.walletName,
+        network_id: this.selectedNetwork.id,
+        mnemonic_phrase: "-",
+        public_key: (keypair.publicKey?.toString() ?? ''),
+        private_key: (keypair.secretKey?.toString() ?? '')
+      };
+
+      await this.walletsService.create(wallet);
+      this.onImportedWallet.emit({ ...wallet });
+
+      const wallets = await this.walletsService.getAllWallets();
+      if (wallets.length === 1) {
+        await this.walletsService.setCurrentWallet(newId);
+      }
+
+      const onboarding = await this.onboardingService.get();
+      if (onboarding) {
+        if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
+          await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
+        }
+      }
+
+      const toast = await this.toastController.create({
+        message: 'Wallet imported successfully!',
+        color: 'success',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
     } else if (this.selectedNetwork.id === 3) {
       this.isProcessing = false;
 

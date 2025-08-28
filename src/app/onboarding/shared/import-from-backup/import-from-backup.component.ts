@@ -101,134 +101,133 @@ export class ImportFromBackupComponent implements OnInit {
       });
 
       await toast.present();
-
       return;
     }
 
     this.isProcessing = true;
 
-    try {
-      if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
-        const privateKeyHex = this.polkadotJsService.encodePrivateKeyToHex(
-          new Uint8Array(this.wallet.private_key?.split(',').map(Number) ?? [])
-        );
+    if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
+      const privateKeyHex = this.polkadotJsService.encodePrivateKeyToHex(
+        new Uint8Array(this.wallet.private_key?.split(',').map(Number) ?? [])
+      );
 
-        let validatedKeypair = await this.polkadotJsService.validatePrivateKey(privateKeyHex);
-        if (validatedKeypair && validatedKeypair.valid) {
-          let mnemonicSeeds = "-";
+      let validatedKeypair = await this.polkadotJsService.validatePrivateKey(privateKeyHex);
+      if (validatedKeypair && !validatedKeypair.valid) {
+        this.isProcessing = false;
 
-          if (this.wallet.mnemonic_phrase !== "" && this.wallet.mnemonic_phrase !== "-") {
-            let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.wallet.mnemonic_phrase);
-            if (isMnemonicPhraseValid) {
-              const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.wallet.mnemonic_phrase);
-              const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
-              const privateKeyFromSeedsHex = this.polkadotJsService.encodePrivateKeyToHex(keypair.secretKey);
+        const toast = await this.toastController.create({
+          message: 'Invalid private key: ' + validatedKeypair.error,
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
 
-              if (!this.polkadotJsService.arePrivateKeysEqual(privateKeyHex, privateKeyFromSeedsHex)) {
-                this.isProcessing = false;
+        await toast.present();
+        return;
+      }
 
-                const toast = await this.toastController.create({
-                  message: 'Invalid mnemonic phrase. Keypair mismatch!',
-                  color: 'warning',
-                  duration: 1500,
-                  position: 'top',
-                });
+      let mnemonicSeeds = "-";
 
-                await toast.present();
-
-                return;
-              }
-
-              mnemonicSeeds = this.wallet.mnemonic_phrase;
-            }
-          }
-
-          const keypair = validatedKeypair;
-          const newId = uuidv4();
-
-          const wallet: Wallet = {
-            id: newId,
-            name: this.walletName,
-            network_id: this.selectedNetwork.id,
-            mnemonic_phrase: mnemonicSeeds,
-            public_key: (keypair.publicKey?.toString() ?? ''),
-            private_key: (keypair.secretKey?.toString() ?? '')
-          };
-
-          let getExistingWallet = await this.walletsService.getWalletById(newId);
-          if (getExistingWallet) {
-            this.isProcessing = false;
-
-            const toast = await this.toastController.create({
-              message: 'Wallet already exists!',
-              color: 'danger',
-              duration: 1500,
-              position: 'top',
-            });
-
-            await toast.present();
-          } else {
-            await this.walletsService.create(wallet);
-            this.onImportedWallet.emit({ ...wallet });
-
-            const wallets = await this.walletsService.getAllWallets();
-            if (wallets.length === 1) {
-              await this.walletsService.setCurrentWallet(newId);
-            }
-
-            const onboarding = await this.onboardingService.get();
-            if (onboarding) {
-              if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
-                await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
-              }
-            }
-
-            const toast = await this.toastController.create({
-              message: 'Wallet imported successfully!',
-              color: 'success',
-              duration: 1500,
-              position: 'top',
-            });
-
-            await toast.present();
-          }
-        } else {
+      if (this.wallet.mnemonic_phrase !== "" && this.wallet.mnemonic_phrase !== "-") {
+        let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.wallet.mnemonic_phrase);
+        if (!isMnemonicPhraseValid) {
           this.isProcessing = false;
 
           const toast = await this.toastController.create({
-            message: 'Invalid private key: ' + validatedKeypair.error,
+            message: 'Invalid mnemonic phrase!',
             color: 'danger',
             duration: 1500,
             position: 'top',
           });
 
           await toast.present();
+          return;
         }
-      } else if (this.selectedNetwork.id === 3) {
+
+        const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.wallet.mnemonic_phrase);
+        const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
+        const privateKeyFromSeedsHex = this.polkadotJsService.encodePrivateKeyToHex(keypair.secretKey);
+
+        if (!this.polkadotJsService.arePrivateKeysEqual(privateKeyHex, privateKeyFromSeedsHex)) {
+          this.isProcessing = false;
+
+          const toast = await this.toastController.create({
+            message: 'This backup file has invalid mnemonic phrase or private key.',
+            color: 'danger',
+            duration: 1500,
+            position: 'top',
+          });
+
+          await toast.present();
+          return;
+        }
+
+        mnemonicSeeds = this.wallet.mnemonic_phrase;
+      }
+
+      const keypair = validatedKeypair;
+      const newId = uuidv4();
+
+      let getExistingWallet = await this.walletsService.getWalletById(newId);
+      if (getExistingWallet) {
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
-          message: this.selectedNetwork.name + ' network is not yet supported.',
-          color: 'warning',
+          message: 'Wallet already exists!',
+          color: 'danger',
           duration: 1500,
           position: 'top',
         });
 
         await toast.present();
-      } else {
-
+        return;
       }
-    } catch (err) {
-      this.isProcessing = false;
+
+      const wallet: Wallet = {
+        id: newId,
+        name: this.walletName,
+        network_id: this.selectedNetwork.id,
+        mnemonic_phrase: mnemonicSeeds,
+        public_key: (keypair.publicKey?.toString() ?? ''),
+        private_key: (keypair.secretKey?.toString() ?? '')
+      };
+
+      await this.walletsService.create(wallet);
+      this.onImportedWallet.emit({ ...wallet });
+
+      const wallets = await this.walletsService.getAllWallets();
+      if (wallets.length === 1) {
+        await this.walletsService.setCurrentWallet(newId);
+      }
+
+      const onboarding = await this.onboardingService.get();
+      if (onboarding) {
+        if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
+          await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
+        }
+      }
 
       const toast = await this.toastController.create({
-        message: 'Invalid file format: ' + err,
-        color: 'danger',
+        message: 'Wallet imported successfully!',
+        color: 'success',
         duration: 1500,
         position: 'top',
       });
 
       await toast.present();
+    } else if (this.selectedNetwork.id === 3) {
+      this.isProcessing = false;
+
+      const toast = await this.toastController.create({
+        message: this.selectedNetwork.name + ' network is not yet supported.',
+        color: 'warning',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+    } else {
+
     }
   }
 

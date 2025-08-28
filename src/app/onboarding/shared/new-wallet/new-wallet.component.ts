@@ -92,7 +92,6 @@ export class NewWalletComponent implements OnInit {
       });
 
       await toast.present();
-
       return;
     }
 
@@ -100,59 +99,72 @@ export class NewWalletComponent implements OnInit {
 
     if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
       let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
-      if (isMnemonicPhraseValid) {
-        const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
-        const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
+      if (!isMnemonicPhraseValid) {
+        this.isProcessing = false;
 
-        const newId = uuidv4();
+        const toast = await this.toastController.create({
+          message: 'Invalid mnemonic phrase!',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
 
-        const wallet: Wallet = {
-          id: newId,
-          name: this.walletName,
-          network_id: this.selectedNetwork.id,
-          mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
-          public_key: keypair.publicKey.toString(),
-          private_key: keypair.secretKey.toString()
-        };
+        await toast.present();
+        return;
+      }
 
-        let getExistingWallet = await this.walletsService.getWalletById(newId);
-        if (getExistingWallet) {
-          this.isProcessing = false;
+      const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
+      const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
 
-          const toast = await this.toastController.create({
-            message: 'Wallet already exists!',
-            color: 'danger',
-            duration: 1500,
-            position: 'top',
-          });
+      const newId = uuidv4();
 
-          await toast.present();
-        } else {
-          await this.walletsService.create(wallet);
-          this.onCreatedWallet.emit({ ...wallet });
+      let getExistingWallet = await this.walletsService.getWalletById(newId);
+      if (getExistingWallet) {
+        this.isProcessing = false;
 
-          const wallets = await this.walletsService.getAllWallets();
-          if (wallets.length === 1) {
-            await this.walletsService.setCurrentWallet(newId);
-          }
+        const toast = await this.toastController.create({
+          message: 'Wallet already exists!',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
 
-          const onboarding = await this.onboardingService.get();
-          if (onboarding) {
-            if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
-              await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
-            }
-          }
+        await toast.present();
+        return;
+      }
 
-          const toast = await this.toastController.create({
-            message: 'Wallet created successfully!',
-            color: 'success',
-            duration: 1500,
-            position: 'top',
-          });
+      const wallet: Wallet = {
+        id: newId,
+        name: this.walletName,
+        network_id: this.selectedNetwork.id,
+        mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
+        public_key: keypair.publicKey.toString(),
+        private_key: keypair.secretKey.toString()
+      };
 
-          await toast.present();
+      await this.walletsService.create(wallet);
+      this.onCreatedWallet.emit({ ...wallet });
+
+      const wallets = await this.walletsService.getAllWallets();
+      if (wallets.length === 1) {
+        await this.walletsService.setCurrentWallet(newId);
+      }
+
+      const onboarding = await this.onboardingService.get();
+      if (onboarding) {
+        if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
+          await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
         }
       }
+
+      const toast = await this.toastController.create({
+        message: 'Wallet created successfully!',
+        color: 'success',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
     } else if (this.selectedNetwork.id === 3) {
       this.isProcessing = false;
 
