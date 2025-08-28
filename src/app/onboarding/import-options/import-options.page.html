@@ -35,13 +35,12 @@
     </ion-grid>
   </div>
 
-  <ion-modal #importSeedPhrase trigger="import-seed-phrase" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-    [expandToScroll]="false">
+  <ion-modal #importSeedPhraseModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Import</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="importSeedPhrase.dismiss()">
+          <ion-button (click)="importSeedPhraseModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -60,13 +59,12 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #importPrivateKey trigger="import-private-key" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-    [expandToScroll]="false">
+  <ion-modal #importPrivateKeyModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Import</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="importPrivateKey.dismiss()">
+          <ion-button (click)="importPrivateKeyModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -85,13 +83,12 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #importFromBackup trigger="import-from-backup" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-    [expandToScroll]="false">
+  <ion-modal #importFromBackupModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Import</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="importFromBackup.dismiss()">
+          <ion-button (click)="importFromBackupModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
           </ion-button>
         </ion-buttons>

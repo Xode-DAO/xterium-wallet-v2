@@ -33,10 +33,10 @@
             </ion-label>
             <div slot="end" class="ion-text-right">
               <h2>
-                {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
+                $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
               </h2>
               <p>
-                ${{ balance.price }}
+                $ {{ balance.price.toFixed(7) }}
               </p>
             </div>
           </ion-item>

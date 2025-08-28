@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -55,6 +55,7 @@ import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from
   ]
 })
 export class ImportOptionsPage implements OnInit {
+  @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
 
   constructor(
     private router: Router,

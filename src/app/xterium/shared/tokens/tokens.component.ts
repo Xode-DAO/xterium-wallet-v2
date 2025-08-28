@@ -11,7 +11,7 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 
-import { Token } from 'src/models/token.model';
+import { Token, TokenPrices } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
@@ -23,6 +23,8 @@ import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { NetworksService } from 'src/app/api/networks/networks.service';
 import { TokensService } from 'src/app/api/tokens/tokens.service';
+import { BalancesService } from 'src/app/api/balances/balances.service';
+import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 
 @Component({
   selector: 'app-tokens',
@@ -50,12 +52,15 @@ export class TokensComponent implements OnInit {
     private xodePolkadotService: XodePolkadotService,
     private networksService: NetworksService,
     private walletsService: WalletsService,
-    private tokensService: TokensService
+    private tokensService: TokensService,
+    private balancesService: BalancesService,
+    private multipayxApiService: MultipayxApiService,
   ) { }
 
   loading: boolean = false;
 
   tokens: Token[] = [];
+  tokenPrices: TokenPrices[] = [];
   balances: Balance[] = [];
 
   balanceByToken: Record<string, Balance> = {};
@@ -84,15 +89,43 @@ export class TokensComponent implements OnInit {
     }
   }
 
-  async getTokenBalances(): Promise<void> {
-    await this.getCurrentWallet();
-
+  async getTokens(): Promise<void> {
     let tokens: Token[] = [];
 
     if (this.currentWallet.network_id === 1) tokens = await this.assethubPolkadotService.getTokens();
     if (this.currentWallet.network_id === 2) tokens = await this.xodePolkadotService.getTokens();
 
     this.tokens = tokens;
+  }
+
+  async getTokenPrices(): Promise<void> {
+    let tokenPrices: TokenPrices[] = [];
+
+    let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency("USD");
+    if (pricePerCurrency.data.length > 0) {
+      await Promise.all(
+        pricePerCurrency.data.map(item => {
+          const token = this.tokens.find(token => token.symbol.toLowerCase() === item.symbol.toLowerCase());
+          if (token) {
+            const tokenPrice: TokenPrices = {
+              token: token,
+              price: item.price
+            }
+
+            tokenPrices.push(tokenPrice);
+          }
+        })
+      );
+    }
+
+    this.tokenPrices = tokenPrices;
+  }
+
+  async getTokenBalances(): Promise<void> {
+    await this.getCurrentWallet();
+
+    await this.getTokens();
+    await this.getTokenPrices();
 
     await this.getBalances();
   }
@@ -100,8 +133,8 @@ export class TokensComponent implements OnInit {
   async getBalances(): Promise<void> {
     let balances: Balance[] = [];
 
-    if (this.currentWallet.network_id === 1) balances = await this.assethubPolkadotService.getBalances(this.tokens, this.currentWalletPublicAddress);
-    if (this.currentWallet.network_id === 2) balances = await this.xodePolkadotService.getBalances(this.tokens, this.currentWalletPublicAddress);
+    if (this.currentWallet.network_id === 1) balances = await this.assethubPolkadotService.getBalances(this.tokens, this.tokenPrices, this.currentWalletPublicAddress);
+    if (this.currentWallet.network_id === 2) balances = await this.xodePolkadotService.getBalances(this.tokens, this.tokenPrices, this.currentWalletPublicAddress);
 
     this.balances = balances;
     this.loading = false;
@@ -141,11 +174,11 @@ export class TokensComponent implements OnInit {
   }
 
   formatBalance(amount: number, decimals: number): number {
-    return this.polkadotJsService.formatBalance(amount, decimals);
+    return this.balancesService.formatBalance(amount, decimals);
   }
 
   formatBalanceWithSuffix(amount: number, decimals: number): string {
-    return this.polkadotJsService.formatBalanceWithSuffix(amount, decimals);
+    return this.balancesService.formatBalanceWithSuffix(amount, decimals);
   }
 
   ngOnInit() {

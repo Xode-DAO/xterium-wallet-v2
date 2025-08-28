@@ -8,3 +8,8 @@ export class Token {
   type: string = "native";
   image: string = "";
 }
+
+export class TokenPrices {
+  token: Token = new Token();
+  price: number = 0;
+}

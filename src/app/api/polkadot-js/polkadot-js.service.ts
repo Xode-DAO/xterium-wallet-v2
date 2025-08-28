@@ -106,29 +106,4 @@ export class PolkadotJsService {
     if (address.length <= start + end) return address;
     return `${address.slice(0, start)}...${address.slice(-end)}`;
   }
-
-  formatBalance(amount: number, decimals: number): number {
-    return amount / Math.pow(10, decimals);
-  }
-
-  formatBalanceWithSuffix(amount: number, decimals: number): string {
-    const scaled = amount / Math.pow(10, decimals);
-
-    let formatted: string;
-    if (scaled >= 1_000_000_000_000) {
-      formatted = (scaled / 1_000_000_000_000).toFixed(2) + " T";
-    } else if (scaled >= 1_000_000_000) {
-      formatted = (scaled / 1_000_000_000).toFixed(2) + " B";
-    } else if (scaled >= 1_000_000) {
-      formatted = (scaled / 1_000_000).toFixed(2) + " M";
-    } else {
-      formatted = scaled.toFixed(5);
-
-      const parts = formatted.split(".");
-      parts[0] = Number(parts[0]).toLocaleString();
-      formatted = parts.join(".");
-    }
-
-    return `${formatted}`;
-  }
 }

@@ -6,7 +6,7 @@ import { xodePolkadot } from "@polkadot-api/descriptors"
 import { createClient } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider/web';
 
-import { Token } from 'src/models/token.model';
+import { Token, TokenPrices } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 
 @Injectable({
@@ -65,19 +65,24 @@ export class XodePolkadotService {
     return tokens;
   }
 
-  async getBalances(tokens: Token[], publicKey: string): Promise<Balance[]> {
+  async getBalances(tokens: Token[], tokenPrices: TokenPrices[], publicKey: string): Promise<Balance[]> {
     const balances: Balance[] = [];
 
     if (tokens.length > 0) {
       await Promise.all(tokens.map(async (token) => {
+        let price = 0;
+        if (tokenPrices.length > 0) {
+          price = tokenPrices.find(p => p.token.id === token.id)?.price || 0;
+        }
+
         if (token.type === 'native') {
           const balanceAccount = await this.xodeApi.query.System.Account.getValue(publicKey);
           balances.push({
             id: uuidv4(),
             token,
             quantity: Number(balanceAccount.data.free),
-            price: 10,
-            amount: Number(balanceAccount.data.free) * 10,
+            price,
+            amount: Number(balanceAccount.data.free) * price,
           });
         } else {
           const assetId = token.reference_id;
@@ -89,8 +94,8 @@ export class XodePolkadotService {
               id: uuidv4(),
               token,
               quantity: Number(account.balance),
-              price: 0,
-              amount: Number(account.balance) * 0,
+              price,
+              amount: Number(account.balance) * price,
             });
           }
         }
