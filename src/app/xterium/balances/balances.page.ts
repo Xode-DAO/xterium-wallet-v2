@@ -22,6 +22,8 @@ import {
 import { addIcons } from 'ionicons';
 import { qrCode, send, swapHorizontal } from 'ionicons/icons';
 
+import { Balance } from 'src/models/balance.model';
+
 import { TokensComponent } from "src/app/xterium/shared/tokens/tokens.component"
 import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.component";
 
@@ -72,8 +74,12 @@ export class BalancesPage implements OnInit {
     }, 1000);
   }
 
-  goToTokenDetails() {
-    this.router.navigate(['/xterium/token-details']);
+  goToTokenDetails(balance: Balance) {
+    this.router.navigate(['/xterium/token-details'], {
+      queryParams: {
+        balance: JSON.stringify(balance)
+      }
+    });
   }
 
   goToSwap() {

@@ -24,16 +24,18 @@ export class AssethubPolkadotService {
     const assethubChainName = (await assethubChainSpecs).name;
     const assethubTokenSymbol = (await assethubChainSpecs).properties['tokenSymbol'];
     const assethubTokenDecimals = (await assethubChainSpecs).properties['tokenDecimals'];
+    const assethubTotalTokenSupply = Number(await this.assethubApi.query.Balances.TotalIssuance.getValue())
 
     const tokens: Token[] = [];
 
     const nativeToken: Token = {
       id: uuidv4(),
       reference_id: 0,
-      network_id: 2,
+      network_id: 1,
       name: assethubChainName,
       symbol: assethubTokenSymbol,
       decimals: assethubTokenDecimals,
+      total_supply: assethubTotalTokenSupply,
       type: "native",
       image: ""
     }
@@ -50,10 +52,11 @@ export class AssethubPolkadotService {
         const assetToken: Token = {
           id: uuidv4(),
           reference_id: assetId,
-          network_id: 2,
+          network_id: 1,
           name: metadata.name.asText(),
           symbol: metadata.symbol.asText(),
           decimals: metadata.decimals,
+          total_supply: Number(asset.value.supply),
           type: "asset",
           image: ""
         };
@@ -69,37 +72,44 @@ export class AssethubPolkadotService {
     const balances: Balance[] = [];
 
     if (tokens.length > 0) {
-      await Promise.all(tokens.map(async (token) => {
-        let price = 0;
-        if (tokenPrices.length > 0) {
-          price = tokenPrices.find(p => p.token.symbol.toLowerCase() === token.symbol.toLowerCase())?.price || 0;
-        }
+      const assetBalances: Balance[] = [];
 
-        if (token.type === 'native') {
-          const balanceAccount = await this.assethubApi.query.System.Account.getValue(publicKey);
-          balances.push({
-            id: uuidv4(),
-            token,
-            quantity: Number(balanceAccount.data.free),
-            price,
-            amount: Number(balanceAccount.data.free) * price,
-          });
-        } else {
-          const assetId = token.reference_id;
-          const account = await this.assethubApi.query.Assets.Account.getValue(Number(assetId), publicKey);
-          const metadata = await this.assethubApi.query.Assets.Metadata.getValue(Number(assetId));
+      await Promise.all(
+        tokens.map(async (token) => {
+          let price = 0;
+          if (tokenPrices.length > 0) {
+            price = tokenPrices.find(p => p.token.symbol.toLowerCase() === token.symbol.toLowerCase())?.price || 0;
+          }
 
-          if (account && metadata) {
+          if (token.type === 'native') {
+            const balanceAccount = await this.assethubApi.query.System.Account.getValue(publicKey);
             balances.push({
               id: uuidv4(),
               token,
-              quantity: Number(account.balance),
+              quantity: Number(balanceAccount.data.free),
               price,
-              amount: Number(account.balance) * price,
+              amount: Number(balanceAccount.data.free) * price,
             });
+          } else {
+            const assetId = token.reference_id;
+            const account = await this.assethubApi.query.Assets.Account.getValue(Number(assetId), publicKey);
+            const metadata = await this.assethubApi.query.Assets.Metadata.getValue(Number(assetId));
+
+            if (account && metadata) {
+              assetBalances.push({
+                id: uuidv4(),
+                token,
+                quantity: Number(account.balance),
+                price,
+                amount: Number(account.balance) * price,
+              });
+            }
           }
-        }
-      }));
+        })
+      );
+
+      assetBalances.sort((a, b) => Number(a.token.reference_id) - Number(b.token.reference_id));
+      balances.push(...assetBalances);
     }
 
     return balances;

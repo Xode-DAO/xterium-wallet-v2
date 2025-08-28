@@ -13,9 +13,9 @@ import { Balance } from 'src/models/balance.model';
   providedIn: 'root'
 })
 export class XodePolkadotService {
-  private XODE_WSPROVIDER = "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc";
+  private wsProvider = "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc";
 
-  private client = createClient(getWsProvider(this.XODE_WSPROVIDER));
+  private client = createClient(getWsProvider(this.wsProvider));
   private xodeApi = this.client.getTypedApi(xodePolkadot);
 
   async getTokens(): Promise<Token[]> {
@@ -24,6 +24,7 @@ export class XodePolkadotService {
     const xodeChainName = (await xodeChainSpecs).name;
     const xodeTokenSymbol = (await xodeChainSpecs).properties['tokenSymbol'];
     const xodeTokenDecimals = (await xodeChainSpecs).properties['tokenDecimals'];
+    const xodeTotalTokenSupply = Number(await this.xodeApi.query.Balances.TotalIssuance.getValue())
 
     const tokens: Token[] = [];
 
@@ -34,6 +35,7 @@ export class XodePolkadotService {
       name: xodeChainName,
       symbol: xodeTokenSymbol,
       decimals: xodeTokenDecimals,
+      total_supply: xodeTotalTokenSupply,
       type: "native",
       image: ""
     }
@@ -54,6 +56,7 @@ export class XodePolkadotService {
           name: metadata.name.asText(),
           symbol: metadata.symbol.asText(),
           decimals: metadata.decimals,
+          total_supply: Number(asset.value.supply),
           type: "asset",
           image: ""
         };
@@ -69,37 +72,44 @@ export class XodePolkadotService {
     const balances: Balance[] = [];
 
     if (tokens.length > 0) {
-      await Promise.all(tokens.map(async (token) => {
-        let price = 0;
-        if (tokenPrices.length > 0) {
-          price = tokenPrices.find(p => p.token.id === token.id)?.price || 0;
-        }
+      const assetBalances: Balance[] = [];
 
-        if (token.type === 'native') {
-          const balanceAccount = await this.xodeApi.query.System.Account.getValue(publicKey);
-          balances.push({
-            id: uuidv4(),
-            token,
-            quantity: Number(balanceAccount.data.free),
-            price,
-            amount: Number(balanceAccount.data.free) * price,
-          });
-        } else {
-          const assetId = token.reference_id;
-          const account = await this.xodeApi.query.Assets.Account.getValue(Number(assetId), publicKey);
-          const metadata = await this.xodeApi.query.Assets.Metadata.getValue(Number(assetId));
+      await Promise.all(
+        tokens.map(async (token) => {
+          let price = 0;
+          if (tokenPrices.length > 0) {
+            price = tokenPrices.find(p => p.token.id === token.id)?.price || 0;
+          }
 
-          if (account && metadata) {
+          if (token.type === 'native') {
+            const balanceAccount = await this.xodeApi.query.System.Account.getValue(publicKey);
             balances.push({
               id: uuidv4(),
               token,
-              quantity: Number(account.balance),
+              quantity: Number(balanceAccount.data.free),
               price,
-              amount: Number(account.balance) * price,
+              amount: Number(balanceAccount.data.free) * price,
             });
+          } else {
+            const assetId = token.reference_id;
+            const account = await this.xodeApi.query.Assets.Account.getValue(Number(assetId), publicKey);
+            const metadata = await this.xodeApi.query.Assets.Metadata.getValue(Number(assetId));
+
+            if (account && metadata) {
+              assetBalances.push({
+                id: uuidv4(),
+                token,
+                quantity: Number(account.balance),
+                price,
+                amount: Number(account.balance) * price,
+              });
+            }
           }
-        }
-      }));
+        })
+      );
+
+      assetBalances.sort((a, b) => Number(a.token.reference_id) - Number(b.token.reference_id));
+      balances.push(...assetBalances);
     }
 
     return balances;

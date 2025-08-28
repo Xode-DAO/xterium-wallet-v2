@@ -15,7 +15,7 @@
       @for (balance of balances; track balance) {
       <ion-col size="12">
         <ion-list>
-          <ion-item button detail="false" lines="none">
+          <ion-item button detail="false" lines="none" (click)="openToken(balance)">
             <ion-avatar slot="start" style="text-align: center;">
               @if (balance.token.image) {
               <img [src]="balance.token.image" />
@@ -28,7 +28,7 @@
               <h2>{{balance.token.name}}</h2>
               <p>
                 {{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}
-                {{balance.token.symbol}}
+                {{ balance.token.symbol }}
               </p>
             </ion-label>
             <div slot="end" class="ion-text-right">

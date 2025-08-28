@@ -45,6 +45,7 @@ export class TokensComponent implements OnInit {
   @Input() refreshCounter: number = 0;
 
   @Output() onTotalAmount = new EventEmitter<number>();
+  @Output() onOpenToken = new EventEmitter<Balance>();
 
   constructor(
     private polkadotJsService: PolkadotJsService,
@@ -63,10 +64,10 @@ export class TokensComponent implements OnInit {
   tokenPrices: TokenPrices[] = [];
   balances: Balance[] = [];
 
-  balanceByToken: Record<string, Balance> = {};
-
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
+
+  // updateBalancesTimeout: any = null;
 
   async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -128,6 +129,8 @@ export class TokensComponent implements OnInit {
     await this.getTokenPrices();
 
     await this.getBalances();
+    await this.computeTotalBalance();
+    await this.attachTokenImages();
   }
 
   async getBalances(): Promise<void> {
@@ -138,14 +141,9 @@ export class TokensComponent implements OnInit {
 
     this.balances = balances;
     this.loading = false;
-
-    await this.loadBalanceByToken();
-    await this.loadBalanceTokenImages();
   }
 
-  async loadBalanceByToken(): Promise<void> {
-    this.balanceByToken = {};
-
+  async computeTotalBalance(): Promise<void> {
     let totalAmount = 0;
 
     for (const token of this.tokens) {
@@ -154,7 +152,6 @@ export class TokensComponent implements OnInit {
       );
 
       if (filtered) {
-        this.balanceByToken[token.id] = filtered;
         let amount = filtered.amount;
         let formattedAmount = this.formatBalance(amount, token.decimals);
         totalAmount += Number(formattedAmount);
@@ -162,9 +159,16 @@ export class TokensComponent implements OnInit {
         this.onTotalAmount.emit(totalAmount);
       }
     }
+
+    // if (this.updateBalancesTimeout) clearTimeout(this.updateBalancesTimeout);
+    // this.updateBalancesTimeout = setTimeout(() => {
+    //   this.getTokenPrices();
+    //   this.getBalances();
+    //   this.computeTotalBalance();
+    // }, 10000);
   }
 
-  async loadBalanceTokenImages(): Promise<void> {
+  async attachTokenImages(): Promise<void> {
     setTimeout(async () => {
       if (this.balances.length > 0) {
         let balanceTokens = this.balances.map(b => b.token);
@@ -179,6 +183,10 @@ export class TokensComponent implements OnInit {
 
   formatBalanceWithSuffix(amount: number, decimals: number): string {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
+  }
+
+  openToken(balance: Balance): void {
+    this.onOpenToken.emit(balance);
   }
 
   ngOnInit() {

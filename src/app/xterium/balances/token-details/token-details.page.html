@@ -10,15 +10,15 @@
           <div class="token-title">
             <ion-item detail="false" lines="none">
               <ion-avatar slot="start">
-                <img src="./../../../assets/images/tokens/xon.png" />
+                <img [src]="balance.token.image" />
               </ion-avatar>
               <ion-label>
-                <h1>Xode Native Token</h1>
-                <p>XON</p>
+                <h1>{{ balance.token.name }}</h1>
+                <p>{{ balance.token.symbol }}</p>
               </ion-label>
             </ion-item>
             <div class="ion-text-center token-price">
-              <h1>$0.1702034120000</h1>
+              <h1>$ {{ balance.price.toFixed(balance.token.decimals) }} </h1>
             </div>
           </div>
         </ion-col>
@@ -58,14 +58,19 @@
             <ion-list>
               <ion-item detail="false" lines="none">
                 <ion-avatar slot="start">
-                  <img src="./../../../assets/images/tokens/xon.png" />
+                  <img [src]="balance.token.image" />
                 </ion-avatar>
                 <ion-label>
-                  <h2>Xode Native Token</h2>
-                  <p>17,000 XON</p>
+                  <h2>{{ balance.token.name }}</h2>
+                  <p>
+                    {{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}
+                    {{ balance.token.symbol }}
+                  </p>
                 </ion-label>
                 <div slot="end" class="ion-text-right">
-                  <h2>$2,890.00</h2>
+                  <h2>
+                    $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
+                  </h2>
                   <p style="color: #333333">-</p>
                 </div>
               </ion-item>
@@ -84,7 +89,7 @@
                 <p>Name</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
-                <h2>Xode Native Token</h2>
+                <h2>{{ balance.token.name }}</h2>
               </div>
             </ion-item>
             <ion-item detail="false" lines="none">
@@ -92,7 +97,7 @@
                 <p>Symbol</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
-                <h2>XON</h2>
+                <h2>{{ balance.token.symbol }}</h2>
               </div>
             </ion-item>
             <ion-item detail="false" lines="none">
@@ -100,7 +105,7 @@
                 <p>Network</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
-                <h2>Xode</h2>
+                <h2>{{ getNetworkName(balance.token.network_id) }}</h2>
               </div>
             </ion-item>
             <ion-item detail="false" lines="none">
@@ -108,7 +113,7 @@
                 <p>Decimal</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
-                <h2>12</h2>
+                <h2>{{ balance.token.decimals }}</h2>
               </div>
             </ion-item>
             <ion-item detail="false" lines="none">
@@ -116,7 +121,7 @@
                 <p>Total Supply</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
-                <h2>1B</h2>
+                <h2>{{ formatBalanceWithSuffix(balance.token.total_supply, balance.token.decimals) }}</h2>
               </div>
             </ion-item>
             <ion-item detail="false" lines="none">
@@ -124,7 +129,7 @@
                 <p>Reference Id</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
-                <h2>1</h2>
+                <h2>{{ balance.token.reference_id }}</h2>
               </div>
             </ion-item>
           </ion-list>

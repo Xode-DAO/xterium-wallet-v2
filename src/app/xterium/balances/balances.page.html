@@ -46,7 +46,8 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <app-tokens [refreshCounter]="refreshCounter" (onTotalAmount)="onTotalAmount($event)"></app-tokens>
+    <app-tokens [refreshCounter]="refreshCounter" (onTotalAmount)="onTotalAmount($event)"
+      (onOpenToken)="goToTokenDetails($event)"></app-tokens>
   </div>
 
   <ion-modal #balancesRceive trigger="balances-receive" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
