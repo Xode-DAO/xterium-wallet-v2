@@ -106,6 +106,7 @@ export class TokensComponent implements OnInit {
     if (!service) return;
 
     this.tokens = await service.getTokens();
+    await this.getTokenPrices();
   }
 
   async getTokenPrices(): Promise<void> {
@@ -117,12 +118,10 @@ export class TokensComponent implements OnInit {
         pricePerCurrency.data.map(item => {
           const token = this.tokens.find(token => token.symbol.toLowerCase() === item.symbol.toLowerCase());
           if (token) {
-            const tokenPrice: TokenPrices = {
+            tokenPrices.push({
               token: token,
               price: item.price
-            }
-
-            tokenPrices.push(tokenPrice);
+            });
           }
         })
       );
@@ -130,6 +129,7 @@ export class TokensComponent implements OnInit {
 
     this.tokenPrices = tokenPrices;
   }
+
   async getBalances(): Promise<void> {
     let service: PolkadotApiService | null = null;
 
@@ -138,13 +138,10 @@ export class TokensComponent implements OnInit {
 
     if (!service) return;
 
-    this.balances = await service.getBalances(
-      this.tokens,
-      this.tokenPrices,
-      this.currentWalletPublicAddress
-    );
+    this.balances = await service.getBalances(this.tokens, this.tokenPrices, this.currentWalletPublicAddress);
+    this.computeTotalBalanceAmount();
 
-    this.getBalanceTotalAmount();
+    await this.getBalanceTokenImages();
 
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
@@ -154,13 +151,13 @@ export class TokensComponent implements OnInit {
           this.currentWalletPublicAddress
         ).subscribe(balances => {
           this.balances = balances;
-          this.getBalanceTotalAmount();
+          this.computeTotalBalanceAmount();
         });
       }
     }, 5000);
   }
 
-  getBalanceTotalAmount(): void {
+  computeTotalBalanceAmount(): void {
     setTimeout(() => {
       let totalAmount = 0;
 
@@ -200,10 +197,7 @@ export class TokensComponent implements OnInit {
     this.onTotalAmount.emit(0);
 
     await this.getTokens();
-    await this.getTokenPrices();
-
     await this.getBalances();
-    await this.getBalanceTokenImages();
   }
 
   formatBalance(amount: number, decimals: number): number {
