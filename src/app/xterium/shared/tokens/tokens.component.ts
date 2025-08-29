@@ -42,10 +42,6 @@ import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.ser
     IonLabel,
     IonAvatar,
     IonSpinner,
-  ],
-  providers: [
-    { provide: PolkadotApiService, useClass: AssethubPolkadotService },
-    { provide: PolkadotApiService, useClass: XodePolkadotService },
   ]
 })
 export class TokensComponent implements OnInit {
