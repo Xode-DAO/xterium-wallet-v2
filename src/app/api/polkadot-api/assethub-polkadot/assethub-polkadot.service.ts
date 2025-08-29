@@ -118,7 +118,7 @@ export class AssethubPolkadotService extends PolkadotApiService {
     return balances;
   }
 
-  getTokensObservable(): Observable<Token[]> {
+  watchTokens(): Observable<Token[]> {
     return new Observable<Token[]>(subscriber => {
       const subscriptions: any[] = [];
       const tokens: Token[] = [];
@@ -219,7 +219,7 @@ export class AssethubPolkadotService extends PolkadotApiService {
     });
   }
 
-  getBalancesObservable(tokens: Token[], tokenPrices: TokenPrices[], publicKey: string): Observable<Balance[]> {
+  watchBalances(tokens: Token[], tokenPrices: TokenPrices[], publicKey: string): Observable<Balance[]> {
     return new Observable<Balance[]>(subscriber => {
       const subscriptions: any[] = [];
       const balances: Balance[] = [];

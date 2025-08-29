@@ -147,15 +147,16 @@ export class TokensComponent implements OnInit {
     this.getBalanceTotalAmount();
 
     this.observableTimeout = setTimeout(() => {
-      this.tokensSubscription = service.getTokensObservable().subscribe(tokens => (this.tokens = tokens));
-      this.balancesSubscription = service.getBalancesObservable(
-        this.tokens,
-        this.tokenPrices,
-        this.currentWalletPublicAddress
-      ).subscribe(balances => {
-        this.balances = balances;
-        this.getBalanceTotalAmount();
-      });
+      if (this.balancesSubscription.closed) {
+        this.balancesSubscription = service.watchBalances(
+          this.tokens,
+          this.tokenPrices,
+          this.currentWalletPublicAddress
+        ).subscribe(balances => {
+          this.balances = balances;
+          this.getBalanceTotalAmount();
+        });
+      }
     }, 5000);
   }
 
