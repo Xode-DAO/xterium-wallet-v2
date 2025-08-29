@@ -10,14 +10,16 @@ import { getWsProvider } from 'polkadot-api/ws-provider/web';
 import { Token, TokenPrices } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 
+import { PolkadotApiService } from '../polkadot-api.service';
+
 @Injectable({
   providedIn: 'root'
 })
-export class XodePolkadotService {
-  private wsProvider = "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc";
+export class XodePolkadotService extends PolkadotApiService {
+  protected wsProvider = "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc";
 
-  private client = createClient(getWsProvider(this.wsProvider));
-  private xodeApi = this.client.getTypedApi(xodePolkadot);
+  protected client = createClient(getWsProvider(this.wsProvider));
+  protected chainApi = this.client.getTypedApi(xodePolkadot);
 
   async getTokens(): Promise<Token[]> {
     const xodeChainSpecs = this.client.getChainSpecData();
@@ -25,7 +27,7 @@ export class XodePolkadotService {
     const xodeChainName = (await xodeChainSpecs).name;
     const xodeTokenSymbol = (await xodeChainSpecs).properties['tokenSymbol'];
     const xodeTokenDecimals = (await xodeChainSpecs).properties['tokenDecimals'];
-    const xodeTotalTokenSupply = Number(await this.xodeApi.query.Balances.TotalIssuance.getValue())
+    const xodeTotalTokenSupply = Number(await this.chainApi.query.Balances.TotalIssuance.getValue({ at: "best" }))
 
     const tokens: Token[] = [];
 
@@ -43,13 +45,13 @@ export class XodePolkadotService {
 
     tokens.push(nativeToken);
 
-    const assets = await this.xodeApi.query.Assets.Asset.getEntries();
+    const assets = await this.chainApi.query.Assets.Asset.getEntries({ at: "best" });
     await Promise.all(
       assets.map(async (asset) => {
         const assetId = asset.keyArgs[0];
         if (!assetId) return;
 
-        const metadata = await this.xodeApi.query.Assets.Metadata.getValue(assetId);
+        const metadata = await this.chainApi.query.Assets.Metadata.getValue(assetId, { at: "best" });
         const assetToken: Token = {
           id: uuidv4(),
           reference_id: assetId,
@@ -83,7 +85,7 @@ export class XodePolkadotService {
           }
 
           if (token.type === 'native') {
-            const balanceAccount = await this.xodeApi.query.System.Account.getValue(publicKey);
+            const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
             balances.push({
               id: uuidv4(),
               token,
@@ -93,8 +95,8 @@ export class XodePolkadotService {
             });
           } else {
             const assetId = token.reference_id;
-            const account = await this.xodeApi.query.Assets.Account.getValue(Number(assetId), publicKey);
-            const metadata = await this.xodeApi.query.Assets.Metadata.getValue(Number(assetId));
+            const account = await this.chainApi.query.Assets.Account.getValue(Number(assetId), publicKey, { at: "best" });
+            const metadata = await this.chainApi.query.Assets.Metadata.getValue(Number(assetId), { at: "best" });
 
             if (account && metadata) {
               assetBalances.push({
@@ -127,7 +129,7 @@ export class XodePolkadotService {
         const assethubChainName = (await assethubChainSpecs).name;
         const assethubTokenSymbol = (await assethubChainSpecs).properties['tokenSymbol'];
         const assethubTokenDecimals = (await assethubChainSpecs).properties['tokenDecimals'];
-        const assethubTotalTokenSupply = Number(await this.xodeApi.query.Balances.TotalIssuance.getValue())
+        const assethubTotalTokenSupply = Number(await this.chainApi.query.Balances.TotalIssuance.getValue({ at: "best" }));
 
         tokens.push({
           id: uuidv4(),
@@ -143,7 +145,7 @@ export class XodePolkadotService {
 
         subscriber.next([...tokens]);
 
-        const totalIssuanceSub = this.xodeApi.query.Balances.TotalIssuance
+        const totalIssuanceSub = this.chainApi.query.Balances.TotalIssuance
           .watchValue("best")
           .subscribe(totalIssuance => {
             const idx = tokens.findIndex(t => t.type === "native");
@@ -159,7 +161,7 @@ export class XodePolkadotService {
 
         subscriptions.push(totalIssuanceSub);
 
-        const assetsSubscription = this.xodeApi.query.Assets.Asset
+        const assetsSubscription = this.chainApi.query.Assets.Asset
           .watchEntries({ at: "best" })
           .subscribe(async assets => {
             const assetList = await Promise.all(
@@ -167,7 +169,7 @@ export class XodePolkadotService {
                 const assetId = entry.args[0];
                 if (!assetId) return null;
 
-                const metadata = await this.xodeApi.query.Assets.Metadata.getValue(assetId);
+                const metadata = await this.chainApi.query.Assets.Metadata.getValue(assetId, { at: "best" });
                 return <Token>{
                   id: uuidv4(),
                   reference_id: assetId,
@@ -190,7 +192,7 @@ export class XodePolkadotService {
             subscriber.next([...tokens]);
 
             newAssets.forEach(asset => {
-              const metaSubscription = this.xodeApi.query.Assets.Metadata
+              const metaSubscription = this.chainApi.query.Assets.Metadata
                 .watchValue(Number(asset.reference_id), "best")
                 .subscribe(metadata => {
                   const idx = tokens.findIndex(t => t.id === asset.id);
@@ -231,7 +233,7 @@ export class XodePolkadotService {
             }
 
             if (token.type === 'native') {
-              const balanceAccount = await this.xodeApi.query.System.Account.getValue(publicKey);
+              const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
               return <Balance>{
                 id: token.id,
                 token,
@@ -242,7 +244,7 @@ export class XodePolkadotService {
             } else {
               const assetId = token.reference_id;
 
-              const account = await this.xodeApi.query.Assets.Account.getValue(Number(assetId), publicKey);
+              const account = await this.chainApi.query.Assets.Account.getValue(Number(assetId), publicKey, { at: "best" });
               if (!account) return null;
 
               return <Balance>{
@@ -269,7 +271,7 @@ export class XodePolkadotService {
           }
 
           if (balance.token.type === 'native') {
-            const systemAccountSubscription = this.xodeApi.query.System.Account
+            const systemAccountSubscription = this.chainApi.query.System.Account
               .watchValue(publicKey, "best")
               .subscribe(account => {
                 const idx = balances.findIndex(t => t.id === balance.id);
@@ -289,7 +291,7 @@ export class XodePolkadotService {
             subscriptions.push(systemAccountSubscription);
           } else {
             const assetId = balance.token.reference_id;
-            const assetAccountSubscription = this.xodeApi.query.Assets.Account
+            const assetAccountSubscription = this.chainApi.query.Assets.Account
               .watchValue(Number(assetId), publicKey, "best")
               .subscribe(account => {
                 if (account && Number(account.balance) > 0) {

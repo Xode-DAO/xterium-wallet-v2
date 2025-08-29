@@ -18,6 +18,8 @@ import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+
+import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
 
@@ -40,6 +42,10 @@ import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.ser
     IonLabel,
     IonAvatar,
     IonSpinner,
+  ],
+  providers: [
+    { provide: PolkadotApiService, useClass: AssethubPolkadotService },
+    { provide: PolkadotApiService, useClass: XodePolkadotService },
   ]
 })
 export class TokensComponent implements OnInit {
@@ -94,12 +100,14 @@ export class TokensComponent implements OnInit {
   }
 
   async getTokens(): Promise<void> {
-    let tokens: Token[] = [];
+    let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) tokens = await this.assethubPolkadotService.getTokens();
-    if (this.currentWallet.network_id === 2) tokens = await this.xodePolkadotService.getTokens();
+    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
 
-    this.tokens = tokens;
+    if (!service) return;
+
+    this.tokens = await service.getTokens();
   }
 
   async getTokenPrices(): Promise<void> {
@@ -124,22 +132,25 @@ export class TokensComponent implements OnInit {
 
     this.tokenPrices = tokenPrices;
   }
-
   async getBalances(): Promise<void> {
-    let balances: Balance[] = [];
+    let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) balances = await this.assethubPolkadotService.getBalances(this.tokens, this.tokenPrices, this.currentWalletPublicAddress);
-    if (this.currentWallet.network_id === 2) balances = await this.xodePolkadotService.getBalances(this.tokens, this.tokenPrices, this.currentWalletPublicAddress);
+    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
 
-    this.balances = balances;
-    this.loading = false;
+    if (!service) return;
+
+    this.balances = await service.getBalances(
+      this.tokens,
+      this.tokenPrices,
+      this.currentWalletPublicAddress
+    );
+
+    this.getBalanceTotalAmount();
 
     this.observableTimeout = setTimeout(() => {
-      this.tokensSubscription = this.assethubPolkadotService.getTokensObservable().subscribe(tokens => {
-        this.tokens = tokens;
-      });
-
-      this.balancesSubscription = this.assethubPolkadotService.getBalancesObservable(
+      this.tokensSubscription = service.getTokensObservable().subscribe(tokens => (this.tokens = tokens));
+      this.balancesSubscription = service.getBalancesObservable(
         this.tokens,
         this.tokenPrices,
         this.currentWalletPublicAddress
@@ -148,6 +159,8 @@ export class TokensComponent implements OnInit {
         this.getBalanceTotalAmount();
       });
     }, 5000);
+
+    this.loading = false;
   }
 
   getBalanceTotalAmount(): void {
@@ -167,7 +180,7 @@ export class TokensComponent implements OnInit {
           this.onTotalAmount.emit(totalAmount);
         }
       }
-    }, 1000);
+    }, 1500);
   }
 
   async getBalanceTokenImages(): Promise<void> {
@@ -195,7 +208,6 @@ export class TokensComponent implements OnInit {
     this.balances = [];
 
     await this.getBalances();
-    this.getBalanceTotalAmount();
     await this.getBalanceTokenImages();
   }
 
