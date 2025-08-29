@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { xodePolkadot } from "@polkadot-api/descriptors"
@@ -113,5 +114,205 @@ export class XodePolkadotService {
     }
 
     return balances;
+  }
+
+  getTokensObservable(): Observable<Token[]> {
+    return new Observable<Token[]>(subscriber => {
+      const subscriptions: any[] = [];
+      const tokens: Token[] = [];
+
+      (async () => {
+        const assethubChainSpecs = this.client.getChainSpecData();
+
+        const assethubChainName = (await assethubChainSpecs).name;
+        const assethubTokenSymbol = (await assethubChainSpecs).properties['tokenSymbol'];
+        const assethubTokenDecimals = (await assethubChainSpecs).properties['tokenDecimals'];
+        const assethubTotalTokenSupply = Number(await this.xodeApi.query.Balances.TotalIssuance.getValue())
+
+        tokens.push({
+          id: uuidv4(),
+          reference_id: 0,
+          network_id: 1,
+          name: assethubChainName,
+          symbol: assethubTokenSymbol,
+          decimals: assethubTokenDecimals,
+          total_supply: assethubTotalTokenSupply,
+          type: "native",
+          image: ""
+        });
+
+        subscriber.next([...tokens]);
+
+        const totalIssuanceSub = this.xodeApi.query.Balances.TotalIssuance
+          .watchValue("best")
+          .subscribe(totalIssuance => {
+            const idx = tokens.findIndex(t => t.type === "native");
+            if (idx >= 0) {
+              tokens[idx] = {
+                ...tokens[idx],
+                total_supply: Number(totalIssuance)
+              };
+
+              subscriber.next([...tokens]);
+            }
+          });
+
+        subscriptions.push(totalIssuanceSub);
+
+        const assetsSubscription = this.xodeApi.query.Assets.Asset
+          .watchEntries({ at: "best" })
+          .subscribe(async assets => {
+            const assetList = await Promise.all(
+              assets.entries.map(async entry => {
+                const assetId = entry.args[0];
+                if (!assetId) return null;
+
+                const metadata = await this.xodeApi.query.Assets.Metadata.getValue(assetId);
+                return <Token>{
+                  id: uuidv4(),
+                  reference_id: assetId,
+                  network_id: 1,
+                  name: metadata.name.asText(),
+                  symbol: metadata.symbol.asText(),
+                  decimals: metadata.decimals,
+                  total_supply: Number(entry.value.supply),
+                  type: "asset",
+                  image: ""
+                };
+              })
+            );
+
+            const newAssets = assetList.filter((t): t is Token => !!t);
+
+            const nativeOnly = tokens.filter(t => t.type === "native");
+            tokens.splice(0, tokens.length, ...nativeOnly, ...newAssets);
+
+            subscriber.next([...tokens]);
+
+            newAssets.forEach(asset => {
+              const metaSubscription = this.xodeApi.query.Assets.Metadata
+                .watchValue(Number(asset.reference_id), "best")
+                .subscribe(metadata => {
+                  const idx = tokens.findIndex(t => t.id === asset.id);
+                  if (idx >= 0) {
+                    tokens[idx] = {
+                      ...tokens[idx],
+                      name: metadata.name.asText(),
+                      symbol: metadata.symbol.asText(),
+                      decimals: metadata.decimals
+                    };
+
+                    subscriber.next([...tokens]);
+                  }
+                });
+
+              subscriptions.push(metaSubscription);
+            });
+          });
+
+        subscriptions.push(assetsSubscription);
+      })();
+
+      return () => subscriptions.forEach(s => s.unsubscribe());
+    });
+  }
+
+  getBalancesObservable(tokens: Token[], tokenPrices: TokenPrices[], publicKey: string): Observable<Balance[]> {
+    return new Observable<Balance[]>(subscriber => {
+      const subscriptions: any[] = [];
+      const balances: Balance[] = [];
+
+      (async () => {
+        const balanceList = await Promise.all(
+          tokens.map(async token => {
+            let price = 0;
+            if (tokenPrices.length > 0) {
+              price = tokenPrices.find(p => p.token.symbol.toLowerCase() === token.symbol.toLowerCase())?.price || 0;
+            }
+
+            if (token.type === 'native') {
+              const balanceAccount = await this.xodeApi.query.System.Account.getValue(publicKey);
+              return <Balance>{
+                id: token.id,
+                token,
+                quantity: Number(balanceAccount.data.free),
+                price,
+                amount: Number(balanceAccount.data.free) * price,
+              };
+            } else {
+              const assetId = token.reference_id;
+
+              const account = await this.xodeApi.query.Assets.Account.getValue(Number(assetId), publicKey);
+              if (!account) return null;
+
+              return <Balance>{
+                id: token.id,
+                token,
+                quantity: Number(account.balance),
+                price,
+                amount: Number(account.balance) * price,
+              };
+            }
+          })
+        );
+
+        const newBalances = balanceList.filter((t): t is Balance => !!t);
+        balances.splice(0, balances.length, ...newBalances);
+        balances.sort((a, b) => Number(a.token.reference_id) - Number(b.token.reference_id))
+
+        subscriber.next([...balances]);
+
+        newBalances.forEach(balance => {
+          let price = 0;
+          if (tokenPrices.length > 0) {
+            price = tokenPrices.find(p => p.token.symbol.toLowerCase() === balance.token.symbol.toLowerCase())?.price || 0;
+          }
+
+          if (balance.token.type === 'native') {
+            const systemAccountSubscription = this.xodeApi.query.System.Account
+              .watchValue(publicKey, "best")
+              .subscribe(account => {
+                const idx = balances.findIndex(t => t.id === balance.id);
+
+                if (idx >= 0) {
+                  balances[idx] = {
+                    ...balances[idx],
+                    quantity: Number(account.data.free),
+                    price,
+                    amount: Number(account.data.free) * price,
+                  };
+
+                  subscriber.next([...balances]);
+                }
+              });
+
+            subscriptions.push(systemAccountSubscription);
+          } else {
+            const assetId = balance.token.reference_id;
+            const assetAccountSubscription = this.xodeApi.query.Assets.Account
+              .watchValue(Number(assetId), publicKey, "best")
+              .subscribe(account => {
+                if (account && Number(account.balance) > 0) {
+                  const idx = balances.findIndex(t => t.id === balance.id);
+                  if (idx >= 0) {
+                    balances[idx] = {
+                      ...balances[idx],
+                      quantity: Number(account.balance),
+                      price,
+                      amount: Number(account.balance) * price,
+                    };
+
+                    subscriber.next([...balances]);
+                  }
+                }
+              });
+
+            subscriptions.push(assetAccountSubscription);
+          }
+        });
+      })();
+
+      return () => subscriptions.forEach(s => s.unsubscribe());
+    });
   }
 }

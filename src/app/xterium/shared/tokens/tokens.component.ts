@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import {
   IonGrid,
@@ -67,7 +68,9 @@ export class TokensComponent implements OnInit {
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
 
-  // updateBalancesTimeout: any = null;
+  observableTimeout: any = null;
+  tokensSubscription: Subscription = new Subscription();
+  balancesSubscription: Subscription = new Subscription();
 
   async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -122,17 +125,6 @@ export class TokensComponent implements OnInit {
     this.tokenPrices = tokenPrices;
   }
 
-  async getTokenBalances(): Promise<void> {
-    await this.getCurrentWallet();
-
-    await this.getTokens();
-    await this.getTokenPrices();
-
-    await this.getBalances();
-    await this.computeTotalBalance();
-    await this.attachTokenImages();
-  }
-
   async getBalances(): Promise<void> {
     let balances: Balance[] = [];
 
@@ -141,40 +133,70 @@ export class TokensComponent implements OnInit {
 
     this.balances = balances;
     this.loading = false;
+
+    this.observableTimeout = setTimeout(() => {
+      this.tokensSubscription = this.assethubPolkadotService.getTokensObservable().subscribe(tokens => {
+        this.tokens = tokens;
+      });
+
+      this.balancesSubscription = this.assethubPolkadotService.getBalancesObservable(
+        this.tokens,
+        this.tokenPrices,
+        this.currentWalletPublicAddress
+      ).subscribe(balances => {
+        this.balances = balances;
+        this.getBalanceTotalAmount();
+      });
+    }, 5000);
   }
 
-  async computeTotalBalance(): Promise<void> {
-    let totalAmount = 0;
+  getBalanceTotalAmount(): void {
+    setTimeout(() => {
+      let totalAmount = 0;
 
-    for (const token of this.tokens) {
-      const filtered = this.balances.find(
-        w => w.token?.id === token.id
-      );
+      for (const token of this.tokens) {
+        const filtered = this.balances.find(
+          w => w.token?.reference_id === token.reference_id
+        );
 
-      if (filtered) {
-        let amount = filtered.amount;
-        let formattedAmount = this.formatBalance(amount, token.decimals);
-        totalAmount += Number(formattedAmount);
+        if (filtered) {
+          let amount = filtered.amount;
+          let formattedAmount = this.formatBalance(amount, token.decimals);
+          totalAmount += Number(formattedAmount);
 
-        this.onTotalAmount.emit(totalAmount);
+          this.onTotalAmount.emit(totalAmount);
+        }
       }
-    }
-
-    // if (this.updateBalancesTimeout) clearTimeout(this.updateBalancesTimeout);
-    // this.updateBalancesTimeout = setTimeout(() => {
-    //   this.getTokenPrices();
-    //   this.getBalances();
-    //   this.computeTotalBalance();
-    // }, 10000);
+    }, 1000);
   }
 
-  async attachTokenImages(): Promise<void> {
+  async getBalanceTokenImages(): Promise<void> {
     setTimeout(async () => {
       if (this.balances.length > 0) {
         let balanceTokens = this.balances.map(b => b.token);
         await this.tokensService.attachIcons(balanceTokens);
       }
     }, 500);
+  }
+
+  async fetchData(): Promise<void> {
+    this.loading = true;
+
+    clearTimeout(this.observableTimeout);
+    if (!this.tokensSubscription.closed) this.tokensSubscription.unsubscribe();
+    if (!this.balancesSubscription.closed) this.balancesSubscription.unsubscribe();
+
+    await this.getCurrentWallet();
+
+    await this.getTokens();
+    await this.getTokenPrices();
+
+    this.onTotalAmount.emit(0);
+    this.balances = [];
+
+    await this.getBalances();
+    this.getBalanceTotalAmount();
+    await this.getBalanceTokenImages();
   }
 
   formatBalance(amount: number, decimals: number): number {
@@ -191,12 +213,7 @@ export class TokensComponent implements OnInit {
 
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
-      this.loading = true;
-
-      this.onTotalAmount.emit(0);
-      this.balances = [];
-
-      this.getTokenBalances();
+      this.fetchData();
     });
 
     this.tokensService.tokenImagesObservable.subscribe(tokenImages => {
@@ -214,12 +231,7 @@ export class TokensComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
     const refreshCounter = changes['refreshCounter']?.currentValue;
     if (refreshCounter > 0) {
-      this.loading = true;
-
-      this.onTotalAmount.emit(0);
-      this.balances = [];
-
-      this.getTokenBalances();
+      this.fetchData();
     }
   }
 }
