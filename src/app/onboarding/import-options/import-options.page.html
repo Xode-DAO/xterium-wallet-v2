@@ -20,13 +20,15 @@
       <ion-row>
         <ion-col size="12">
           <div class="primary-button-controls">
-            <ion-button expand="block" size="default" class="ion-margin-bottom" id="import-seed-phrase">
+            <ion-button expand="block" size="default" class="ion-margin-bottom" id="import-seed-phrase"
+              (click)="openImportSeedPhraseModal()">
               IMPORT SEED PHRASE
             </ion-button>
-            <ion-button expand="block" size="default" class="ion-margin-bottom" id="import-private-key">
+            <ion-button expand="block" size="default" class="ion-margin-bottom" id="import-private-key"
+              (click)="openImportPrivateKeyModal()">
               IMPORT PRIVATE KEY
             </ion-button>
-            <ion-button expand="block" size="default" id="import-from-backup">
+            <ion-button expand="block" size="default" id="import-from-backup" (click)="openImportFromBackupModal()">
               IMPORT FROM BACKUP
             </ion-button>
           </div>
@@ -53,7 +55,7 @@
 
         <div class="ion-padding-horizontal">
           <app-import-seed-phrase [selectedNetwork]="selectedNetwork"
-            (onImportedWallet)="onImportedWallet($event)"></app-import-seed-phrase>
+            (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
         </div>
       </ion-content>
     </ng-template>
@@ -77,7 +79,7 @@
 
         <div class="ion-padding-horizontal">
           <app-import-private-key [selectedNetwork]="selectedNetwork"
-            (onImportedWallet)="onImportedWallet($event)"></app-import-private-key>
+            (onImportedWallet)="onImportWalletPrivateKey($event)"></app-import-private-key>
         </div>
       </ion-content>
     </ng-template>
@@ -101,7 +103,7 @@
 
         <div class="ion-padding-horizontal">
           <app-import-from-backup [selectedNetwork]="selectedNetwork"
-            (onImportedWallet)="onImportedWallet($event)"></app-import-from-backup>
+            (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
         </div>
       </ion-content>
     </ng-template>

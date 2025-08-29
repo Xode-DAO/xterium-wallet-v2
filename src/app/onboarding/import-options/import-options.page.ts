@@ -56,6 +56,8 @@ import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from
 })
 export class ImportOptionsPage implements OnInit {
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
+  @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
+  @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
 
   constructor(
     private router: Router,
@@ -69,7 +71,30 @@ export class ImportOptionsPage implements OnInit {
 
   selectedNetwork: Network = {} as Network;
 
-  onImportedWallet(wallet: Wallet) {
+  openImportSeedPhraseModal() {
+    this.importSeedPhraseModal.present();
+  }
+
+  onImportWalletSeedPhrase(wallet: Wallet) {
+    this.importSeedPhraseModal.dismiss();
+    this.router.navigate(['/xterium/balances']);
+  }
+
+  openImportPrivateKeyModal() {
+    this.importPrivateKeyModal.present();
+  }
+
+  onImportWalletPrivateKey(wallet: Wallet) {
+    this.importPrivateKeyModal.dismiss();
+    this.router.navigate(['/xterium/balances']);
+  }
+
+  openImportFromBackupModal() {
+    this.importFromBackupModal.present();
+  }
+
+  onImportWalletFromBackup(wallet: Wallet) {
+    this.importFromBackupModal.dismiss();
     this.router.navigate(['/xterium/balances']);
   }
 

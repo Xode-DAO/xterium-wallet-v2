@@ -166,7 +166,7 @@
 
                     <div class="ion-padding-horizontal">
                       <app-import-seed-phrase [selectedNetwork]="selectedNetwork"
-                        (onImportedWallet)="openImportWalletSeedPhrase($event)"></app-import-seed-phrase>
+                        (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
                     </div>
                   </ion-content>
                 </ng-template>
@@ -191,7 +191,7 @@
 
                     <div class="ion-padding-horizontal">
                       <app-import-private-key [selectedNetwork]="selectedNetwork"
-                        (onImportedWallet)="openImportWalletPrivateKey($event)"></app-import-private-key>
+                        (onImportedWallet)="onImportWalletPrivateKey($event)"></app-import-private-key>
                     </div>
                   </ion-content>
                 </ng-template>
@@ -216,7 +216,7 @@
 
                     <div class="ion-padding-horizontal">
                       <app-import-from-backup [selectedNetwork]="selectedNetwork"
-                        (onImportedWallet)="openImportWalletFromBackup($event)"></app-import-from-backup>
+                        (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
                     </div>
                   </ion-content>
                 </ng-template>

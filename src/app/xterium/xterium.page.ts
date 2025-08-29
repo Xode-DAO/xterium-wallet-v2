@@ -186,7 +186,7 @@ export class XteriumPage implements OnInit {
     this.importSeedPhraseModal.present();
   }
 
-  openImportWalletSeedPhrase(wallet: Wallet) {
+  onImportWalletSeedPhrase(wallet: Wallet) {
     this.newlyAddedWallet = wallet;
 
     this.createNewAccountModal.dismiss();
@@ -197,7 +197,7 @@ export class XteriumPage implements OnInit {
     this.importPrivateKeyModal.present();
   }
 
-  openImportWalletPrivateKey(wallet: Wallet) {
+  onImportWalletPrivateKey(wallet: Wallet) {
     this.newlyAddedWallet = wallet;
 
     this.createNewAccountModal.dismiss();
@@ -208,7 +208,7 @@ export class XteriumPage implements OnInit {
     this.importFromBackupModal.present();
   }
 
-  openImportWalletFromBackup(wallet: Wallet) {
+  onImportWalletFromBackup(wallet: Wallet) {
     this.newlyAddedWallet = wallet;
 
     this.createNewAccountModal.dismiss();

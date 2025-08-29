@@ -65,8 +65,6 @@ export class TokensComponent implements OnInit {
     private multipayxApiService: MultipayxApiService,
   ) { }
 
-  loading: boolean = false;
-
   tokens: Token[] = [];
   tokenPrices: TokenPrices[] = [];
   balances: Balance[] = [];
@@ -159,8 +157,6 @@ export class TokensComponent implements OnInit {
         this.getBalanceTotalAmount();
       });
     }, 5000);
-
-    this.loading = false;
   }
 
   getBalanceTotalAmount(): void {
@@ -193,19 +189,17 @@ export class TokensComponent implements OnInit {
   }
 
   async fetchData(): Promise<void> {
-    this.loading = true;
-
     clearTimeout(this.observableTimeout);
     if (!this.tokensSubscription.closed) this.tokensSubscription.unsubscribe();
     if (!this.balancesSubscription.closed) this.balancesSubscription.unsubscribe();
 
     await this.getCurrentWallet();
 
+    this.balances = [];
+    this.onTotalAmount.emit(0);
+
     await this.getTokens();
     await this.getTokenPrices();
-
-    this.onTotalAmount.emit(0);
-    this.balances = [];
 
     await this.getBalances();
     await this.getBalanceTokenImages();
