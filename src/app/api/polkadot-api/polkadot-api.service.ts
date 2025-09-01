@@ -19,4 +19,6 @@ export abstract class PolkadotApiService {
 
   abstract watchTokens(): Observable<Token[]>;
   abstract watchBalances(tokens: Token[], tokenPrices: TokenPrices[], publicKey: string): Observable<Balance[]>;
+  abstract watchBalance(balance: Balance, publicKey: string): Observable<Balance>;
+
 }

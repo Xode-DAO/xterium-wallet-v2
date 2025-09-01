@@ -235,7 +235,7 @@ export class XodePolkadotService extends PolkadotApiService {
             if (token.type === 'native') {
               const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
               return <Balance>{
-                id: token.id,
+                id: uuidv4(),
                 token,
                 quantity: Number(balanceAccount.data.free),
                 price,
@@ -248,7 +248,7 @@ export class XodePolkadotService extends PolkadotApiService {
               if (!account) return null;
 
               return <Balance>{
-                id: token.id,
+                id: uuidv4(),
                 token,
                 quantity: Number(account.balance),
                 price,
@@ -313,6 +313,51 @@ export class XodePolkadotService extends PolkadotApiService {
           }
         });
       })();
+
+      return () => subscriptions.forEach(s => s.unsubscribe());
+    });
+  }
+
+  watchBalance(balance: Balance, publicKey: string): Observable<Balance> {
+    return new Observable<Balance>(subscriber => {
+      const subscriptions: any[] = [];
+
+      if (balance.token.type === 'native') {
+        const systemAccountSubscription = this.chainApi.query.System.Account
+          .watchValue(publicKey, "best")
+          .subscribe(account => {
+            const newBalance: Balance = {
+              id: balance.id,
+              token: balance.token,
+              quantity: Number(account.data.free),
+              price: balance.price,
+              amount: Number(account.data.free) * balance.price,
+            };
+
+            subscriber.next(newBalance);
+          });
+
+        subscriptions.push(systemAccountSubscription);
+      } else {
+        const assetId = balance.token.reference_id;
+        const assetAccountSubscription = this.chainApi.query.Assets.Account
+          .watchValue(Number(assetId), publicKey, "best")
+          .subscribe(account => {
+            if (account && Number(account.balance) > 0) {
+              const newBalance: Balance = {
+                id: balance.id,
+                token: balance.token,
+                quantity: Number(account.balance),
+                price: balance.price,
+                amount: Number(account.balance) * balance.price,
+              };
+
+              subscriber.next(newBalance);
+            }
+          });
+
+        subscriptions.push(assetAccountSubscription);
+      }
 
       return () => subscriptions.forEach(s => s.unsubscribe());
     });
