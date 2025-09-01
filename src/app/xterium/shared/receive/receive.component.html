@@ -1,8 +1,7 @@
 <div class="qrcode">
-  <qrcode [qrdata]="'5CJ6JNcNx2vu4bgVBkeaAFwh4XwnCmjT6HK1MprzzePm7cTY'" [allowEmptyString]="true"
-    [colorDark]="'#000000ff'" [colorLight]="'#ffffffff'" [elementType]="'canvas'" [errorCorrectionLevel]="'M'"
-    [imageSrc]="'./../../../assets/images/tokens/usdt.png'" [imageHeight]="50" [imageWidth]="50" [margin]="0"
-    [scale]="1" [width]="300">
+  <qrcode [qrdata]="currentWalletPublicAddress" [allowEmptyString]="true" [colorDark]="'#000000ff'"
+    [colorLight]="'#ffffffff'" [elementType]="'canvas'" [errorCorrectionLevel]="'M'" [imageSrc]="qrImageIcon"
+    [imageHeight]="70" [imageWidth]="70" [margin]="0" [scale]="1" [width]="300">
   </qrcode>
 </div>
 
@@ -13,8 +12,8 @@
         <img src="./../../../../assets/icon/xterium-logo.png" />
       </ion-avatar>
       <ion-label>
-        <h2>My Wallet 2</h2>
-        <p>5CJ6J...Pm7cTY</p>
+        <h2>{{ currentWallet.name }}</h2>
+        <p>{{ truncateAddress(currentWalletPublicAddress) }}</p>
       </ion-label>
     </ion-item>
   </ion-list>
