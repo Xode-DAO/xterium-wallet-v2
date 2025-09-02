@@ -1,3 +1,78 @@
-<p>
-  send works!
-</p>
+<div class="send-details">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <div class="token-title ion-text-center">
+          <img src="./../../../../assets/images/tokens/usdt.png" height="60" />
+          <ion-label>
+            <h1>Tether USD</h1>
+            <p>USDT</p>
+          </ion-label>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <ion-item class="primary-textarea-item" lines="none">
+          <ion-label position="stacked">Recipient's Wallet Address:</ion-label>
+          <ion-textarea auto-grow="true" rows="3" placeholder=""></ion-textarea>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <div class="small-outline-button-wrapper ion-text-left">
+          <ion-button fill="outline" size="small" expand="block">
+            <ion-icon name="clipboard-outline" slot="start"></ion-icon>
+            Paste
+          </ion-button>
+        </div>
+      </ion-col>
+      <ion-col size="6">
+        <div class="small-outline-button-wrapper ion-text-left">
+          <ion-button fill="outline" size="small" expand="block">
+            <ion-icon name="scan-outline" slot="start"></ion-icon>
+            Scan
+          </ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <div class="ion-text-left enter-amount-label">
+          <ion-label>Amount:</ion-label>
+        </div>
+        <ion-item class="primary-input-item enter-amount-item" lines="none">
+          <ion-input placeholder="0.00" class="enter-amount-input">
+            <ion-label slot="start" class="enter-amount-image">
+              <ion-avatar slot="start" style="padding: 3px;">
+                <img src="./../../../../assets/images/tokens/usdt.png" height="60" />
+              </ion-avatar>
+            </ion-label>
+            <ion-label slot="end" class="enter-amount-token-symbol">USDT</ion-label>
+          </ion-input>
+        </ion-item>
+        <div class="ion-text-right enter-amount-available-balance">
+          <span>Balance: <b>1,000.00</b> USDT</span>
+        </div>
+        <div class="ion-text-center enter-amount-buttons">
+          <ion-button fill="solid" size="small">25%</ion-button>
+          <ion-button fill="solid" size="small">50%</ion-button>
+          <ion-button fill="solid" size="small">75%</ion-button>
+          <ion-button fill="solid" size="small">100%</ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <div class="primary-button-controls">
+          <ion-button expand="block" size="default" class="ion-margin-bottom">
+            SEND
+          </ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-toast [duration]="5000"></ion-toast>
+</div>

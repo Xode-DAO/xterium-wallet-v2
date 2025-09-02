@@ -39,6 +39,7 @@ import { BalancesService } from 'src/app/api/balances/balances.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 
 import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.component";
+import { SendComponent } from "src/app/xterium/shared/send/send.component"
 
 @Component({
   selector: 'app-token-details',
@@ -63,7 +64,8 @@ import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.compone
     IonModal,
     IonTitle,
     IonToolbar,
-    ReceiveComponent
+    ReceiveComponent,
+    SendComponent
   ]
 })
 export class TokenDetailsPage implements OnInit {

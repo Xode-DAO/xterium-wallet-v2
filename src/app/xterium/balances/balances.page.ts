@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +26,7 @@ import { Balance } from 'src/models/balance.model';
 
 import { TokensComponent } from "src/app/xterium/shared/tokens/tokens.component"
 import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.component";
+import { SendComponent } from "src/app/xterium/shared/send/send.component"
 
 @Component({
   selector: 'app-balances',
@@ -48,10 +49,15 @@ import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.compone
     IonTitle,
     IonToolbar,
     TokensComponent,
-    ReceiveComponent
+    ReceiveComponent,
+    SendComponent
   ]
 })
 export class BalancesPage implements OnInit {
+  @ViewChild('balancesReceiveModal', { read: IonModal }) balancesReceiveModal!: IonModal;
+  @ViewChild('balancesSelectTokenModal', { read: IonModal }) balancesSelectTokenModal!: IonModal;
+  @ViewChild('balancesSendModal', { read: IonModal }) balancesSendModal!: IonModal;
+  @ViewChild('manageTokensModal', { read: IonModal }) manageTokensModal!: IonModal;
 
   constructor(
     private router: Router
@@ -72,6 +78,22 @@ export class BalancesPage implements OnInit {
     setTimeout(() => {
       event.target.complete();
     }, 1000);
+  }
+
+  openBalancesReceiveModal() {
+    this.balancesReceiveModal.present();
+  }
+
+  openBalancesSelectTokenModal() {
+    this.balancesSelectTokenModal.present();
+  }
+
+  openBalancesSendModal(balance: Balance) {
+    this.balancesSendModal.present();
+  }
+
+  openManageTokensModal() {
+    this.manageTokensModal.present();
   }
 
   goToTokenDetails(balance: Balance) {
