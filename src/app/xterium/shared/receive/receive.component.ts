@@ -1,6 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import {
+  IonGrid,
+  IonRow,
+  IonCol,
   IonList,
   IonItem,
   IonAvatar,
@@ -24,6 +27,9 @@ import { TokensService } from 'src/app/api/tokens/tokens.service';
   templateUrl: './receive.component.html',
   styleUrls: ['./receive.component.scss'],
   imports: [
+    IonGrid,
+    IonRow,
+    IonCol,
     IonList,
     IonItem,
     IonAvatar,

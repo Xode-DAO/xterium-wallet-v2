@@ -28,8 +28,8 @@
     </ion-row>
     <ion-row>
       <ion-col size="12">
-        <div class="small-outline-button-wrapper ion-text-center">
-          <ion-button fill="outline" size="small" (click)="copyToClipboard()">
+        <div class="primary-button-wrapper">
+          <ion-button expand="block" size="default" class="secondary-button" (click)="copyToClipboard()">
             <ion-icon name="copy-outline" slot="start"></ion-icon>
             Copy Address
           </ion-button>
@@ -52,9 +52,9 @@
         </ion-list>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="ion-margin-top">
       <ion-col size="12">
-        <div class="primary-button-controls">
+        <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="ion-margin-bottom success-button" (click)="exportWallet()">
             EXPORT WALLET
           </ion-button>
