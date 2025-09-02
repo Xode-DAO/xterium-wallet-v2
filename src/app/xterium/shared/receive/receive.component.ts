@@ -45,7 +45,7 @@ export class ReceiveComponent implements OnInit {
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
 
-  qrImageIcon: string = "";
+  qrImageIcon: string = "./../../../assets/icon/xterium-logo.png";
 
   async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -74,18 +74,13 @@ export class ReceiveComponent implements OnInit {
 
   async fetchData(): Promise<void> {
     await this.getCurrentWallet();
-    await this.getBalanceTokenImages();
+    await this.getTokenImage();
   }
 
-  async getBalanceTokenImages(): Promise<void> {
+  async getTokenImage(): Promise<void> {
     setTimeout(async () => {
       if (this.token) {
-        let tokens: Token[] = [
-          this.token
-        ];
-        await this.tokensService.attachIcons(tokens);
-      } else {
-        this.qrImageIcon = "./../../../assets/icon/xterium-logo.png";
+        await this.tokensService.attachIcon(this.token);
       }
     }, 500);
   }
@@ -93,11 +88,9 @@ export class ReceiveComponent implements OnInit {
   ngOnInit() {
     this.fetchData();
 
-    this.tokensService.tokenImagesObservable.subscribe(tokenImages => {
-      if (tokenImages.length > 0) {
-        for (let i = 0; i < tokenImages.length; i++) {
-          this.qrImageIcon = tokenImages[i].image;
-        }
+    this.tokensService.tokenImageObservable.subscribe(tokenImage => {
+      if (tokenImage) {
+        this.qrImageIcon = tokenImage.image;
       }
     });
   }

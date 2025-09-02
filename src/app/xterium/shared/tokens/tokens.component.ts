@@ -12,7 +12,7 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 
-import { Token, TokenPrices } from 'src/models/token.model';
+import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
@@ -61,14 +61,13 @@ export class TokensComponent implements OnInit {
   ) { }
 
   tokens: Token[] = [];
-  tokenPrices: TokenPrices[] = [];
+  tokenPrices: TokenPrice[] = [];
   balances: Balance[] = [];
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
 
   observableTimeout: any = null;
-  tokensSubscription: Subscription = new Subscription();
   balancesSubscription: Subscription = new Subscription();
 
   async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
@@ -105,7 +104,7 @@ export class TokensComponent implements OnInit {
   }
 
   async getTokenPrices(): Promise<void> {
-    let tokenPrices: TokenPrices[] = [];
+    let tokenPrices: TokenPrice[] = [];
 
     let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency("USD");
     if (pricePerCurrency.data.length > 0) {
@@ -176,14 +175,17 @@ export class TokensComponent implements OnInit {
     setTimeout(async () => {
       if (this.balances.length > 0) {
         let balanceTokens = this.balances.map(b => b.token);
-        await this.tokensService.attachIcons(balanceTokens);
+        if (balanceTokens.length > 0) {
+          for (const token of balanceTokens) {
+            await this.tokensService.attachIcon(token);
+          }
+        }
       }
     }, 500);
   }
 
   async fetchData(): Promise<void> {
     clearTimeout(this.observableTimeout);
-    if (!this.tokensSubscription.closed) this.tokensSubscription.unsubscribe();
     if (!this.balancesSubscription.closed) this.balancesSubscription.unsubscribe();
 
     await this.getCurrentWallet();
@@ -212,13 +214,11 @@ export class TokensComponent implements OnInit {
       this.fetchData();
     });
 
-    this.tokensService.tokenImagesObservable.subscribe(tokenImages => {
-      if (tokenImages.length > 0) {
-        for (let i = 0; i < tokenImages.length; i++) {
-          let balanceToken = this.balances.filter(d => d.token.id === tokenImages[i].id)[0];
-          if (balanceToken) {
-            balanceToken.token.image = tokenImages[i].image;
-          }
+    this.tokensService.tokenImageObservable.subscribe(tokenImage => {
+      if (tokenImage) {
+        let balanceToken = this.balances.filter(d => d.token.id === tokenImage.id)[0];
+        if (balanceToken) {
+          balanceToken.token.image = tokenImage.image;
         }
       }
     });

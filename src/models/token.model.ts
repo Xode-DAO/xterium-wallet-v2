@@ -10,7 +10,7 @@ export class Token {
   image: string = "";
 }
 
-export class TokenPrices {
+export class TokenPrice {
   token: Token = new Token();
   price: number = 0;
 }

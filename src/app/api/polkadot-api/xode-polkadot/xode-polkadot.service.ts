@@ -7,7 +7,7 @@ import { xodePolkadot } from "@polkadot-api/descriptors"
 import { createClient } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider/web';
 
-import { Token, TokenPrices } from 'src/models/token.model';
+import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 
 import { PolkadotApiService } from '../polkadot-api.service';
@@ -71,7 +71,7 @@ export class XodePolkadotService extends PolkadotApiService {
     return tokens;
   }
 
-  async getBalances(tokens: Token[], tokenPrices: TokenPrices[], publicKey: string): Promise<Balance[]> {
+  async getBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Promise<Balance[]> {
     const balances: Balance[] = [];
 
     if (tokens.length > 0) {
@@ -219,7 +219,7 @@ export class XodePolkadotService extends PolkadotApiService {
     });
   }
 
-  watchBalances(tokens: Token[], tokenPrices: TokenPrices[], publicKey: string): Observable<Balance[]> {
+  watchBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Observable<Balance[]> {
     return new Observable<Balance[]>(subscriber => {
       const subscriptions: any[] = [];
       const balances: Balance[] = [];

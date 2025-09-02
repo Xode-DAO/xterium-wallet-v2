@@ -17,8 +17,8 @@ export class TokensService {
 
   private assetPath = 'assets/images/tokens/';
 
-  private tokenImagesSubject = new BehaviorSubject<Token[]>([]);
-  public tokenImagesObservable = this.tokenImagesSubject.asObservable();
+  private tokenImageSubject = new BehaviorSubject<Token | null>(null);
+  public tokenImageObservable = this.tokenImageSubject.asObservable();
 
   async imageExists(path: string): Promise<boolean> {
     const baseUrl = `${window.location.protocol}//${window.location.host}/`;
@@ -48,18 +48,12 @@ export class TokensService {
     return `${this.assetPath}default.png`;
   }
 
-  async attachIcons(tokens: Token[]): Promise<void> {
-    let tokenImages: Token[] = [];
+  async attachIcon(token: Token): Promise<void> {
+    let tokenImage: Token = {
+      ...token,
+      image: "./../../../" + await this.getTokenIcon(token.symbol)
+    };
 
-    if (tokens.length > 0) {
-      for (let i = 0; i < tokens.length; i++) {
-        tokenImages.push({
-          ...tokens[i],
-          image: "./../../../" + await this.getTokenIcon(tokens[i].symbol)
-        });
-      }
-    }
-
-    this.tokenImagesSubject.next(tokenImages);
+    this.tokenImageSubject.next(tokenImage);
   }
 }
