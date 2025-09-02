@@ -18,54 +18,56 @@
     }
   }
 
-  .enter-amount-label {
-    font-size: 0.9rem;
-    margin: 10px;
-    font-weight: 700;
-  }
+  .enter-amount {
+    .label {
+      font-size: 0.9rem;
+      margin: 10px;
+      font-weight: 700;
+    }
 
-  ion-item.enter-amount-item {
-    border-radius: 25px;
-  }
+    ion-item.item {
+      border-radius: 25px;
+    }
 
-  ion-label.enter-amount-image {
-    font-size: 0.9rem;
-    margin: 0px;
-  }
+    ion-label.image {
+      font-size: 0.9rem;
+      margin: 0px;
+    }
 
-  ion-input.enter-amount-input {
-    text-align: right;
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
+    ion-input.input {
+      text-align: right;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
 
-  ion-label.enter-amount-token-symbol {
-    font-size: 0.9rem;
-    font-weight: 200;
-    margin: 0px 10px;
-  }
+    ion-label.token-symbol {
+      font-size: 0.9rem;
+      font-weight: 200;
+      margin: 0px 10px;
+    }
 
-  .enter-amount-available-balance {
-    font-size: 0.9rem;
-    margin: 10px 10px 25px 10px;
-  }
+    .available-balance {
+      font-size: 0.9rem;
+      margin: 10px 10px 25px 10px;
+    }
 
-  .enter-amount-buttons {
-    ion-button {
-      --background: #303030;
-      --background-hover: #303030;
-      --background-activated: #303030;
-      --background-focused: #303030;
-      --color: white;
-      --color-activated: #c2c2c2;
-      --border-radius: 30px;
-      --border-color: white;
-      --padding-top: 15px;
-      --padding-bottom: 15px;
-      --padding-start: 20px;
-      --padding-end: 20px;
+    .buttons {
+      ion-button {
+        --background: #303030;
+        --background-hover: #303030;
+        --background-activated: #303030;
+        --background-focused: #303030;
+        --color: white;
+        --color-activated: #c2c2c2;
+        --border-radius: 30px;
+        --border-color: white;
+        --padding-top: 15px;
+        --padding-bottom: 15px;
+        --padding-start: 20px;
+        --padding-end: 20px;
 
-      font-size: 15px;
+        font-size: 15px;
+      }
     }
   }
 }

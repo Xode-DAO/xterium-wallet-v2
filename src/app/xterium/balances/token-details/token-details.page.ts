@@ -167,10 +167,6 @@ export class TokenDetailsPage implements OnInit {
     }, 5000);
   }
 
-  formatBalance(amount: number, decimals: number): number {
-    return this.balancesService.formatBalance(amount, decimals);
-  }
-
   formatBalanceWithSuffix(amount: number, decimals: number): string {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
   }

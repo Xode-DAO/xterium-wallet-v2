@@ -3,10 +3,10 @@
     <ion-row>
       <ion-col size="12">
         <div class="token-title ion-text-center">
-          <img src="./../../../../assets/images/tokens/usdt.png" height="60" />
+          <img [src]="balance.token.image" height="60" />
           <ion-label>
-            <h1>Tether USD</h1>
-            <p>USDT</p>
+            <h1>{{ balance.token.name }}</h1>
+            <p>{{ balance.token.symbol }}</p>
           </ion-label>
         </div>
       </ion-col>
@@ -15,14 +15,14 @@
       <ion-col size="12">
         <ion-item class="primary-textarea-item" lines="none">
           <ion-label position="stacked">Recipient's Wallet Address:</ion-label>
-          <ion-textarea auto-grow="true" rows="3" placeholder=""></ion-textarea>
+          <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="6">
         <div class="small-outline-button-wrapper ion-text-left">
-          <ion-button fill="outline" size="small" expand="block">
+          <ion-button fill="outline" size="small" expand="block" (click)="pasteFromClipboard()">
             <ion-icon name="clipboard-outline" slot="start"></ion-icon>
             Paste
           </ion-button>
@@ -38,28 +38,33 @@
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="12">
-        <div class="ion-text-left enter-amount-label">
+      <ion-col size="12" class="enter-amount">
+        <div class="ion-text-left label">
           <ion-label>Amount:</ion-label>
         </div>
-        <ion-item class="primary-input-item enter-amount-item" lines="none">
-          <ion-input placeholder="0.00" class="enter-amount-input">
-            <ion-label slot="start" class="enter-amount-image">
+        <ion-item class="primary-input-item item" lines="none">
+          <ion-input placeholder="0.00" type="text" class="input" [value]="formattedAmountValue"
+            (ionInput)="onAmountInput($event)" (ionBlur)="onAmountBlur()">
+            <ion-label slot="start" class="image">
               <ion-avatar slot="start" style="padding: 3px;">
-                <img src="./../../../../assets/images/tokens/usdt.png" height="60" />
+                <img [src]="balance.token.image" height="60" />
               </ion-avatar>
             </ion-label>
-            <ion-label slot="end" class="enter-amount-token-symbol">USDT</ion-label>
+            <ion-label slot="end" class="token-symbol">{{ balance.token.symbol }}</ion-label>
           </ion-input>
         </ion-item>
-        <div class="ion-text-right enter-amount-available-balance">
-          <span>Balance: <b>1,000.00</b> USDT</span>
+        <div class="ion-text-right available-balance">
+          <span>
+            Balance:
+            <b>{{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}</b>
+            {{ balance.token.symbol }}
+          </span>
         </div>
-        <div class="ion-text-center enter-amount-buttons">
-          <ion-button fill="solid" size="small">25%</ion-button>
-          <ion-button fill="solid" size="small">50%</ion-button>
-          <ion-button fill="solid" size="small">75%</ion-button>
-          <ion-button fill="solid" size="small">100%</ion-button>
+        <div class="ion-text-center buttons">
+          <ion-button fill="solid" size="small" (click)="fillAmount(25)">25%</ion-button>
+          <ion-button fill="solid" size="small" (click)="fillAmount(50)">50%</ion-button>
+          <ion-button fill="solid" size="small" (click)="fillAmount(75)">75%</ion-button>
+          <ion-button fill="solid" size="small" (click)="fillAmount(100)">100%</ion-button>
         </div>
       </ion-col>
     </ion-row>
