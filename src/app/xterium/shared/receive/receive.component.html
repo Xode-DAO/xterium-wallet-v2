@@ -8,8 +8,13 @@
 <div class="wallet-details ion-padding-horizontal">
   <ion-list>
     <ion-item detail="false" lines="none">
-      <ion-avatar slot="start">
-        <img src="./../../../../assets/icon/xterium-logo.png" />
+      <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
+        @if (currentNetwork) {
+        <img [src]="'./../../../../assets/images/networks/' + currentNetwork.image" alt="Network Logo" />
+        }
+        @else {
+        <img src="./../../../../assets/icon/xterium-logo.png" alt="Network Logo" />
+        }
       </ion-avatar>
       <ion-label>
         <h2>{{ currentWallet.name }}</h2>

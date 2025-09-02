@@ -25,9 +25,9 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
 
+import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Balance } from 'src/models/balance.model';
-import { Network } from 'src/models/network.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';

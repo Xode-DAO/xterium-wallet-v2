@@ -10,8 +10,8 @@ import {
 
 import { QRCodeComponent } from 'angularx-qrcode';
 
-import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
+import { Network } from 'src/models/network.model';
 import { Token } from 'src/models/token.model';
 
 import { NetworksService } from 'src/app/api/networks/networks.service';
@@ -43,6 +43,7 @@ export class ReceiveComponent implements OnInit {
   ) { }
 
   currentWallet: Wallet = {} as Wallet;
+  currentNetwork: Network = {} as Network;
   currentWalletPublicAddress: string = '';
 
   qrImageIcon: string = "./../../../assets/icon/xterium-logo.png";
@@ -63,6 +64,7 @@ export class ReceiveComponent implements OnInit {
 
       const network = this.networksService.getNetworkById(this.currentWallet.network_id);
       if (network) {
+        this.currentNetwork = network;
         this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
       }
     }
@@ -81,6 +83,8 @@ export class ReceiveComponent implements OnInit {
     setTimeout(async () => {
       if (this.token) {
         await this.tokensService.attachIcon(this.token);
+      } else {
+        this.qrImageIcon = "./../../../assets/images/networks/" + this.currentNetwork.image;
       }
     }, 500);
   }

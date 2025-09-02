@@ -36,15 +36,15 @@ import {
   chevronDownOutline
 } from 'ionicons/icons';
 
-import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NetworksComponent } from "src/app/xterium/shared/networks/networks.component";
+import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
 import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 
-import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
+import { Wallet } from 'src/models/wallet.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { NetworksService } from 'src/app/api/networks/networks.service';
