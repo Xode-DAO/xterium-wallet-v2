@@ -43,8 +43,9 @@
           <ion-label>Amount:</ion-label>
         </div>
         <ion-item class="primary-input-item item" lines="none">
-          <ion-input placeholder="0.00" type="text" class="input" [value]="formattedAmountValue"
-            (ionInput)="onAmountInput($event)" (ionBlur)="onAmountBlur()">
+          <ion-input type="text" inputmode="numeric" [value]="formattedAmountValue" (ionFocus)="onAmountFocus($event)"
+            (ionInput)="onAmountInput($event)" (ionBlur)="onAmountBlur()" (keydown)="onAmountKeyDown($event)"
+            class="input" placeholder="0">
             <ion-label slot="start" class="image">
               <ion-avatar slot="start" style="padding: 3px;">
                 <img [src]="balance.token.image" height="60" />

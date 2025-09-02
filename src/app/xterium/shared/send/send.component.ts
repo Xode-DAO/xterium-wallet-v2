@@ -80,7 +80,7 @@ export class SendComponent implements OnInit {
   balancesSubscription: Subscription = new Subscription();
 
   recipientAddress: string = "";
-  formattedAmountValue: string = "0.00";
+  formattedAmountValue: string = "0";
 
   pasteFromClipboard() {
     navigator.clipboard.readText().then(
@@ -151,42 +151,59 @@ export class SendComponent implements OnInit {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
   }
 
+  onAmountFocus(event: any) {
+    let rawValue = this.formattedAmountValue;
+    rawValue = rawValue.replace(/,/g, '');
+    if (rawValue.endsWith('.00')) {
+      rawValue = rawValue.slice(0, -3);
+    }
+    this.formattedAmountValue = rawValue;
+  }
+
   onAmountInput(event: any) {
     const inputEl = event.target as HTMLInputElement;
-    let rawValue = inputEl.value.replace(/,/g, '');
+    let rawValue = inputEl.value;
 
-    if (rawValue === '') {
-      this.formattedAmountValue = '0';
-      return;
+    if (rawValue.startsWith('0') && rawValue.length > 1 && !rawValue.startsWith('0.')) {
+      rawValue = rawValue.replace(/^0+/, '');
+      if (rawValue === '') rawValue = '0';
     }
 
-    if (!/^\d*\.?\d*$/.test(rawValue)) return;
-
-    const selectionStart = inputEl.selectionStart || 0;
-    const charsBeforeCaret = rawValue.slice(0, selectionStart).length;
-
-    const [integer, decimal] = rawValue.split('.');
-
-    const withCommas = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    this.formattedAmountValue = decimal !== undefined ? `${withCommas}.${decimal}` : withCommas;
-
-    setTimeout(() => {
-      const newRaw = this.formattedAmountValue.replace(/,/g, '');
-      let newPos = charsBeforeCaret;
-
-      if (newPos > newRaw.length) newPos = newRaw.length;
-      inputEl.setSelectionRange(newPos, newPos);
-    });
+    this.formattedAmountValue = rawValue;
   }
 
   onAmountBlur() {
-    if (!this.formattedAmountValue || this.formattedAmountValue === '0') {
+    let rawValue = this.formattedAmountValue;
+
+    if (!rawValue || rawValue === '') {
       this.formattedAmountValue = '0.00';
       return;
     }
 
-    if (!this.formattedAmountValue.includes('.')) {
-      this.formattedAmountValue = this.formattedAmountValue + '.00';
+    const [integer, decimal] = rawValue.split('.');
+    const withCommas = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    this.formattedAmountValue =
+      decimal !== undefined ? `${withCommas}.${decimal}` : `${withCommas}.00`;
+  }
+
+  onAmountKeyDown(event: KeyboardEvent) {
+    const inputEl = event.target as HTMLInputElement;
+    const value = inputEl.value;
+
+    if (
+      event.key === 'Backspace' ||
+      event.key === 'Tab' ||
+      event.key === 'ArrowLeft' ||
+      event.key === 'ArrowRight' ||
+      event.key === 'Delete'
+    ) {
+      return;
+    }
+
+    if (event.key === '.' && !value.includes('.')) return;
+
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault();
     }
   }
 
@@ -195,6 +212,10 @@ export class SendComponent implements OnInit {
     const fillAmount = (totalAmount * percentage) / 100;
 
     this.formattedAmountValue = this.formatBalanceWithSuffix(fillAmount, this.balance.token.decimals);
+  }
+
+  send(): void {
+
   }
 
   ngOnInit() {
