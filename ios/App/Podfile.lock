@@ -3,10 +3,14 @@ PODS:
     - CapacitorCordova
   - CapacitorApp (7.0.1):
     - Capacitor
+  - CapacitorClipboard (7.0.2):
+    - Capacitor
   - CapacitorCordova (7.4.2)
   - CapacitorHaptics (7.0.1):
     - Capacitor
   - CapacitorKeyboard (7.0.1):
+    - Capacitor
+  - CapacitorLocalNotifications (7.0.2):
     - Capacitor
   - CapacitorNativeBiometric (0.0.1):
     - Capacitor
@@ -18,9 +22,11 @@ PODS:
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - "CapacitorClipboard (from `../../node_modules/@capacitor/clipboard`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
+  - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
   - CapacitorNativeBiometric (from `../../node_modules/capacitor-native-biometric`)
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
@@ -30,12 +36,16 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
     :path: "../../node_modules/@capacitor/app"
+  CapacitorClipboard:
+    :path: "../../node_modules/@capacitor/clipboard"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorHaptics:
     :path: "../../node_modules/@capacitor/haptics"
   CapacitorKeyboard:
     :path: "../../node_modules/@capacitor/keyboard"
+  CapacitorLocalNotifications:
+    :path: "../../node_modules/@capacitor/local-notifications"
   CapacitorNativeBiometric:
     :path: "../../node_modules/capacitor-native-biometric"
   CapacitorPreferences:
@@ -46,13 +56,15 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Capacitor: 9d9e481b79ffaeacaf7a85d6a11adec32bd33b59
   CapacitorApp: febecbb9582cb353aed037e18ec765141f880fe9
+  CapacitorClipboard: 7e227702976d4435a5a40df54f65e154d0dfc1f3
   CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
   CapacitorHaptics: 1f1e17041f435d8ead9ff2a34edd592c6aa6a8d6
   CapacitorKeyboard: 09fd91dcde4f8a37313e7f11bde553ad1ed52036
+  CapacitorLocalNotifications: 665188ae8accd40806129073896fb2b39322d858
   CapacitorNativeBiometric: 78cf21304251a512e4597437325b5e9b0cd9f7b3
   CapacitorPreferences: 65107ed7437d96ee72583df5763985e3c0ff2bc2
   CapacitorStatusBar: e04d05e121d5a5979c29eb4249186a4e4a84cacb
 
-PODFILE CHECKSUM: fc5f5b39615beedbab45b6a541731c523e046117
+PODFILE CHECKSUM: 917bd45202a02b2605110a5dcff1cc16608bcc0e
 
 COCOAPODS: 1.16.2

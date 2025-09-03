@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { Clipboard } from '@capacitor/clipboard';
 import {
   IonButton,
   IonIcon,
@@ -70,16 +71,18 @@ export class NewWalletComponent implements OnInit {
   async copyToClipboard() {
     const mnemonic = this.walletMnemonicPhrase.join(' ');
 
-    navigator.clipboard.writeText(mnemonic).then(async () => {
-      const toast = await this.toastController.create({
-        message: 'Mnemonic phrase copied to clipboard!',
-        color: 'success',
-        duration: 1500,
-        position: 'top',
-      });
-
-      await toast.present();
+    await Clipboard.write({
+      string: mnemonic
     });
+
+    const toast = await this.toastController.create({
+      message: 'Mnemonic phrase copied to clipboard!',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+
+    await toast.present();
   }
 
   async saveWallet() {

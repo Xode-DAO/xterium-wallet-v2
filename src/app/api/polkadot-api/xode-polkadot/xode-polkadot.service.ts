@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { xodePolkadot, MultiAddress } from "@polkadot-api/descriptors"
-import { createClient, Transaction, TxEvent } from 'polkadot-api';
+import { createClient, Transaction, TxEvent, InvalidTxError } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider/web';
-import { sr25519CreateDerive } from "@polkadot-labs/hdkd"
+import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
 
 import { Token, TokenPrice } from 'src/models/token.model';
@@ -387,27 +387,23 @@ export class XodePolkadotService extends PolkadotApiService {
     return new Observable<TxEvent>(subscriber => {
       const subscriptions: any[] = [];
 
-      const publicKey = new Uint8Array(wallet.public_key.split(',').map(Number));
       const secretKey = new Uint8Array(wallet.private_key.split(',').map(Number));
-
       const signer = getPolkadotSigner(
-        publicKey,
+        sr25519.getPublicKey(secretKey),
         "Sr25519",
-        async (msg: Uint8Array) => {
-          const derive = sr25519CreateDerive(secretKey);
-          const keyPair = derive("");
-
-          return keyPair.sign(msg);
-        }
+        (input) => sr25519.sign(input, secretKey),
       );
 
       const signTransactionSubscription = transaction
         .signSubmitAndWatch(signer)
-        .subscribe(
-          transactionEvent => {
-            subscriber.next(transactionEvent);
-          }
-        );
+        .subscribe({
+          next: (event: TxEvent) => {
+            subscriber.next(event);
+          },
+          error(err: InvalidTxError) {
+            subscriber.error(err);
+          },
+        });
 
       subscriptions.push(signTransactionSubscription);
 

@@ -28,4 +28,9 @@ export class BalancesService {
 
     return `${formatted}`;
   }
+
+  parseBalance(amount: number, decimals: number): number {
+    const raw = amount * Math.pow(10, decimals);
+    return Number(BigInt(Math.floor(raw)).toString());
+  }
 }

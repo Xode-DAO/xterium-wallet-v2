@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { Clipboard } from '@capacitor/clipboard';
 import {
   IonButton,
   IonIcon,
@@ -68,22 +69,22 @@ export class ImportSeedPhraseComponent implements OnInit {
   isProcessing: boolean = false;
 
   async pasteFromClipboard() {
-    navigator.clipboard.readText().then(
-      async clipText => {
-        if (clipText.split(' ').length !== 12) {
-          const toast = await this.toastController.create({
-            message: 'Invalid mnemonic phrase length!',
-            color: 'danger',
-            duration: 1500,
-            position: 'top',
-          });
+    const { type, value } = await Clipboard.read();
 
-          await toast.present();
-        } else {
-          this.walletMnemonicPhrase = clipText.split(' ')
-        }
+    if (type === 'text/plain') {
+      if (value.split(' ').length !== 12) {
+        const toast = await this.toastController.create({
+          message: 'Invalid mnemonic phrase length!',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
+
+        await toast.present();
+      } else {
+        this.walletMnemonicPhrase = value.split(' ')
       }
-    );
+    }
   }
 
   async importWallet() {

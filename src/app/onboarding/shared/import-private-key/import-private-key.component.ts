@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { Clipboard } from '@capacitor/clipboard';
 import {
   IonButton,
   IonIcon,
@@ -70,12 +71,12 @@ export class ImportPrivateKeyComponent implements OnInit {
 
   isProcessing: boolean = false;
 
-  pasteFromClipboard() {
-    navigator.clipboard.readText().then(
-      async clipText => {
-        this.privateKey = clipText;
-      }
-    );
+  async pasteFromClipboard() {
+    const { type, value } = await Clipboard.read();
+
+    if (type === 'text/plain') {
+      this.privateKey = value;
+    }
   }
 
   async importWallet() {

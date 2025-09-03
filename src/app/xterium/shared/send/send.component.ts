@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Subscription } from 'rxjs';
 
+import { Clipboard } from '@capacitor/clipboard';
 import {
   IonButton,
   IonIcon,
@@ -26,6 +27,7 @@ import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
 
+import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
@@ -58,7 +60,10 @@ import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.ser
 export class SendComponent implements OnInit {
   @Input() balance: Balance = {} as Balance;
 
+  @Output() onSendSuccessful = new EventEmitter<string>();
+
   constructor(
+    private localNotificationsService: LocalNotificationsService,
     private balancesService: BalancesService,
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
@@ -66,6 +71,7 @@ export class SendComponent implements OnInit {
     private networksService: NetworksService,
     private walletsService: WalletsService,
     private multipayxApiService: MultipayxApiService,
+    private toastController: ToastController
   ) {
     addIcons({
       clipboardOutline,
@@ -76,18 +82,21 @@ export class SendComponent implements OnInit {
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
 
-  observableTimeout: any = null;
+  balancesObservableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
+  transferSubscription: Subscription = new Subscription();
 
   recipientAddress: string = "";
   formattedAmountValue: string = "0";
 
-  pasteFromClipboard() {
-    navigator.clipboard.readText().then(
-      async clipText => {
-        this.recipientAddress = clipText;
-      }
-    );
+  isProcessing: boolean = false;
+
+  async pasteFromClipboard() {
+    const { type, value } = await Clipboard.read();
+
+    if (type === 'text/plain') {
+      this.recipientAddress = value;
+    }
   }
 
   async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
@@ -112,7 +121,7 @@ export class SendComponent implements OnInit {
   }
 
   async fetchData(): Promise<void> {
-    clearTimeout(this.observableTimeout);
+    clearTimeout(this.balancesObservableTimeout);
     if (!this.balancesSubscription.closed) this.balancesSubscription.unsubscribe();
 
     await this.getCurrentWallet();
@@ -135,7 +144,7 @@ export class SendComponent implements OnInit {
 
     if (!service) return;
 
-    this.observableTimeout = setTimeout(() => {
+    this.balancesObservableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
           this.balance,
@@ -214,8 +223,86 @@ export class SendComponent implements OnInit {
     this.formattedAmountValue = this.formatBalanceWithSuffix(fillAmount, this.balance.token.decimals);
   }
 
-  send(): void {
+  async send(): Promise<void> {
+    if (this.recipientAddress === "" || this.formattedAmountValue === "0" || this.formattedAmountValue === "0.00") {
+      const toast = await this.toastController.create({
+        message: 'Wallet name is required!',
+        color: 'warning',
+        duration: 1500,
+        position: 'top',
+      });
 
+      await toast.present();
+      return;
+    }
+
+    this.isProcessing = true;
+
+    let service: PolkadotApiService | null = null;
+
+    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+
+    if (!service) return;
+
+    const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
+
+    const transaction = service.transfer(this.balance, this.recipientAddress, parseAmount);
+    const wallet = this.currentWallet;
+
+    this.transferSubscription = service.signTransactions(transaction, wallet).subscribe({
+      next: async (event) => {
+        this.handleTransferTransactionEvent(event);
+      },
+      error: async (err) => {
+        this.isProcessing = false;
+      }
+    });
+  }
+
+  async handleTransferTransactionEvent(event: any) {
+    let title = '';
+    let body = '';
+
+    const hashInfo = event.txHash ? `\nTx Hash: ${event.txHash}` : '';
+
+    switch (event.type) {
+      case "signed":
+        title = "Transaction Signed";
+        body = `Your transfer request has been signed and is ready to be sent.${hashInfo}`;
+        break;
+
+      case "broadcasted":
+        title = "Transaction Sent";
+        body = `Your transfer has been broadcasted to the network.${hashInfo}`;
+        break;
+
+      case "txBestBlocksState":
+        if (event.found) {
+          title = "Transaction Included in Block";
+
+          const eventMessages = event.events.map((e: any, idx: number) => {
+            if (e.type === "ExtrinsicSuccess") return `Step ${idx + 1}: Transfer succeeded.`;
+            if (e.type === "ExtrinsicFailed") return `Step ${idx + 1}: Transfer failed.`;
+            return `Step ${idx + 1}: ${e.type} event detected.`;
+          });
+
+          body = `Your transaction is included in a block.${hashInfo}\n` + eventMessages.join("\n");
+        }
+        break;
+
+      case "finalized":
+        title = "Transaction Completed";
+        body = `Your transfer is now finalized and confirmed on the blockchain.${hashInfo}`;
+        break;
+
+      default:
+        title = "Transaction Update";
+        body = `Received event: ${event.type}${hashInfo}`;
+    }
+
+    const id = Math.floor(Math.random() * 100000);
+    await this.localNotificationsService.presentNotification(title, body, id);
   }
 
   ngOnInit() {

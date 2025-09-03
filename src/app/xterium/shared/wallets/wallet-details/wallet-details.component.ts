@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { Clipboard } from '@capacitor/clipboard';
 import {
   IonButton,
   IonIcon,
@@ -89,16 +90,18 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   async copyToClipboard() {
-    navigator.clipboard.writeText(this.walletPublicKey).then(async () => {
-      const toast = await this.toastController.create({
-        message: 'Public key copied to clipboard!',
-        color: 'success',
-        duration: 1500,
-        position: 'top',
-      });
-
-      await toast.present();
+    await Clipboard.write({
+      string: this.walletPublicKey
     });
+
+    const toast = await this.toastController.create({
+      message: 'Public key copied to clipboard!',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+
+    await toast.present();
   }
 
   async getCurrentWallet(): Promise<void> {

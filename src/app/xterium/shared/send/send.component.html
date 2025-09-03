@@ -73,7 +73,8 @@
     <ion-row class="ion-margin-top">
       <ion-col size="12">
         <div class="primary-button-wrapper">
-          <ion-button expand="block" size="default" class="ion-margin-bottom">
+          <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="send()"
+            [disabled]="isProcessing">
             SEND
           </ion-button>
         </div>

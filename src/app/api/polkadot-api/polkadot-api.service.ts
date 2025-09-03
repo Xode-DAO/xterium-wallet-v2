@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PolkadotClient, Transaction, TxEvent, TypedApi } from 'polkadot-api';
+import { PolkadotClient, TypedApi, Transaction, TxEvent } from 'polkadot-api';
 
 import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
