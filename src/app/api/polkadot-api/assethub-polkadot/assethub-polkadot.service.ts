@@ -3,12 +3,15 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
-import { assethubPolkadot } from "@polkadot-api/descriptors"
-import { createClient } from 'polkadot-api';
+import { assethubPolkadot, MultiAddress } from "@polkadot-api/descriptors"
+import { createClient, Transaction, TxEvent } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider/web';
+import { sr25519CreateDerive } from "@polkadot-labs/hdkd"
+import { getPolkadotSigner } from "polkadot-api/signer"
 
 import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
+import { Wallet } from 'src/models/wallet.model';
 
 import { PolkadotApiService } from '../polkadot-api.service';
 
@@ -358,6 +361,55 @@ export class AssethubPolkadotService extends PolkadotApiService {
 
         subscriptions.push(assetAccountSubscription);
       }
+
+      return () => subscriptions.forEach(s => s.unsubscribe());
+    });
+  }
+
+  transfer(balance: Balance, destPublicKey: string, value: number): Transaction<any, any, any, void | undefined> {
+    const bigValue = BigInt(value);
+
+    if (balance.token.type === 'native') {
+      return this.chainApi.tx.Balances.transfer_allow_death({
+        dest: MultiAddress.Id(destPublicKey),
+        value: bigValue,
+      });
+    }
+
+    return this.chainApi.tx.Assets.transfer_keep_alive({
+      id: Number(balance.token.reference_id),
+      target: MultiAddress.Id(destPublicKey),
+      amount: bigValue,
+    });
+  }
+
+  signTransactions(transaction: Transaction<any, any, any, void | undefined>, wallet: Wallet): Observable<TxEvent> {
+    return new Observable<TxEvent>(subscriber => {
+      const subscriptions: any[] = [];
+
+      const publicKey = new Uint8Array(wallet.public_key.split(',').map(Number));
+      const secretKey = new Uint8Array(wallet.private_key.split(',').map(Number));
+
+      const signer = getPolkadotSigner(
+        publicKey,
+        "Sr25519",
+        async (msg: Uint8Array) => {
+          const derive = sr25519CreateDerive(secretKey);
+          const keyPair = derive("");
+
+          return keyPair.sign(msg);
+        }
+      );
+
+      const signTransactionSubscription = transaction
+        .signSubmitAndWatch(signer)
+        .subscribe(
+          transactionEvent => {
+            subscriber.next(transactionEvent);
+          }
+        );
+
+      subscriptions.push(signTransactionSubscription);
 
       return () => subscriptions.forEach(s => s.unsubscribe());
     });

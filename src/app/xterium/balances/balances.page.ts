@@ -72,6 +72,8 @@ export class BalancesPage implements OnInit {
   refreshCounter: number = 0;
   totalAmount: number = 0;
 
+  selectedBalance: Balance = {} as Balance
+
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;
 
@@ -89,6 +91,7 @@ export class BalancesPage implements OnInit {
   }
 
   openBalancesSendModal(balance: Balance) {
+    this.selectedBalance = balance;
     this.balancesSendModal.present();
   }
 
