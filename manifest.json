@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Xterium Browser Extension",
+  "version": "1.0",
+  "description": "A web3 wallet designed to interact with Xode and other Polkadot blockchains, directly from your browser.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "assets/icon/xterium-logo.png"
+  },
+  "icons": {
+    "16": "assets/icon/xterium-logo.png",
+    "48": "assets/icon/xterium-logo.png",
+    "128": "assets/icon/xterium-logo.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; style-src 'self' 'unsafe-inline';"
+  }
+}

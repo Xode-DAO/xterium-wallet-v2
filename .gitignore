@@ -28,6 +28,7 @@ log.txt
 /tmp
 /out-tsc
 /bazel-out
+/chrome-ext-dist
 
 # Node
 /node_modules

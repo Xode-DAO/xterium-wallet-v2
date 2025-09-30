@@ -5,6 +5,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
 import { StatusBar, Style } from '@capacitor/status-bar';
 
+import { EnvironmentService } from './api/environment/environment.service';
 import { BiometricService } from "src/app/api/biometric/biometric.service";
 
 @Component({
@@ -15,14 +16,19 @@ import { BiometricService } from "src/app/api/biometric/biometric.service";
 export class AppComponent {
   constructor(
     private platform: Platform,
-    private biometricService: BiometricService
+    private environmentService: EnvironmentService,
+    private biometricService: BiometricService,
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.setupStatusBar();
+      const isChromeExtension = this.environmentService.isChromeExtension();
+      if (!isChromeExtension) {
+        this.setupStatusBar();
+      }
+
       // this.authenticate();
     });
   }
@@ -45,5 +51,4 @@ export class AppComponent {
       console.error('Authentication failed', error);
     }
   }
-
 }

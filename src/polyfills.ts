@@ -53,3 +53,62 @@ import 'zone.js';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const styleEl = document.getElementById("deferred-style") as HTMLLinkElement;
+  if (styleEl) styleEl.media = "all";
+
+  // Detect if running as a Chrome Extension
+  // This is important for applying specific styles and behaviors
+  const isChromeExtension = !!(
+    (window as any).chrome?.runtime?.id ||
+    window.location.protocol === 'chrome-extension:'
+  );
+
+  if (isChromeExtension) {
+    document.documentElement.classList.add('chrome-extension-mode');
+    document.documentElement.setAttribute('data-chrome-extension', 'true');
+
+    const width = 450;
+    const height = 600;
+
+    if (typeof window.resizeTo === 'function') window.resizeTo(width, height);
+
+    document.documentElement.style.setProperty('--app-height', `${height}px`);
+    document.documentElement.style.setProperty('--app-width', `${width}px`);
+    document.documentElement.style.height = `${height}px`;
+    document.documentElement.style.width = `${width}px`;
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.zoom = '0.95';
+
+    document.body.style.height = `${height}px`;
+    document.body.style.width = `${width}px`;
+    document.body.style.overflow = 'hidden';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.position = 'fixed';
+
+    window.addEventListener('scroll', (e) => {
+      window.scrollTo(0, 0);
+      e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+      if ((e.target as HTMLElement).closest('ion-content')) return;
+      e.preventDefault();
+    }, { passive: false });
+
+    const setIonAppDimensions = () => {
+      const ionApp = document.querySelector('ion-app');
+      if (ionApp) {
+        (ionApp as HTMLElement).style.height = `${height}px`;
+        (ionApp as HTMLElement).style.width = `${width}px`;
+        (ionApp as HTMLElement).style.overflow = 'hidden';
+      } else {
+        setTimeout(setIonAppDimensions, 50);
+      }
+    };
+
+    setIonAppDimensions();
+  }
+});
