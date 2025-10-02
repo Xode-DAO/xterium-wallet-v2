@@ -153,6 +153,21 @@ export class NewWalletComponent implements OnInit {
         await this.walletsService.setCurrentWallet(newId);
       }
 
+      const encodedWallets = await Promise.all(
+        wallets.map(async (wallet) => {
+          const publicKeyU8a = new Uint8Array(
+            wallet.public_key.split(",").map((byte) => Number(byte.trim()))
+          );
+
+          return {
+            address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
+            name: wallet.name,
+          };
+        })
+      );
+
+      chrome.storage.local.set({ accounts: encodedWallets });
+
       const onboarding = await this.onboardingService.get();
       if (onboarding) {
         if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
