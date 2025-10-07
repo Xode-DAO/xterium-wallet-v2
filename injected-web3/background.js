@@ -1,65 +1,130 @@
+const FIXED_WINDOW_WIDTH = 450;
+const FIXED_WINDOW_HEIGHT = 600;
+
+let approvalWindowId = null;
+
+function createApprovalPopup(origin) {
+  chrome.windows.create(
+    {
+      url: chrome.runtime.getURL(
+        `index.html#/web3/approval?origin=${encodeURIComponent(origin)}`
+      ),
+      type: "popup",
+      width: FIXED_WINDOW_WIDTH,
+      height: FIXED_WINDOW_HEIGHT,
+    },
+    (newWindow) => {
+      approvalWindowId = newWindow.id;
+
+      chrome.windows.onRemoved.addListener((closedId) => {
+        if (closedId === approvalWindowId) {
+          approvalWindowId = null;
+        }
+      });
+    }
+  );
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (!message || !message.type) {
-    sendResponse(null);
+  console.log("Background received message:", message, sender);
+
+  if (message.type === "xterium-request-approval") {
+    const origin = sender.origin || sender.url;
+
+    chrome.storage.local.get(["origins"], (results) => {
+      let origins = results.origins || [];
+
+      const existingOrigin = origins.find((o) => o.origin === origin);
+      if (existingOrigin) {
+        if (existingOrigin.approved) {
+          sendResponse(existingOrigin);
+          return;
+        }
+      } else {
+        const newOrigin = {
+          origin: origin,
+          approved: false,
+        };
+        origins.push(newOrigin);
+
+        chrome.storage.local.set({ origins: origins }, () => {
+          sendResponse(newOrigin);
+        });
+      }
+
+      if (approvalWindowId !== null) {
+        chrome.windows.get(approvalWindowId, (win) => {
+          if (chrome.runtime.lastError || !win) {
+            createApprovalPopup(origin);
+          } else {
+            chrome.windows.update(approvalWindowId, { focused: true });
+          }
+        });
+      } else {
+        createApprovalPopup(origin);
+      }
+    });
+
     return true;
   }
 
-  switch (message.type) {
-    case "enable-request": {
-      // TODO: show approval UI using chrome.action.openPopup or chrome.windows.create, etc.
-      // For now we auto-approve. In production show a popup to allow user to approve.
-      sendResponse(true);
-      break;
-    }
+  if (message.type === "xterium-approval-response") {
+    const origin = message.payload.origin;
+    const selectedAccounts = message.payload.selected_accounts || [];
 
-    case "get-accounts": {
-      // Respond with InjectedAccountWithMeta[]
-      chrome.storage.local.get(["accounts"], (results) => {
-        if (results.accounts && results.accounts.length > 0) {
-          const accounts = results.accounts.map((account) => ({
-            address: account.address,
-            name: account.name,
-            type: "sr25519",
-          }));
+    chrome.storage.local.get(["origins"], (results) => {
+      let origins = results.origins || [];
 
-          sendResponse(accounts);
-        } else {
-          sendResponse([]);
-        }
-      });
+      const existingOrigin = origins.find((o) => o.origin === origin);
+      if (existingOrigin) {
+        existingOrigin.approved = message.payload.approved;
 
-      break;
-    }
+        chrome.storage.local.set({ origins: origins }, () => {
+          if (selectedAccounts.length > 0) {
+            const connectedAccounts = [];
 
-    case "subscribe-accounts": {
-      // For subscribe we just return current accounts. If you later push updates,
-      // use chrome.tabs.sendMessage to notify content scripts and they will forward to page.
+            for (let i = 0; i < selectedAccounts.length; i++) {
+              connectedAccounts.push({
+                address: selectedAccounts[i].address,
+                name: selectedAccounts[i].name,
+                type: "sr25519",
+              });
+            }
+
+            console.log("Storing connected accounts:", connectedAccounts);
+
+            chrome.storage.local.set({ accounts: connectedAccounts });
+          }
+
+          sendResponse(existingOrigin);
+
+          if (approvalWindowId !== null) {
+            chrome.windows.remove(approvalWindowId);
+            approvalWindowId = null;
+          }
+        });
+      }
+    });
+  }
+
+  if (message.type === "xterium-get-accounts") {
+    console.log("Received request for connected accounts");
+
+    chrome.storage.local.get(["accounts"], (results) => {
+      console.log("Retrieving connected accounts:", results.accounts);
+
+      let accounts = [];
+
+      if (results.accounts && results.accounts.length > 0) {
+        accounts = results.accounts.map((account) => ({
+          address: account.address,
+          name: account.name,
+          type: "sr25519",
+        }));
+      }
+
       sendResponse(accounts);
-      break;
-    }
-
-    case "sign-payload": {
-      console.log("[Xterium Background] sign-payload", message.payload);
-
-      // Replace with real signing flow. This is a fake signature for testing.
-      const fakeSig = "0xFAKE_SIGNATURE_PAYLOAD";
-      sendResponse({ signature: fakeSig });
-
-      break;
-    }
-
-    case "sign-raw": {
-      console.log("[Xterium Background] sign-raw", message.payload);
-
-      const fakeSigRaw = "0xFAKE_SIGNATURE_RAW";
-      sendResponse({ signature: fakeSigRaw });
-
-      break;
-    }
-
-    default: {
-      sendResponse(null);
-    }
+    });
   }
 
   return true;

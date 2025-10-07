@@ -81,12 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.style.overflow = 'hidden';
     document.documentElement.style.zoom = '0.95';
 
-    document.body.style.height = `${height}px`;
-    document.body.style.width = `${width}px`;
     document.body.style.overflow = 'hidden';
     document.body.style.margin = '0';
     document.body.style.padding = '0';
-    document.body.style.position = 'fixed';
 
     window.addEventListener('scroll', (e) => {
       window.scrollTo(0, 0);
@@ -101,8 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const setIonAppDimensions = () => {
       const ionApp = document.querySelector('ion-app');
       if (ionApp) {
-        (ionApp as HTMLElement).style.height = `${height}px`;
-        (ionApp as HTMLElement).style.width = `${width}px`;
         (ionApp as HTMLElement).style.overflow = 'hidden';
       } else {
         setTimeout(setIonAppDimensions, 50);

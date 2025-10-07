@@ -90,6 +90,25 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'web3',
+    loadComponent: () => import('./web3/web3.page').then(m => m.Web3Page),
+    children: [
+      {
+        path: 'approval',
+        loadComponent: () => import('./web3/approval/approval.page').then(m => m.ApprovalPage)
+      },
+      {
+        path: 'sign',
+        loadComponent: () => import('./web3/sign/sign.page').then(m => m.SignPage)
+      },
+      {
+        path: '',
+        redirectTo: '/web3/approval',
+        pathMatch: 'full',
+      },
+    ]
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',

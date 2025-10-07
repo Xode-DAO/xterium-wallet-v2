@@ -3,47 +3,38 @@
     window.injectedWeb3 = {};
   }
 
-  let currentRequestId = 1;
-  function nextRequestId() {
-    return String(currentRequestId++);
-  }
-
   function postAndWait(type, payload) {
     return new Promise((resolve) => {
-      const requestId = nextRequestId();
+      window.postMessage(
+        {
+          xterium: true,
+          type: type,
+          payload: payload,
+        },
+        "*"
+      );
 
       window.addEventListener("message", (event) => {
         if (!event || event.source !== window) return;
 
         if (!event.data) return;
         if (event.data.xterium !== true) return;
-        if (event.data.type !== type + "-result") return;
-        if (event.data.request_id !== requestId) return;
+        if (event.data.type !== type + "-results") return;
 
         window.removeEventListener("message", this);
         resolve(event.data.response);
       });
-
-      window.postMessage(
-        {
-          xterium: true,
-          type: type,
-          payload: payload,
-          request_id: requestId,
-        },
-        "*"
-      );
     });
   }
 
   window.injectedWeb3["xterium"] = {
     version: "2.0.0",
     enable: async (origin) => {
-      const approved = await postAndWait("xterium-enable-request", {
+      const requestApproval = await postAndWait("xterium-request-approval", {
         origin: origin,
       });
 
-      if (!approved) throw new Error("User rejected Xterium connection");
+      if (!requestApproval.approved) throw new Error("User rejected Xterium connection");
 
       return {
         accounts: {
