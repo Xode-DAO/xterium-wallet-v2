@@ -5,7 +5,8 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
 import { StatusBar, Style } from '@capacitor/status-bar';
 
-import { BiometricService } from "src/app/api/biometric/biometric.service";
+import { BiometricService } from 'src/app/api/biometric/biometric.service';
+import { DeepLinkService } from './api/deep-link/deep-link.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { BiometricService } from "src/app/api/biometric/biometric.service";
 export class AppComponent {
   constructor(
     private platform: Platform,
-    private biometricService: BiometricService
+    private biometricService: BiometricService,
+    private deepLinkService: DeepLinkService
   ) {
     this.initializeApp();
   }
@@ -23,6 +25,7 @@ export class AppComponent {
   initializeApp() {
     this.platform.ready().then(() => {
       this.setupStatusBar();
+      this.deepLinkService.initDeepLinks();
       // this.authenticate();
     });
   }
@@ -45,5 +48,4 @@ export class AppComponent {
       console.error('Authentication failed', error);
     }
   }
-
 }
