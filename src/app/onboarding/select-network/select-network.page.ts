@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,18 +12,28 @@ import {
   IonItem,
   IonLabel,
   IonCard,
+  IonIcon,
   IonAvatar,
   IonButton,
+  IonButtons,
   IonCheckbox,
+  IonModal,
+  IonTitle,
+  IonToolbar,
   IonToast,
 } from '@ionic/angular/standalone';
 
-import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
+import { addIcons } from 'ionicons';
+import { close } from 'ionicons/icons';
 
-import { Network } from "src/models/network.model"
+import { HeaderComponent } from 'src/app/onboarding/shared/header/header.component';
+
+import { Network } from 'src/models/network.model';
 
 import { NetworksService } from 'src/app/api/networks/networks.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
+
+import { TermsAndConditionComponent } from 'src/app/onboarding/shared/terms-and-condition/terms-and-condition.component'
 
 @Component({
   selector: 'app-select-network',
@@ -42,25 +52,41 @@ import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
     IonItem,
     IonLabel,
     IonCard,
+    IonIcon,
     IonAvatar,
     IonButton,
+    IonButtons,
     IonCheckbox,
+    IonModal,
+    IonTitle,
+    IonToolbar,
     IonToast,
-    HeaderComponent
-  ]
+    HeaderComponent,
+    TermsAndConditionComponent,
+  ],
 })
 export class SelectNetworkPage implements OnInit {
+  @ViewChild('termsAndConditionModal', { read: IonModal })
+  termsAndConditionModal!: IonModal;
 
   constructor(
     private router: Router,
     private networksService: NetworksService,
     private onboardingService: OnboardingService
-  ) { }
+  ) {
+    addIcons({
+      close
+    });
+  }
 
   selectedNetworkId: number = 0;
   selectedNetwork: Network | null = null;
 
   isAgreed: boolean = false;
+
+  openTermsAndConditionModal() {
+    this.termsAndConditionModal.present();
+  }
 
   selectNetwork(id: number) {
     this.selectedNetworkId = id;
@@ -77,7 +103,7 @@ export class SelectNetworkPage implements OnInit {
         step1_selected_network: this.selectedNetwork,
         step2_accepted_terms: this.isAgreed,
         step3_created_wallet: null,
-        step4_completed: false
+        step4_completed: false,
       });
     }
 
