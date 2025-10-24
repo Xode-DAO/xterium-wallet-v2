@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
-import { App } from '@capacitor/app';
 import { Router } from '@angular/router';
+
+import { App } from '@capacitor/app';
 
 @Injectable({
   providedIn: 'root',
@@ -9,20 +10,19 @@ export class DeepLinkService {
   constructor(
     private router: Router,
     private ngZone: NgZone
-  ) {}
+  ) { }
 
   initDeepLinks() {
     App.addListener('appUrlOpen', (event: any) => {
       this.ngZone.run(() => {
         const url = event.url;
 
-        // Handle both custom scheme and HTTPS
         let slug = '';
 
         if (url.includes('xterium://app')) {
-          slug = url.split('xterium://app').pop() || ''; // custom scheme
+          slug = url.split('xterium://app').pop() || '';
         } else if (url.includes('.app')) {
-          slug = url.split('.app').pop() || ''; // universal/app link
+          slug = url.split('.app').pop() || '';
         }
 
         if (slug) {

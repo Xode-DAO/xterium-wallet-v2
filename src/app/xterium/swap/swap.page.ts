@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonIcon
+} from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
 import { construct } from 'ionicons/icons';
 
@@ -11,11 +15,16 @@ import { construct } from 'ionicons/icons';
   templateUrl: './swap.page.html',
   styleUrls: ['./swap.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonContent, IonIcon]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonContent,
+    IonIcon
+  ]
 })
 export class SwapPage implements OnInit {
 
-  constructor() { 
+  constructor() {
     addIcons({
       construct
     });

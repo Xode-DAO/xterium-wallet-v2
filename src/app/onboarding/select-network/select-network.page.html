@@ -21,18 +21,10 @@
       <ion-row>
         <ion-col size="12">
           <ion-list lines="none">
-            <ion-card
-              button
-              class="network-card"
-              [class.active]="selectedNetworkId === 1"
-              (click)="selectNetwork(1)"
-            >
+            <ion-card button class="network-card" [class.active]="selectedNetworkId === 1" (click)="selectNetwork(1)">
               <ion-item lines="none">
                 <ion-avatar slot="start">
-                  <img
-                    src="../../../assets/images/networks/assethub.png"
-                    alt="AssetHub"
-                  />
+                  <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
                 </ion-avatar>
                 <ion-label>
                   <h2>AssetHub - Polkadot</h2>
@@ -41,18 +33,10 @@
               </ion-item>
             </ion-card>
 
-            <ion-card
-              button
-              class="network-card"
-              [class.active]="selectedNetworkId === 2"
-              (click)="selectNetwork(2)"
-            >
+            <ion-card button class="network-card" [class.active]="selectedNetworkId === 2" (click)="selectNetwork(2)">
               <ion-item lines="none">
                 <ion-avatar slot="start">
-                  <img
-                    src="../../../assets/images/networks/xode.png"
-                    alt="Xode"
-                  />
+                  <img src="../../../assets/images/networks/xode.png" alt="Xode" />
                 </ion-avatar>
                 <ion-label>
                   <h2>Xode - Polkadot</h2>
@@ -61,18 +45,10 @@
               </ion-item>
             </ion-card>
 
-            <ion-card
-              button
-              class="network-card"
-              [class.active]="selectedNetworkId === 3"
-              (click)="selectNetwork(3)"
-            >
+            <ion-card button class="network-card" [class.active]="selectedNetworkId === 3" (click)="selectNetwork(3)">
               <ion-item lines="none">
                 <ion-avatar slot="start">
-                  <img
-                    src="../../../assets/images/networks/solana.png"
-                    alt="Solana"
-                  />
+                  <img src="../../../assets/images/networks/solana.png" alt="Solana" />
                 </ion-avatar>
                 <ion-label>
                   <h2>Solana</h2>
@@ -89,10 +65,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center ion-margin-top ion-margin-bottom">
-            <ion-checkbox
-              (ionChange)="isAgreed = $event.detail.checked"
-              [checked]="isAgreed"
-            >
+            <ion-checkbox (ionChange)="isAgreed = $event.detail.checked" [checked]="isAgreed">
               I agree to the
               <a (click)="openTermsAndConditionModal()">terms and conditions</a>
             </ion-checkbox>
@@ -102,13 +75,8 @@
       <ion-row class="ion-margin-top">
         <ion-col size="12">
           <div class="primary-button-wrapper">
-            <ion-button
-              expand="block"
-              size="default"
-              class="ion-margin-bottom"
-              (click)="getStarted()"
-              [disabled]="!isAgreed"
-            >
+            <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="getStarted()"
+              [disabled]="!isAgreed">
               GET STARTED
             </ion-button>
           </div>
@@ -117,12 +85,7 @@
     </ion-grid>
   </div>
 
-  <ion-modal
-    #termsAndConditionModal
-    [initialBreakpoint]="0.98"
-    [breakpoints]="[0, 0.98]"
-    [expandToScroll]="false"
-  >
+  <ion-modal #termsAndConditionModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Terms and Conditions</ion-title>

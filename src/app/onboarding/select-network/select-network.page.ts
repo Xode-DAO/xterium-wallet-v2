@@ -84,10 +84,6 @@ export class SelectNetworkPage implements OnInit {
 
   isAgreed: boolean = false;
 
-  openTermsAndConditionModal() {
-    this.termsAndConditionModal.present();
-  }
-
   selectNetwork(id: number) {
     this.selectedNetworkId = id;
 
@@ -108,6 +104,10 @@ export class SelectNetworkPage implements OnInit {
     }
 
     this.router.navigate(['/onboarding/setup-wallet']);
+  }
+
+  openTermsAndConditionModal() {
+    this.termsAndConditionModal.present();
   }
 
   ngOnInit() {
