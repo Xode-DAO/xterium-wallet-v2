@@ -7,6 +7,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 
 import { EnvironmentService } from './api/environment/environment.service';
 import { BiometricService } from "src/app/api/biometric/biometric.service";
+import { DeepLinkService } from './api/deep-link/deep-link.service';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class AppComponent {
     private platform: Platform,
     private environmentService: EnvironmentService,
     private biometricService: BiometricService,
+    private deepLinkService: DeepLinkService
   ) {
     this.initializeApp();
   }
@@ -29,6 +31,7 @@ export class AppComponent {
         this.setupStatusBar();
       }
 
+      this.deepLinkService.initDeepLinks();
       // this.authenticate();
     });
   }
