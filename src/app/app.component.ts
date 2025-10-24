@@ -5,7 +5,8 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
 import { StatusBar, Style } from '@capacitor/status-bar';
 
-import { BiometricService } from 'src/app/api/biometric/biometric.service';
+import { EnvironmentService } from './api/environment/environment.service';
+import { BiometricService } from "src/app/api/biometric/biometric.service";
 import { DeepLinkService } from './api/deep-link/deep-link.service';
 
 @Component({
@@ -16,6 +17,7 @@ import { DeepLinkService } from './api/deep-link/deep-link.service';
 export class AppComponent {
   constructor(
     private platform: Platform,
+    private environmentService: EnvironmentService,
     private biometricService: BiometricService,
     private deepLinkService: DeepLinkService
   ) {
@@ -24,7 +26,11 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.setupStatusBar();
+      const isChromeExtension = this.environmentService.isChromeExtension();
+      if (!isChromeExtension) {
+        this.setupStatusBar();
+      }
+
       this.deepLinkService.initDeepLinks();
       // this.authenticate();
     });
