@@ -46,7 +46,7 @@
     "buffer": "^6.0.3",
     "capacitor-native-biometric": "^4.2.2",
     "ionicons": "^7.0.0",
-    "polkadot-api": "^1.16.1",
+    "polkadot-api": "^1.17.2",
     "rxjs": "~7.8.0",
     "ts-node": "^10.9.2",
     "tslib": "^2.3.0",

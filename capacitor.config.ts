@@ -13,6 +13,10 @@ const config: CapacitorConfig = {
       interval: 15,
       autoStart: true,
     },
+    CustomURLScheme: {
+      URL_SCHEME: 'xterium',
+      HOST: 'app'
+    }
   },
 };
 
