@@ -7,26 +7,32 @@
     <ion-grid>
       <ion-row>
         <ion-col size="12">
-          <div class="ion-text-center" style="margin-top: -75px;">
+          <div class="ion-text-center" style="margin-top: -75px">
             <h1 style="font-weight: bold">Welcome!</h1>
             <span>
-              Get started by choosing a network you want to connect with.
-              This will be the blockchain your wallet operates on.
+              Get started by choosing a network you want to connect with. This
+              will be the blockchain your wallet operates on.
             </span>
             <br /><br />
-            <span>
-              You can change this anytime later in Settings.
-            </span>
+            <span> You can change this anytime later in Settings. </span>
           </div>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="12">
           <ion-list lines="none">
-            <ion-card button class="network-card" [class.active]="selectedNetworkId === 1" (click)="selectNetwork(1)">
+            <ion-card
+              button
+              class="network-card"
+              [class.active]="selectedNetworkId === 1"
+              (click)="selectNetwork(1)"
+            >
               <ion-item lines="none">
                 <ion-avatar slot="start">
-                  <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
+                  <img
+                    src="../../../assets/images/networks/assethub.png"
+                    alt="AssetHub"
+                  />
                 </ion-avatar>
                 <ion-label>
                   <h2>AssetHub - Polkadot</h2>
@@ -35,10 +41,18 @@
               </ion-item>
             </ion-card>
 
-            <ion-card button class="network-card" [class.active]="selectedNetworkId === 2" (click)="selectNetwork(2)">
+            <ion-card
+              button
+              class="network-card"
+              [class.active]="selectedNetworkId === 2"
+              (click)="selectNetwork(2)"
+            >
               <ion-item lines="none">
                 <ion-avatar slot="start">
-                  <img src="../../../assets/images/networks/xode.png" alt="Xode" />
+                  <img
+                    src="../../../assets/images/networks/xode.png"
+                    alt="Xode"
+                  />
                 </ion-avatar>
                 <ion-label>
                   <h2>Xode - Polkadot</h2>
@@ -47,14 +61,25 @@
               </ion-item>
             </ion-card>
 
-            <ion-card button class="network-card" [class.active]="selectedNetworkId === 3" (click)="selectNetwork(3)">
+            <ion-card
+              button
+              class="network-card"
+              [class.active]="selectedNetworkId === 3"
+              (click)="selectNetwork(3)"
+            >
               <ion-item lines="none">
                 <ion-avatar slot="start">
-                  <img src="../../../assets/images/networks/solana.png" alt="Solana" />
+                  <img
+                    src="../../../assets/images/networks/solana.png"
+                    alt="Solana"
+                  />
                 </ion-avatar>
                 <ion-label>
                   <h2>Solana</h2>
-                  <p>Make low-cost transactions on the high-performance Solana blockchain.</p>
+                  <p>
+                    Make low-cost transactions on the high-performance Solana
+                    blockchain.
+                  </p>
                 </ion-label>
               </ion-item>
             </ion-card>
@@ -64,8 +89,12 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center ion-margin-top ion-margin-bottom">
-            <ion-checkbox (ionChange)="isAgreed = $event.detail.checked" [checked]="isAgreed">
-              I agree to the <a [routerLink]="['/xterium']">terms and conditions</a>
+            <ion-checkbox
+              (ionChange)="isAgreed = $event.detail.checked"
+              [checked]="isAgreed"
+            >
+              I agree to the
+              <a (click)="openTermsAndConditionModal()">terms and conditions</a>
             </ion-checkbox>
           </div>
         </ion-col>
@@ -73,8 +102,13 @@
       <ion-row class="ion-margin-top">
         <ion-col size="12">
           <div class="primary-button-wrapper">
-            <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="getStarted()"
-              [disabled]="!isAgreed">
+            <ion-button
+              expand="block"
+              size="default"
+              class="ion-margin-bottom"
+              (click)="getStarted()"
+              [disabled]="!isAgreed"
+            >
               GET STARTED
             </ion-button>
           </div>
@@ -82,6 +116,30 @@
       </ion-row>
     </ion-grid>
   </div>
+
+  <ion-modal
+    #termsAndConditionModal
+    [initialBreakpoint]="0.98"
+    [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false"
+  >
+    <ng-template>
+      <ion-toolbar class="main-modal-toolbar">
+        <ion-title>Terms and Conditions</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="termsAndConditionModal.dismiss()" fill="clear">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+
+      <ion-content>
+        <div class="ion-padding-horizontal">
+          <app-terms-and-condition></app-terms-and-condition>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
   <ion-toast [duration]="5000"></ion-toast>
 </ion-content>
