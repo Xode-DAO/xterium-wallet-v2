@@ -1,0 +1,181 @@
+<ion-content [fullscreen]="true" class="web3-fees-page">
+  <div class="ion-text-center">
+    <img
+      alt="xterium"
+      src="./../../../assets/icon/xterium-logo.png"
+      class="logo"
+    />
+  </div>
+
+  <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <div class="ion-text-center" style="margin-top: -75px">
+            <h1 style="font-weight: bold">
+              {{ extrinsicInfo?.title || 'Transaction' }}
+            </h1>
+            <span
+              >{{ extrinsicInfo?.subtitle || 'Review before confirming'
+              }}</span
+            >
+          </div>
+
+          <div class="ion-text-center ion-margin-bottom" *ngIf="extrinsicInfo">
+            <ion-chip [color]="getCategoryColor(extrinsicInfo.category)">
+              <ion-icon
+                [name]="getCategoryIcon(extrinsicInfo.category)"
+              ></ion-icon>
+              <ion-label>{{ extrinsicInfo.category | titlecase }}</ion-label>
+            </ion-chip>
+          </div>
+
+          <div class="card-container" *ngIf="transactionData">
+            <ion-card class="confirmation-card">
+              <ion-card-content class="ion-padding">
+                <ion-item
+                  lines="none"
+                  class="detail-item"
+                  *ngIf="shouldShowField('amount')"
+                >
+                  <ion-label class="detail-label" color="medium"
+                    >Amount</ion-label
+                  >
+                  <div slot="end" class="detail-value">
+                    <ion-text color="light">
+                      <h2>{{ transactionData.formattedAmount }} {{ transactionData.balance.token.symbol }}</h2>
+                    </ion-text>
+                  </div>
+                </ion-item>
+
+                <ion-item
+                  lines="none"
+                  class="detail-item"
+                  *ngIf="shouldShowField('from')"
+                >
+                  <ion-label class="detail-label" color="medium">From</ion-label>
+                  <div slot="end" class="detail-value">
+                    <ion-text color="light">
+                      <h2>{{ transactionData.wallet.formattedAddress | slice:0:12 }}...{{ transactionData.wallet.formattedAddress | slice:-8 }}</h2>
+                    </ion-text>
+                  </div>
+                </ion-item>
+
+                <ion-item
+                  lines="none"
+                  class="detail-item"
+                  *ngIf="shouldShowField('to')"
+                >
+                  <ion-label class="detail-label" color="medium">To</ion-label>
+                  <div slot="end" class="detail-value">
+                    <ion-text color="light">
+                      <h2>{{ transactionData.recipientAddress | slice:0:12 }}...{{ transactionData.recipientAddress | slice:-8 }}</h2>
+                    </ion-text>
+                  </div>
+                </ion-item>
+
+                <ion-item
+                  lines="none"
+                  class="detail-item"
+                  *ngIf="shouldShowField('assetId') && transactionData.balance.token.type === 'asset'"
+                >
+                  <ion-label class="detail-label" color="medium"
+                    >Asset ID</ion-label
+                  >
+                  <div slot="end" class="detail-value">
+                    <ion-text color="light">
+                      <h2>{{ transactionData.balance.token.reference_id }}</h2>
+                    </ion-text>
+                  </div>
+                </ion-item>
+
+                <ion-item lines="default" class="detail-item">
+                  <ion-label class="detail-label" color="medium"
+                    >Action</ion-label
+                  >
+                  <div slot="end" class="detail-value">
+                    <ion-text color="light">
+                      <h2>{{ extrinsic }}</h2>
+                    </ion-text>
+                  </div>
+                </ion-item>
+
+                <ion-item
+                  lines="none"
+                  class="detail-item"
+                  *ngIf="shouldShowField('network')"
+                >
+                  <ion-label class="detail-label" color="medium"
+                    >Network</ion-label
+                  >
+                  <div slot="end" class="detail-value">
+                    <div class="network-info">
+                      <ion-text color="light">
+                        <h2>{{ transactionData.network.name }}</h2>
+                      </ion-text>
+                    </div>
+                  </div>
+                </ion-item>
+
+                <ion-item
+                  lines="none"
+                  class="detail-item"
+                  *ngIf="shouldShowField('fee')"
+                >
+                  <ion-label class="detail-label" color="medium"
+                    >Estimated Fee</ion-label
+                  >
+                  <div slot="end" class="detail-value">
+                    <div *ngIf="isLoadingFee" class="fee-loading">
+                      <ion-spinner name="crescent"></ion-spinner>
+                      <ion-text color="medium">
+                        <div class="fee-subtext">Calculating fee...</div>
+                      </ion-text>
+                    </div>
+                    
+                    <div *ngIf="!isLoadingFee && feeEstimate">
+                      <ion-text color="light">
+                        <h2>{{ feeEstimate.fee }}</h2>
+                      </ion-text>
+                    </div>
+                  </div>
+                </ion-item>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="ion-padding-horizontal">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <div class="primary-button-wrapper">
+            <ion-button 
+              expand="block" 
+              size="default" 
+              class="ion-margin-bottom danger-button"
+              (click)="cancelTransaction()">
+              CANCEL
+            </ion-button>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="primary-button-wrapper">
+            <ion-button 
+              expand="block" 
+              size="default" 
+              class="ion-margin-bottom"
+              (click)="confirmTransaction()">
+              CONFIRM
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-footer>
