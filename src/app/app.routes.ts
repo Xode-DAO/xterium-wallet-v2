@@ -83,6 +83,10 @@ export const routes: Routes = [
         loadComponent: () => import('./xterium/explore/explore.page').then(m => m.ExplorePage)
       },
       {
+        path: 'explore',
+        loadComponent: () => import('./xterium/explore/browser/browser.page').then(m => m.BrowserPage)
+      },
+      {
         path: '',
         redirectTo: '/xterium/balances',
         pathMatch: 'full',
@@ -112,5 +116,9 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
+  },
+  {
+    path: 'browser',
+    loadComponent: () => import('./xterium/explore/browser/browser.page').then( m => m.BrowserPage)
   },
 ];
