@@ -6,6 +6,7 @@ import { PolkadotClient, TypedApi, Transaction, TxEvent } from 'polkadot-api';
 import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
+import { FeeEstimate } from 'src/models/fees.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,4 +25,5 @@ export abstract class PolkadotApiService {
 
   abstract transfer(balance: Balance, destPublicKey: string, value: number): Transaction<any, any, any, void | undefined>;
   abstract signTransactions(transaction: Transaction<any, any, any, void | undefined>, wallet: Wallet): Observable<TxEvent>;
+  abstract estimateFee(transaction: Transaction<any, any, any, void | undefined>, publicKey: string, tokenPrices: TokenPrice[]): Observable<FeeEstimate>;
 }

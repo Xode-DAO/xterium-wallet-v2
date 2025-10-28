@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -18,16 +18,20 @@ import {
   IonAvatar,
   IonToast,
   ToastController,
+  IonModal,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonContent
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { clipboardOutline, scanOutline } from 'ionicons/icons';
+import { clipboardOutline, scanOutline, chevronDownOutline, close } from 'ionicons/icons';
 
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
 
-import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
@@ -36,6 +40,9 @@ import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode
 import { NetworksService } from 'src/app/api/networks/networks.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
+
+import { NetworksComponent } from '../networks/networks.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-send',
@@ -55,6 +62,12 @@ import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.ser
     IonLabel,
     IonAvatar,
     IonToast,
+    IonModal,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonContent,
+    NetworksComponent
   ]
 })
 export class SendComponent implements OnInit {
@@ -62,8 +75,9 @@ export class SendComponent implements OnInit {
 
   @Output() onSendSuccessful = new EventEmitter<string>();
 
+  @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
+
   constructor(
-    private localNotificationsService: LocalNotificationsService,
     private balancesService: BalancesService,
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
@@ -71,16 +85,20 @@ export class SendComponent implements OnInit {
     private networksService: NetworksService,
     private walletsService: WalletsService,
     private multipayxApiService: MultipayxApiService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private router: Router
   ) {
     addIcons({
       clipboardOutline,
-      scanOutline
+      scanOutline,
+      chevronDownOutline,
+      close
     });
   }
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
+  selectedNetwork: Network = {} as Network;
 
   balancesObservableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
@@ -90,6 +108,15 @@ export class SendComponent implements OnInit {
   formattedAmountValue: string = "0";
 
   isProcessing: boolean = false;
+
+  openSelectNetworkModal() {
+    this.selectNetworkModal.present();
+  }
+
+  onSelectedNetwork(network: Network) {
+    this.selectedNetwork = network;
+    this.selectNetworkModal.dismiss();
+  }
 
   async pasteFromClipboard() {
     const { type, value } = await Clipboard.read();
@@ -115,6 +142,7 @@ export class SendComponent implements OnInit {
 
       const network = this.networksService.getNetworkById(this.currentWallet.network_id);
       if (network) {
+        this.selectedNetwork = network;
         this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
       }
     }
@@ -247,62 +275,45 @@ export class SendComponent implements OnInit {
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
 
-    const transaction = service.transfer(this.balance, this.recipientAddress, parseAmount);
-    const wallet = this.currentWallet;
-
-    this.transferSubscription = service.signTransactions(transaction, wallet).subscribe({
-      next: async (event) => {
-        this.handleTransferTransactionEvent(event);
+    const extrinsic = this.balance.token.type === 'native' 
+      ? 'Balances.transfer_allow_death' 
+      : 'Assets.transfer_keep_alive';
+    
+    const transactionData = {
+      balance: this.balance,
+      recipientAddress: this.recipientAddress,
+      amount: parseAmount,
+      formattedAmount: this.formattedAmountValue,
+      network: this.selectedNetwork,
+      wallet: {
+        ...this.currentWallet,
+        formattedAddress: this.currentWalletPublicAddress, 
+        rawPublicKey: this.currentWallet.public_key 
       },
-      error: async (err) => {
-        this.isProcessing = false;
+      extrinsic: extrinsic,
+      serviceType: this.currentWallet.network_id,
+      transferData: {
+        balance: this.balance,
+        recipientAddress: this.recipientAddress,
+        amount: parseAmount
       }
-    });
-  }
+    };
 
-  async handleTransferTransactionEvent(event: any) {
-    let title = '';
-    let body = '';
-
-    const hashInfo = event.txHash ? `\nTx Hash: ${event.txHash}` : '';
-
-    switch (event.type) {
-      case "signed":
-        title = "Transaction Signed";
-        body = `Your transfer request has been signed and is ready to be sent.${hashInfo}`;
-        break;
-
-      case "broadcasted":
-        title = "Transaction Sent";
-        body = `Your transfer has been broadcasted to the network.${hashInfo}`;
-        break;
-
-      case "txBestBlocksState":
-        if (event.found) {
-          title = "Transaction Included in Block";
-
-          const eventMessages = event.events.map((e: any, idx: number) => {
-            if (e.type === "ExtrinsicSuccess") return `Step ${idx + 1}: Transfer succeeded.`;
-            if (e.type === "ExtrinsicFailed") return `Step ${idx + 1}: Transfer failed.`;
-            return `Step ${idx + 1}: ${e.type} event detected.`;
-          });
-
-          body = `Your transaction is included in a block.${hashInfo}\n` + eventMessages.join("\n");
+    console.log('Navigating to fees page with data:', transactionData);
+  
+    setTimeout(() => {
+      this.router.navigate(['/web3/fees', extrinsic], {
+        state: { transactionData }
+      }).then(success => {
+        if (!success) {
+          console.error('Navigation failed');
+          this.isProcessing = false;
         }
-        break;
-
-      case "finalized":
-        title = "Transaction Completed";
-        body = `Your transfer is now finalized and confirmed on the blockchain.${hashInfo}`;
-        break;
-
-      default:
-        title = "Transaction Update";
-        body = `Received event: ${event.type}${hashInfo}`;
-    }
-
-    const id = Math.floor(Math.random() * 100000);
-    await this.localNotificationsService.presentNotification(title, body, id);
+      }).catch(error => {
+        console.error('Navigation error:', error);
+        this.isProcessing = false;
+      });
+    }, 100);
   }
 
   ngOnInit() {

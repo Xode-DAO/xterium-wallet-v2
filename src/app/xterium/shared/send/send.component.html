@@ -20,6 +20,34 @@
       </ion-col>
     </ion-row>
     <ion-row>
+      <ion-col size="12">
+        <ion-item class="primary-select-button-item" (click)="openSelectNetworkModal()">
+          <ion-label style="font-size: 15px;">Destination</ion-label>
+          <ion-label slot="end">{{ selectedNetwork.name || 'Select Network' }}</ion-label>
+          <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
+            <img [src]="'./../../assets/images/networks/' + selectedNetwork.image" alt="Network Logo" />
+          </ion-avatar>
+          <ion-modal #selectNetworkModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+            <ng-template>
+              <ion-toolbar class="main-modal-toolbar">
+                <ion-title>Destination Network</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button (click)="selectNetworkModal.dismiss()">
+                    <ion-icon name="close" style="color: white;"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <ion-content>
+                <div class="ion-padding-horizontal">
+                  <app-networks (onSelectedNetwork)="onSelectedNetwork($event)"></app-networks>
+                </div>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col size="6">
         <div class="primary-button-wrapper ion-text-left">
           <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"

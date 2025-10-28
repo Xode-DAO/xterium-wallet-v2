@@ -106,6 +106,10 @@ export const routes: Routes = [
         loadComponent: () => import('./web3/sign/sign.page').then(m => m.SignPage)
       },
       {
+        path: 'fees/:extrinsic',
+        loadComponent: () => import('./web3/fees/fees.page').then( m => m.FeesPage)
+      },
+      {
         path: '',
         redirectTo: '/web3/approval',
         pathMatch: 'full',
