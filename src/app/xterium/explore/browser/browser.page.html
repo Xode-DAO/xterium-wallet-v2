@@ -1,0 +1,19 @@
+<ion-content [fullscreen]="true">
+  <ion-button
+    fill="clear"
+    class="primary-back-button"
+    [routerLink]="['/xterium/explore']"
+  >
+    <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+
+  <div *ngIf="showIframe" class="iframe-container">
+    <iframe
+      class="webPage"
+      frameborder="0"
+      name="eventsPage"
+      [src]="safeUrl"
+      allowfullscreen
+    ></iframe>
+  </div>
+</ion-content>
