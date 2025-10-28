@@ -27,13 +27,12 @@ import { addIcons } from 'ionicons';
 import { close } from 'ionicons/icons';
 
 import { HeaderComponent } from 'src/app/onboarding/shared/header/header.component';
+import { TermsAndConditionComponent } from 'src/app/onboarding/shared/terms-and-condition/terms-and-condition.component'
 
 import { Network } from 'src/models/network.model';
 
 import { NetworksService } from 'src/app/api/networks/networks.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
-
-import { TermsAndConditionComponent } from 'src/app/onboarding/shared/terms-and-condition/terms-and-condition.component'
 
 @Component({
   selector: 'app-select-network',

@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonGrid,
+  IonRow,
+  IonCol,
   IonSegment,
   IonSegmentButton,
   IonSegmentView,
@@ -17,6 +20,9 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonSegment,
     IonSegmentButton,
     IonSegmentView,
@@ -25,7 +31,7 @@ import {
   ],
 })
 export class TermsAndConditionComponent implements OnInit {
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }
