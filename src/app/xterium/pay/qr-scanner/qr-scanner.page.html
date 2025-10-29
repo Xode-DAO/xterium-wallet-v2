@@ -1,0 +1,27 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-button fill="clear" class="primary-back-button" (click)="handleBack()">
+    <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+  </ion-button>
+
+  <div class="scanner-container" [class.scanning-mode]="scanning">
+    @if (scanning) {
+      <div class="scanner-ui">
+        <div class="scan-box">
+          <div class="corner top-left"></div>
+          <div class="corner top-right"></div>
+          <div class="corner bottom-left"></div>
+          <div class="corner bottom-right"></div>
+        </div>
+      </div>
+    }
+    @if (scannedResult && !scanning) {
+      <div class="result-container">
+        <ion-item>
+          <ion-label position="stacked">Scanned Result</ion-label>
+          <ion-input [value]="scannedResult" readonly></ion-input>
+        </ion-item>
+      </div>
+    }
+    
+  </div>
+</ion-content>
