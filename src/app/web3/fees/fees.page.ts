@@ -2,14 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { Subscription } from 'rxjs';
+import { Transaction } from 'polkadot-api';
+
 import {
   IonContent,
   IonItem,
   IonLabel,
   IonButton,
   IonCard,
-  IonCardContent,
   IonText,
   IonGrid,
   IonRow,
@@ -19,23 +21,30 @@ import {
   IonChip,
   IonSpinner
 } from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
-import { 
-  checkmarkCircle, 
-  closeCircle,
-  arrowRedo,
-  trendingUp,
-  card,
-  gitBranch,
-  swapHorizontal,
-  megaphone,
-  help
+import {
+  cube,
+  cubeOutline,
+  arrowUpOutline,
+  arrowDownOutline,
+  globeOutline,
+  flame
 } from 'ionicons/icons';
+
+import { Network } from 'src/models/network.model';
+import { Wallet } from 'src/models/wallet.model';
 import { ExtrinsicInfo, FeeEstimate } from 'src/models/fees.model';
 
+import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
+import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
+import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
+import { NetworksService } from 'src/app/api/networks/networks.service';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { BalancesService } from 'src/app/api/balances/balances.service';
 import { FeesService } from 'src/app/api/fees/fees.service';
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
-import { ExtrinsicMappingService } from 'src/app/api/fees/fees-extrinsic-mapping/extrinsic-mapping.service';
 
 @Component({
   selector: 'app-fees',
@@ -43,15 +52,14 @@ import { ExtrinsicMappingService } from 'src/app/api/fees/fees-extrinsic-mapping
   styleUrls: ['./fees.page.scss'],
   standalone: true,
   imports: [
+    CommonModule,
+    FormsModule,
     IonContent,
     IonItem,
     IonLabel,
     IonButton,
     IonCard,
-    IonCardContent,
     IonText,
-    CommonModule,
-    FormsModule,
     IonGrid,
     IonRow,
     IonCol,
@@ -62,141 +70,100 @@ import { ExtrinsicMappingService } from 'src/app/api/fees/fees-extrinsic-mapping
   ],
 })
 export class FeesPage implements OnInit {
-  extrinsic: string = '';
-  extrinsicInfo: ExtrinsicInfo | null = null;
-  
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private polkadotJsService: PolkadotJsService,
+    private assethubPolkadotService: AssethubPolkadotService,
+    private xodePolkadotService: XodePolkadotService,
+    private networksService: NetworksService,
+    private walletsService: WalletsService,
+    private balancesService: BalancesService,
+
+    private feesService: FeesService,
+    private localNotificationsService: LocalNotificationsService,
+  ) {
+    addIcons({
+      cube,
+      cubeOutline,
+      arrowUpOutline,
+      arrowDownOutline,
+      globeOutline,
+      flame
+    });
+  }
+
+  currentWallet: Wallet = {} as Wallet;
+  currentWalletPublicAddress: string = '';
+  currentNetwork: Network = {} as Network;
+
+  extrinsic: string = "";
+  estimatedFee: number = 0;
+  isLoadingFee: boolean = true;
+
+  transaction: Transaction<any, any, any, void | undefined> | null = null;
+
+  isProcessing: boolean = false;
+
   transactionData: any = null;
   feeEstimate: FeeEstimate | null = null;
-  isLoadingFee: boolean = true;
   feeSubscription: Subscription = new Subscription();
 
   transactionStatus: string = '';
   transactionHash: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private feesService: FeesService,
-    private extrinsicMappingService: ExtrinsicMappingService,
-    private localNotificationsService: LocalNotificationsService,
-  ) {
-    addIcons({ 
-      checkmarkCircle, 
-      closeCircle,
-      arrowRedo,
-      trendingUp,
-      card,
-      gitBranch,
-      swapHorizontal,
-      megaphone,
-      help
-    });
+  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+    const publicKeyUint8 = new Uint8Array(
+      publicKey.split(',').map(byte => Number(byte.trim()))
+    );
+
+    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
-  ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.extrinsic = params.get('extrinsic') || '';
-      this.extrinsicInfo = this.extrinsicMappingService.getExtrinsicInfo(this.extrinsic);
-      
-      const navigation = this.router.getCurrentNavigation();
-      if (navigation?.extras.state) {
-        const stateData = navigation.extras.state['transactionData'];
-        console.log('Received transaction data:', stateData);
-        
-        this.transactionData = this.feesService.recreateTransaction(stateData);
-        
-        if (this.transactionData && this.transactionData.transaction) {
-          console.log('Transaction recreated successfully, estimating fee...');
-          this.estimateFee();
-        } else {
-          console.error('Failed to recreate transaction');
-          this.isLoadingFee = false;
-          this.feeEstimate = this.feesService.getFallbackFeeEstimate(
-            stateData?.balance?.token?.symbol,
-            stateData?.balance?.token?.decimals
-          );
-        }
-      } else {
-        console.error('No transaction data in navigation state');
-        this.isLoadingFee = false;
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+
+      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
+      if (network) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+        this.currentNetwork = network;
       }
-    });
-  }
-
-  private estimateFee() {
-    if (!this.transactionData || !this.transactionData.transaction) {
-      console.error('Transaction data or transaction object is missing');
-      this.isLoadingFee = false;
-      
-      this.feeEstimate = this.feesService.getFallbackFeeEstimate(
-        this.transactionData?.balance?.token?.symbol,
-        this.transactionData?.balance?.token?.decimals
-      );
-      return;
     }
-
-    this.isLoadingFee = true;
-
-    const fromAddress = this.transactionData.wallet.formattedAddress;
-
-    this.feeSubscription = this.feesService.estimateFee(
-      this.transactionData.transaction, 
-      fromAddress,
-      this.transactionData.wallet.network_id
-    ).subscribe({
-      next: (feeEstimate: FeeEstimate) => {
-        this.feeEstimate = feeEstimate;
-        this.isLoadingFee = false;
-      },
-      error: (error) => {
-        console.error('Error estimating fee:', error);
-        this.isLoadingFee = false;
-        this.feeEstimate = this.feesService.getFallbackFeeEstimate(
-          this.transactionData.balance.token.symbol,
-          this.transactionData.balance.token.decimals
-        );
-      }
-    });
   }
 
-  convertToNumber(value: string): number {
-    return Number(value);
+  truncateAddress(address: string): string {
+    return this.polkadotJsService.truncateAddress(address);
   }
 
-  shouldShowField(field: string): boolean {
-    return this.extrinsicInfo?.requiredFields.includes(field) || false;
-  }
-
-  getCategoryIcon(category: string): string {
-    return this.extrinsicMappingService.getCategoryIcon(category as any);
-  }
-
-  getCategoryColor(category: string): string {
-    return this.extrinsicMappingService.getCategoryColor(category as any);
+  formatBalance(amount: number, decimals: number): number {
+    return this.balancesService.formatBalance(amount, decimals);
   }
 
   confirmTransaction() {
-    if (!this.transactionData || !this.transactionData.transaction) {
+    if (!this.transaction) {
       console.error('Transaction data or transaction object is missing');
       return;
     }
 
-    const service = this.feesService.getServiceForNetwork(this.transactionData.wallet.network_id);
-    
+    let service: PolkadotApiService | null = null;
+
+    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+
     if (!service) return;
 
-    console.log('Confirming transaction:', this.extrinsic);
+    this.isProcessing = true;
 
-    this.router.navigate(['/xterium/balances']);
-    
-    service.signTransactions(
-      this.transactionData.transaction, 
-      this.transactionData.wallet
-    ).subscribe({
+    service.signTransactions(this.transaction, this.currentWallet).subscribe({
       next: async (event) => {
-        this.handleTransferTransactionEvent(event);},
-      error: (error) => {
-        console.error('Transaction error:', error);
+        this.handleTransferTransactionEvent(event);
+      },
+      error: async (err) => {
+        this.isProcessing = false;
       }
     });
   }
@@ -248,6 +215,36 @@ export class FeesPage implements OnInit {
 
   cancelTransaction() {
     this.router.navigate(['/xterium/balances']);
+  }
+
+  async fetchData(): Promise<void> {
+    await this.getCurrentWallet();
+
+    this.route.paramMap.subscribe(params => {
+      let service: PolkadotApiService | null = null;
+
+      if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
+      if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+
+      if (!service) return;
+
+      const encodedhex = params.get('encodedhex') || '';
+      service.getTransactionInfo(encodedhex).then(async (transactionInfo) => {
+        this.transaction = transactionInfo;
+
+        this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
+
+        setTimeout(async () => {
+          const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
+          this.estimatedFee = Number(fee.partial_fee);
+          this.isLoadingFee = false;
+        }, 1000);
+      });
+    });
+  }
+
+  ngOnInit() {
+    this.fetchData();
   }
 
   ngOnDestroy() {

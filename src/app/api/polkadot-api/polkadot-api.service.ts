@@ -16,6 +16,8 @@ export abstract class PolkadotApiService {
   protected abstract client: PolkadotClient;
   protected abstract chainApi: TypedApi<any>;
 
+  abstract getTransactionInfo(encodedData: string): Promise<Transaction<any, any, any, void | undefined>>;
+
   abstract getTokens(): Promise<Token[]>;
   abstract getBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Promise<Balance[]>;
 
@@ -25,5 +27,6 @@ export abstract class PolkadotApiService {
 
   abstract transfer(balance: Balance, destPublicKey: string, value: number): Transaction<any, any, any, void | undefined>;
   abstract signTransactions(transaction: Transaction<any, any, any, void | undefined>, wallet: Wallet): Observable<TxEvent>;
+
   abstract estimateFee(transaction: Transaction<any, any, any, void | undefined>, publicKey: string, tokenPrices: TokenPrice[]): Observable<FeeEstimate>;
 }

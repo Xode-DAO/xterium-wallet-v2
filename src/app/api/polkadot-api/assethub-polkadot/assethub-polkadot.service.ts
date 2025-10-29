@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { assethubPolkadot, MultiAddress } from "@polkadot-api/descriptors"
-import { createClient, Transaction, TxEvent, InvalidTxError } from 'polkadot-api';
+import { createClient, Transaction, TxEvent, InvalidTxError, Binary } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider/web';
 import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
@@ -21,9 +21,14 @@ import { FeeEstimate } from 'src/models/fees.model';
 })
 export class AssethubPolkadotService extends PolkadotApiService {
   protected wsProvider = "wss://polkadot-asset-hub-rpc.polkadot.io";
-
   protected client = createClient(getWsProvider(this.wsProvider));
   protected chainApi = this.client.getTypedApi(assethubPolkadot);
+
+  async getTransactionInfo(encodedData: string): Promise<Transaction<any, any, any, void | undefined>> {
+    const binary = Binary.fromHex(encodedData);
+    const decodedTx = await this.chainApi.txFromCallData(binary);
+    return decodedTx;
+  }
 
   async getTokens(): Promise<Token[]> {
     const assethubChainSpecs = this.client.getChainSpecData();
@@ -421,18 +426,18 @@ export class AssethubPolkadotService extends PolkadotApiService {
             const chainSpecs = await this.client.getChainSpecData();
             const decimals = chainSpecs.properties['tokenDecimals'] as number;
             const symbol = chainSpecs.properties['tokenSymbol'] as string;
-            
+
             const feeAmount = Number(partialFee) / Math.pow(10, decimals);
             const formattedFee = feeAmount.toFixed(decimals > 6 ? 6 : decimals);
-            
+
             let tokenPrice = 0;
             if (tokenPrices.length > 0) {
               tokenPrice = tokenPrices.find(p => p.token.symbol.toLowerCase() === symbol.toLowerCase())?.price || 0;
             }
-            
+
             const feeUSD = tokenPrice > 0 ? (feeAmount * tokenPrice).toFixed(4) : 'N/A';
             const feeUSDDisplay = tokenPrice > 0 ? `≈ $${feeUSD} USD` : 'Price unavailable';
-            
+
             const feeEstimate: FeeEstimate = {
               fee: `${formattedFee} ${symbol}`,
               feeUSD: feeUSDDisplay,
@@ -440,7 +445,7 @@ export class AssethubPolkadotService extends PolkadotApiService {
               tokenSymbol: symbol,
               tokenDecimals: decimals
             };
-            
+
             subscriber.next(feeEstimate);
             subscriber.complete();
           } catch (error) {

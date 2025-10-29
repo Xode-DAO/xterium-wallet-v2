@@ -274,45 +274,11 @@ export class SendComponent implements OnInit {
     if (!service) return;
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
+    const transaction = service.transfer(this.balance, this.recipientAddress, parseAmount);
 
-    const extrinsic = this.balance.token.type === 'native' 
-      ? 'Balances.transfer_allow_death' 
-      : 'Assets.transfer_keep_alive';
-    
-    const transactionData = {
-      balance: this.balance,
-      recipientAddress: this.recipientAddress,
-      amount: parseAmount,
-      formattedAmount: this.formattedAmountValue,
-      network: this.selectedNetwork,
-      wallet: {
-        ...this.currentWallet,
-        formattedAddress: this.currentWalletPublicAddress, 
-        rawPublicKey: this.currentWallet.public_key 
-      },
-      extrinsic: extrinsic,
-      serviceType: this.currentWallet.network_id,
-      transferData: {
-        balance: this.balance,
-        recipientAddress: this.recipientAddress,
-        amount: parseAmount
-      }
-    };
-
-    console.log('Navigating to fees page with data:', transactionData);
-  
-    setTimeout(() => {
-      this.router.navigate(['/web3/fees', extrinsic], {
-        state: { transactionData }
-      }).then(success => {
-        if (!success) {
-          console.error('Navigation failed');
-          this.isProcessing = false;
-        }
-      }).catch(error => {
-        console.error('Navigation error:', error);
-        this.isProcessing = false;
-      });
+    setTimeout(async () => {
+      const encodedHex = (await transaction.getEncodedData()).asHex();
+      this.router.navigate(['/web3/fees/' + encodedHex]);
     }, 100);
   }
 
