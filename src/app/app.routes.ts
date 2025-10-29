@@ -7,7 +7,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/onboarding/select-network',
+        redirectTo: '/security/login',
         pathMatch: 'full',
       },
     ]
