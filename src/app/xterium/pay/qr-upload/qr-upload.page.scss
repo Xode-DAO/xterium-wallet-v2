@@ -1,0 +1,37 @@
+ion-card.custom-card {
+    margin: 0px;
+    border-radius: 15px;
+    background: #2a2a2a;
+
+    .transaction-note {
+      font-size: 14px;
+      background: #2a2a2a;
+    }
+
+    ion-item {
+      --background: #2a2a2a;
+    }
+
+    ion-item.transaction-item {
+      --background: #2a2a2a;
+
+      .transaction-item-details {
+        font-size: 18px;
+        font-weight: 900;
+        background: #2a2a2a;
+      }
+    }
+
+    ion-item.token-info {
+      --background: #2a2a2a;
+
+      .token-amount {
+        margin-bottom: 7px;
+      }
+
+      h2 {
+        color: #ffffff;
+        font-size: 15px;
+      }
+    }
+  }

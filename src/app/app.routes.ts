@@ -125,4 +125,12 @@ export const routes: Routes = [
     path: 'browser',
     loadComponent: () => import('./xterium/explore/browser/browser.page').then( m => m.BrowserPage)
   },
+  {
+    path: 'qr-scanner',
+    loadComponent: () => import('./xterium/pay/qr-scanner/qr-scanner.page').then( m => m.QrScannerPage)
+  },
+  {
+    path: 'qr-upload',
+    loadComponent: () => import('./xterium/pay/qr-upload/qr-upload.page').then( m => m.QrUploadPage)
+  },
 ];

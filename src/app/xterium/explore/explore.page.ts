@@ -23,11 +23,10 @@ export class ExplorePage implements OnInit {
 
   constructor(private router: Router) {}
 
-  async browserPagNavigation() {
+  browserPageNavigation() {
     this.router.navigate(['/browser']);
   }
 
-  ngOnInit() 
-  {}
+  ngOnInit() {}
 
 }
