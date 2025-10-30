@@ -1,7 +1,74 @@
-<ion-content [fullscreen]="true" class="ion-padding">
-  <div class="button-container">
-    <ion-button expand="block" color="primary" (click)="browserPagNavigation()">
-      Go to Browser Page
-    </ion-button>
+<ion-content [fullscreen]="true" class="explore-page">
+  <div class="ion-text-center ion-padding">
+  </div>
+
+  <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <div class="ion-text-center">
+            <h1 style="font-weight: bold">
+              Explore Xterium
+            </h1>
+            <span>
+              Discover amazing features
+            </span>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div class="card-container ion-margin-top">
+            <ion-card class="feature-card">
+              <img 
+                alt="Xterium Xode Web3" 
+                src="./../../../assets/images/backgrounds/xode-web3.png"
+              />
+              
+              <ion-card-header>
+                <ion-card-subtitle>Web3 Infrastructure</ion-card-subtitle>
+                <ion-card-title>Xode Staking</ion-card-title>
+              </ion-card-header>
+              
+              <ion-card-content>
+                  Stake your assets on Xode's secure platform and earn competitive rewards. Our staking service provides reliable infrastructure with high uptime and optimal returns for your investments.
+              </ion-card-content>
+              <ion-button 
+                fill="clear" 
+                (click)="redirectToNode()"
+              >
+                Explore
+              </ion-button>
+            </ion-card>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div class="card-container ion-margin-top">
+            <ion-card class="feature-card">
+              <img 
+                alt="Xterium Ecosystem" 
+                src="./../../../assets/images/backgrounds/xode-web3.png" 
+              />
+              <ion-card-header>
+                <ion-card-subtitle>Digital Ecosystem</ion-card-subtitle>
+                <ion-card-title>Explore Xterium</ion-card-title>
+              </ion-card-header>
+              
+              <ion-card-content>
+                 Discover the complete Xterium ecosystem featuring decentralized applications, and innovative blockchain solutions designed for the future of Web3.
+              </ion-card-content>
+              <ion-button 
+                fill="clear" 
+                (click)="redirectToXterium()"
+              >
+                Explore
+              </ion-button>
+            </ion-card>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 </ion-content>
