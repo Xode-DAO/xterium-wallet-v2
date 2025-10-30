@@ -2,7 +2,6 @@
  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
 }
 
-
 .login-container {
  padding: 20px;
  height: 100%;
@@ -10,18 +9,6 @@
  flex-direction: column;
  justify-content: center;
 }
-
-
-.custom-toolbar {
- --background: transparent;
- --border-width: 0;
-  ion-title {
-   color: white;
-   font-weight: 600;
-   font-size: 1.2rem;
- }
-}
-
 
 .app-header {
  text-align: center;
@@ -56,16 +43,6 @@
  }
 }
 
-
-.login-section, .extension-login {
- background: white;
- border-radius: 20px;
- padding: 30px 25px;
- box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
- backdrop-filter: blur(10px);
-}
-
-
 .biometric-promo, .extension-header {
  text-align: center;
  margin-bottom: 30px;
@@ -98,7 +75,6 @@
  }
 }
 
-
 .biometric-button {
  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
  --background-activated: var(--ion-color-primary-shade);
@@ -112,69 +88,6 @@
    font-size: 20px;
  }
 }
-
-
-.alternative-options {
- .divider {
-   text-align: center;
-   color: var(--ion-color-medium);
-   font-size: 0.9rem;
-   margin: 0 0 15px 0;
-   position: relative;
-  
-   &::before, &::after {
-     content: '';
-     position: absolute;
-     top: 50%;
-     width: 30%;
-     height: 1px;
-     background: var(--ion-color-light);
-   }
-  
-   &::before {
-     left: 0;
-   }
-  
-   &::after {
-     right: 0;
-   }
- }
-}
-
-
-.password-fallback-button {
- --border-radius: 12px;
- --padding-top: 16px;
- --padding-bottom: 16px;
- --border-color: var(--ion-color-medium);
- --color: var(--ion-color-medium);
- font-weight: 600;
-  ion-icon {
-   font-size: 18px;
- }
-}
-
-
-.password-fallback {
- .fallback-header {
-   display: flex;
-   align-items: center;
-   margin-bottom: 25px;
-  
-   h3 {
-     margin: 0;
-     color: var(--ion-color-dark);
-     font-weight: 600;
-     flex: 1;
-     text-align: center;
-   }
-  
-   ion-button {
-     --color: var(--ion-color-medium);
-   }
- }
-}
-
 
 .auth-form {
  background: transparent;
@@ -203,17 +116,6 @@
  }
 }
 
-
-.login-button {
- --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
- --border-radius: 12px;
- --padding-top: 16px;
- --padding-bottom: 16px;
- font-weight: 600;
- margin-bottom: 15px;
-}
-
-
 .security-tips {
  display: flex;
  align-items: center;
@@ -227,7 +129,6 @@
  }
 }
 
-
 @keyframes fadeIn {
  from {
    opacity: 0;
@@ -239,11 +140,9 @@
  }
 }
 
-
 .login-section, .extension-login, .password-fallback {
  animation: fadeIn 0.5s ease-out;
 }
-
 
 @media (max-width: 350px) {
  .login-container {
@@ -256,9 +155,6 @@
    font-size: 1.7rem;
  }
 }
-
-
-
 
 .biometric-unavailable {
  text-align: center;
@@ -274,7 +170,6 @@
    font-weight: 500;
  }
 }
-
 
 .biometric-button[disabled] {
  opacity: 0.6;

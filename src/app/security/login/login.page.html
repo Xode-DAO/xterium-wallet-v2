@@ -2,44 +2,49 @@
   <div class="login-container">
     <div class="app-header"></div>
 
-    <div *ngIf="isMobile">
-      <div class="biometric-promo">
-        <div class="biometric-icon-container">
-          <ion-icon name="finger-print" class="biometric-icon"></ion-icon>
-        </div>
+    @if (isMobile) {
+    <div class="biometric-promo">
+      <div class="biometric-icon-container">
+        <ion-icon name="finger-print" class="biometric-icon"></ion-icon>
       </div>
 
-      <div *ngIf="!biometricAvailable" class="biometric-unavailable">
+      @if (!biometricAvailable) {
+      <div class="biometric-unavailable">
         <p class="unavailable-text">
           Biometric authentication is not available on this device
         </p>
       </div>
+      }
 
-      <ion-button
-        expand="block"
-        class="biometric-button"
-        (click)="loginWithBiometric()"
-        mode="ios"
-        [disabled]="!biometricAvailable"
-      >
-        <ion-icon slot="start" name="finger-print"></ion-icon>
-        Login with Biometrics
-      </ion-button>
+      <div class="primary-button-wrapper">
+        <ion-button
+          expand="block"
+          class="ion-margin-bottom"
+          (click)="loginWithBiometric()"
+          mode="ios"
+          [disabled]="!biometricAvailable"
+        >
+          Login with Biometrics
+        </ion-button>
+      </div>
     </div>
-
-    <div *ngIf="!isMobile">
+    } @else {
+    <div>
       <div class="extension-header">
         <h2 class="section-title">
           {{ isFirstTimeSetup ? 'Set Up Your Password' : 'Browser Extension
           Login' }}
         </h2>
-        <ion-text *ngIf="isFirstTimeSetup" class="setup-description">
+
+        @if (isFirstTimeSetup) {
+        <ion-text class="setup-description">
           <p>Create a secure password to protect your extension data</p>
         </ion-text>
+        }
       </div>
 
       <ion-list class="auth-form">
-        <ion-item lines="full" class="form-item">
+        <ion-item lines="none" class="form-item">
           <ion-label position="stacked">Password</ion-label>
           <ion-input
             type="password"
@@ -48,7 +53,8 @@
           ></ion-input>
         </ion-item>
 
-        <ion-item *ngIf="isFirstTimeSetup" lines="full" class="form-item">
+        @if (isFirstTimeSetup) {
+        <ion-item lines="none" class="form-item">
           <ion-label position="stacked">Confirm Password</ion-label>
           <ion-input
             type="password"
@@ -56,20 +62,26 @@
             [(ngModel)]="confirmPassword"
           ></ion-input>
         </ion-item>
+        }
       </ion-list>
 
-      <ion-button
-        expand="block"
-        class="login-button"
-        (click)="loginWithPassword()"
-      >
-        {{ isFirstTimeSetup ? 'Set Password & Continue' : 'Unlock Extension' }}
-      </ion-button>
+      <div class="primary-button-wrapper">
+        <ion-button
+          expand="block"
+          class="ion-margin-bottom"
+          size="default"
+          (click)="loginWithPassword()"
+        >
+          {{ isFirstTimeSetup ? 'Set Password & Continue' : 'Unlock Extension'
+          }}
+        </ion-button>
+      </div>
 
       <div class="security-tips">
         <ion-icon name="shield-checkmark"></ion-icon>
         <span>Your data is encrypted locally</span>
       </div>
     </div>
+    }
   </div>
 </ion-content>
