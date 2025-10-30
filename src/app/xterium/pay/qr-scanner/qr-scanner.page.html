@@ -1,27 +1,24 @@
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-button fill="clear" class="primary-back-button" (click)="handleBack()">
+  <ion-button fill="clear" class="primary-back-button" (click)="returnToPayPage()">
     <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
   </ion-button>
-
-  <div class="scanner-container" [class.scanning-mode]="scanning">
-    @if (scanning) {
-      <div class="scanner-ui">
-        <div class="scan-box">
-          <div class="corner top-left"></div>
-          <div class="corner top-right"></div>
-          <div class="corner bottom-left"></div>
-          <div class="corner bottom-right"></div>
-        </div>
-      </div>
-    }
-    @if (scannedResult && !scanning) {
-      <div class="result-container">
-        <ion-item>
-          <ion-label position="stacked">Scanned Result</ion-label>
-          <ion-input [value]="scannedResult" readonly></ion-input>
-        </ion-item>
-      </div>
-    }
-    
+  <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <div style="margin-top: 50px">
+            <ion-card class="custom-card">
+              <ion-card-header>
+                <ion-card-title>Result Details</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-textarea [value]="scannedResult" readonly autoGrow="true" rows="3" style="width: 100%; overflow-wrap: break-word;"></ion-textarea>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 </ion-content>
+
