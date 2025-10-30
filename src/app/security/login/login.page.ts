@@ -5,12 +5,13 @@ import {
   IonContent,
   IonButton,
   IonIcon,
-  IonList,
   IonItem,
-  IonLabel,
   IonInput,
   IonText,
   ToastController,
+  IonGrid,
+  IonRow,
+  IonCol,
 } from '@ionic/angular/standalone';
 import { Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -32,11 +33,12 @@ import { fingerPrint, shieldCheckmark } from 'ionicons/icons';
     IonContent,
     IonButton,
     IonIcon,
-    IonList,
     IonItem,
-    IonLabel,
     IonInput,
     IonText,
+    IonGrid,
+    IonRow,
+    IonCol,
   ],
 })
 export class LoginPage implements OnInit {
