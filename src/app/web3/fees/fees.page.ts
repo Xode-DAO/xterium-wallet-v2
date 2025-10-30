@@ -19,7 +19,9 @@ import {
   IonFooter,
   IonIcon,
   IonChip,
-  IonSpinner
+  IonSpinner,
+  IonList,
+  IonAvatar,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -66,7 +68,9 @@ import { LocalNotificationsService } from 'src/app/api/local-notifications/local
     IonFooter,
     IonIcon,
     IonChip,
-    IonSpinner
+    IonSpinner,
+    IonList,
+    IonAvatar,
   ],
 })
 export class FeesPage implements OnInit {
@@ -158,6 +162,8 @@ export class FeesPage implements OnInit {
 
     this.isProcessing = true;
 
+    this.router.navigate(['/xterium/balances']);
+    
     service.signTransactions(this.transaction, this.currentWallet).subscribe({
       next: async (event) => {
         this.handleTransferTransactionEvent(event);

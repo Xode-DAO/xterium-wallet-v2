@@ -29,6 +29,29 @@
       </ion-row>
       <ion-row>
         <ion-col size="12">
+          <div class="wallet-details ion-margin-top">
+            <ion-list>
+              <h2 style="margin-bottom: 6px;">Send From:</h2>
+              <ion-item detail="false" lines="none">
+                <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
+                  @if (currentNetwork) {
+                  <img [src]="'./../../../../assets/images/networks/' + currentNetwork.image" alt="Network Logo" />
+                  }
+                  @else {
+                  <img src="./../../../../assets/icon/xterium-logo.png" alt="Network Logo" />
+                  }
+                </ion-avatar>
+                <ion-label>
+                  <h2>{{ currentWallet.name }}</h2>
+                  <p>{{ truncateAddress(currentWalletPublicAddress) }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
           <div class="payload-container">
             <ion-card class="transaction-card">
               <ion-item lines="none">
@@ -42,7 +65,7 @@
 
               <ion-item lines="none">
                 <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
-                <ion-label>From:</ion-label>
+                <ion-label>Source:</ion-label>
                 <ion-text slot="end" class="label-value">
                   {{ truncateAddress(currentWalletPublicAddress) }}
                 </ion-text>
