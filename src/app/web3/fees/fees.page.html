@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true" class="web3-fees-page">
-  <div class="ion-text-center">
+  <div class="ion-text-center ion-margin-bottom">
     <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
   </div>
 
@@ -7,7 +7,7 @@
     <ion-grid>
       <ion-row>
         <ion-col size="12">
-          <div class="ion-text-center" style="margin-top: -75px;">
+          <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
             <h1 style="font-weight: bold">
               Authorize Transaction
             </h1>
@@ -17,7 +17,7 @@
       </ion-row>
       <ion-row>
         <ion-col size="12">
-          <div class="ion-text-center ion-margin-top">
+          <div class="ion-text-center">
             <ion-chip [color]="'success'">
               <ion-icon [name]="'cube'"></ion-icon>
               <ion-label>{{ extrinsic }}</ion-label>
@@ -28,21 +28,23 @@
       <ion-row>
         <ion-col size="12">
           <div class="wallet-details ion-margin-top">
-            <h2 style="margin-bottom: 6px;">Send From:</h2>
-            <ion-item detail="false" lines="none">
-              <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
-                @if (currentNetwork) {
-                <img [src]="'./../../../../assets/images/networks/' + currentNetwork.image" alt="Network Logo" />
-                }
-                @else {
-                <img src="./../../../../assets/icon/xterium-logo.png" alt="Network Logo" />
-                }
-              </ion-avatar>
-              <ion-label>
-                <h2>{{ currentWallet.name }}</h2>
-                <p>{{ truncateAddress(currentWalletPublicAddress) }}</p>
-              </ion-label>
-            </ion-item>
+            <h2 style="margin-bottom: 6px;">Wallet Account:</h2>
+            <ion-list>
+              <ion-item detail="false" lines="none">
+                <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
+                  @if (currentNetwork) {
+                  <img [src]="'./../../../../assets/images/networks/' + currentNetwork.image" alt="Network Logo" />
+                  }
+                  @else {
+                  <img src="./../../../../assets/icon/xterium-logo.png" alt="Network Logo" />
+                  }
+                </ion-avatar>
+                <ion-label>
+                  <h2>{{ currentWallet.name }}</h2>
+                  <p>{{ truncateAddress(currentWalletPublicAddress) }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
           </div>
         </ion-col>
       </ion-row>
@@ -58,7 +60,6 @@
                   <ion-label>Queued</ion-label>
                 </ion-chip>
               </ion-item>
-
               <ion-item lines="none">
                 <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
                 <ion-label>Source:</ion-label>
@@ -66,7 +67,6 @@
                   {{ truncateAddress(currentWalletPublicAddress) }}
                 </ion-text>
               </ion-item>
-
               <ion-item lines="none">
                 <ion-icon name="globe-outline" size="small" slot="start"></ion-icon>
                 <ion-label>Network:</ion-label>
@@ -74,7 +74,6 @@
                   {{ currentNetwork.name }}
                 </ion-text>
               </ion-item>
-
               <ion-item lines="none">
                 <ion-icon name="flame" size="small" slot="start"></ion-icon>
                 <ion-label>Estimated Fee:</ion-label>

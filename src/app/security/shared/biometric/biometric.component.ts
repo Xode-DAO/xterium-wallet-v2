@@ -14,6 +14,8 @@ import { addIcons } from 'ionicons';
 import { fingerPrint, shieldCheckmark } from 'ionicons/icons';
 
 import { BiometricService } from 'src/app/api/biometric/biometric.service';
+import { EncryptionService } from 'src/app/api/encryption/encryption.service';
+import { AuthService } from 'src/app/api/auth/auth.service';
 
 @Component({
   selector: 'app-biometric',
@@ -32,6 +34,8 @@ export class BiometricComponent implements OnInit {
   constructor(
     private router: Router,
     private biometricService: BiometricService,
+    private encryptionService: EncryptionService,
+    private authService: AuthService,
     private toastController: ToastController
   ) {
     addIcons({
@@ -61,8 +65,13 @@ export class BiometricComponent implements OnInit {
 
     const isBiometricEnabled = await this.biometricService.isBiometricEnabled();
     if (!isBiometricEnabled) {
-      await this.biometricService.setCredentials();
       this.biometricService.enableBiometric();
+
+      await this.biometricService.setCredentials();
+      const credentials = await this.biometricService.getCredentials();
+
+      const encryptedPassword = await this.encryptionService.encrypt(credentials.password, credentials.password);
+      await this.authService.setupPassword(encryptedPassword);
 
       const toast = await this.toastController.create({
         message: 'Biometric setup complete! Please login again.',
@@ -79,6 +88,22 @@ export class BiometricComponent implements OnInit {
   async login() {
     this.isProcessing = true;
 
+    const auth = await this.authService.getAuth();
+
+    if (!auth?.encrypted_password) {
+      this.isProcessing = false;
+
+      const toast = await this.toastController.create({
+        message: 'No password found. Please set it up first.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
     const success = await this.biometricService.verifyIdentity();
     if (!success) {
       this.isProcessing = false;
@@ -94,6 +119,25 @@ export class BiometricComponent implements OnInit {
       return;
     }
 
+    const credentials = await this.biometricService.getCredentials();
+
+    const decryptedPassword = await this.encryptionService.decrypt(auth.encrypted_password, credentials.password);
+    if (decryptedPassword !== credentials.password) {
+      this.isProcessing = false;
+
+      const toast = await this.toastController.create({
+        message: 'Invalid password. Try again.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
+    await this.authService.renewAuth();
+
     const toast = await this.toastController.create({
       message: 'Biometric login successful!',
       color: 'success',
@@ -102,9 +146,6 @@ export class BiometricComponent implements OnInit {
     });
 
     await toast.present();
-
-    const credentials = await this.biometricService.getCredentials();
-    console.log('Retrieved credentials:', credentials);
 
     this.router.navigate(['/xterium'], { replaceUrl: true });
   }

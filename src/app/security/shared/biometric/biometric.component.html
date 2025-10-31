@@ -2,8 +2,10 @@
   <ion-row>
     <ion-col size="12">
       <div class="ion-text-center" style="margin-top: -75px">
-        <h1 style="font-weight: bold">Sign in</h1>
-        <span style="font-size: 15px;">Login securely using your device's biometric authentication</span>
+        <h1 style="font-weight: bold">Login</h1>
+        <span style="font-size: 15px;">
+          Sign in securely with your device’s biometric authentication (Face ID or fingerprint).
+        </span>
       </div>
     </ion-col>
   </ion-row>
@@ -12,7 +14,6 @@
       <div class="ion-text-center biometric-icon-container">
         <ion-icon name="finger-print" class="biometric-icon"></ion-icon>
       </div>
-
       @if (!isBiometricAvailable) {
       <div class="biometric-unavailable">
         <p class="unavailable-text">
