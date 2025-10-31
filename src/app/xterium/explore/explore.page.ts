@@ -2,8 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonButton } from '@ionic/angular/standalone';
-
+import {
+  IonContent,
+  IonButton,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-explore',
@@ -16,6 +26,14 @@ import { IonContent, IonButton } from '@ionic/angular/standalone';
     FormsModule,
     IonContent,
     IonButton,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonCardContent,
+    IonGrid,
+    IonRow,
+    IonCol,
   ],
 })
 export class ExplorePage implements OnInit {
@@ -23,10 +41,13 @@ export class ExplorePage implements OnInit {
 
   constructor(private router: Router) {}
 
-  browserPageNavigation() {
-    this.router.navigate(['/browser']);
+  redirectToNode() {
+    window.open('https://node.xode.net/', '_blank');
+  }
+
+  redirectToXterium() {
+    window.open('https://xterium.app/', '_blank');
   }
 
   ngOnInit() {}
-
 }
