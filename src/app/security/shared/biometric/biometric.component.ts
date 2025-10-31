@@ -43,7 +43,7 @@ export class BiometricComponent implements OnInit {
   isBiometricAvailable = false;
   isProcessing = false;
 
-  private async initBiometric() {
+  async initBiometric() {
     const availability = await this.biometricService.isAvailable();
     this.isBiometricAvailable = availability.available;
 
@@ -56,6 +56,7 @@ export class BiometricComponent implements OnInit {
       });
 
       await toast.present();
+      return;
     }
 
     const isBiometricEnabled = await this.biometricService.isBiometricEnabled();
@@ -71,48 +72,38 @@ export class BiometricComponent implements OnInit {
       });
 
       await toast.present();
-    } else {
-      await this.login();
+      return;
     }
   }
 
   async login() {
     this.isProcessing = true;
 
-    try {
-      const success = await this.biometricService.verifyIdentity();
-      if (!success) {
-        const toast = await this.toastController.create({
-          message: 'Biometric authentication failed.',
-          color: 'danger',
-          duration: 1500,
-          position: 'top',
-        });
-
-        await toast.present();
-      }
+    const success = await this.biometricService.verifyIdentity();
+    if (!success) {
+      this.isProcessing = false;
 
       const toast = await this.toastController.create({
-        message: 'Biometric login successful!',
-        color: 'success',
-        duration: 1500,
-        position: 'top',
-      });
-
-      await toast.present();
-    } catch (error) {
-      const toast = await this.toastController.create({
-        message: 'Error during authentication. Error: ' + error,
+        message: 'Biometric authentication failed.',
         color: 'danger',
         duration: 1500,
         position: 'top',
       });
 
       await toast.present();
-    } finally {
-      this.router.navigate(['/xterium'], { replaceUrl: true });
-      this.isProcessing = false;
+      return;
     }
+
+    const toast = await this.toastController.create({
+      message: 'Biometric login successful!',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+
+    await toast.present();
+
+    this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
   ngOnInit() {

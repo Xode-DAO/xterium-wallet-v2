@@ -82,7 +82,6 @@ export class PasswordLoginComponent implements OnInit {
       });
 
       await toast.present();
-
       return;
     }
 
