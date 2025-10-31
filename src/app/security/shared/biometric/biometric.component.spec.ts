@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { PinComponent } from './pin.component';
+import { BiometricComponent } from './biometric.component';
 
-describe('PinComponent', () => {
-  let component: PinComponent;
-  let fixture: ComponentFixture<PinComponent>;
+describe('BiometricComponent', () => {
+  let component: BiometricComponent;
+  let fixture: ComponentFixture<BiometricComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PinComponent ],
+      declarations: [ BiometricComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PinComponent);
+    fixture = TestBed.createComponent(BiometricComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

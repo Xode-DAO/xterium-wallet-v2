@@ -9,12 +9,12 @@
         <ion-col size="12">
           <div class="ion-text-center" style="margin-top: -75px">
             <h1 style="font-weight: bold">Welcome!</h1>
-            <span>
+            <span style="font-size: 15px;">
               Get started by choosing a network you want to connect with. This
               will be the blockchain your wallet operates on.
             </span>
             <br /><br />
-            <span> You can change this anytime later in Settings. </span>
+            <span style="font-size: 15px;"> You can change this anytime later in Settings. </span>
           </div>
         </ion-col>
       </ion-row>
@@ -66,8 +66,10 @@
         <ion-col size="12">
           <div class="ion-text-center ion-margin-top ion-margin-bottom">
             <ion-checkbox (ionChange)="isAgreed = $event.detail.checked" [checked]="isAgreed">
-              I agree to the
-              <a (click)="openTermsAndConditionModal()">terms and conditions</a>
+              <div class="" style="font-size: 15px;">
+                I agree to the
+                <a (click)="openTermsAndConditionModal()">terms and conditions</a>
+              </div>
             </ion-checkbox>
           </div>
         </ion-col>

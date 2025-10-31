@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Platform } from '@ionic/angular';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import {
+  IonApp,
+  IonRouterOutlet,
+} from '@ionic/angular/standalone';
 
 import { StatusBar, Style } from '@capacitor/status-bar';
 
@@ -12,32 +16,39 @@ import { DeepLinkService } from './api/deep-link/deep-link.service';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet],
+  imports: [
+    IonApp,
+    IonRouterOutlet,
+  ],
 })
 export class AppComponent {
+
   constructor(
     private platform: Platform,
+    private router: Router,
     private environmentService: EnvironmentService,
     private biometricService: BiometricService,
     private deepLinkService: DeepLinkService
   ) {
-    this.initializeApp();
+    this.initApp();
   }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      const isChromeExtension = this.environmentService.isChromeExtension();
-      if (!isChromeExtension) {
-        this.setupStatusBar();
-      }
+  isChromeExtension = false;
 
-      this.deepLinkService.initDeepLinks();
-      // this.authenticate();
+  initApp() {
+    this.platform.ready().then(() => {
+      this.isChromeExtension = this.environmentService.isChromeExtension();
+
+      this.initStatusBar();
+      this.initAuthentication();
+      this.initDeepLinks();
     });
   }
 
-  async setupStatusBar() {
+  async initStatusBar() {
     try {
+      if (this.isChromeExtension) return;
+
       await StatusBar.setOverlaysWebView({ overlay: false });
       await StatusBar.setStyle({ style: Style.Dark });
       await StatusBar.setBackgroundColor({ color: '#1B1B1B' });
@@ -46,12 +57,11 @@ export class AppComponent {
     }
   }
 
-  async authenticate() {
-    try {
-      const result = await this.biometricService.verifyIdentity();
-      console.log('Authentication successful', result);
-    } catch (error) {
-      console.error('Authentication failed', error);
-    }
+  async initAuthentication() {
+    this.router.navigate(['/security'], { replaceUrl: true });
+  }
+
+  initDeepLinks() {
+    this.deepLinkService.initDeepLinks();
   }
 }

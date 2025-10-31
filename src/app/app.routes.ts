@@ -7,7 +7,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/security/login',
+        redirectTo: '/onboarding/select-network',
         pathMatch: 'full',
       },
     ]
@@ -84,7 +84,18 @@ export const routes: Routes = [
       },
       {
         path: 'explore',
-        loadComponent: () => import('./xterium/explore/browser/browser.page').then(m => m.BrowserPage)
+        loadComponent: () => import('./xterium/explore/browser/browser.page').then(m => m.BrowserPage),
+        children: [
+          {
+            path: 'browser',
+            loadComponent: () => import('./xterium/explore/browser/browser.page').then(m => m.BrowserPage)
+          },
+          {
+            path: '',
+            redirectTo: '/xterium/explore/browser',
+            pathMatch: 'full',
+          },
+        ]
       },
       {
         path: '',
@@ -103,7 +114,7 @@ export const routes: Routes = [
       },
       {
         path: 'fees/:encodedhex',
-        loadComponent: () => import('./web3/fees/fees.page').then( m => m.FeesPage)
+        loadComponent: () => import('./web3/fees/fees.page').then(m => m.FeesPage)
       },
       {
         path: 'sign',
@@ -120,9 +131,5 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },
-  {
-    path: 'browser',
-    loadComponent: () => import('./xterium/explore/browser/browser.page').then( m => m.BrowserPage)
   },
 ];
