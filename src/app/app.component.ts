@@ -58,14 +58,14 @@ export class AppComponent {
   }
 
   async initAuthentication() {
-    // const auth = await this.authService.getAuth();
+    const auth = await this.authService.getAuth();
 
-    // if (!auth || !auth.expires_at || Date.now() > auth.expires_at) {
-    //   this.router.navigate(['/security'], { replaceUrl: true });
-    //   return;
-    // }
+    if (!auth || !auth.expires_at || Date.now() > auth.expires_at) {
+      this.router.navigate(['/security'], { replaceUrl: true });
+      return;
+    }
 
-    // this.router.navigate(['/xterium'], { replaceUrl: true });
+    this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
   initDeepLinks() {
