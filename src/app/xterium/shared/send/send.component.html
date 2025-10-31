@@ -13,38 +13,37 @@
     </ion-row>
     <ion-row>
       <ion-col size="12">
-        <ion-item class="primary-textarea-item" lines="none">
-          <ion-label position="stacked">Recipient's Wallet Address:</ion-label>
-          <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="12">
-        <ion-item class="primary-select-button-item" (click)="openSelectNetworkModal()">
-          <ion-label style="font-size: 15px;">Destination</ion-label>
-          <ion-label slot="end">{{ selectedNetwork.name || 'Select Network' }}</ion-label>
-          <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
-            <img [src]="'./../../assets/images/networks/' + selectedNetwork.image" alt="Network Logo" />
-          </ion-avatar>
-          <ion-modal #selectNetworkModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
-            <ng-template>
-              <ion-toolbar class="main-modal-toolbar">
-                <ion-title>Destination Network</ion-title>
-                <ion-buttons slot="end">
-                  <ion-button (click)="selectNetworkModal.dismiss()">
-                    <ion-icon name="close" style="color: white;"></ion-icon>
-                  </ion-button>
-                </ion-buttons>
-              </ion-toolbar>
-              <ion-content>
-                <div class="ion-padding-horizontal">
-                  <app-networks (onSelectedNetwork)="onSelectedNetwork($event)"></app-networks>
-                </div>
-              </ion-content>
-            </ng-template>
-          </ion-modal>
-        </ion-item>
+        <ion-list>
+          <ion-item class="primary-textarea-item ion-margin-bottom" lines="none">
+            <ion-label position="stacked">Recipient's Wallet Address:</ion-label>
+            <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
+          </ion-item>
+          <ion-item class="primary-select-button-item" (click)="openSelectNetworkModal()">
+            <ion-label style="font-size: 15px;">Destination</ion-label>
+            <ion-label slot="end">{{ selectedNetwork.name || 'Select Network' }}</ion-label>
+            <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
+              <img [src]="'./../../assets/images/networks/' + selectedNetwork.image" alt="Network Logo" />
+            </ion-avatar>
+            <ion-modal #selectNetworkModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+              [expandToScroll]="false">
+              <ng-template>
+                <ion-toolbar class="main-modal-toolbar">
+                  <ion-title>Destination Network</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="selectNetworkModal.dismiss()">
+                      <ion-icon name="close" style="color: white;"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+                <ion-content>
+                  <div class="ion-padding-horizontal">
+                    <app-networks (onSelectedNetwork)="onSelectedNetwork($event)"></app-networks>
+                  </div>
+                </ion-content>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+        </ion-list>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -71,18 +70,20 @@
         <div class="ion-text-left label">
           <ion-label>Amount:</ion-label>
         </div>
-        <ion-item class="primary-input-item item" lines="none">
-          <ion-input type="text" inputmode="numeric" [value]="formattedAmountValue" (ionFocus)="onAmountFocus($event)"
-            (ionInput)="onAmountInput($event)" (ionBlur)="onAmountBlur()" (keydown)="onAmountKeyDown($event)"
-            class="input" placeholder="0">
-            <ion-label slot="start" class="image">
-              <ion-avatar slot="start" style="padding: 3px;">
-                <img [src]="balance.token.image" height="60" />
-              </ion-avatar>
-            </ion-label>
-            <ion-label slot="end" class="token-symbol">{{ balance.token.symbol }}</ion-label>
-          </ion-input>
-        </ion-item>
+        <ion-list>
+          <ion-item class="primary-input-item item" lines="none">
+            <ion-input type="text" inputmode="numeric" [value]="formattedAmountValue" (ionFocus)="onAmountFocus($event)"
+              (ionInput)="onAmountInput($event)" (ionBlur)="onAmountBlur()" (keydown)="onAmountKeyDown($event)"
+              class="input" placeholder="0">
+              <ion-label slot="start" class="image">
+                <ion-avatar slot="start" style="padding: 3px;">
+                  <img [src]="balance.token.image" height="60" />
+                </ion-avatar>
+              </ion-label>
+              <ion-label slot="end" class="token-symbol">{{ balance.token.symbol }}</ion-label>
+            </ion-input>
+          </ion-item>
+        </ion-list>
         <div class="ion-text-right available-balance">
           <span>
             Balance:

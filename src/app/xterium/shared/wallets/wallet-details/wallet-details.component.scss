@@ -1,24 +1,31 @@
-.show-secrets {
+.wallet-details {
+  padding: 5px 8px;
+
   ion-list {
     background: transparent;
   }
 
-  ion-item {
-    --background: transparent;
-    --background-hover: transparent;
-    --background-activated: transparent;
-    --background-focused: transparent;
+  .show-secrets {
+    ion-list {
+      background: transparent;
 
-    border: 3px solid #777777;
-    border-radius: 25px;
-    box-shadow: none !important;
-    margin-bottom: 10px;
+      ion-item {
+        --background: transparent;
+        --background-hover: transparent;
+        --background-activated: transparent;
+        --background-focused: transparent;
+
+        border: 3px solid #777777;
+        border-radius: 25px;
+        box-shadow: none !important;
+      }
+    }
   }
-}
 
-.item-divider {
-  height: 5px;
-  background-color: #777777;
-  width: 50px;
-  margin: 10px auto;
+  .item-divider {
+    height: 5px;
+    background-color: #777777;
+    width: 50px;
+    margin: 10px auto;
+  }
 }

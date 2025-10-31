@@ -1,6 +1,6 @@
 ion-toolbar.wallet-toolbar {
   --background: #1a1a1a;
-  padding: 5px 8px;
+  padding: 7px 15px;
 
   ion-icon {
     font-size: 27px;
@@ -58,36 +58,36 @@ ion-modal.create-wallet-modal {
   ion-list {
     background: transparent;
     padding-bottom: 20px;
-  }
 
-  ion-item-divider {
-    margin-top: 25px;
-    margin-bottom: 12px;
-    margin-left: -10px;
+    ion-item.create-wallet-new-account-item {
+      --background: transparent;
 
-    color: #7d7d7d;
-  }
+      background-image: url("./../../assets/images/backgrounds/main-button.png");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      transition: background-size 0.2s ease;
+      border-radius: 50px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+      font-weight: 700;
+    }
 
-  ion-item.create-wallet-new-account-item {
-    --background: transparent;
+    ion-item.create-wallet-item {
+      --background: #333333;
 
-    background-image: url("./../../assets/images/backgrounds/main-button.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    transition: background-size 0.2s ease;
-    border-radius: 50px;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-    font-weight: 700;
-  }
+      border-radius: 50px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+      font-weight: 700;
+    }
 
-  ion-item.create-wallet-item {
-    --background: #333333;
+    ion-item-divider {
+      margin-top: 25px;
+      margin-bottom: 12px;
+      margin-left: -10px;
 
-    border-radius: 50px;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-    font-weight: 700;
+      color: #7d7d7d;
+    }
   }
 }

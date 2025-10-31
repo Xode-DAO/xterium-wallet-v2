@@ -1,42 +1,44 @@
-.qrcode {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  background: white;
-  margin: 10px auto 20px auto;
-  border-radius: 15px;
-  width: fit-content;
-  height: fit-content;
-}
-
-.wallet-details {
-  border: none;
-
-  ion-list {
-    background: transparent;
+.receive-details {
+  .qrcode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    margin: 10px auto 20px auto;
+    border-radius: 15px;
+    width: fit-content;
+    height: fit-content;
   }
 
-  ion-item {
-    --background: #333333;
+  .wallet-details {
+    border: none;
 
-    border-radius: 12px;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-  }
+    ion-list {
+      background: transparent;
 
-  h2 {
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0px;
-    padding: 8px 0px 2px 0px;
-  }
+      ion-item {
+        --background: #333333;
 
-  p {
-    color: #bdbdbd;
-    font-size: 14px;
-    margin: 0px;
-    padding: 0px 0px 8px 0px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        transition: background 0.2s;
+      }
+
+      h2 {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0px;
+        padding: 8px 0px 2px 0px;
+      }
+
+      p {
+        color: #bdbdbd;
+        font-size: 14px;
+        margin: 0px;
+        padding: 0px 0px 8px 0px;
+      }
+    }
   }
 }

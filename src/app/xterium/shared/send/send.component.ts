@@ -12,17 +12,18 @@ import {
   IonRow,
   IonCol,
   IonItem,
-  IonInput,
-  IonTextarea,
+  IonList,
   IonLabel,
   IonAvatar,
-  IonToast,
-  ToastController,
-  IonModal,
-  IonToolbar,
-  IonTitle,
+  IonInput,
+  IonTextarea,
   IonButtons,
-  IonContent
+  IonToast,
+  IonModal,
+  IonContent,
+  IonTitle,
+  IonToolbar,
+  ToastController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -57,16 +58,17 @@ import { Router } from '@angular/router';
     IonRow,
     IonCol,
     IonItem,
-    IonInput,
-    IonTextarea,
+    IonList,
     IonLabel,
     IonAvatar,
+    IonInput,
+    IonTextarea,
+    IonButtons,
     IonToast,
     IonModal,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonContent,
+    IonTitle,
+    IonToolbar,
     NetworksComponent
   ]
 })

@@ -1,137 +1,139 @@
-ion-button.back-button {
-  --color: white;
-  --padding-top: 0px;
-  --padding-bottom: 0px;
-  --padding-start: 18px;
-  --padding-end: 18px;
+.token-details-content {
+  ion-button.back-button {
+    --color: white;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --padding-start: 18px;
+    --padding-end: 18px;
 
-  position: absolute;
-  z-index: 100;
-  font-size: 24px;
+    position: absolute;
+    z-index: 100;
+    font-size: 24px;
+    margin-top: 85px;
+  }
 
-  margin-top: 70px;
-}
+  .token-title {
+    margin-top: 45px;
 
-.token-title {
-  margin-top: 45px;
+    ion-item {
+      --background: transparent;
 
-  ion-item {
-    --background: transparent;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
 
-    border-radius: 12px;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-
-    ion-avatar {
-      height: 65px;
-      width: 65px;
-      margin-left: 15px;
+      ion-avatar {
+        height: 65px;
+        width: 65px;
+        margin-left: 20px;
+      }
     }
-  }
 
-  h1 {
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 700;
-    margin: 0px;
-    padding: 8px 0px 2px 0px;
-  }
-
-  p {
-    color: #bdbdbd;
-    font-size: 17px;
-    margin: 0px;
-    padding: 0px 0px 8px 0px;
-  }
-
-  .token-price h1 {
-    font-weight: 700;
-    font-size: 35px;
-    color: #ffffff;
-  }
-}
-
-.token-balance {
-  .token-balance-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 17px 5px 10px 5px;
-
-    h3 {
-      color: white;
-      font-size: 17px;
+    h1 {
+      color: #ffffff;
+      font-size: 20px;
       font-weight: 700;
-      margin: 0;
+      margin: 0px;
+      padding: 8px 0px 2px 0px;
     }
-  }
 
-  ion-list {
-    background: transparent;
-  }
-
-  ion-item {
-    --background: #333333;
-
-    border-radius: 12px;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-  }
-
-  h2 {
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0px;
-    padding: 8px 0px 2px 0px;
-  }
-
-  p {
-    color: #bdbdbd;
-    font-size: 14px;
-    margin: 0px;
-    padding: 0px 0px 8px 0px;
-  }
-}
-
-.token-details {
-  .token-details-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 5px 5px 10px 5px;
-
-    h3 {
-      color: white;
+    p {
+      color: #bdbdbd;
       font-size: 17px;
+      margin: 0px;
+      padding: 0px 0px 8px 0px;
+    }
+
+    .token-price h1 {
       font-weight: 700;
-      margin: 0;
+      font-size: 35px;
+      color: #ffffff;
     }
   }
 
-  ion-list {
-    background: transparent;
+  .token-balance {
+    .token-balance-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 17px 5px 10px 5px;
+
+      h3 {
+        color: white;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+      }
+    }
+
+    ion-list {
+      background: transparent;
+    }
+
+    ion-item {
+      --background: #333333;
+
+      border-radius: 12px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+    }
+
+    h2 {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0px;
+      padding: 8px 0px 2px 0px;
+    }
+
+    p {
+      color: #bdbdbd;
+      font-size: 14px;
+      margin: 0px;
+      padding: 0px 0px 8px 0px;
+    }
   }
 
-  ion-item {
-    --background: #333333;
+  .token-details {
+    .token-details-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 5px 5px 10px 5px;
 
-    border-radius: 12px;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-    padding: 0;
+      h3 {
+        color: white;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+      }
+    }
+
+    ion-list {
+      background: transparent;
+    }
+
+    ion-item {
+      --background: #333333;
+
+      border-radius: 12px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+      padding: 0;
+    }
+
+    h2 {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0px;
+    }
+
+    p {
+      color: #bdbdbd;
+      font-size: 16px;
+      margin: 0px;
+    }
   }
 
-  h2 {
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 700;
-    margin: 0px;
-  }
-
-  p {
-    color: #bdbdbd;
-    font-size: 16px;
-    margin: 0px;
-  }
 }
