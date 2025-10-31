@@ -103,6 +103,9 @@ export class BiometricComponent implements OnInit {
 
     await toast.present();
 
+    const credentials = await this.biometricService.getCredentials();
+    console.log('Retrieved credentials:', credentials);
+
     this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 

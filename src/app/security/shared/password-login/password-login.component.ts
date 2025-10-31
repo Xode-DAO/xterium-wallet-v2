@@ -100,6 +100,8 @@ export class PasswordLoginComponent implements OnInit {
       return;
     }
 
+    await this.authService.renewAuth();
+
     const toast = await this.toastController.create({
       message: 'Login successful!',
       color: 'success',

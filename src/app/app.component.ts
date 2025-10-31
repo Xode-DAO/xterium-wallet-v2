@@ -10,7 +10,7 @@ import {
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 import { EnvironmentService } from './api/environment/environment.service';
-import { BiometricService } from "src/app/api/biometric/biometric.service";
+import { AuthService } from './api/auth/auth.service';
 import { DeepLinkService } from './api/deep-link/deep-link.service';
 
 @Component({
@@ -27,7 +27,7 @@ export class AppComponent {
     private platform: Platform,
     private router: Router,
     private environmentService: EnvironmentService,
-    private biometricService: BiometricService,
+    private authService: AuthService,
     private deepLinkService: DeepLinkService
   ) {
     this.initApp();
@@ -58,7 +58,14 @@ export class AppComponent {
   }
 
   async initAuthentication() {
-    this.router.navigate(['/security'], { replaceUrl: true });
+    const auth = await this.authService.getAuth();
+
+    if (!auth || !auth.expires_at || Date.now() > auth.expires_at) {
+      this.router.navigate(['/security'], { replaceUrl: true });
+      return;
+    }
+
+    this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
   initDeepLinks() {

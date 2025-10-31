@@ -1,6 +1,6 @@
 export class Auth {
   encrypted_password: string = "";
-  timestamp: number = 0;
+  expires_at: number | null = null;
 }
 
 export class PasswordLogin {
