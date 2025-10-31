@@ -1,49 +1,53 @@
 .select-network-content {
   ion-list {
     background: transparent;
-  }
-
-  ion-card.network-card {
-    --background: #2a2a2a;
-
-    border-radius: 15px;
-    border: 3px solid #2a2a2a;
-    margin: 10px 0px;
-    background: var(--background);
-    transition: background 220ms ease, transform 120ms ease;
-
-    cursor: pointer;
 
     ion-item {
       --background: transparent;
-    }
+      --padding-start: 0;
+      --inner-padding-end: 0;
 
-    h2 {
-      color: #fff;
-      font-weight: 700;
-      margin: 0;
-    }
+      ion-card.network-card {
+        --background: #2a2a2a;
 
-    p {
-      color: #c7c7c7;
-      margin: 0;
-    }
+        border-radius: 15px;
+        border: 3px solid #2a2a2a;
+        margin: 5px 0px;
+        width: 100%;
+        cursor: pointer;
 
-    &.active {
-      --background: #00605d;
+        ion-card-content {
+          --background: transparent;
 
-      border: 3px solid #0bbab5;
-      background: var(--background);
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 15px;
 
-      h2,
-      p {
-        color: #ffffff;
+          ion-avatar {
+            border-radius: 50%;
+            flex-shrink: 0;
+          }
+
+          h2 {
+            color: #fff;
+            font-weight: 700;
+            margin: 0;
+          }
+
+          p {
+            color: #c7c7c7;
+            margin: 0;
+          }
+        }
+
+        &.active {
+          --background: #00605d;
+
+          border: 3px solid #0bbab5;
+          background: var(--background);
+        }
       }
     }
-  }
-
-  ion-avatar img {
-    border-radius: 50%;
-    object-fit: cover;
   }
 }

@@ -27,16 +27,14 @@
             </div>
             }
             @for (wallet of walletsByNetwork[network.name]; track wallet) {
-            <ion-list>
-              <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(wallet, $event)">
-                <ion-checkbox slot="start" class="wallet-checkbox" [checked]="isWalletSelected(wallet)"
-                  (click)="$event.stopPropagation()" (ionChange)="toggleCheckbox(wallet, $event)"></ion-checkbox>
-                <ion-label>
-                  <h2>{{ wallet.name }}</h2>
-                  <p>{{ truncateAddress(wallet.public_key) }}</p>
-                </ion-label>
-              </ion-item>
-            </ion-list>
+            <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(wallet, $event)">
+              <ion-checkbox slot="start" class="wallet-checkbox" [checked]="isWalletSelected(wallet)"
+                (click)="$event.stopPropagation()" (ionChange)="toggleCheckbox(wallet, $event)"></ion-checkbox>
+              <ion-label>
+                <h2>{{ wallet.name }}</h2>
+                <p>{{ truncateAddress(wallet.public_key) }}</p>
+              </ion-label>
+            </ion-item>
             }
             }
             }

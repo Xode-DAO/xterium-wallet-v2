@@ -18,47 +18,51 @@
           </div>
         </ion-col>
       </ion-row>
-      <ion-row>
-        <ion-col size="12">
-          <ion-list lines="none">
-            <ion-card button class="network-card" [class.active]="selectedNetworkId === 1" (click)="selectNetwork(1)">
-              <ion-item lines="none">
-                <ion-avatar slot="start">
-                  <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
-                </ion-avatar>
-                <ion-label>
-                  <h2>AssetHub - Polkadot</h2>
-                  <p>Manage your assets easily on the AssetHub parachain.</p>
-                </ion-label>
-              </ion-item>
-            </ion-card>
-
-            <ion-card button class="network-card" [class.active]="selectedNetworkId === 2" (click)="selectNetwork(2)">
-              <ion-item lines="none">
-                <ion-avatar slot="start">
-                  <img src="../../../assets/images/networks/xode.png" alt="Xode" />
-                </ion-avatar>
-                <ion-label>
-                  <h2>Xode - Polkadot</h2>
-                  <p>Experience smooth and fast transactions with Xode.</p>
-                </ion-label>
-              </ion-item>
-            </ion-card>
-
-            <ion-card button class="network-card" [class.active]="selectedNetworkId === 3" (click)="selectNetwork(3)">
-              <ion-item lines="none">
-                <ion-avatar slot="start">
-                  <img src="../../../assets/images/networks/solana.png" alt="Solana" />
-                </ion-avatar>
-                <ion-label>
-                  <h2>Solana</h2>
-                  <p>
-                    Make low-cost transactions on the high-performance Solana
-                    blockchain.
-                  </p>
-                </ion-label>
-              </ion-item>
-            </ion-card>
+      <ion-row class="ion-margin-top">
+        <ion-col size="12" class="">
+          <ion-list>
+            <ion-item lines="none">
+              <ion-card button class="network-card" [class.active]="selectedNetworkId === 1" (click)="selectNetwork(1)">
+                <ion-card-content>
+                  <ion-avatar slot="start">
+                    <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
+                  </ion-avatar>
+                  <ion-label>
+                    <h2>AssetHub - Polkadot</h2>
+                    <p>Manage your assets easily on the AssetHub parachain.</p>
+                  </ion-label>
+                </ion-card-content>
+              </ion-card>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-card button class="network-card" [class.active]="selectedNetworkId === 2" (click)="selectNetwork(2)">
+                <ion-card-content>
+                  <ion-avatar slot="start">
+                    <img src="../../../assets/images/networks/xode.png" alt="Xode" />
+                  </ion-avatar>
+                  <ion-label>
+                    <h2>Xode - Polkadot</h2>
+                    <p>Experience smooth and fast transactions with Xode.</p>
+                  </ion-label>
+                </ion-card-content>
+              </ion-card>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-card button class="network-card" [class.active]="selectedNetworkId === 3" (click)="selectNetwork(3)">
+                <ion-card-content>
+                  <ion-avatar slot="start">
+                    <img src="../../../assets/images/networks/solana.png" alt="Solana" />
+                  </ion-avatar>
+                  <ion-label>
+                    <h2>Solana</h2>
+                    <p>
+                      Make low-cost transactions on the high-performance Solana
+                      blockchain.
+                    </p>
+                  </ion-label>
+                </ion-card-content>
+              </ion-card>
+            </ion-item>
           </ion-list>
         </ion-col>
       </ion-row>

@@ -2,14 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  IonContent, 
+
+import {
+  IonContent,
   IonButton,
   IonIcon,
   IonGrid,
   IonRow,
   IonCol
 } from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
 import { qrCode, cloudUpload } from 'ionicons/icons';
 
@@ -20,14 +22,14 @@ import { qrCode, cloudUpload } from 'ionicons/icons';
   standalone: true,
   imports: [
     RouterModule,
-    CommonModule, 
+    CommonModule,
     FormsModule,
-    IonContent, 
-    IonButton,
-    IonIcon,
+    IonContent,
     IonGrid,
     IonRow,
-    IonCol
+    IonCol,
+    IonButton,
+    IonIcon,
   ]
 })
 export class PayPage implements OnInit {
@@ -37,17 +39,16 @@ export class PayPage implements OnInit {
       qrCode,
       cloudUpload,
     });
-   }
+  }
 
   qrCodeScannerNavigation() {
-    this.router.navigate(['/qr-scanner']);
+    this.router.navigate(['/pay/qr-scanner']);
   }
 
-   qrCodeUploadNavigation() {
-    this.router.navigate(['/qr-upload']);
+  qrCodeUploadNavigation() {
+    this.router.navigate(['/pay/qr-upload']);
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
 }

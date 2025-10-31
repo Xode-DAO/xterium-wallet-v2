@@ -1,4 +1,4 @@
-.mnemonic-container {
+.import-seeds-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -6,13 +6,17 @@
   ion-grid {
     max-width: 500px;
     width: 100%;
-  }
 
-  ion-col {
-    padding: 3px;
-  }
+    ion-col {
+      padding: 3px;
 
-  ion-item.name-item {
-    margin-bottom: 10px;
+      ion-list {
+        background: transparent;
+
+        ion-item.name-item {
+          margin-bottom: 10px;
+        }
+      }
+    }
   }
 }

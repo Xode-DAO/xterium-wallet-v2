@@ -167,6 +167,9 @@ ion-refresher {
     --padding-end: 20px;
     --box-shadow: none;
 
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+
     &::part(native) {
       background: center / 100% 100% no-repeat url("assets/images/backgrounds/main-button.png");
       transition: background-size 0.2s ease;
@@ -223,7 +226,7 @@ ion-toolbar.main-modal-toolbar {
     align-items: center;
     text-align: center;
     font-weight: 700;
-    margin-top: 15px;
+    margin: 15px 0px;
   }
 
   .button-content {
@@ -246,6 +249,7 @@ ion-toolbar.main-modal-toolbar {
 }
 
 ion-item.primary-input-item,
+ion-item.primary-input-file,
 ion-item.primary-textarea-item,
 ion-item.primary-select-button-item {
   --background: #333333;
@@ -259,6 +263,14 @@ ion-item.primary-select-button-item {
 
 ion-item.primary-input-item {
   border-radius: 50px;
+
+  ion-input {
+    border: none;
+  }
+}
+
+ion-item.primary-input-file {
+  border-radius: 25px;
 
   ion-input {
     border: none;
@@ -283,12 +295,14 @@ ion-item.primary-select-button-item {
 }
 
 ion-item.primary-input-item:not(:has(ion-input[readonly])),
+ion-item.primary-input-file:not(:has(ion-input[readonly])),
 ion-item.primary-textarea-item:not(:has(ion-textarea[readonly])),
 ion-item.primary-select-button-item:not(:has(ion-select[readonly])) {
   border: 3px solid #777777;
 }
 
 ion-item.primary-input-item:focus-within:not(:has(ion-input[readonly])),
+ion-item.primary-input-file:focus-within:not(:has(ion-input[readonly])),
 ion-item.primary-textarea-item:focus-within:not(:has(ion-textarea[readonly])),
 ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly])) {
   --background: #272727;

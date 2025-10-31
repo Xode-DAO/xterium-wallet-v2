@@ -11,9 +11,10 @@ import {
   IonGrid,
   IonRow,
   IonCol,
+  IonList,
   IonItem,
-  IonInput,
   IonLabel,
+  IonInput,
   IonToast,
   ToastController
 } from '@ionic/angular/standalone';
@@ -40,9 +41,10 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonGrid,
     IonRow,
     IonCol,
+    IonList,
     IonItem,
-    IonInput,
     IonLabel,
+    IonInput,
     IonToast,
   ]
 })

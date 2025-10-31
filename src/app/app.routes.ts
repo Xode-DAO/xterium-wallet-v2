@@ -72,7 +72,17 @@ export const routes: Routes = [
       },
       {
         path: 'pay',
-        loadComponent: () => import('./xterium/pay/pay.page').then(m => m.PayPage)
+        loadComponent: () => import('./xterium/pay/pay.page').then(m => m.PayPage),
+        children: [
+          {
+            path: 'qr-scanner',
+            loadComponent: () => import('./xterium/pay/qr-scanner/qr-scanner.page').then(m => m.QrScannerPage)
+          },
+          {
+            path: 'qr-upload',
+            loadComponent: () => import('./xterium/pay/qr-upload/qr-upload.page').then(m => m.QrUploadPage)
+          },
+        ]
       },
       {
         path: 'transaction-history',
@@ -81,21 +91,6 @@ export const routes: Routes = [
       {
         path: 'explore',
         loadComponent: () => import('./xterium/explore/explore.page').then(m => m.ExplorePage)
-      },
-      {
-        path: 'explore',
-        loadComponent: () => import('./xterium/explore/browser/browser.page').then(m => m.BrowserPage),
-        children: [
-          {
-            path: 'browser',
-            loadComponent: () => import('./xterium/explore/browser/browser.page').then(m => m.BrowserPage)
-          },
-          {
-            path: '',
-            redirectTo: '/xterium/explore/browser',
-            pathMatch: 'full',
-          },
-        ]
       },
       {
         path: '',
@@ -131,13 +126,5 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },
-  {
-    path: 'qr-scanner',
-    loadComponent: () => import('./xterium/pay/qr-scanner/qr-scanner.page').then( m => m.QrScannerPage)
-  },
-  {
-    path: 'qr-upload',
-    loadComponent: () => import('./xterium/pay/qr-upload/qr-upload.page').then( m => m.QrUploadPage)
-  },
+  }
 ];

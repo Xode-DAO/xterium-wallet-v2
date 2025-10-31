@@ -2,18 +2,18 @@
   <ion-grid>
     <ion-row>
       <ion-col size="12">
-        <ion-item class="primary-input-item" lines="none">
-          <ion-label>Name:</ion-label>
-          <ion-input type="text" [(ngModel)]="walletName" placeholder="e.g. My Wallet Name"></ion-input>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="12">
-        <div class="upload-input-wrapper">
-          <label for="fileUpload" class="upload-label">Choose backup file:</label>
-          <input id="fileUpload" type="file" accept=".json,.txt" (change)="onFileSelected($event)" />
-        </div>
+        <ion-list>
+          <ion-item class="primary-input-item ion-margin-bottom" lines="none">
+            <ion-label>Name:</ion-label>
+            <ion-input type="text" [(ngModel)]="walletName" placeholder="e.g. My Wallet Name"></ion-input>
+          </ion-item>
+          <ion-item class="primary-input-file" lines="none">
+            <div class="upload-input-wrapper">
+              <label for="fileUpload" class="upload-label">Choose backup file:</label>
+              <input id="fileUpload" type="file" accept=".json,.txt" (change)="onFileSelected($event)" />
+            </div>
+          </ion-item>
+        </ion-list>
       </ion-col>
     </ion-row>
     <ion-row class="ion-margin-top">

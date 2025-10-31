@@ -20,7 +20,6 @@ import {
   IonIcon,
   IonChip,
   IonSpinner,
-  IonList,
   IonAvatar,
 } from '@ionic/angular/standalone';
 
@@ -36,7 +35,7 @@ import {
 
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
-import { ExtrinsicInfo, FeeEstimate } from 'src/models/fees.model';
+import { FeeEstimate } from 'src/models/fees.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
@@ -69,7 +68,6 @@ import { LocalNotificationsService } from 'src/app/api/local-notifications/local
     IonIcon,
     IonChip,
     IonSpinner,
-    IonList,
     IonAvatar,
   ],
 })
@@ -162,10 +160,9 @@ export class FeesPage implements OnInit {
 
     this.isProcessing = true;
 
-    this.router.navigate(['/xterium/balances']);
-    
     service.signTransactions(this.transaction, this.currentWallet).subscribe({
       next: async (event) => {
+        this.router.navigate(['/xterium/balances']);
         this.handleTransferTransactionEvent(event);
       },
       error: async (err) => {

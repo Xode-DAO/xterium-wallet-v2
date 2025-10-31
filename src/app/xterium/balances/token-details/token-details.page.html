@@ -55,26 +55,24 @@
             <div class="token-balance-header">
               <h3>Your Balance</h3>
             </div>
-            <ion-list>
-              <ion-item detail="false" lines="none">
-                <ion-avatar slot="start">
-                  <img [src]="balance.token.image" />
-                </ion-avatar>
-                <ion-label>
-                  <h2>{{ balance.token.name }}</h2>
-                  <p>
-                    {{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}
-                    {{ balance.token.symbol }}
-                  </p>
-                </ion-label>
-                <div slot="end" class="ion-text-right">
-                  <h2>
-                    $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
-                  </h2>
-                  <p style="color: #333333">-</p>
-                </div>
-              </ion-item>
-            </ion-list>
+            <ion-item detail="false" lines="none">
+              <ion-avatar slot="start">
+                <img [src]="balance.token.image" />
+              </ion-avatar>
+              <ion-label>
+                <h2>{{ balance.token.name }}</h2>
+                <p>
+                  {{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}
+                  {{ balance.token.symbol }}
+                </p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>
+                  $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
+                </h2>
+                <p style="color: #333333">-</p>
+              </div>
+            </ion-item>
           </div>
         </ion-col>
       </ion-row>
@@ -83,56 +81,54 @@
           <div class="token-details-header">
             <h3>Token Details</h3>
           </div>
-          <ion-list>
-            <ion-item detail="false" lines="none">
-              <ion-label slot="start">
-                <p>Name</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>{{ balance.token.name }}</h2>
-              </div>
-            </ion-item>
-            <ion-item detail="false" lines="none">
-              <ion-label slot="start">
-                <p>Symbol</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>{{ balance.token.symbol }}</h2>
-              </div>
-            </ion-item>
-            <ion-item detail="false" lines="none">
-              <ion-label slot="start">
-                <p>Network</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>{{ getNetworkName(balance.token.network_id) }}</h2>
-              </div>
-            </ion-item>
-            <ion-item detail="false" lines="none">
-              <ion-label slot="start">
-                <p>Decimal</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>{{ balance.token.decimals }}</h2>
-              </div>
-            </ion-item>
-            <ion-item detail="false" lines="none">
-              <ion-label slot="start">
-                <p>Total Supply</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>{{ formatBalanceWithSuffix(balance.token.total_supply, balance.token.decimals) }}</h2>
-              </div>
-            </ion-item>
-            <ion-item detail="false" lines="none">
-              <ion-label slot="start">
-                <p>Reference Id</p>
-              </ion-label>
-              <div slot="end" class="ion-text-right">
-                <h2>{{ balance.token.reference_id }}</h2>
-              </div>
-            </ion-item>
-          </ion-list>
+          <ion-item detail="false" lines="none">
+            <ion-label slot="start">
+              <p>Name</p>
+            </ion-label>
+            <div slot="end" class="ion-text-right">
+              <h2>{{ balance.token.name }}</h2>
+            </div>
+          </ion-item>
+          <ion-item detail="false" lines="none">
+            <ion-label slot="start">
+              <p>Symbol</p>
+            </ion-label>
+            <div slot="end" class="ion-text-right">
+              <h2>{{ balance.token.symbol }}</h2>
+            </div>
+          </ion-item>
+          <ion-item detail="false" lines="none">
+            <ion-label slot="start">
+              <p>Network</p>
+            </ion-label>
+            <div slot="end" class="ion-text-right">
+              <h2>{{ getNetworkName(balance.token.network_id) }}</h2>
+            </div>
+          </ion-item>
+          <ion-item detail="false" lines="none">
+            <ion-label slot="start">
+              <p>Decimal</p>
+            </ion-label>
+            <div slot="end" class="ion-text-right">
+              <h2>{{ balance.token.decimals }}</h2>
+            </div>
+          </ion-item>
+          <ion-item detail="false" lines="none">
+            <ion-label slot="start">
+              <p>Total Supply</p>
+            </ion-label>
+            <div slot="end" class="ion-text-right">
+              <h2>{{ formatBalanceWithSuffix(balance.token.total_supply, balance.token.decimals) }}</h2>
+            </div>
+          </ion-item>
+          <ion-item detail="false" lines="none">
+            <ion-label slot="start">
+              <p>Reference Id</p>
+            </ion-label>
+            <div slot="end" class="ion-text-right">
+              <h2>{{ balance.token.reference_id }}</h2>
+            </div>
+          </ion-item>
         </ion-col>
       </ion-row>
     </ion-grid>

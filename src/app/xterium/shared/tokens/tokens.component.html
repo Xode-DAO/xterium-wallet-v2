@@ -14,33 +14,31 @@
     <ion-row>
       @for (balance of balances; track balance) {
       <ion-col size="12">
-        <ion-list>
-          <ion-item button detail="false" lines="none" (click)="openToken(balance)">
-            <ion-avatar slot="start" style="text-align: center;">
-              @if (balance.token.image) {
-              <img [src]="balance.token.image" />
-              }
-              @else {
-              <ion-spinner name="lines"></ion-spinner>
-              }
-            </ion-avatar>
-            <ion-label>
-              <h2>{{balance.token.name}}</h2>
-              <p>
-                {{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}
-                {{ balance.token.symbol }}
-              </p>
-            </ion-label>
-            <div slot="end" class="ion-text-right">
-              <h2>
-                $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
-              </h2>
-              <p>
-                $ {{ balance.price.toFixed(7) }}
-              </p>
-            </div>
-          </ion-item>
-        </ion-list>
+        <ion-item button detail="false" lines="none" (click)="openToken(balance)">
+          <ion-avatar slot="start" style="text-align: center;">
+            @if (balance.token.image) {
+            <img [src]="balance.token.image" />
+            }
+            @else {
+            <ion-spinner name="lines"></ion-spinner>
+            }
+          </ion-avatar>
+          <ion-label>
+            <h2>{{balance.token.name}}</h2>
+            <p>
+              {{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}
+              {{ balance.token.symbol }}
+            </p>
+          </ion-label>
+          <div slot="end" class="ion-text-right">
+            <h2>
+              $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
+            </h2>
+            <p>
+              $ {{ balance.price.toFixed(7) }}
+            </p>
+          </div>
+        </ion-item>
       </ion-col>
       }
     </ion-row>

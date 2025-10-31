@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import {
   IonContent,
   IonButton,
@@ -25,21 +26,22 @@ import {
     CommonModule,
     FormsModule,
     IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonButton,
     IonCard,
     IonCardHeader,
     IonCardTitle,
     IonCardSubtitle,
     IonCardContent,
-    IonGrid,
-    IonRow,
-    IonCol,
   ],
 })
 export class ExplorePage implements OnInit {
-  showIframe = false;
 
-  constructor(private router: Router) {}
+  constructor() { }
+
+  showIframe = false;
 
   redirectToNode() {
     window.open('https://node.xode.net/', '_blank');
@@ -49,5 +51,5 @@ export class ExplorePage implements OnInit {
     window.open('https://xterium.app/', '_blank');
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }

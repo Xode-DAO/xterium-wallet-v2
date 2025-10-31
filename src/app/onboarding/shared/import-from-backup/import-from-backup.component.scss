@@ -1,25 +1,23 @@
 .upload-backup-container {
+  ion-list {
+    background: transparent;
+  }
+
   .upload-input-wrapper {
     display: flex;
     flex-direction: column;
     box-shadow: none !important;
 
     .upload-label {
-      font-size: 14px;
-      color: #ffffff;
-      padding-left: 9px;
-      padding-right: 9px;
+      font-weight: bold;
+      font-size: 15px;
       margin-top: 5px;
       margin-bottom: 5px;
     }
 
     input[type='file'] {
-      background: #333333;
-      color: #ffffff;
-      border: 3px solid #777777;
-      border-radius: 50px;
-      box-shadow: none !important;
-      padding: 10px;
+      padding: 5px 5px 10px 5px;
+      margin-left: -5px;
     }
   }
 }
