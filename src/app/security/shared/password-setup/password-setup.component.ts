@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -41,6 +41,7 @@ import { PasswordSetup } from 'src/models/auth.model';
   styleUrls: ['./password-setup.component.scss'],
 })
 export class PasswordSetupComponent implements OnInit {
+  @Output() onPasswordSetup = new EventEmitter<string>();
 
   constructor(
     private router: Router,
@@ -97,6 +98,8 @@ export class PasswordSetupComponent implements OnInit {
 
     const encryptedPassword = await this.encryptionService.encrypt(this.passwordSetup.password, this.passwordSetup.password);
     await this.authService.setupPassword(encryptedPassword);
+
+    this.onPasswordSetup.emit(this.passwordSetup.password);
 
     const toast = await this.toastController.create({
       message: 'Password setup successful!',

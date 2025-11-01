@@ -41,6 +41,7 @@ import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
+import { AuthService } from 'src/app/api/auth/auth.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
@@ -48,7 +49,6 @@ import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode
 import { NetworksService } from 'src/app/api/networks/networks.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
-import { AuthService } from 'src/app/api/auth/auth.service';
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 
 import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
@@ -94,13 +94,13 @@ export class SignTransactionPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private environmentService: EnvironmentService,
+    private authService: AuthService,
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private networksService: NetworksService,
     private walletsService: WalletsService,
     private balancesService: BalancesService,
-    private authService: AuthService,
     private localNotificationsService: LocalNotificationsService,
   ) {
     addIcons({
@@ -195,7 +195,7 @@ export class SignTransactionPage implements OnInit {
     this.confirmSignTransactionModal.present();
   }
 
-  confirmSignTransaction() {
+  confirmSignTransaction(decryptedPassword: string) {
     if (!this.transaction) {
       console.error('Transaction data or transaction object is missing');
       return;
@@ -209,6 +209,8 @@ export class SignTransactionPage implements OnInit {
     if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
 
     if (!service) return;
+
+    // decrypt the wallet here...
 
     service.signTransactions(this.transaction, this.currentWallet).subscribe({
       next: async (event) => {

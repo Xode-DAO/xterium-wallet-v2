@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -6,8 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Clipboard } from '@capacitor/clipboard';
 import {
-  IonButton,
-  IonIcon,
+  IonContent,
   IonGrid,
   IonRow,
   IonCol,
@@ -15,7 +14,13 @@ import {
   IonItem,
   IonLabel,
   IonInput,
+  IonButton,
+  IonButtons,
+  IonIcon,
   IonToast,
+  IonModal,
+  IonTitle,
+  IonToolbar,
   ToastController
 } from '@ionic/angular/standalone';
 
@@ -25,9 +30,13 @@ import { arrowBackOutline, copyOutline, close } from 'ionicons/icons';
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model'
 
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
+import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+
+import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 
 @Component({
   selector: 'app-new-wallet',
@@ -36,8 +45,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
   imports: [
     CommonModule,
     FormsModule,
-    IonButton,
-    IonIcon,
+    IonContent,
     IonGrid,
     IonRow,
     IonCol,
@@ -45,16 +53,27 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonItem,
     IonLabel,
     IonInput,
+    IonButton,
+    IonButtons,
+    IonIcon,
     IonToast,
+    IonModal,
+    IonTitle,
+    IonToolbar,
+    SignWalletComponent,
   ]
 })
 export class NewWalletComponent implements OnInit {
+  @ViewChild('confirmSaveWalletModal', { read: IonModal }) confirmSaveWalletModal!: IonModal;
+
   @Input() selectedNetwork: Network = {} as Network;
   @Output() onCreatedWallet = new EventEmitter<Wallet>();
 
   constructor(
+    private environmentService: EnvironmentService,
     private polkadotJsService: PolkadotJsService,
     private onboardingService: OnboardingService,
+    private encryptionService: EncryptionService,
     private walletsService: WalletsService,
     private toastController: ToastController
   ) {
@@ -64,6 +83,8 @@ export class NewWalletComponent implements OnInit {
       close
     });
   }
+
+  isChromeExtension = false;
 
   walletName: string = '';
   walletMnemonicPhrase: string[] = new Array(12).fill('');
@@ -100,6 +121,10 @@ export class NewWalletComponent implements OnInit {
       return;
     }
 
+    this.confirmSaveWalletModal.present();
+  }
+
+  async onSignWallet(password: string) {
     this.isProcessing = true;
 
     if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
@@ -138,13 +163,16 @@ export class NewWalletComponent implements OnInit {
         return;
       }
 
+      const encryptedMnemonicPhrase = await this.encryptionService.encrypt(this.walletMnemonicPhrase.join(' '), password);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(keypair.secretKey.toString(), password);
+
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
         network_id: this.selectedNetwork.id,
-        mnemonic_phrase: this.walletMnemonicPhrase.join(' '),
+        mnemonic_phrase: encryptedMnemonicPhrase,
         public_key: keypair.publicKey.toString(),
-        private_key: keypair.secretKey.toString()
+        private_key: encryptedPrivateKey,
       };
 
       await this.walletsService.create(wallet);
@@ -155,20 +183,22 @@ export class NewWalletComponent implements OnInit {
         await this.walletsService.setCurrentWallet(newId);
       }
 
-      const encodedWallets = await Promise.all(
-        wallets.map(async (wallet) => {
-          const publicKeyU8a = new Uint8Array(
-            wallet.public_key.split(",").map((byte) => Number(byte.trim()))
-          );
+      if (this.isChromeExtension) {
+        const encodedWallets = await Promise.all(
+          wallets.map(async (wallet) => {
+            const publicKeyU8a = new Uint8Array(
+              wallet.public_key.split(",").map((byte) => Number(byte.trim()))
+            );
 
-          return {
-            address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
-            name: wallet.name,
-          };
-        })
-      );
+            return {
+              address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
+              name: wallet.name,
+            };
+          })
+        );
 
-      chrome.storage.local.set({ accounts: encodedWallets });
+        chrome.storage.local.set({ accounts: encodedWallets });
+      }
 
       const onboarding = await this.onboardingService.get();
       if (onboarding) {
@@ -202,6 +232,8 @@ export class NewWalletComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+
     this.polkadotJsService.generateMnemonic().then(mnemonicPhrase => {
       this.walletMnemonicPhrase = mnemonicPhrase.split(' ');
     });

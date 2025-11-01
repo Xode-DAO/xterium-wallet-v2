@@ -59,13 +59,19 @@ export class AppComponent {
 
   async initAuthentication() {
     const auth = await this.authService.getAuth();
+    const isExpired = auth?.expires_at && Date.now() > auth.expires_at;
 
-    if (!auth || !auth.expires_at || Date.now() > auth.expires_at) {
-      this.router.navigate(['/security'], { replaceUrl: true });
-      return;
+    let targetRoute = '/onboarding';
+    if (auth) {
+      targetRoute = isExpired ? '/security' : '/xterium';
     }
 
-    this.router.navigate(['/xterium'], { replaceUrl: true });
+    await this.router.navigate([targetRoute], { replaceUrl: true });
+
+    window.history.pushState(null, '', window.location.href);
+    window.onpopstate = () => {
+      window.history.go(1);
+    };
   }
 
   initDeepLinks() {

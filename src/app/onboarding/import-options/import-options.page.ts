@@ -77,7 +77,7 @@ export class ImportOptionsPage implements OnInit {
 
   onImportWalletSeedPhrase(wallet: Wallet) {
     this.importSeedPhraseModal.dismiss();
-    this.router.navigate(['/xterium/balances']);
+    this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
   openImportPrivateKeyModal() {
@@ -86,7 +86,7 @@ export class ImportOptionsPage implements OnInit {
 
   onImportWalletPrivateKey(wallet: Wallet) {
     this.importPrivateKeyModal.dismiss();
-    this.router.navigate(['/xterium/balances']);
+    this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
   openImportFromBackupModal() {
@@ -95,7 +95,7 @@ export class ImportOptionsPage implements OnInit {
 
   onImportWalletFromBackup(wallet: Wallet) {
     this.importFromBackupModal.dismiss();
-    this.router.navigate(['/xterium/balances']);
+    this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
   ngOnInit() {

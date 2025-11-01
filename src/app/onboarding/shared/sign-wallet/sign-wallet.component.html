@@ -1,0 +1,32 @@
+<div class="sign-wallet">
+  <div class="ion-text-center ion-margin-bottom">
+    <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
+  </div>
+
+  <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+    <h1 style="font-weight: bold">Confirm Save</h1>
+    <span style="font-size: 15px;">
+      @if (isChromeExtension) {
+      @if (isPasswordExisting) {
+      To securely save your wallet, please authenticate using your existing password.
+      } @else {
+      To securely save your wallet, please create a new password.
+      }
+      } @else {
+      To securely save your wallet, please authenticate using your biometric data.
+      }
+    </span>
+  </div>
+
+  <div class="ion-padding-horizontal">
+    @if (isChromeExtension) {
+    @if (isPasswordExisting) {
+    <app-password-login (onLogin)="signWallet($event)"></app-password-login>
+    } @else {
+    <app-password-setup (onPasswordSetup)="signWallet($event)"></app-password-setup>
+    }
+    } @else {
+    <app-biometric (onLogin)="signWallet($event)"></app-biometric>
+    }
+  </div>
+</div>
