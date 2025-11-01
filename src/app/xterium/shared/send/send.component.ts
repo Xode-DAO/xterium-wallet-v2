@@ -280,7 +280,7 @@ export class SendComponent implements OnInit {
 
     setTimeout(async () => {
       const encodedHex = (await transaction.getEncodedData()).asHex();
-      this.router.navigate(['/web3/fees/' + encodedHex]);
+      this.router.navigate(['/web3/sign-transaction/' + encodedHex]);
     }, 100);
   }
 

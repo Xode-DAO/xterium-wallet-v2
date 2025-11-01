@@ -4,6 +4,37 @@
   </div>
 
   <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <div class="ion-text-center" style="margin-top: -75px">
+            <h1 style="font-weight: bold">
+              @if (isChromeExtension) {
+              @if (isPasswordExisting) {
+              Login
+              } @else {
+              Set Up Your Password
+              }
+              } @else {
+              Login
+              }
+            </h1>
+            <span style="font-size: 15px;">
+              @if (isChromeExtension) {
+              @if (isPasswordExisting) {
+              Please enter your password to unlock your wallet.
+              } @else {
+              Please set up a password to secure your wallet.
+              }
+              } @else {
+              Sign in securely with your device’s biometric authentication (Face ID or fingerprint).
+              }
+            </span>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
     @if (isChromeExtension) {
     @if (isPasswordExisting) {
     <app-password-login></app-password-login>

@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription } from 'rxjs';
 import { Transaction } from 'polkadot-api';
 
 import {
@@ -17,11 +16,15 @@ import {
   IonLabel,
   IonAvatar,
   IonButton,
+  IonButtons,
   IonCard,
   IonFooter,
   IonIcon,
   IonChip,
   IonSpinner,
+  IonModal,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -36,8 +39,8 @@ import {
 
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
-import { FeeEstimate } from 'src/models/fees.model';
 
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
@@ -45,13 +48,17 @@ import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode
 import { NetworksService } from 'src/app/api/networks/networks.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
-import { FeesService } from 'src/app/api/fees/fees.service';
+import { AuthService } from 'src/app/api/auth/auth.service';
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 
+import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
+import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
+import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
+
 @Component({
-  selector: 'app-fees',
-  templateUrl: './fees.page.html',
-  styleUrls: ['./fees.page.scss'],
+  selector: 'app-sign-transaction',
+  templateUrl: './sign-transaction.page.html',
+  styleUrls: ['./sign-transaction.page.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -66,26 +73,34 @@ import { LocalNotificationsService } from 'src/app/api/local-notifications/local
     IonLabel,
     IonAvatar,
     IonButton,
+    IonButtons,
     IonCard,
     IonFooter,
     IonIcon,
     IonChip,
     IonSpinner,
+    IonModal,
+    IonTitle,
+    IonToolbar,
+    PasswordSetupComponent,
+    PasswordLoginComponent,
+    BiometricComponent
   ],
 })
-export class FeesPage implements OnInit {
+export class SignTransactionPage implements OnInit {
+  @ViewChild('confirmSignTransactionModal', { read: IonModal }) confirmSignTransactionModal!: IonModal;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private environmentService: EnvironmentService,
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private networksService: NetworksService,
     private walletsService: WalletsService,
     private balancesService: BalancesService,
-
-    private feesService: FeesService,
+    private authService: AuthService,
     private localNotificationsService: LocalNotificationsService,
   ) {
     addIcons({
@@ -98,24 +113,20 @@ export class FeesPage implements OnInit {
     });
   }
 
+  isChromeExtension = false;
+  isPasswordExisting = false;
+
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
   currentNetwork: Network = {} as Network;
+
+  transaction: Transaction<any, any, any, void | undefined> | null = null;
 
   extrinsic: string = "";
   estimatedFee: number = 0;
   isLoadingFee: boolean = true;
 
-  transaction: Transaction<any, any, any, void | undefined> | null = null;
-
   isProcessing: boolean = false;
-
-  transactionData: any = null;
-  feeEstimate: FeeEstimate | null = null;
-  feeSubscription: Subscription = new Subscription();
-
-  transactionStatus: string = '';
-  transactionHash: string = '';
 
   async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -147,11 +158,50 @@ export class FeesPage implements OnInit {
     return this.balancesService.formatBalance(amount, decimals);
   }
 
-  confirmTransaction() {
+  async initSecurity() {
+    const auth = await this.authService.getAuth();
+    if (auth) {
+      this.isPasswordExisting = true;
+    }
+  }
+
+  async initTransaction(): Promise<void> {
+    await this.getCurrentWallet();
+
+    this.route.paramMap.subscribe(params => {
+      let service: PolkadotApiService | null = null;
+
+      if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
+      if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+
+      if (!service) return;
+
+      const encodedhex = params.get('encodedhex') || '';
+      service.getTransactionInfo(encodedhex).then(async (transactionInfo) => {
+        this.transaction = transactionInfo;
+        this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
+
+        setTimeout(async () => {
+          const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
+
+          this.estimatedFee = Number(fee.partial_fee);
+          this.isLoadingFee = false;
+        }, 1000);
+      });
+    });
+  }
+
+  signTransactions() {
+    this.confirmSignTransactionModal.present();
+  }
+
+  confirmSignTransaction() {
     if (!this.transaction) {
       console.error('Transaction data or transaction object is missing');
       return;
     }
+
+    this.isProcessing = true;
 
     let service: PolkadotApiService | null = null;
 
@@ -160,12 +210,12 @@ export class FeesPage implements OnInit {
 
     if (!service) return;
 
-    this.isProcessing = true;
-
     service.signTransactions(this.transaction, this.currentWallet).subscribe({
       next: async (event) => {
+        this.confirmSignTransactionModal.dismiss();
+
         this.router.navigate(['/xterium/balances']);
-        this.handleTransferTransactionEvent(event);
+        this.handleTransactionEvent(event);
       },
       error: async (err) => {
         this.isProcessing = false;
@@ -173,7 +223,7 @@ export class FeesPage implements OnInit {
     });
   }
 
-  async handleTransferTransactionEvent(event: any) {
+  async handleTransactionEvent(event: any) {
     let title = '';
     let body = '';
 
@@ -222,39 +272,10 @@ export class FeesPage implements OnInit {
     this.router.navigate(['/xterium/balances']);
   }
 
-  async fetchData(): Promise<void> {
-    await this.getCurrentWallet();
-
-    this.route.paramMap.subscribe(params => {
-      let service: PolkadotApiService | null = null;
-
-      if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-      if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
-
-      if (!service) return;
-
-      const encodedhex = params.get('encodedhex') || '';
-      service.getTransactionInfo(encodedhex).then(async (transactionInfo) => {
-        this.transaction = transactionInfo;
-
-        this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
-
-        setTimeout(async () => {
-          const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
-          this.estimatedFee = Number(fee.partial_fee);
-          this.isLoadingFee = false;
-        }, 1000);
-      });
-    });
-  }
-
   ngOnInit() {
-    this.fetchData();
-  }
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+    this.initSecurity();
 
-  ngOnDestroy() {
-    if (this.feeSubscription) {
-      this.feeSubscription.unsubscribe();
-    }
+    this.initTransaction();
   }
 }

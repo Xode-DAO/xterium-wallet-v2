@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonContent,
+  IonGrid,
+  IonRow,
+  IonCol,
   IonToast,
 } from '@ionic/angular/standalone';
 
@@ -24,6 +27,9 @@ import { AuthService } from 'src/app/api/auth/auth.service';
     CommonModule,
     FormsModule,
     IonContent,
+    IonGrid,
+    IonRow,
+    IonCol,
     IonToast,
     HeaderComponent,
     PasswordSetupComponent,

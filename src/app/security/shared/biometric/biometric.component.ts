@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 import {
@@ -30,6 +30,7 @@ import { AuthService } from 'src/app/api/auth/auth.service';
   styleUrls: ['./biometric.component.scss'],
 })
 export class BiometricComponent implements OnInit {
+  @Output() onLogin = new EventEmitter<string>();
 
   constructor(
     private router: Router,
@@ -136,10 +137,12 @@ export class BiometricComponent implements OnInit {
       return;
     }
 
+    this.onLogin.emit(decryptedPassword);
+
     await this.authService.renewAuth();
 
     const toast = await this.toastController.create({
-      message: 'Biometric login successful!',
+      message: 'Sign in successful!',
       color: 'success',
       duration: 1500,
       position: 'top',

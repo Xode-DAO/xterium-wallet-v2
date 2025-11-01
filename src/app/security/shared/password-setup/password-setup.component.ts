@@ -107,7 +107,7 @@ export class PasswordSetupComponent implements OnInit {
 
     await toast.present();
 
-    this.router.navigate(['/xterium'], { replaceUrl: true });
+    this.router.navigate(['/onboarding'], { replaceUrl: true });
     this.isProcessing = false;
   }
 

@@ -108,12 +108,8 @@ export const routes: Routes = [
         loadComponent: () => import('./web3/approval/approval.page').then(m => m.ApprovalPage)
       },
       {
-        path: 'fees/:encodedhex',
-        loadComponent: () => import('./web3/fees/fees.page').then(m => m.FeesPage)
-      },
-      {
-        path: 'sign',
-        loadComponent: () => import('./web3/sign/sign.page').then(m => m.SignPage)
+        path: 'sign-transaction/:encodedhex',
+        loadComponent: () => import('./web3/sign-transaction/sign-transaction.page').then(m => m.SignTransactionPage)
       },
       {
         path: '',

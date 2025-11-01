@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +21,7 @@ import { shieldCheckmark } from 'ionicons/icons';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 
-import { PasswordLogin } from 'src/models/auth.model';
+import { Auth, PasswordLogin } from 'src/models/auth.model';
 
 @Component({
   selector: 'app-password-login',
@@ -41,6 +41,7 @@ import { PasswordLogin } from 'src/models/auth.model';
   styleUrls: ['./password-login.component.scss'],
 })
 export class PasswordLoginComponent implements OnInit {
+  @Output() onLogin = new EventEmitter<string>();
 
   constructor(
     private router: Router,
@@ -102,10 +103,12 @@ export class PasswordLoginComponent implements OnInit {
       return;
     }
 
+    this.onLogin.emit(decryptedPassword);
+
     await this.authService.renewAuth();
 
     const toast = await this.toastController.create({
-      message: 'Login successful!',
+      message: 'Sign in successful!',
       color: 'success',
       duration: 1500,
       position: 'top',
