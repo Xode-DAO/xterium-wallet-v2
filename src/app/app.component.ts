@@ -27,7 +27,6 @@ export class AppComponent {
     private platform: Platform,
     private router: Router,
     private environmentService: EnvironmentService,
-    private authService: AuthService,
     private deepLinkService: DeepLinkService
   ) {
     this.initApp();
@@ -40,7 +39,6 @@ export class AppComponent {
       this.isChromeExtension = this.environmentService.isChromeExtension();
 
       this.initStatusBar();
-      this.initAuthentication();
       this.initDeepLinks();
     });
   }
@@ -55,23 +53,6 @@ export class AppComponent {
     } catch (error) {
       console.error('StatusBar setup failed:', error);
     }
-  }
-
-  async initAuthentication() {
-    const auth = await this.authService.getAuth();
-    const isExpired = auth?.expires_at && Date.now() > auth.expires_at;
-
-    let targetRoute = '/onboarding';
-    if (auth) {
-      targetRoute = isExpired ? '/security' : '/xterium';
-    }
-
-    await this.router.navigate([targetRoute], { replaceUrl: true });
-
-    window.history.pushState(null, '', window.location.href);
-    window.onpopstate = () => {
-      window.history.go(1);
-    };
   }
 
   initDeepLinks() {
