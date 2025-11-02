@@ -30,3 +30,19 @@
 
   <ion-toast [duration]="5000"></ion-toast>
 </div>
+
+<ion-modal #confirmImportWalletModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+  <ng-template>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>Confirm Import</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="confirmImportWalletModal.dismiss()">
+          <ion-icon name="close" style="color: white;"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-content>
+      <app-sign-wallet (onSignWallet)="onSignWallet($event)"></app-sign-wallet>
+    </ion-content>
+  </ng-template>
+</ion-modal>

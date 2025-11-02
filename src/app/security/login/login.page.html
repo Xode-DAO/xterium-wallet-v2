@@ -37,12 +37,12 @@
 
     @if (isChromeExtension) {
     @if (isPasswordExisting) {
-    <app-password-login></app-password-login>
+    <app-password-login (onLogin)="goToXteriumPage($event)"></app-password-login>
     } @else {
-    <app-password-setup></app-password-setup>
+    <app-password-setup (onPasswordSetup)="goToXteriumPage($event)"></app-password-setup>
     }
     } @else {
-    <app-biometric></app-biometric>
+    <app-biometric (onLogin)="goToXteriumPage($event)"></app-biometric>
     }
   </div>
 

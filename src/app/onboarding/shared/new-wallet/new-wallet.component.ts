@@ -130,6 +130,7 @@ export class NewWalletComponent implements OnInit {
     if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
       let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
       if (!isMnemonicPhraseValid) {
+        this.confirmSaveWalletModal.dismiss();
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
@@ -150,6 +151,7 @@ export class NewWalletComponent implements OnInit {
 
       let getExistingWallet = await this.walletsService.getWalletById(newId);
       if (getExistingWallet) {
+        this.confirmSaveWalletModal.dismiss();
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
@@ -216,6 +218,7 @@ export class NewWalletComponent implements OnInit {
 
       await toast.present();
     } else if (this.selectedNetwork.id === 3) {
+      this.confirmSaveWalletModal.dismiss();
       this.isProcessing = false;
 
       const toast = await this.toastController.create({

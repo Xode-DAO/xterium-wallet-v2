@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -44,7 +43,6 @@ export class PasswordSetupComponent implements OnInit {
   @Output() onPasswordSetup = new EventEmitter<string>();
 
   constructor(
-    private router: Router,
     private encryptionService: EncryptionService,
     private authService: AuthService,
     private toastController: ToastController
@@ -100,17 +98,6 @@ export class PasswordSetupComponent implements OnInit {
     await this.authService.setupPassword(encryptedPassword);
 
     this.onPasswordSetup.emit(this.passwordSetup.password);
-
-    const toast = await this.toastController.create({
-      message: 'Password setup successful!',
-      color: 'success',
-      duration: 1500,
-      position: 'top',
-    });
-
-    await toast.present();
-
-    this.router.navigate(['/onboarding'], { replaceUrl: true });
     this.isProcessing = false;
   }
 

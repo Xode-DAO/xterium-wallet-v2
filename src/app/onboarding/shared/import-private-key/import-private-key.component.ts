@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -6,8 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { Clipboard } from '@capacitor/clipboard';
 import {
-  IonButton,
-  IonIcon,
+  IonContent,
   IonGrid,
   IonRow,
   IonCol,
@@ -15,8 +14,13 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonTextarea,
+  IonButton,
+  IonButtons,
+  IonIcon,
   IonToast,
+  IonModal,
+  IonTitle,
+  IonToolbar,
   ToastController
 } from '@ionic/angular/standalone';
 
@@ -26,9 +30,13 @@ import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model'
 
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
+import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+
+import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 
 @Component({
   selector: 'app-import-private-key',
@@ -38,8 +46,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
   imports: [
     CommonModule,
     FormsModule,
-    IonButton,
-    IonIcon,
+    IonContent,
     IonGrid,
     IonRow,
     IonCol,
@@ -47,17 +54,27 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonItem,
     IonLabel,
     IonInput,
-    IonTextarea,
+    IonButton,
+    IonButtons,
+    IonIcon,
     IonToast,
+    IonModal,
+    IonTitle,
+    IonToolbar,
+    SignWalletComponent
   ]
 })
 export class ImportPrivateKeyComponent implements OnInit {
+  @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
+
   @Input() selectedNetwork: Network = {} as Network;
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(
+    private environmentService: EnvironmentService,
     private polkadotJsService: PolkadotJsService,
     private onboardingService: OnboardingService,
+    private encryptionService: EncryptionService,
     private walletsService: WalletsService,
     private toastController: ToastController
   ) {
@@ -67,6 +84,8 @@ export class ImportPrivateKeyComponent implements OnInit {
       close
     });
   }
+
+  isChromeExtension = false;
 
   walletName: string = '';
   privateKey: string = '';
@@ -94,11 +113,16 @@ export class ImportPrivateKeyComponent implements OnInit {
       return;
     }
 
+    this.confirmImportWalletModal.present();
+  }
+
+  async onSignWallet(password: string) {
     this.isProcessing = true;
 
     if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
       let validatedKeypair = await this.polkadotJsService.validatePrivateKey(this.privateKey);
       if (validatedKeypair && !validatedKeypair.valid) {
+        this.confirmImportWalletModal.dismiss();
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
@@ -117,6 +141,7 @@ export class ImportPrivateKeyComponent implements OnInit {
 
       let getExistingWallet = await this.walletsService.getWalletById(newId);
       if (getExistingWallet) {
+        this.confirmImportWalletModal.dismiss();
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
@@ -130,13 +155,15 @@ export class ImportPrivateKeyComponent implements OnInit {
         return;
       }
 
+      const encryptedPrivateKey = await this.encryptionService.encrypt(keypair.secretKey!.toString(), password);
+
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
         network_id: this.selectedNetwork.id,
         mnemonic_phrase: "-",
-        public_key: (keypair.publicKey?.toString() ?? ''),
-        private_key: (keypair.secretKey?.toString() ?? '')
+        public_key: keypair.publicKey!.toString(),
+        private_key: encryptedPrivateKey
       };
 
       await this.walletsService.create(wallet);
@@ -147,20 +174,22 @@ export class ImportPrivateKeyComponent implements OnInit {
         await this.walletsService.setCurrentWallet(newId);
       }
 
-      const encodedWallets = await Promise.all(
-        wallets.map(async (wallet) => {
-          const publicKeyU8a = new Uint8Array(
-            wallet.public_key.split(",").map((byte) => Number(byte.trim()))
-          );
+      if (this.isChromeExtension) {
+        const encodedWallets = await Promise.all(
+          wallets.map(async (wallet) => {
+            const publicKeyU8a = new Uint8Array(
+              wallet.public_key.split(",").map((byte) => Number(byte.trim()))
+            );
 
-          return {
-            address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
-            name: wallet.name,
-          };
-        })
-      );
+            return {
+              address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
+              name: wallet.name,
+            };
+          })
+        );
 
-      chrome.storage.local.set({ accounts: encodedWallets });
+        chrome.storage.local.set({ accounts: encodedWallets });
+      }
 
       const onboarding = await this.onboardingService.get();
       if (onboarding) {
@@ -168,6 +197,8 @@ export class ImportPrivateKeyComponent implements OnInit {
           await this.onboardingService.update({ step3_created_wallet: wallet, step4_completed: true });
         }
       }
+
+      this.confirmImportWalletModal.dismiss();
 
       const toast = await this.toastController.create({
         message: 'Wallet imported successfully!',
@@ -178,6 +209,7 @@ export class ImportPrivateKeyComponent implements OnInit {
 
       await toast.present();
     } else if (this.selectedNetwork.id === 3) {
+      this.confirmImportWalletModal.dismiss();
       this.isProcessing = false;
 
       const toast = await this.toastController.create({
@@ -193,5 +225,7 @@ export class ImportPrivateKeyComponent implements OnInit {
     }
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+  }
 }

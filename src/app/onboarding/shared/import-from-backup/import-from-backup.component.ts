@@ -1,19 +1,25 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  IonButton,
+  IonContent,
   IonGrid,
   IonRow,
   IonCol,
   IonList,
   IonItem,
-  IonInput,
   IonLabel,
+  IonInput,
+  IonButton,
+  IonButtons,
+  IonIcon,
   IonToast,
+  IonModal,
+  IonTitle,
+  IonToolbar,
   ToastController
 } from '@ionic/angular/standalone';
 
@@ -23,9 +29,13 @@ import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
 import { Network } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model'
 
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
+import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+
+import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 
 @Component({
   selector: 'app-import-from-backup',
@@ -34,24 +44,35 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
   imports: [
     CommonModule,
     FormsModule,
-    IonButton,
+    IonContent,
     IonGrid,
     IonRow,
     IonCol,
     IonList,
     IonItem,
-    IonInput,
     IonLabel,
+    IonInput,
+    IonButton,
+    IonButtons,
+    IonIcon,
     IonToast,
+    IonModal,
+    IonTitle,
+    IonToolbar,
+    SignWalletComponent
   ]
 })
 export class ImportFromBackupComponent implements OnInit {
+  @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
+
   @Input() selectedNetwork: Network = {} as Network;
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(
+    private environmentService: EnvironmentService,
     private polkadotJsService: PolkadotJsService,
     private onboardingService: OnboardingService,
+    private encryptionService: EncryptionService,
     private walletsService: WalletsService,
     private toastController: ToastController
   ) {
@@ -61,6 +82,8 @@ export class ImportFromBackupComponent implements OnInit {
       close
     });
   }
+
+  isChromeExtension = false;
 
   walletName: string = '';
   wallet: Wallet = new Wallet();
@@ -106,15 +129,21 @@ export class ImportFromBackupComponent implements OnInit {
       return;
     }
 
+    this.confirmImportWalletModal.present();
+  }
+
+  async onSignWallet(password: string) {
     this.isProcessing = true;
 
     if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
+      const decryptedPrivateKey = await this.encryptionService.decrypt(this.wallet.private_key!, password);
       const privateKeyHex = this.polkadotJsService.encodePrivateKeyToHex(
-        new Uint8Array(this.wallet.private_key?.split(',').map(Number) ?? [])
+        new Uint8Array(decryptedPrivateKey.split(',').map(Number) ?? [])
       );
 
       let validatedKeypair = await this.polkadotJsService.validatePrivateKey(privateKeyHex);
       if (validatedKeypair && !validatedKeypair.valid) {
+        this.confirmImportWalletModal.dismiss();
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
@@ -128,11 +157,16 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
-      let mnemonicSeeds = "-";
+      let mnemonicPhrase = "-";
+      let publicKey = this.wallet.public_key;
+      let privateKey = this.wallet.private_key;
 
       if (this.wallet.mnemonic_phrase !== "" && this.wallet.mnemonic_phrase !== "-") {
-        let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.wallet.mnemonic_phrase);
+        const decryptedMnemonicPhrase = await this.encryptionService.decrypt(this.wallet.mnemonic_phrase!, password);
+
+        let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(decryptedMnemonicPhrase);
         if (!isMnemonicPhraseValid) {
+          this.confirmImportWalletModal.dismiss();
           this.isProcessing = false;
 
           const toast = await this.toastController.create({
@@ -146,11 +180,12 @@ export class ImportFromBackupComponent implements OnInit {
           return;
         }
 
-        const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.wallet.mnemonic_phrase);
+        const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(decryptedMnemonicPhrase);
         const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
         const privateKeyFromSeedsHex = this.polkadotJsService.encodePrivateKeyToHex(keypair.secretKey);
 
         if (!this.polkadotJsService.arePrivateKeysEqual(privateKeyHex, privateKeyFromSeedsHex)) {
+          this.confirmImportWalletModal.dismiss();
           this.isProcessing = false;
 
           const toast = await this.toastController.create({
@@ -164,14 +199,19 @@ export class ImportFromBackupComponent implements OnInit {
           return;
         }
 
-        mnemonicSeeds = this.wallet.mnemonic_phrase;
+        const encryptedMnemonicPhrase = await this.encryptionService.encrypt(decryptedMnemonicPhrase, password);
+        const encryptedPrivateKey = await this.encryptionService.encrypt(keypair.secretKey!.toString(), password);
+
+        mnemonicPhrase = encryptedMnemonicPhrase;
+        publicKey = keypair.publicKey!.toString();
+        privateKey = encryptedPrivateKey;
       }
 
-      const keypair = validatedKeypair;
       const newId = uuidv4();
 
       let getExistingWallet = await this.walletsService.getWalletById(newId);
       if (getExistingWallet) {
+        this.confirmImportWalletModal.dismiss();
         this.isProcessing = false;
 
         const toast = await this.toastController.create({
@@ -189,9 +229,9 @@ export class ImportFromBackupComponent implements OnInit {
         id: newId,
         name: this.walletName,
         network_id: this.selectedNetwork.id,
-        mnemonic_phrase: mnemonicSeeds,
-        public_key: (keypair.publicKey?.toString() ?? ''),
-        private_key: (keypair.secretKey?.toString() ?? '')
+        mnemonic_phrase: mnemonicPhrase,
+        public_key: publicKey,
+        private_key: privateKey
       };
 
       await this.walletsService.create(wallet);
@@ -202,20 +242,22 @@ export class ImportFromBackupComponent implements OnInit {
         await this.walletsService.setCurrentWallet(newId);
       }
 
-      const encodedWallets = await Promise.all(
-        wallets.map(async (wallet) => {
-          const publicKeyU8a = new Uint8Array(
-            wallet.public_key.split(",").map((byte) => Number(byte.trim()))
-          );
+      if (this.isChromeExtension) {
+        const encodedWallets = await Promise.all(
+          wallets.map(async (wallet) => {
+            const publicKeyU8a = new Uint8Array(
+              wallet.public_key.split(",").map((byte) => Number(byte.trim()))
+            );
 
-          return {
-            address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
-            name: wallet.name,
-          };
-        })
-      );
+            return {
+              address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
+              name: wallet.name,
+            };
+          })
+        );
 
-      chrome.storage.local.set({ accounts: encodedWallets });
+        chrome.storage.local.set({ accounts: encodedWallets });
+      }
 
       const onboarding = await this.onboardingService.get();
       if (onboarding) {
@@ -233,6 +275,7 @@ export class ImportFromBackupComponent implements OnInit {
 
       await toast.present();
     } else if (this.selectedNetwork.id === 3) {
+      this.confirmImportWalletModal.dismiss();
       this.isProcessing = false;
 
       const toast = await this.toastController.create({
@@ -248,5 +291,7 @@ export class ImportFromBackupComponent implements OnInit {
     }
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+  }
 }

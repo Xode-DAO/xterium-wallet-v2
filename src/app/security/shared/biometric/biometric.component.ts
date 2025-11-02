@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
 
 import {
   IonGrid,
@@ -33,7 +32,6 @@ export class BiometricComponent implements OnInit {
   @Output() onLogin = new EventEmitter<string>();
 
   constructor(
-    private router: Router,
     private biometricService: BiometricService,
     private encryptionService: EncryptionService,
     private authService: AuthService,
@@ -137,20 +135,10 @@ export class BiometricComponent implements OnInit {
       return;
     }
 
-    this.onLogin.emit(decryptedPassword);
-
     await this.authService.renewAuth();
 
-    const toast = await this.toastController.create({
-      message: 'Sign in successful!',
-      color: 'success',
-      duration: 1500,
-      position: 'top',
-    });
-
-    await toast.present();
-
-    this.router.navigate(['/xterium'], { replaceUrl: true });
+    this.onLogin.emit(decryptedPassword);
+    this.isProcessing = false;
   }
 
   ngOnInit() {

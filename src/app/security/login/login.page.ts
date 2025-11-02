@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -40,6 +41,7 @@ import { AuthService } from 'src/app/api/auth/auth.service';
 export class LoginPage implements OnInit {
 
   constructor(
+    private router: Router,
     private environmentService: EnvironmentService,
     private authService: AuthService,
   ) { }
@@ -52,6 +54,10 @@ export class LoginPage implements OnInit {
     if (auth) {
       this.isPasswordExisting = true;
     }
+  }
+
+  goToXteriumPage(_: string) {
+    this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
   ngOnInit() {
