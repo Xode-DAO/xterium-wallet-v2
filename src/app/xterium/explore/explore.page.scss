@@ -1,4 +1,27 @@
 .explore-page {
+  .segments-header {
+    font-weight: 700;
+    margin-top: 70px;
+    color: #ffffff;
+    padding-left: 26px;
+    padding-right: 26px;
+    
+    .header-content {
+      padding-top: 20px;
+      text-align: center;
+      
+      h1 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      
+      span {
+        font-size: 14px;
+        opacity: 0.8;
+      }
+    }
+  }
 
   .card-container {
     justify-content: center;
