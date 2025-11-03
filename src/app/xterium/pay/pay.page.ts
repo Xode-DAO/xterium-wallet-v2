@@ -1,19 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import {
-  IonContent,
-  IonButton,
-  IonIcon,
-  IonGrid,
-  IonRow,
-  IonCol
-} from '@ionic/angular/standalone';
-
-import { addIcons } from 'ionicons';
-import { qrCode, cloudUpload } from 'ionicons/icons';
+import { IonRouterOutlet } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-pay',
@@ -21,33 +10,14 @@ import { qrCode, cloudUpload } from 'ionicons/icons';
   styleUrls: ['./pay.page.scss'],
   standalone: true,
   imports: [
-    RouterModule,
+    IonRouterOutlet,
     CommonModule,
     FormsModule,
-    IonContent,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonButton,
-    IonIcon,
   ]
 })
 export class PayPage implements OnInit {
 
-  constructor(private router: Router) {
-    addIcons({
-      qrCode,
-      cloudUpload,
-    });
-  }
-
-  qrCodeScannerNavigation() {
-    this.router.navigate(['/pay/qr-scanner']);
-  }
-
-  qrCodeUploadNavigation() {
-    this.router.navigate(['/pay/qr-upload']);
-  }
+  constructor() { }
 
   ngOnInit() { }
 

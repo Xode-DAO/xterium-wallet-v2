@@ -7,12 +7,16 @@
       <ion-row>
         <ion-col size="12">
           <div style="margin-top: 50px">
-            <ion-card class="custom-card">
+            <div class="bank-header">
+                <img class="bank-logo" src="https://custody.staginglab.info/uploads/bank/file_1750745489568.svg" />
+                <span class="bank-name">BDO Unibank</span>
+              </div>
+            <ion-card class="custom-card qr-result-card">
               <ion-card-header>
-                <ion-card-title>Result Details</ion-card-title>
+                <ion-card-title>USDT</ion-card-title>
               </ion-card-header>
+
               <ion-card-content>
-                <ion-textarea [value]="scannedResult" readonly autoGrow="true" rows="3" style="width: 100%; overflow-wrap: break-word;"></ion-textarea>
               </ion-card-content>
             </ion-card>
           </div>
