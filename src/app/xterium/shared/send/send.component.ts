@@ -75,6 +75,7 @@ import { Router } from '@angular/router';
 export class SendComponent implements OnInit {
   @Input() balance: Balance = {} as Balance;
 
+  @Output() onClickSend = new EventEmitter<string>();
   @Output() onSendSuccessful = new EventEmitter<string>();
 
   @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
@@ -278,10 +279,10 @@ export class SendComponent implements OnInit {
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
     const transaction = service.transfer(this.balance, this.recipientAddress, parseAmount);
 
-    setTimeout(async () => {
-      const encodedHex = (await transaction.getEncodedData()).asHex();
-      this.router.navigate(['/web3/sign-transaction/' + encodedHex]);
-    }, 100);
+    const encodedHex = (await transaction.getEncodedData()).asHex();
+    this.onClickSend.emit(encodedHex);
+
+    this.router.navigate(['/web3/sign-transaction/' + encodedHex]);
   }
 
   ngOnInit() {

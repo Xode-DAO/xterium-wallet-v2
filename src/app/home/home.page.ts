@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { IonRouterOutlet } from '@ionic/angular/standalone';
 
 import { AuthService } from '../api/auth/auth.service';
+import { WalletsService } from '../api/wallets/wallets.service';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ export class HomePage {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private walletsService: WalletsService
   ) {
     this.initAuthentication();
   }
@@ -26,13 +28,23 @@ export class HomePage {
     if (auth) {
       const isAuthExpired = auth.expires_at ? Date.now() > auth.expires_at : false;
       if (isAuthExpired) {
-        await this.router.navigate(['/security/login'], { replaceUrl: true });
+        await this.router.navigate(['/security'], { replaceUrl: true });
       } else {
-        await this.router.navigate(['/xterium/balances'], { replaceUrl: true });
+        const wallets = await this.walletsService.getAllWallets();
+        const currentWallet = await this.walletsService.getCurrentWallet();
+
+        if (wallets.length === 0 || !currentWallet) {
+          localStorage.clear();
+
+          await this.router.navigate(['/onboarding'], { replaceUrl: true });
+          return;
+        }
+
+        await this.router.navigate(['/xterium'], { replaceUrl: true });
       }
     } else {
       localStorage.clear();
-      await this.router.navigate(['/onboarding/select-network'], { replaceUrl: true });
+      await this.router.navigate(['/onboarding'], { replaceUrl: true });
     }
 
     window.history.pushState(null, '', window.location.href);

@@ -99,7 +99,7 @@
       </ion-toolbar>
       <ion-content>
         <div class="ion-padding-horizontal">
-          <app-send [balance]="selectedBalance"></app-send>
+          <app-send [balance]="selectedBalance" (onClickSend)="onClickSend($event)"></app-send>
         </div>
       </ion-content>
     </ng-template>

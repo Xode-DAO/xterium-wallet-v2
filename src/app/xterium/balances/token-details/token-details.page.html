@@ -166,7 +166,7 @@
       </ion-toolbar>
       <ion-content>
         <div class="ion-text-center ion-padding">
-          <app-send [balance]="balance"></app-send>
+          <app-send [balance]="balance" (onClickSend)="onClickSend($event)"></app-send>
         </div>
       </ion-content>
     </ng-template>

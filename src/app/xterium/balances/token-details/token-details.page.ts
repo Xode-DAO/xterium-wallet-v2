@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -67,6 +67,9 @@ import { SendComponent } from "src/app/xterium/shared/send/send.component"
   ]
 })
 export class TokenDetailsPage implements OnInit {
+  @ViewChild('tokenDetailsSend', { read: IonModal }) tokenDetailsSendModal!: IonModal;
+
+  @Output() onClickSendSuccessful = new EventEmitter<string>();
 
   constructor(
     private router: Router,
@@ -167,6 +170,11 @@ export class TokenDetailsPage implements OnInit {
 
   formatBalanceWithSuffix(amount: number, decimals: number): string {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
+  }
+
+  onClickSend(_: string) {
+    this.tokenDetailsSendModal.dismiss();
+    this.onClickSendSuccessful.emit(_);
   }
 
   ngOnInit() {
