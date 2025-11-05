@@ -10,13 +10,12 @@ import {
   IonRow,
   IonCol,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent,
-  IonTextarea,
   IonItem,
   IonLabel,
+  IonText,
 } from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
@@ -24,6 +23,13 @@ import {
   CapacitorBarcodeScanner,
   CapacitorBarcodeScannerTypeHint,
 } from '@capacitor/barcode-scanner';
+
+import { Network } from 'src/models/network.model';
+import { Wallet } from 'src/models/wallet.model';
+
+import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { NetworksService } from 'src/app/api/networks/networks.service';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
   selector: 'app-qr-scanner',
@@ -41,20 +47,45 @@ import {
     IonRow,
     IonCol,
     IonCard,
-    IonCardHeader,
-    IonCardTitle,
     IonCardContent,
-    IonTextarea,
     IonItem,
     IonLabel,
+    IonText,
   ],
 })
 export class QrScannerPage implements OnInit {
+  qrAmount: number | null = null;
+
+  walletData: {
+    name?: string;
+    account?: string;
+    amount?: number;
+  } = {};
+
+  availableUSDt: number = 0;
+
+  selectedNetwork: Network = {} as Network;
+  currentWallet: Wallet = {} as Wallet;
+
+  currentWalletPublicAddress: string = '';
+
   scannedResult: string | null = null;
   scanning = false;
+  scanSuccess = false;
   parsedEMV: any = null;
 
-  constructor(private router: Router) {
+  tokenDetails = {
+    token: 'USDt',
+    amount: 9.969981,
+    pricePerToken: 1.003011,
+  };
+
+  constructor(
+    private router: Router,
+     private polkadotJsService: PolkadotJsService,
+    private networksService: NetworksService,
+    private walletsService: WalletsService
+  ) {
     addIcons({
       arrowBackOutline,
       close,
@@ -66,11 +97,11 @@ export class QrScannerPage implements OnInit {
     let i = 0;
 
     while (i < data.length) {
-      const tag = data.substring(i, 2);
-      const len = parseInt(data.substring(i + 2, 2), 10);
-      const value = data.substring(i + 4, len);
+      const tag = data.substring(i, i + 2);
+      const len = parseInt(data.substring(i + 2, i + 4), 10);
+      const value = data.substring(i + 4, i + 4 + len);
 
-      if (['27', '28', '62', '51'].includes(tag)) {
+      if (['26', '27', '28', '62', '51'].includes(tag)) {
         parsed[tag] = this.formatEMVQR(value);
       } else {
         parsed[tag] = value;
@@ -84,6 +115,7 @@ export class QrScannerPage implements OnInit {
 
   async scanQrCode() {
     this.scanning = true;
+    this.scanSuccess = false;
 
     try {
       const result = await CapacitorBarcodeScanner.scanBarcode({
@@ -96,13 +128,57 @@ export class QrScannerPage implements OnInit {
       }
 
       this.scannedResult = result.ScanResult;
-
       this.parsedEMV = this.formatEMVQR(result.ScanResult);
-      this.scanning = false;
+
+      this.walletData = {
+        name: this.parsedEMV?.['59'] || '',
+        account:
+          this.parsedEMV?.['26']?.['04'] ||
+          this.parsedEMV?.['26']?.['01'] ||
+          this.parsedEMV?.['27']?.['04'] ||
+          this.parsedEMV?.['27']?.['01'] ||
+          '',
+        amount: this.parsedEMV?.['54']
+          ? parseFloat(this.parsedEMV['54'])
+          : 0,
+      };
+
+      this.scanSuccess = true;
     } catch (err) {
       console.warn('Scan cancelled or failed', err);
       this.returnToPayPage();
+    } finally {
+      this.scanning = false;
     }
+  }
+
+  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+    const publicKeyUint8 = new Uint8Array(
+      publicKey.split(',').map(byte => Number(byte.trim()))
+    );
+
+    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+  }
+
+   truncateAddress(address: string): string {
+    return this.polkadotJsService.truncateAddress(address);
+  }
+
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+
+      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
+      if (network) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+      }
+    }
+  }
+
+  onSendMoney() {
+    console.log('Send money clicked');
   }
 
   returnToPayPage() {
@@ -112,5 +188,6 @@ export class QrScannerPage implements OnInit {
 
   async ngOnInit() {
     await this.scanQrCode();
+    await this.getCurrentWallet();
   }
 }

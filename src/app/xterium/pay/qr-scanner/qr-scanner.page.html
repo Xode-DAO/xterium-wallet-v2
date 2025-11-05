@@ -1,28 +1,100 @@
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-button fill="clear" class="primary-back-button" (click)="returnToPayPage()">
-    <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
-  </ion-button>
+<ion-content [fullscreen]="true" class="payment-transaction-content">
   <div class="ion-padding">
     <ion-grid>
       <ion-row>
-        <ion-col size="12">
-          <div style="margin-top: 50px">
+        <ion-col size="12" size-md="8" size-lg="6" offset-md="2" offset-lg="3">
+          <div class="page-wrapper">
+            <ion-button fill="clear" class="primary-back-button" (click)="returnToPayPage()">
+              <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+            </ion-button>
             <div class="bank-header">
-                <img class="bank-logo" src="https://custody.staginglab.info/uploads/bank/file_1750745489568.svg" />
-                <span class="bank-name">BDO Unibank</span>
-              </div>
-            <ion-card class="custom-card qr-result-card">
-              <ion-card-header>
-                <ion-card-title>USDT</ion-card-title>
-              </ion-card-header>
+              <img
+                class="bank-logo"
+                src="https://custody.staginglab.info/uploads/bank/file_1750745489568.svg"
+              />
+              <span class="bank-name">BDO Unibank</span>
+            </div>
 
+              <ion-card class="transaction-card">
+                <ion-card-content>
+                  <ion-item lines="none" class="transaction-item">
+                    @if (scanSuccess) {
+                     <div class="balance-container">
+                        <div class="balance-amount">USD {{ walletData.amount }}</div>
+                        <div class="insufficient-balance">
+                          Available: {{ availableUSDt }} USDt (USD {{ availableUSDt.toFixed(2) }}) - Insufficient balance
+                        </div>
+                      </div>
+                    }
+                    </ion-item>
+                </ion-card-content>
+             </ion-card>
+
+            <div class="section-title">Wallet</div>
+            <ion-card class="wallet-card">
               <ion-card-content>
+                <div class="wallet-info">
+                  <div>
+                    <div class="wallet-name">{{ currentWallet.name | slice:0:20}}</div>
+                    <div class="wallet-address">
+                      {{currentWalletPublicAddress === '' ? "Loading..." : truncateAddress(currentWalletPublicAddress)}}
+                    </div>
+                  </div>
+                </div>
               </ion-card-content>
             </ion-card>
+
+            <div class="section-title">Token Details</div>
+            <ion-card class="details-card">
+              <div class="wallet-info">
+                <ion-card-content>
+                  <ion-item lines="none" class="token-item">
+                      <ion-label>Token</ion-label>
+                      <ion-text slot="end" class="token-value">
+                      {{ tokenDetails.token }}
+                    </ion-text>
+                  </ion-item>
+
+                  <ion-item lines="none" class="detail-item">
+                    <ion-label>Amount</ion-label>
+                    <ion-text slot="end" class="detail-value">{{ tokenDetails.amount }}</ion-text>
+                  </ion-item>
+
+                  <div class="price-info">
+                    <span class="price-label">Price</span>
+                    <span class="price-value">USD {{ tokenDetails.pricePerToken }} per {{tokenDetails.token }}</span>
+                  </div>
+
+                  <div class="account-details">
+                  @if (scanSuccess) {
+                    <div class="account-row">
+                      <span class="account-label">Account Name</span>
+                      <span class="account-value">{{ walletData.name }}</span>
+                    </div>
+                  }
+                  @if (scanSuccess) {
+                    <div class="account-row">
+                      <span class="account-label">Account Number</span>
+                      <span class="account-value">{{ walletData.account }}</span>
+                    </div>
+                  }
+                </div>
+                </ion-card-content>
+              </div>
+            </ion-card>
+            <div class="primary-button-wrapper">
+              <ion-button expand="block" class="ion-margin-bottom" (click)="onSendMoney()">
+                SEND MONEY
+              </ion-button>
+            </div>
           </div>
         </ion-col>
       </ion-row>
     </ion-grid>
+    <div class="powered-by">
+      <ion-text>Powered by</ion-text>
+        <img src="../../../../assets/images/multipayx/multipayx.png" alt="MultipayX Logo" />
+    </div>
+    
   </div>
 </ion-content>
-
