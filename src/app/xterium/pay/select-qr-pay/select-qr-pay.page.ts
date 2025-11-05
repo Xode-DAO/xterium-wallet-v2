@@ -12,6 +12,9 @@ import {
   IonCol
 } from '@ionic/angular/standalone';
 
+import { addIcons } from 'ionicons';
+import { qrCode, cloudUpload } from 'ionicons/icons';
+
 @Component({
   selector: 'app-select-qr-pay',
   templateUrl: './select-qr-pay.page.html',
@@ -30,7 +33,12 @@ import {
 })
 export class SelectQrPayPage implements OnInit {
 
-  constructor( private router: Router ) { }
+  constructor( private router: Router ) {
+    addIcons({
+      qrCode,
+      cloudUpload,
+    });
+   }
 
   qrCodeScannerNavigation() {
     this.router.navigate(['/xterium/pay/qr-scanner']);
