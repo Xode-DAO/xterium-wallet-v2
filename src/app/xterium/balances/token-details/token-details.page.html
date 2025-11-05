@@ -23,6 +23,19 @@
           </div>
         </ion-col>
       </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <div id="chart">
+            <apx-chart
+              [series]="candlestickSeries"
+              [chart]="candlestickChart"
+              [xaxis]="candlestickXaxis"
+              [yaxis]="candlestickYaxis"
+              [title]="candlestickTitle"
+            ></apx-chart>
+          </div>
+        </ion-col>
+      </ion-row>
       <ion-row class="token-action-buttons">
         <ion-col size="4" class="ion-text-center">
           <ion-button fill="clear" expand="block" id="token-details-receive">
