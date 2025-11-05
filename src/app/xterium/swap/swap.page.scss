@@ -1,22 +1,145 @@
-.coming-soon-container {
-  text-align: center;
-  margin-top: 40%;
-  color: #666;
-
-  .coming-soon-icon {
-    font-size: 60px;
-    color: #0bbab5;
-    margin-bottom: 10px;
+.swap-page {
+  .swap-container {
+    padding: 20px 24px;
+    margin-top: 70px;
+    position: relative;
   }
 
-  h2 {
-    font-weight: 700;
-    font-size: 20px;
-    margin-bottom: 8px;
+  .swap-section {
+    background: #2a2a2a;
+    border-radius: 25px;
+    padding: 20px;
+    margin-bottom: 0;
+    border: 1px solid #3a3a3a;
+    position: relative;
+
+    .section-label {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .amount-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+
+      .amount-input {
+        font-size: 28px;
+        font-weight: 600;
+        --padding-start: 0;
+        --padding-end: 0;
+        --background: transparent;
+        --color: #fff;
+        flex: 1;
+        margin-right: 12px;
+        min-height: 48px;
+
+        &::placeholder {
+          color: #666;
+        }
+      }
+
+      .token-select-button {
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --border-radius: 25px;
+        --background: #3a3a3a;
+        --background-hover: #444;
+        --background-activated: #444;
+        margin: 0;
+        height: 48px;
+        min-width: 120px;
+
+        .token-avatar {
+          width: 24px;
+          height: 24px;
+          margin-right: 8px;
+        }
+
+        .token-symbol {
+          font-weight: 600;
+          font-size: 16px;
+          margin-right: 8px;
+          color: #fff;
+        }
+
+        ion-icon {
+          color: #bebebe;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .balance-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+
+      .balance-label {
+        font-size: 14px;
+        color: #888;
+        font-weight: 500;
+      }
+
+      .percentage-buttons {
+        display: flex;
+        gap: 6px;
+
+        ion-button {
+          --border-radius: 25px;
+          --border-color: #444;
+          --background: #3a3a3a;
+          --background-hover: #444;
+          --background-activated: #444;
+          --color: #fff;
+          --padding-start: 8px;
+          --padding-end: 8px;
+          height: 28px;
+          font-size: 12px;
+          font-weight: 500;
+          margin: 0;
+          min-width: 45px;
+
+          &:hover {
+            --background: #444;
+          }
+        }
+      }
+    }
   }
 
-  p {
-    font-size: 14px;
-    color: #888;
+  .swap-direction-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    margin: -12px 0;
+
+    .swap-arrow-button {
+      background: #3299a7;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:active {
+        transform: scale(0.95);
+        background: #2a8997;
+      }
+
+      .swap-arrow {
+        color: white;
+        font-size: 18px;
+      }
+    }
   }
 }
