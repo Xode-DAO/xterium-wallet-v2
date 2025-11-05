@@ -24,11 +24,11 @@ import {
   CapacitorBarcodeScannerTypeHint,
 } from '@capacitor/barcode-scanner';
 
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
@@ -64,7 +64,7 @@ export class QrScannerPage implements OnInit {
 
   availableUSDt: number = 0;
 
-  selectedNetwork: Network = {} as Network;
+  selectedChain: Chain = {} as Chain;
   currentWallet: Wallet = {} as Wallet;
 
   currentWalletPublicAddress: string = '';
@@ -82,8 +82,8 @@ export class QrScannerPage implements OnInit {
 
   constructor(
     private router: Router,
-     private polkadotJsService: PolkadotJsService,
-    private networksService: NetworksService,
+    private polkadotJsService: PolkadotJsService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService
   ) {
     addIcons({
@@ -152,16 +152,16 @@ export class QrScannerPage implements OnInit {
     }
   }
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
-   truncateAddress(address: string): string {
+  truncateAddress(address: string): string {
     return this.polkadotJsService.truncateAddress(address);
   }
 
@@ -170,9 +170,9 @@ export class QrScannerPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
 
-      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
-      if (network) {
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
+      if (chain) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
       }
     }
   }
