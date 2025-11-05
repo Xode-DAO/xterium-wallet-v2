@@ -38,7 +38,7 @@ import {
 } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
-import { Wallet } from 'src/models/wallet.model';
+import { Wallet, WalletSigner } from 'src/models/wallet.model';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
@@ -47,6 +47,7 @@ import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.servic
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
 import { NetworksService } from 'src/app/api/networks/networks.service';
+import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
@@ -100,6 +101,7 @@ export class SignTransactionPage implements OnInit {
     private xodePolkadotService: XodePolkadotService,
     private networksService: NetworksService,
     private walletsService: WalletsService,
+    private encryptionService: EncryptionService,
     private balancesService: BalancesService,
     private localNotificationsService: LocalNotificationsService,
   ) {
@@ -195,7 +197,7 @@ export class SignTransactionPage implements OnInit {
     this.confirmSignTransactionModal.present();
   }
 
-  confirmSignTransaction(decryptedPassword: string) {
+  async confirmSignTransaction(decryptedPassword: string) {
     if (!this.transaction) {
       console.error('Transaction data or transaction object is missing');
       return;
@@ -210,9 +212,12 @@ export class SignTransactionPage implements OnInit {
 
     if (!service) return;
 
-    // decrypt the wallet here...
+    const decryptedPrivateKey = await this.encryptionService.decrypt(this.currentWallet.private_key, decryptedPassword);
+    const walletSigner: WalletSigner = {
+      private_key: decryptedPrivateKey
+    };
 
-    service.signTransactions(this.transaction, this.currentWallet).subscribe({
+    service.signTransactions(this.transaction, walletSigner).subscribe({
       next: async (event) => {
         this.confirmSignTransactionModal.dismiss();
 

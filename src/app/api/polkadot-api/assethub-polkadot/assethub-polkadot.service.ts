@@ -11,7 +11,7 @@ import { getPolkadotSigner } from "polkadot-api/signer"
 
 import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
-import { Wallet } from 'src/models/wallet.model';
+import { WalletSigner } from 'src/models/wallet.model';
 
 import { PolkadotApiService } from '../polkadot-api.service';
 import { FeeEstimate } from 'src/models/fees.model';
@@ -389,11 +389,11 @@ export class AssethubPolkadotService extends PolkadotApiService {
     });
   }
 
-  signTransactions(transaction: Transaction<any, any, any, void | undefined>, wallet: Wallet): Observable<TxEvent> {
+  signTransactions(transaction: Transaction<any, any, any, void | undefined>, walletSigner: WalletSigner): Observable<TxEvent> {
     return new Observable<TxEvent>(subscriber => {
       const subscriptions: any[] = [];
 
-      const secretKey = new Uint8Array(wallet.private_key.split(',').map(Number));
+      const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
       const signer = getPolkadotSigner(
         sr25519.getPublicKey(secretKey),
         "Sr25519",

@@ -1,9 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Subscription } from 'rxjs';
+import { NgApexchartsModule } from 'ng-apexcharts';
+
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexTitleSubtitle,
+  ApexXAxis
+} from "ng-apexcharts";
 
 import {
   IonContent,
@@ -63,10 +71,14 @@ import { SendComponent } from "src/app/xterium/shared/send/send.component"
     IonTitle,
     IonToolbar,
     ReceiveComponent,
-    SendComponent
+    SendComponent,
+    NgApexchartsModule
   ]
 })
 export class TokenDetailsPage implements OnInit {
+  @ViewChild('tokenDetailsSend', { read: IonModal }) tokenDetailsSendModal!: IonModal;
+
+  @Output() onClickSendSuccessful = new EventEmitter<string>();
 
   constructor(
     private router: Router,
@@ -94,6 +106,38 @@ export class TokenDetailsPage implements OnInit {
 
   observableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
+
+  candlestickSeries: ApexAxisChartSeries = [];
+
+  candlestickChart: ApexChart = {
+    type: "candlestick",
+    height: 350,
+  };
+
+  candlestickTitle: ApexTitleSubtitle = {
+    text: "Price History",
+    align: "left",
+    style: {
+      color: "#ffffff"
+    }
+  };
+
+  candlestickXaxis: ApexXAxis = {
+    type: "datetime",
+    labels: {
+      style: {
+        colors: "#ffffff"
+      }
+    }
+  };
+
+  candlestickYaxis = {
+    labels: {
+      style: {
+        colors: "#ffffff"
+      }
+    }
+  };
 
   async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -160,6 +204,7 @@ export class TokenDetailsPage implements OnInit {
           this.currentWalletPublicAddress
         ).subscribe(balance => {
           this.balance = balance;
+          this.initCandlestickChart();
         });
       }
     }, 5000);
@@ -167,6 +212,38 @@ export class TokenDetailsPage implements OnInit {
 
   formatBalanceWithSuffix(amount: number, decimals: number): string {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
+  }
+
+  generateDummyPriceHistory(symbol: string) {
+    if (symbol === 'DOT') {
+      return [
+        { x: new Date('2025-01-01'), y: [7.1, 7.4, 7.0, 7.3] },
+        { x: new Date('2025-01-02'), y: [7.3, 7.6, 7.2, 7.4] },
+        { x: new Date('2025-01-03'), y: [7.4, 7.8, 7.3, 7.7] },
+        { x: new Date('2025-01-04'), y: [7.7, 7.9, 7.5, 7.6] },
+        { x: new Date('2025-01-05'), y: [7.6, 7.8, 7.4, 7.5] }
+      ];
+    }
+
+    return [];
+  }
+
+  initCandlestickChart() {
+    if (!this.balance?.token?.symbol) return;
+
+    const history = this.generateDummyPriceHistory(this.balance.token.symbol);
+
+    this.candlestickSeries = [
+      {
+        name: `${this.balance.token.symbol} Price`,
+        data: history
+      }
+    ];
+  }
+
+  onClickSend(_: string) {
+    this.tokenDetailsSendModal.dismiss();
+    this.onClickSendSuccessful.emit(_);
   }
 
   ngOnInit() {
@@ -177,6 +254,7 @@ export class TokenDetailsPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['balance']) {
         this.balance = JSON.parse(params['balance']);
+        this.initCandlestickChart();
       }
     });
   }

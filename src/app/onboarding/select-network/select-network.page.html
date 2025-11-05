@@ -25,6 +25,19 @@
               <ion-card button class="network-card" [class.active]="selectedNetworkId === 1" (click)="selectNetwork(1)">
                 <ion-card-content>
                   <ion-avatar slot="start">
+                    <img src="../../../assets/images/networks/polkadot.png" alt="Polkadot" />
+                  </ion-avatar>
+                  <ion-label>
+                    <h2>Polkadot</h2>
+                    <p>Connect and secure all parachains with the Polkadot Relay Chain for seamless interoperability.</p>
+                  </ion-label>
+                </ion-card-content>
+              </ion-card>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-card button class="network-card" [class.active]="selectedNetworkId === 2" (click)="selectNetwork(2)">
+                <ion-card-content>
+                  <ion-avatar slot="start">
                     <img src="../../../assets/images/networks/assethub.png" alt="AssetHub" />
                   </ion-avatar>
                   <ion-label>
@@ -35,7 +48,7 @@
               </ion-card>
             </ion-item>
             <ion-item lines="none">
-              <ion-card button class="network-card" [class.active]="selectedNetworkId === 2" (click)="selectNetwork(2)">
+              <ion-card button class="network-card" [class.active]="selectedNetworkId === 3" (click)="selectNetwork(3)">
                 <ion-card-content>
                   <ion-avatar slot="start">
                     <img src="../../../assets/images/networks/xode.png" alt="Xode" />
@@ -48,7 +61,20 @@
               </ion-card>
             </ion-item>
             <ion-item lines="none">
-              <ion-card button class="network-card" [class.active]="selectedNetworkId === 3" (click)="selectNetwork(3)">
+              <ion-card button class="network-card" [class.active]="selectedNetworkId === 4" (click)="selectNetwork(4)">
+                <ion-card-content>
+                  <ion-avatar slot="start">
+                    <img src="../../../assets/images/networks/hydration.png" alt="Hydration" />
+                  </ion-avatar>
+                  <ion-label>
+                    <h2>Hydration</h2>
+                    <p>Participate in decentralized trading and liquidity on the Hydration network.</p>
+                  </ion-label>
+                </ion-card-content>
+              </ion-card>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-card button class="network-card" [class.active]="selectedNetworkId === 5" (click)="selectNetwork(5)">
                 <ion-card-content>
                   <ion-avatar slot="start">
                     <img src="../../../assets/images/networks/solana.png" alt="Solana" />

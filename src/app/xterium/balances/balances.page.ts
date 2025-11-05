@@ -115,6 +115,11 @@ export class BalancesPage implements OnInit {
     this.totalAmount = amount;
   }
 
+  onClickSend(_: string) {
+    this.balancesSelectTokenModal.dismiss();
+    this.balancesSendModal.dismiss();
+  }
+
   ngOnInit() { }
 
 }

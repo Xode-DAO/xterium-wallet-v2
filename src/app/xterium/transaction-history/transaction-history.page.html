@@ -153,123 +153,90 @@
           <ion-row class="search-hash">
             <ion-col size="12">
               <ion-item>
-                <ion-input placeholder="Enter transaction hash"></ion-input>
-                <ion-button fill="clear" slot="end">
-                  <ion-icon name="search-outline"></ion-icon>
+                <ion-input [(ngModel)]="blockHash" placeholder="Enter transaction hash"></ion-input>
+                <ion-button fill="clear" slot="end" (click)="onSearchHash()">
+                  <ion-icon name="search-outline" size="small"></ion-icon>
                 </ion-button>
               </ion-item>
             </ion-col>
           </ion-row>
 
-          <ion-row>
-            <ion-col size="12">
-              <ion-card class="transaction-card">
-                <ion-item lines="none">
-                  <ion-label>
-                    <strong>0x0849ccba33...f293</strong>
-                  </ion-label>
-                  <ion-chip color="success" slot="end">
-                    <ion-label>Success</ion-label>
-                  </ion-chip>
-                </ion-item>
+          @if (isLoading) {
+            <ion-row class="ion-justify-content-center ion-padding">
+              <ion-spinner name="crescent"></ion-spinner>
+            </ion-row>
+          }
 
-                <ion-item lines="none">
-                  <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>From:</ion-label>
-                  <ion-text slot="end" class="label-value">5FcJQZ...6BYq</ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="arrow-down-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>To:</ion-label>
-                  <ion-text slot="end" class="label-value">5D1yTz..p636</ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Amount:</ion-label>
-                  <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
-                    <span>1,000.00</span>
-                    <img src="../../../assets/images/tokens/xon.png" alt="XON Token" height="15" />
-                    <span>XON</span>
-                  </div>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Block:</ion-label>
-                  <ion-text slot="end" class="label-value">#1,651,076</ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Action:</ion-label>
-                  <ion-chip color="secondary" slot="end">
-                    <ion-label>assets(transfer)</ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Time Stamp:</ion-label>
-                  <ion-text slot="end" class="label-value">4/12/2025 9:10:24 PM</ion-text>
-                </ion-item>
-              </ion-card>
-
-              <ion-card class="transaction-card">
-                <ion-item lines="none">
-                  <ion-label>
-                    <strong>0x0849ccba33...f293</strong>
-                  </ion-label>
-                  <ion-chip color="success" slot="end">
-                    <ion-label>Success</ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>From:</ion-label>
-                  <ion-text slot="end" class="label-value">5FcJQZ...6BYq</ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="arrow-down-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>To:</ion-label>
-                  <ion-text slot="end" class="label-value">5D1yTz..p636</ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Amount:</ion-label>
-                  <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
-                    <span>1,000.00</span>
-                    <img src="../../../assets/images/tokens/xon.png" alt="XON Token" height="15" />
-                    <span>XON</span>
-                  </div>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Block:</ion-label>
-                  <ion-text slot="end" class="label-value">#1,651,076</ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Action:</ion-label>
-                  <ion-chip color="secondary" slot="end">
-                    <ion-label>assets(transfer)</ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Time Stamp:</ion-label>
-                  <ion-text slot="end" class="label-value">4/12/2025 9:10:24 PM</ion-text>
-                </ion-item>
-              </ion-card>
-            </ion-col>
+          @if (!isLoading && transactions.length === 0) {
+            <ion-row>
+              <ion-col class="ion-text-center ion-padding">
+                <ion-text color="medium">No transactions found.</ion-text>
+              </ion-col>
           </ion-row>
+          }
+
+          @for (transaction of transactions; track transaction.hash) {
+            <ion-row>
+              <ion-col size="12">
+                <ion-card class="transaction-card">
+                  <ion-item lines="none">
+                    <ion-label>
+                      <strong> {{ transaction.hash | slice:0:10 }}...{{ transaction.hash | slice:-4 }} </strong>
+                    </ion-label>
+                    <ion-chip color="success" slot="end">
+                      <ion-label> {{ transaction.status }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+
+                  <ion-item lines="none">
+                    <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>From:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ transaction.from | slice:0:10}} ... {{ transaction.from | slice:-4 }}
+                    </ion-text>
+                  </ion-item>
+
+                  <ion-item lines="none">
+                    <ion-icon name="arrow-down-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>To:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ transaction.to | slice:0:10 }} ... {{ transaction.to | slice:-4 }}
+                    </ion-text>
+                  </ion-item>
+
+                  <ion-item lines="none">
+                    <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Amount:</ion-label>
+                    <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
+                      <span>{{ transaction.amount }}</span>
+                      <img src="../../../assets/images/tokens/xon.png" alt="XON Token" height="15" />
+                      <span> {{ transaction.token_symbol }} </span>
+                    </div>
+                  </ion-item>
+
+                  <ion-item lines="none">
+                    <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Block:</ion-label>
+                    <ion-text slot="end" class="label-value"> {{ transaction.block_num }} </ion-text>
+                  </ion-item>
+
+                  <ion-item lines="none">
+                    <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Action:</ion-label>
+                    <ion-chip color="secondary" slot="end">
+                      <ion-label> {{ transaction.action }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+
+                  <ion-item lines="none">
+                    <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Time Stamp:</ion-label>
+                    <ion-text slot="end" class="label-value">{{ transaction.block_timestamp }}</ion-text>
+                  </ion-item>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+          }
         </ion-grid>
       </div>
     </ion-segment-content>
