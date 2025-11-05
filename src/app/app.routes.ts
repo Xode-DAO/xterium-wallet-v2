@@ -10,8 +10,8 @@ export const routes: Routes = [
     loadComponent: () => import('./onboarding/onboarding.page').then(m => m.OnboardingPage),
     children: [
       {
-        path: 'select-network',
-        loadComponent: () => import('./onboarding/select-network/select-network.page').then(m => m.SelectNetworkPage)
+        path: 'select-chain',
+        loadComponent: () => import('./onboarding/select-chain/select-chain.page').then(m => m.SelectChainPage)
       },
       {
         path: 'setup-wallet',
@@ -27,7 +27,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/onboarding/select-network',
+        redirectTo: '/onboarding/select-chain',
         pathMatch: 'full',
       },
     ]
@@ -69,7 +69,7 @@ export const routes: Routes = [
         children: [
           {
             path: 'select-qr-pay',
-            loadComponent: () => import('./xterium/pay/select-qr-pay/select-qr-pay.page').then( m => m.SelectQrPayPage)
+            loadComponent: () => import('./xterium/pay/select-qr-pay/select-qr-pay.page').then(m => m.SelectQrPayPage)
           },
           {
             path: 'qr-scanner',
@@ -125,5 +125,4 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
-  
 ];

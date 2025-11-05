@@ -37,7 +37,7 @@ import {
   flame
 } from 'ionicons/icons';
 
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet, WalletSigner } from 'src/models/wallet.model';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
@@ -46,7 +46,7 @@ import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -99,7 +99,7 @@ export class SignTransactionPage implements OnInit {
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
     private encryptionService: EncryptionService,
     private balancesService: BalancesService,
@@ -120,7 +120,7 @@ export class SignTransactionPage implements OnInit {
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
-  currentNetwork: Network = {} as Network;
+  currentChain: Chain = {} as Chain;
 
   transaction: Transaction<any, any, any, void | undefined> | null = null;
 
@@ -130,12 +130,12 @@ export class SignTransactionPage implements OnInit {
 
   isProcessing: boolean = false;
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -144,10 +144,10 @@ export class SignTransactionPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
 
-      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
-      if (network) {
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
-        this.currentNetwork = network;
+      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
+      if (chain) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
+        this.currentChain = chain;
       }
     }
   }
@@ -173,8 +173,8 @@ export class SignTransactionPage implements OnInit {
     this.route.paramMap.subscribe(params => {
       let service: PolkadotApiService | null = null;
 
-      if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-      if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+      if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
+      if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
 
       if (!service) return;
 
@@ -207,8 +207,8 @@ export class SignTransactionPage implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
 
     if (!service) return;
 
@@ -244,7 +244,7 @@ export class SignTransactionPage implements OnInit {
 
       case "broadcasted":
         title = "Transaction Sent";
-        body = `Your transfer has been broadcasted to the network.${hashInfo}`;
+        body = `Your transfer has been broadcasted to the chain.${hashInfo}`;
         break;
 
       case "txBestBlocksState":

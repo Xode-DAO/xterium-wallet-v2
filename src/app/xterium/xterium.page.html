@@ -70,31 +70,31 @@
                     <ion-col size="12">
                       <ion-list>
                         <ion-item class="primary-select-button-item ion-margin-bottom"
-                          (click)="openSelectNetworkModal()">
-                          @if (selectedNetwork) {
+                          (click)="openSelectChainModal()">
+                          @if (selectedChain) {
                           <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
-                            <img [src]="'./../../assets/images/networks/' + selectedNetwork.image" alt="Network Logo" />
+                            <img [src]="'./../../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />
                           </ion-avatar>
                           }
-                          <ion-label>{{ selectedNetwork.name || 'Select Network' }}</ion-label>
+                          <ion-label>{{ selectedChain.name || 'Select Chain' }}</ion-label>
                           <ion-button size="small" fill="clear">
                             <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
                           </ion-button>
 
-                          <ion-modal #selectNetworkModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+                          <ion-modal #selectChainModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
                             [expandToScroll]="false">
                             <ng-template>
                               <ion-toolbar class="main-modal-toolbar">
-                                <ion-title>Select Network</ion-title>
+                                <ion-title>Select Chain</ion-title>
                                 <ion-buttons slot="end">
-                                  <ion-button (click)="selectNetworkModal.dismiss()">
+                                  <ion-button (click)="selectChainModal.dismiss()">
                                     <ion-icon name="close" style="color: white;"></ion-icon>
                                   </ion-button>
                                 </ion-buttons>
                               </ion-toolbar>
                               <ion-content>
                                 <div class="ion-padding-horizontal">
-                                  <app-networks (onSelectedNetwork)="onSelectedNetwork($event)"></app-networks>
+                                  <app-chains (onSelectedChain)="onSelectedChain($event)"></app-chains>
                                 </div>
                               </ion-content>
                             </ng-template>
@@ -142,7 +142,7 @@
                           wallet.</span>
                       </div>
 
-                      <app-new-wallet [selectedNetwork]="selectedNetwork"
+                      <app-new-wallet [selectedChain]="selectedChain"
                         (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
                     </div>
                   </ion-content>
@@ -168,7 +168,7 @@
                           phrase.</span>
                       </div>
 
-                      <app-import-seed-phrase [selectedNetwork]="selectedNetwork"
+                      <app-import-seed-phrase [selectedChain]="selectedChain"
                         (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
                     </div>
                   </ion-content>
@@ -193,7 +193,7 @@
                         <span style="font-size: 15px;">Restore an existing wallet with your private key.</span>
                       </div>
 
-                      <app-import-private-key [selectedNetwork]="selectedNetwork"
+                      <app-import-private-key [selectedChain]="selectedChain"
                         (onImportedWallet)="onImportWalletPrivateKey($event)"></app-import-private-key>
                     </div>
                   </ion-content>
@@ -218,7 +218,7 @@
                         <span style="font-size: 15px;">Restore a wallet from your backup files. </span>
                       </div>
 
-                      <app-import-from-backup [selectedNetwork]="selectedNetwork"
+                      <app-import-from-backup [selectedChain]="selectedChain"
                         (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
                     </div>
                   </ion-content>
@@ -235,7 +235,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-wallets [newlyAddedWallet]="newlyAddedWallet" (onFilteredNetwork)="onFilteredNetwork($event)"
+        <app-wallets [newlyAddedWallet]="newlyAddedWallet" (onFilteredChain)="onFilteredChain($event)"
           (onSetCurrentWallet)="onSetCurrentWallet($event)"></app-wallets>
       </ion-content>
     </ng-template>

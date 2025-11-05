@@ -36,18 +36,18 @@ import {
   chevronDownOutline
 } from 'ionicons/icons';
 
-import { NetworksComponent } from "src/app/xterium/shared/networks/networks.component";
+import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
 import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 
-import { Network } from 'src/models/network.model';
+import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
@@ -77,7 +77,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonLabel,
     IonModal,
     WalletsComponent,
-    NetworksComponent,
+    ChainsComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
     ImportPrivateKeyComponent,
@@ -87,7 +87,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
 export class XteriumPage implements OnInit {
   @ViewChild('myWalletsModal', { read: IonModal }) myWalletsModal!: IonModal;
   @ViewChild('createWalletModal', { read: IonModal }) createWalletModal!: IonModal;
-  @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
+  @ViewChild('selectChainModal', { read: IonModal }) selectChainModal!: IonModal;
   @ViewChild('createNewAccountModal', { read: IonModal }) createNewAccountModal!: IonModal;
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
   @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
@@ -96,7 +96,7 @@ export class XteriumPage implements OnInit {
 
   constructor(
     private polkadotJsService: PolkadotJsService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService
   ) {
     addIcons({
@@ -112,18 +112,18 @@ export class XteriumPage implements OnInit {
     });
   }
 
-  selectedNetwork: Network = {} as Network;
+  selectedChain: Chain = {} as Chain;
   newlyAddedWallet: Wallet = {} as Wallet;
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -136,9 +136,9 @@ export class XteriumPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
 
-      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
-      if (network) {
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
+      if (chain) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
       }
     }
   }
@@ -156,18 +156,18 @@ export class XteriumPage implements OnInit {
     this.createWalletModal.present();
   }
 
-  openSelectNetworkModal() {
-    this.selectNetworkModal.present();
+  openSelectChainModal() {
+    this.selectChainModal.present();
   }
 
-  onSelectedNetwork(network: Network) {
-    this.selectedNetwork = network;
-    this.selectNetworkModal.dismiss();
+  onSelectedChain(chain: Chain) {
+    this.selectedChain = chain;
+    this.selectChainModal.dismiss();
   }
 
-  onFilteredNetwork(network: Network) {
-    if (network.name !== "All Networks") {
-      this.selectedNetwork = network;
+  onFilteredChain(chain: Chain) {
+    if (chain.name !== "All Chains") {
+      this.selectedChain = chain;
     }
   }
 
@@ -220,7 +220,7 @@ export class XteriumPage implements OnInit {
   }
 
   ngOnInit() {
-    this.selectedNetwork = this.networksService.getNetworksByCategory('Live')[0];
+    this.selectedChain = this.chainsService.getChainsByNetwork(Network.Polkadot)[0];
 
     setTimeout(() => {
       this.getCurrentWallet();

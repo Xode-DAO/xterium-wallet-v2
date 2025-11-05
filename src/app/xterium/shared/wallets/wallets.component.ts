@@ -21,14 +21,14 @@ import {
 import { addIcons } from 'ionicons';
 import { ellipsisVerticalOutline } from 'ionicons/icons';
 
-import { NetworksComponent } from "src/app/xterium/shared/networks/networks.component";
+import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
 import { WalletDetailsComponent } from 'src/app/xterium/shared/wallets/wallet-details/wallet-details.component';
 
-import { Network } from 'src/models/network.model';
+import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
@@ -51,22 +51,22 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonButtons,
     IonButton,
     IonIcon,
-    NetworksComponent,
+    ChainsComponent,
     WalletDetailsComponent
   ]
 })
 export class WalletsComponent implements OnInit {
-  @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
+  @ViewChild('selectChainModal', { read: IonModal }) selectChainModal!: IonModal;
   @ViewChild('walletDetailsModal', { read: IonModal }) walletDetailsModal!: IonModal;
 
   @Input() newlyAddedWallet: Wallet = {} as Wallet;
 
-  @Output() onFilteredNetwork = new EventEmitter<Network>();
+  @Output() onFilteredChain = new EventEmitter<Chain>();
   @Output() onSetCurrentWallet = new EventEmitter<Wallet>();
 
   constructor(
     private polkadotJsService: PolkadotJsService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
   ) {
     addIcons({
@@ -74,59 +74,59 @@ export class WalletsComponent implements OnInit {
     });
   }
 
-  networks: Network[] = [];
+  chains: Chain[] = [];
   wallets: Wallet[] = [];
 
-  networksByName: Record<string, Network[]> = {};
-  walletsByNetwork: Record<string, Wallet[]> = {};
+  chainsByName: Record<string, Chain[]> = {};
+  walletsByChain: Record<string, Wallet[]> = {};
 
-  selectedNetwork: Network = {} as Network;
+  selectedChain: Chain = {} as Chain;
   selectedWallet: Wallet = {} as Wallet;
 
   currentWallet: Wallet = {} as Wallet;
 
-  getNetworks(): void {
-    const allNetworks = this.networksService.getNetworksByCategory('All');
-    const liveNetworks = this.networksService.getNetworksByCategory('Live');
+  getChains(): void {
+    const allChains = this.chainsService.getChainsByNetwork(Network.All);
+    const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
 
-    this.networks = [...allNetworks, ...liveNetworks];
-    this.selectedNetwork = this.networks[0];
+    this.chains = [...allChains, ...liveChains];
+    this.selectedChain = this.chains[0];
 
-    this.loadNetworkByName();
+    this.loadChainByName();
   }
 
-  loadNetworkByName(): void {
-    this.networksByName = {};
+  loadChainByName(): void {
+    this.chainsByName = {};
 
-    if (this.selectedNetwork.name === "All Networks") {
-      this.networksByName["All Networks"] = this.networks;
+    if (this.selectedChain.name === "All Chains") {
+      this.chainsByName["All Chains"] = this.chains;
     } else {
-      const mapped = this.networks.filter(network => network.name.toLowerCase() === this.selectedNetwork.name.toLowerCase());
-      this.networksByName[this.selectedNetwork.name] = mapped;
+      const mapped = this.chains.filter(chain => chain.name.toLowerCase() === this.selectedChain.name.toLowerCase());
+      this.chainsByName[this.selectedChain.name] = mapped;
     }
   }
 
   async getWallets(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
-    this.loadWalletsByNetwork();
+    this.loadWalletsByChain();
   }
 
-  async loadWalletsByNetwork(): Promise<void> {
-    this.walletsByNetwork = {};
+  async loadWalletsByChain(): Promise<void> {
+    this.walletsByChain = {};
 
-    for (const network of this.networks) {
+    for (const chain of this.chains) {
       const filtered = this.wallets.filter(
-        w => w.network_id === network.id
+        w => w.chain_id === chain.id
       );
 
       const mapped = await Promise.all(
         filtered.map(async wallet => ({
           ...wallet,
-          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, network)
+          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, chain)
         }))
       );
 
-      this.walletsByNetwork[network.name] = mapped;
+      this.walletsByChain[chain.name] = mapped;
     }
   }
 
@@ -137,12 +137,12 @@ export class WalletsComponent implements OnInit {
     }
   }
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -150,19 +150,19 @@ export class WalletsComponent implements OnInit {
     return this.polkadotJsService.truncateAddress(address);
   }
 
-  openSelectNetworkModal() {
-    this.selectNetworkModal.present();
+  openSelectChainModal() {
+    this.selectChainModal.present();
   }
 
-  onSelectedNetwork(network: Network) {
-    this.selectedNetwork = network;
+  onSelectedChain(chain: Chain) {
+    this.selectedChain = chain;
 
-    this.loadNetworkByName();
-    this.loadWalletsByNetwork();
+    this.loadChainByName();
+    this.loadWalletsByChain();
 
-    this.selectNetworkModal.dismiss();
+    this.selectChainModal.dismiss();
 
-    this.onFilteredNetwork.emit(network);
+    this.onFilteredChain.emit(chain);
   }
 
   async setCurrentWallet(wallet: Wallet) {
@@ -196,7 +196,7 @@ export class WalletsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getNetworks();
+    this.getChains();
     this.getWallets();
     this.getCurrentWallet();
   }

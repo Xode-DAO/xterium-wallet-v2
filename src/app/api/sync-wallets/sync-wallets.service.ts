@@ -25,9 +25,9 @@ export class SyncWalletsService {
 
     parsedExistingWallets.forEach(async (oldWallet) => {
       const newWallet: Wallet = {
-        network_id: 1,
         id: oldWallet.id.toString(),
         name: oldWallet.name,
+        chain_id: 1,
         mnemonic_phrase: oldWallet.mnemonic_phrase,
         public_key: oldWallet.public_key,
         private_key: oldWallet.private_key,

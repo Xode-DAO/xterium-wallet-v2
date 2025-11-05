@@ -31,18 +31,18 @@ import { clipboardOutline, scanOutline, chevronDownOutline, close } from 'ionico
 
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 
-import { NetworksComponent } from '../networks/networks.component';
+import { ChainsComponent } from '../chains/chains.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -69,7 +69,7 @@ import { Router } from '@angular/router';
     IonContent,
     IonTitle,
     IonToolbar,
-    NetworksComponent
+    ChainsComponent
   ]
 })
 export class SendComponent implements OnInit {
@@ -78,14 +78,14 @@ export class SendComponent implements OnInit {
   @Output() onClickSend = new EventEmitter<string>();
   @Output() onSendSuccessful = new EventEmitter<string>();
 
-  @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
+  @ViewChild('selectChainModal', { read: IonModal }) selectChainModal!: IonModal;
 
   constructor(
     private balancesService: BalancesService,
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
     private multipayxApiService: MultipayxApiService,
     private toastController: ToastController,
@@ -101,7 +101,7 @@ export class SendComponent implements OnInit {
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
-  selectedNetwork: Network = {} as Network;
+  selectedChain: Chain = {} as Chain;
 
   balancesObservableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
@@ -112,13 +112,13 @@ export class SendComponent implements OnInit {
 
   isProcessing: boolean = false;
 
-  openSelectNetworkModal() {
-    this.selectNetworkModal.present();
+  openSelectChainModal() {
+    this.selectChainModal.present();
   }
 
-  onSelectedNetwork(network: Network) {
-    this.selectedNetwork = network;
-    this.selectNetworkModal.dismiss();
+  onSelectedChain(chain: Chain) {
+    this.selectedChain = chain;
+    this.selectChainModal.dismiss();
   }
 
   async pasteFromClipboard() {
@@ -129,12 +129,12 @@ export class SendComponent implements OnInit {
     }
   }
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -143,10 +143,10 @@ export class SendComponent implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
 
-      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
-      if (network) {
-        this.selectedNetwork = network;
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
+      if (chain) {
+        this.selectedChain = chain;
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
       }
     }
   }
@@ -170,8 +170,8 @@ export class SendComponent implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
 
     if (!service) return;
 
@@ -271,8 +271,8 @@ export class SendComponent implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
 
     if (!service) return;
 

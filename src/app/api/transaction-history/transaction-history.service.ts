@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { firstValueFrom } from 'rxjs';
 
 import {
+  PaymentHistory,
   TransactionHistory,
   TransactionHistoryStatus,
 } from 'src/models/transaction-history.model';
-import { Network } from 'src/models/network.model';
+
+import { Chain } from 'src/models/chain.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,20 +42,30 @@ export class TransactionHistoryService {
 
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+  ) { }
+
+  fetchPaymentHistory() {
+
+  }
+
+  fetchTransactionHistory() {
+
+  }
 
   async fetchTransfers(
     address: string,
-    network: Network
+    chain: Chain
   ): Promise<TransactionHistory[]> {
-    const transfersApiUrl = this.SUBSCAN_API_KEYS[network.name];
-    const extrinsicsApiUrl = this.SUBSCAN_API_KEYS_EXTRINSICS[network.name];
+    const transfersApiUrl = this.SUBSCAN_API_KEYS[chain.name];
+    const extrinsicsApiUrl = this.SUBSCAN_API_KEYS_EXTRINSICS[chain.name];
 
     if (!transfersApiUrl || !extrinsicsApiUrl) {
-      throw new Error('Unsupported network for fetching transactions.');
+      throw new Error('Unsupported chain for fetching transactions.');
     }
 
-    const nativeTokenSymbol = this.NATIVE_TOKENS[network.name] || '';
+    const nativeTokenSymbol = this.NATIVE_TOKENS[chain.name] || '';
     const allTransfers: TransactionHistory[] = [];
     const seenHashes = new Set<string>();
 
@@ -84,7 +97,7 @@ export class TransactionHistoryService {
 
           const action = isAssetTransfer ? 'assets(transfer)'
             : isNativeTransfer ? 'balances(transfer_allow_death)'
-            : item.action ?? 'unknown(transfer)';
+              : item.action ?? 'unknown(transfer)';
 
           return {
             block_num: item.block_num,
@@ -94,8 +107,8 @@ export class TransactionHistoryService {
             hash: item.hash,
             block_timestamp: item.block_timestamp,
             status: item.success === true
-                ? TransactionHistoryStatus.Success
-                : TransactionHistoryStatus.Fail,
+              ? TransactionHistoryStatus.Success
+              : TransactionHistoryStatus.Fail,
             action,
             token_symbol: item.asset_symbol || nativeTokenSymbol || 'unknown',
           };
@@ -127,10 +140,10 @@ export class TransactionHistoryService {
         if (extrinsicRes.code === 0 && extrinsicRes.data) {
           transfer.action = `${extrinsicRes.data.call_module}(${extrinsicRes.data.call_module_function})`;
         }
-      } catch (_) {}
+      } catch (_) { }
     }
-    
-    if (network.name === 'Asset Hub - Paseo') {
+
+    if (chain.name === 'Asset Hub - Paseo') {
       await Promise.all(allTransfers.map(fetchExtrinsic));
     } else {
       for (const transfer of allTransfers) {

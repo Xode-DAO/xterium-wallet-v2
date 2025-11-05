@@ -54,5 +54,9 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We use Face ID to securely verify your identity when logging in.</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+  <key>NSCameraUsageDescription</key>
+  <string>We need camera access to scan QR codes</string>
 </dict>
 </plist>

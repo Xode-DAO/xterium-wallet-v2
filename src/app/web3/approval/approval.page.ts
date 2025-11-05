@@ -16,11 +16,11 @@ import {
   IonCheckbox,
 } from '@ionic/angular/standalone';
 
-import { Network } from 'src/models/network.model';
+import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 
@@ -50,63 +50,63 @@ export class ApprovalPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private polkadotJsService: PolkadotJsService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
     public environmentService: EnvironmentService,
   ) { }
 
-  networks: Network[] = [];
+  chains: Chain[] = [];
   wallets: Wallet[] = [];
 
-  networksByName: Record<string, Network[]> = {};
-  walletsByNetwork: Record<string, Wallet[]> = {};
+  chainsByName: Record<string, Chain[]> = {};
+  walletsByChain: Record<string, Wallet[]> = {};
 
   selectedAccounts: Wallet[] = [];
 
   origin: string = "";
 
-  getNetworks(): void {
-    const allNetworks = this.networksService.getNetworksByCategory('All');
-    const liveNetworks = this.networksService.getNetworksByCategory('Live');
+  getChains(): void {
+    const allChains = this.chainsService.getChainsByNetwork(Network.All);
+    const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
 
-    this.networks = [...allNetworks, ...liveNetworks];
-    this.loadNetworkByName();
+    this.chains = [...allChains, ...liveChains];
+    this.loadChainByName();
   }
 
-  loadNetworkByName(): void {
-    this.networksByName["All Networks"] = this.networks;
+  loadChainByName(): void {
+    this.chainsByName["All Chains"] = this.chains;
   }
 
   async getWallets(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
-    this.loadWalletsByNetwork();
+    this.loadWalletsByChain();
   }
 
-  async loadWalletsByNetwork(): Promise<void> {
-    this.walletsByNetwork = {};
+  async loadWalletsByChain(): Promise<void> {
+    this.walletsByChain = {};
 
-    for (const network of this.networks) {
+    for (const chain of this.chains) {
       const filtered = this.wallets.filter(
-        w => w.network_id === network.id
+        w => w.chain_id === chain.id
       );
 
       const mapped = await Promise.all(
         filtered.map(async wallet => ({
           ...wallet,
-          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, network)
+          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, chain)
         }))
       );
 
-      this.walletsByNetwork[network.name] = mapped;
+      this.walletsByChain[chain.name] = mapped;
     }
   }
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -189,7 +189,7 @@ export class ApprovalPage implements OnInit {
   }
 
   ngOnInit() {
-    this.getNetworks();
+    this.getChains();
     this.getWallets();
 
     this.route.queryParams.subscribe(params => {

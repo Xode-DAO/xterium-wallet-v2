@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SelectNetworkPage } from './select-network.page';
+import { SelectChainPage } from './select-chain.page';
 
-describe('SelectNetworkPage', () => {
-  let component: SelectNetworkPage;
-  let fixture: ComponentFixture<SelectNetworkPage>;
+describe('SelectChainPage', () => {
+  let component: SelectChainPage;
+  let fixture: ComponentFixture<SelectChainPage>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelectNetworkPage);
+    fixture = TestBed.createComponent(SelectChainPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -32,7 +32,7 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
 
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Balance } from 'src/models/balance.model';
 
@@ -40,7 +40,7 @@ import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
@@ -86,7 +86,7 @@ export class TokenDetailsPage implements OnInit {
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
     private balancesService: BalancesService,
     private multipayxApiService: MultipayxApiService,
@@ -118,7 +118,7 @@ export class TokenDetailsPage implements OnInit {
     text: "Price History",
     align: "left",
     style: {
-      color: "#ffffff"
+      color: "#ffffff",
     }
   };
 
@@ -126,7 +126,8 @@ export class TokenDetailsPage implements OnInit {
     type: "datetime",
     labels: {
       style: {
-        colors: "#ffffff"
+        colors: "#ffffff",
+        cssClass: 'label-bg'
       }
     }
   };
@@ -139,12 +140,12 @@ export class TokenDetailsPage implements OnInit {
     }
   };
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -153,9 +154,9 @@ export class TokenDetailsPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
 
-      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
-      if (network) {
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
+      if (chain) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
       }
     }
   }
@@ -164,13 +165,13 @@ export class TokenDetailsPage implements OnInit {
     this.router.navigate(['/xterium/swap']);
   }
 
-  getNetworkName(networkId: number): string {
-    const network = this.networksService.getNetworkById(networkId);
-    if (!network) {
+  getChainName(chainId: number): string {
+    const chain = this.chainsService.getChainById(chainId);
+    if (!chain) {
       return "";
     }
 
-    return network.name;
+    return chain.name;
   }
 
   async fetchData(): Promise<void> {
@@ -192,8 +193,8 @@ export class TokenDetailsPage implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
 
     if (!service) return;
 
@@ -215,17 +216,13 @@ export class TokenDetailsPage implements OnInit {
   }
 
   generateDummyPriceHistory(symbol: string) {
-    if (symbol === 'DOT') {
-      return [
-        { x: new Date('2025-01-01'), y: [7.1, 7.4, 7.0, 7.3] },
-        { x: new Date('2025-01-02'), y: [7.3, 7.6, 7.2, 7.4] },
-        { x: new Date('2025-01-03'), y: [7.4, 7.8, 7.3, 7.7] },
-        { x: new Date('2025-01-04'), y: [7.7, 7.9, 7.5, 7.6] },
-        { x: new Date('2025-01-05'), y: [7.6, 7.8, 7.4, 7.5] }
-      ];
-    }
-
-    return [];
+    return [
+      { x: new Date('2025-01-01'), y: [7.1, 7.4, 7.0, 7.3] },
+      { x: new Date('2025-01-02'), y: [7.3, 7.6, 7.2, 7.4] },
+      { x: new Date('2025-01-03'), y: [7.4, 7.8, 7.3, 7.7] },
+      { x: new Date('2025-01-04'), y: [7.7, 7.9, 7.5, 7.6] },
+      { x: new Date('2025-01-05'), y: [7.6, 7.8, 7.4, 7.5] }
+    ];
   }
 
   initCandlestickChart() {
@@ -254,8 +251,9 @@ export class TokenDetailsPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['balance']) {
         this.balance = JSON.parse(params['balance']);
-        this.initCandlestickChart();
       }
     });
+
+    this.initCandlestickChart();
   }
 }

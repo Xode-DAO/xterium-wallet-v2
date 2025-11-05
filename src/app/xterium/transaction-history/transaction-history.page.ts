@@ -39,11 +39,11 @@ import {
 
 import { TransactionHistoryService } from 'src/app/api/transaction-history/transaction-history.service';
 import { TransactionHistory } from 'src/models/transaction-history.model';
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { Wallet } from 'src/models/wallet.model';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 
 @Component({
   selector: 'app-transaction-history',
@@ -87,7 +87,7 @@ export class TransactionHistoryPage implements OnInit {
   constructor(
     private transactionHistoryService: TransactionHistoryService,
     private walletsService: WalletsService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private polkadotJsService: PolkadotJsService
   ) {
     addIcons({
@@ -103,12 +103,12 @@ export class TransactionHistoryPage implements OnInit {
 
   walletPublicKey: string = '';
   currentWallet: Wallet = {} as Wallet;
-  walletNetwork: Network = {} as Network;
+  walletChain: Chain = {} as Chain;
 
-  getWalletNetwork(): void {
-    const network = this.networksService.getNetworkById(this.wallet.network_id);
-    if (network) {
-      this.walletNetwork = network;
+  getWalletChain(): void {
+    const chain = this.chainsService.getChainById(this.wallet.chain_id);
+    if (chain) {
+      this.walletChain = chain;
     }
   }
 
@@ -119,30 +119,30 @@ export class TransactionHistoryPage implements OnInit {
     }
   }
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map((byte) => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
-  
+
   async loadCurrentWalletTransfers() {
     this.isLoading = true;
     this.transactions = [];
 
-    await this.encodePublicAddressByChainFormat(this.wallet.public_key, this.walletNetwork).then((encodedAddress) => {
+    await this.encodePublicAddressByChainFormat(this.wallet.public_key, this.walletChain).then((encodedAddress) => {
         this.walletPublicKey = encodedAddress;
       });
 
     try {
-      console.log('Fetching transfers for:', this.walletPublicKey, this.walletNetwork);
+      console.log('Fetching transfers for:', this.walletPublicKey, this.walletChain);
 
       const allTransfers = await this.transactionHistoryService.fetchTransfers(
         this.walletPublicKey,
         // '12ouvKSvKnXAdXFR5oCL1vXimWrkDWG3joMNw3ETupTRs1ab', // test address
-        this.walletNetwork
+        this.walletChain
       );
 
       this.transactions = allTransfers;
@@ -168,7 +168,7 @@ export class TransactionHistoryPage implements OnInit {
       const allTransfers = await this.transactionHistoryService.fetchTransfers(
         this.walletPublicKey,
         // '12ouvKSvKnXAdXFR5oCL1vXimWrkDWG3joMNw3ETupTRs1ab', // test address
-        this.walletNetwork
+        this.walletChain
       );
 
       this.transactions = allTransfers.filter((tx) =>
@@ -193,10 +193,10 @@ export class TransactionHistoryPage implements OnInit {
     }
   }
 
-  async loadWalletNetwork(): Promise<void> {
-    const network = this.networksService.getNetworkById(this.wallet.network_id);
-    if (network) {
-      this.walletNetwork = network;
+  async loadWalletChain(): Promise<void> {
+    const chain = this.chainsService.getChainById(this.wallet.chain_id);
+    if (chain) {
+      this.walletChain = chain;
     }
   }
 
@@ -206,7 +206,7 @@ export class TransactionHistoryPage implements OnInit {
 
   ngOnInit() {
     this.loadCurrentWallet()
-    .then(() => this.loadWalletNetwork())
+    .then(() => this.loadWalletChain())
     .then(() => this.loadCurrentWalletTransfers());
   }
 }

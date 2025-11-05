@@ -14,7 +14,6 @@ import { Balance } from 'src/models/balance.model';
 import { WalletSigner } from 'src/models/wallet.model';
 
 import { PolkadotApiService } from '../polkadot-api.service';
-import { FeeEstimate } from 'src/models/fees.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +42,7 @@ export class AssethubPolkadotService extends PolkadotApiService {
     const nativeToken: Token = {
       id: uuidv4(),
       reference_id: 0,
-      network_id: 1,
+      chain_id: 1,
       name: assethubChainName,
       symbol: assethubTokenSymbol,
       decimals: assethubTokenDecimals,
@@ -64,7 +63,7 @@ export class AssethubPolkadotService extends PolkadotApiService {
         const assetToken: Token = {
           id: uuidv4(),
           reference_id: assetId,
-          network_id: 1,
+          chain_id: 1,
           name: metadata.name.asText(),
           symbol: metadata.symbol.asText(),
           decimals: metadata.decimals,
@@ -143,7 +142,7 @@ export class AssethubPolkadotService extends PolkadotApiService {
         tokens.push({
           id: uuidv4(),
           reference_id: 0,
-          network_id: 1,
+          chain_id: 1,
           name: assethubChainName,
           symbol: assethubTokenSymbol,
           decimals: assethubTokenDecimals,
@@ -182,7 +181,7 @@ export class AssethubPolkadotService extends PolkadotApiService {
                 return <Token>{
                   id: uuidv4(),
                   reference_id: assetId,
-                  network_id: 1,
+                  chain_id: 1,
                   name: metadata.name.asText(),
                   symbol: metadata.symbol.asText(),
                   decimals: metadata.decimals,
@@ -414,51 +413,6 @@ export class AssethubPolkadotService extends PolkadotApiService {
       subscriptions.push(signTransactionSubscription);
 
       return () => subscriptions.forEach(s => s.unsubscribe());
-    });
-  }
-
-  estimateFee(transaction: Transaction<any, any, any, void | undefined>, publicKey: string, tokenPrices: TokenPrice[]): Observable<FeeEstimate> {
-    return new Observable<FeeEstimate>(subscriber => {
-      transaction
-        .getEstimatedFees(publicKey)
-        .then(async (partialFee: bigint) => {
-          try {
-            const chainSpecs = await this.client.getChainSpecData();
-            const decimals = chainSpecs.properties['tokenDecimals'] as number;
-            const symbol = chainSpecs.properties['tokenSymbol'] as string;
-
-            const feeAmount = Number(partialFee) / Math.pow(10, decimals);
-            const formattedFee = feeAmount.toFixed(decimals > 6 ? 6 : decimals);
-
-            let tokenPrice = 0;
-            if (tokenPrices.length > 0) {
-              tokenPrice = tokenPrices.find(p => p.token.symbol.toLowerCase() === symbol.toLowerCase())?.price || 0;
-            }
-
-            const feeUSD = tokenPrice > 0 ? (feeAmount * tokenPrice).toFixed(4) : 'N/A';
-            const feeUSDDisplay = tokenPrice > 0 ? `≈ $${feeUSD} USD` : 'Price unavailable';
-
-            const feeEstimate: FeeEstimate = {
-              fee: `${formattedFee} ${symbol}`,
-              feeUSD: feeUSDDisplay,
-              partialFee: partialFee,
-              tokenSymbol: symbol,
-              tokenDecimals: decimals
-            };
-
-            subscriber.next(feeEstimate);
-            subscriber.complete();
-          } catch (error) {
-            console.error('Error estimating fee:', error);
-            subscriber.error(error);
-          }
-        })
-        .catch(error => {
-          console.error('Error in fee estimation:', error);
-          subscriber.error(error);
-        });
-      return () => {
-      };
     });
   }
 }

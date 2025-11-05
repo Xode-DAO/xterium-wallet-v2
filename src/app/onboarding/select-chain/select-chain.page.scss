@@ -1,4 +1,4 @@
-.select-network-content {
+.select-chain-content {
   ion-list {
     background: transparent;
 
@@ -7,7 +7,7 @@
       --padding-start: 0;
       --inner-padding-end: 0;
 
-      ion-card.network-card {
+      ion-card.chain-card {
         --background: #2a2a2a;
 
         border-radius: 25px;

@@ -1,4 +1,4 @@
 export class RPC {
-  network_id: number = 0;
+  chain_id: number = 0;
   url: string = "";
 }

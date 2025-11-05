@@ -1,0 +1,21 @@
+<div class="chains-list">
+  <ion-grid>
+    <ion-row>
+      @for (chain of chains; track chain;) {
+      <ion-col size="12">
+        <ion-list>
+          <ion-item button detail="false" lines="none" (click)="selectChain(chain)">
+            <ion-avatar slot="start">
+              <img [src]="'/../../../../assets/images/chains/' + chain.image" />
+            </ion-avatar>
+            <ion-label>
+              <h2>{{ chain.name }}</h2>
+              <p>{{ chain.description }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+</div>

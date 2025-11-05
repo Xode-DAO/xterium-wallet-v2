@@ -16,11 +16,11 @@
           <ion-list>
             <ion-item detail="false" lines="none">
               <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
-                @if (currentNetwork) {
-                <img [src]="'./../../../../assets/images/networks/' + currentNetwork.image" alt="Network Logo" />
+                @if (currentChain) {
+                <img [src]="'./../../../../assets/images/chains/' + currentChain.image" alt="Chain Logo" />
                 }
                 @else {
-                <img src="./../../../../assets/icon/xterium-logo.png" alt="Network Logo" />
+                <img src="./../../../../assets/icon/xterium-logo.png" alt="Chain Logo" />
                 }
               </ion-avatar>
               <ion-label>

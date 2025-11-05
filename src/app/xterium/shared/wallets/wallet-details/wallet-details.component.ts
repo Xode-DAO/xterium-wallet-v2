@@ -22,11 +22,11 @@ import {
 import { addIcons } from 'ionicons';
 import { copyOutline } from 'ionicons/icons';
 
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
@@ -57,7 +57,7 @@ export class WalletDetailsComponent implements OnInit {
 
   constructor(
     private polkadotJsService: PolkadotJsService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
     private toastController: ToastController,
     private actionSheetController: ActionSheetController
@@ -68,24 +68,24 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   walletPublicKey: string = '';
-  walletNetwork: Network = {} as Network;
+  walletChain: Chain = {} as Chain;
   updateTimeOut: any = null;
 
   currentWallet: Wallet = {} as Wallet;
 
-  getWalletNetwork(): void {
-    const network = this.networksService.getNetworkById(this.wallet.network_id);
-    if (network) {
-      this.walletNetwork = network;
+  getWalletChain(): void {
+    const chain = this.chainsService.getChainById(this.wallet.chain_id);
+    if (chain) {
+      this.walletChain = chain;
     }
   }
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -208,8 +208,8 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getWalletNetwork();
-    this.encodePublicAddressByChainFormat(this.wallet.public_key, this.walletNetwork).then(encodedAddress => {
+    this.getWalletChain();
+    this.encodePublicAddressByChainFormat(this.wallet.public_key, this.walletChain).then(encodedAddress => {
       this.walletPublicKey = encodedAddress;
     });
 

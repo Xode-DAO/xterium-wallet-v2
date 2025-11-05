@@ -27,7 +27,7 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
 
-import { Network } from 'src/models/network.model';
+import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
@@ -66,7 +66,7 @@ import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 export class ImportSeedPhraseComponent implements OnInit {
   @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
 
-  @Input() selectedNetwork: Network = {} as Network;
+  @Input() selectedChain: Chain = {} as Chain;
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(
@@ -129,7 +129,7 @@ export class ImportSeedPhraseComponent implements OnInit {
   async onSignWallet(password: string) {
     this.isProcessing = true;
 
-    if (this.selectedNetwork.id === 1 || this.selectedNetwork.id === 2) {
+    if (this.selectedChain.network === Network.Polkadot) {
       let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
       if (!isMnemonicPhraseValid) {
         this.confirmImportWalletModal.dismiss();
@@ -173,7 +173,7 @@ export class ImportSeedPhraseComponent implements OnInit {
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
-        network_id: this.selectedNetwork.id,
+        chain_id: this.selectedChain.id,
         mnemonic_phrase: encryptedMnemonicPhrase,
         public_key: keypair.publicKey.toString(),
         private_key: encryptedPrivateKey
@@ -219,20 +219,18 @@ export class ImportSeedPhraseComponent implements OnInit {
       });
 
       await toast.present();
-    } else if (this.selectedNetwork.id === 3) {
+    } else {
       this.confirmImportWalletModal.dismiss();
       this.isProcessing = false;
 
       const toast = await this.toastController.create({
-        message: this.selectedNetwork.name + ' network is not yet supported.',
+        message: this.selectedChain.name + ' chain is not yet supported.',
         color: 'warning',
         duration: 1500,
         position: 'top',
       });
 
       await toast.present();
-    } else {
-
     }
   }
 

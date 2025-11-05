@@ -19,7 +19,7 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
@@ -69,7 +69,7 @@ export class ImportOptionsPage implements OnInit {
     });
   }
 
-  selectedNetwork: Network = {} as Network;
+  selectedChain: Chain = {} as Chain;
 
   openImportSeedPhraseModal() {
     this.importSeedPhraseModal.present();
@@ -101,11 +101,10 @@ export class ImportOptionsPage implements OnInit {
   ngOnInit() {
     this.onboardingService.get().then(onboarding => {
       if (onboarding) {
-        if (onboarding.step1_selected_network) {
-          this.selectedNetwork = onboarding.step1_selected_network;
+        if (onboarding.step1_selected_chain) {
+          this.selectedChain = onboarding.step1_selected_chain;
         }
       }
     });
   }
-
 }

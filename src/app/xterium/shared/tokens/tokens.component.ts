@@ -14,7 +14,7 @@ import {
 import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
-import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
@@ -22,7 +22,7 @@ import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polka
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
 
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
-import { NetworksService } from 'src/app/api/networks/networks.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { TokensService } from 'src/app/api/tokens/tokens.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
@@ -51,7 +51,7 @@ export class TokensComponent implements OnInit {
     private polkadotJsService: PolkadotJsService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private networksService: NetworksService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
     private tokensService: TokensService,
     private balancesService: BalancesService,
@@ -68,12 +68,12 @@ export class TokensComponent implements OnInit {
   observableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
 
-  async encodePublicAddressByChainFormat(publicKey: string, network: Network): Promise<string> {
+  async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
-    const ss58Format = typeof network.address_prefix === 'number' ? network.address_prefix : 0;
+    const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
@@ -82,9 +82,9 @@ export class TokensComponent implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
 
-      const network = this.networksService.getNetworkById(this.currentWallet.network_id);
-      if (network) {
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, network)
+      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
+      if (chain) {
+        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
       }
     }
   }
@@ -92,8 +92,8 @@ export class TokensComponent implements OnInit {
   async getTokens(): Promise<void> {
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
 
     if (!service) return;
 
@@ -125,8 +125,8 @@ export class TokensComponent implements OnInit {
   async getBalances(): Promise<void> {
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.network_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.network_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
 
     if (!service) return;
 

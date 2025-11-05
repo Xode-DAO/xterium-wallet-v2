@@ -1,3 +1,12 @@
+export class PaymentHistory {
+  date_time!: string;
+  payment_type!: string;
+  name!: string;
+  token_symbol!: string;
+  amount!: string;
+  chain_id!: string;
+}
+
 export class TransactionHistory {
   block_num!: number
   amount!: string

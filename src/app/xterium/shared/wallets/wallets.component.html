@@ -2,31 +2,31 @@
   <ion-grid>
     <ion-row>
       <ion-col size="12">
-        <ion-item class="primary-select-button-item" (click)="openSelectNetworkModal()">
-          @if (selectedNetwork) {
+        <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
+          @if (selectedChain) {
           <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
-            <img [src]="'./../assets/images/networks/' + selectedNetwork.image" alt="Network Logo" />
+            <img [src]="'./../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />
           </ion-avatar>
           }
-          <ion-label>{{ selectedNetwork.name || 'Select Network' }}</ion-label>
+          <ion-label>{{ selectedChain.name || 'Select Chain' }}</ion-label>
           <ion-button size="small" fill="clear">
             <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
           </ion-button>
 
-          <ion-modal #selectNetworkModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+          <ion-modal #selectChainModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
             <ng-template>
               <ion-toolbar class="main-modal-toolbar">
-                <ion-title>Select Network</ion-title>
+                <ion-title>Select Chain</ion-title>
                 <ion-buttons slot="end">
-                  <ion-button (click)="selectNetworkModal.dismiss()">
+                  <ion-button (click)="selectChainModal.dismiss()">
                     <ion-icon name="close" style="color: white;"></ion-icon>
                   </ion-button>
                 </ion-buttons>
               </ion-toolbar>
               <ion-content>
                 <div class="ion-padding-horizontal">
-                  <app-networks [isAllNetworkIncluded]="true"
-                    (onSelectedNetwork)="onSelectedNetwork($event)"></app-networks>
+                  <app-chains [isAllChainIncluded]="true"
+                    (onSelectedChain)="onSelectedChain($event)"></app-chains>
                 </div>
               </ion-content>
             </ng-template>
@@ -37,21 +37,21 @@
   </ion-grid>
 
   <ion-grid class="wallet-grid">
-    @for (network of networksByName[selectedNetwork.name]; track network) {
-    @if (walletsByNetwork[network.name] && walletsByNetwork[network.name].length > 0) {
-    <div class="network-label">
-      {{ network.name }}
+    @for (chain of chainsByName[selectedChain.name]; track chain) {
+    @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
+    <div class="chain-label">
+      {{ chain.name }}
     </div>
     }
     <ion-row>
-      @for (wallet of walletsByNetwork[network.name]; track wallet) {
+      @for (wallet of walletsByChain[chain.name]; track wallet) {
       <ion-col size="6">
         <ion-list>
           <ion-item class="wallet-item" [ngClass]="{ 'selected-wallet': wallet.id === currentWallet.id }" button
             detail="false" lines="none" (click)="setCurrentWallet(wallet)">
             <ion-label>
               <div class="wallet-header">
-                <img [src]="'./../../../../assets/images/networks/' + network.image" height="25" />
+                <img [src]="'./../../../../assets/images/chains/' + chain.image" height="25" />
                 <ion-button fill="clear" size="small" class="menu-button"
                   (click)="openWalletDetailsModal(wallet); $event.stopPropagation()">
                   <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>

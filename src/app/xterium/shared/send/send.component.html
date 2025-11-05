@@ -18,26 +18,26 @@
             <ion-label position="stacked">Recipient's Wallet Address:</ion-label>
             <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
           </ion-item>
-          <ion-item class="primary-select-button-item" (click)="openSelectNetworkModal()">
+          <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
             <ion-label style="font-size: 15px;">Destination</ion-label>
-            <ion-label slot="end">{{ selectedNetwork.name || 'Select Network' }}</ion-label>
+            <ion-label slot="end">{{ selectedChain.name || 'Select Chain' }}</ion-label>
             <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
-              <img [src]="'./../../assets/images/networks/' + selectedNetwork.image" alt="Network Logo" />
+              <img [src]="'./../../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />
             </ion-avatar>
-            <ion-modal #selectNetworkModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+            <ion-modal #selectChainModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
               [expandToScroll]="false">
               <ng-template>
                 <ion-toolbar class="main-modal-toolbar">
-                  <ion-title>Destination Network</ion-title>
+                  <ion-title>Destination Chain</ion-title>
                   <ion-buttons slot="end">
-                    <ion-button (click)="selectNetworkModal.dismiss()">
+                    <ion-button (click)="selectChainModal.dismiss()">
                       <ion-icon name="close" style="color: white;"></ion-icon>
                     </ion-button>
                   </ion-buttons>
                 </ion-toolbar>
                 <ion-content>
                   <div class="ion-padding-horizontal">
-                    <app-networks (onSelectedNetwork)="onSelectedNetwork($event)"></app-networks>
+                    <app-chains (onSelectedChain)="onSelectedChain($event)"></app-chains>
                   </div>
                 </ion-content>
               </ng-template>
