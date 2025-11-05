@@ -20,6 +20,16 @@ export class NetworksService {
     },
     {
       id: 1,
+      name: "Polkadot",
+      description: "Connect and secure all parachains with the Polkadot Relay Chain for seamless interoperability.",
+      unit: "DOT",
+      decimal: 10,
+      category: "Live",
+      address_prefix: 0,
+      image: "polkadot.png"
+    },
+    {
+      id: 2,
       name: "AssetHub - Polkadot",
       description: "Manage your assets easily on the AssetHub parachain.",
       unit: "DOT",
@@ -29,7 +39,7 @@ export class NetworksService {
       image: "assethub.png"
     },
     {
-      id: 2,
+      id: 3,
       name: "Xode - Polkadot",
       description: "Experience smooth and fast transactions with Xode.",
       unit: "XON",
@@ -39,7 +49,7 @@ export class NetworksService {
       image: "xode.png"
     },
     {
-      id: 3,
+      id: 4,
       name: "Hydration",
       description: "Participate in decentralized trading and liquidity on the Hydration network.",
       unit: "HDX",
@@ -49,7 +59,7 @@ export class NetworksService {
       image: "hydration.png"
     },
     {
-      id: 4,
+      id: 5,
       name: "Solana - Mainnet",
       description: "Make low-cost transactions on the high-performance Solana blockchain.",
       unit: "SOL",
@@ -59,7 +69,7 @@ export class NetworksService {
       image: "solana.png"
     },
     {
-      id: 5,
+      id: 6,
       name: "AssetHub - Paseo",
       description: "Manage your assets easily on the Paseo AssetHub parachain.",
       unit: "PAS",
@@ -69,7 +79,7 @@ export class NetworksService {
       image: "paseo.png"
     },
     {
-      id: 6,
+      id: 7,
       name: "Xode - Paseo",
       description: "Experience smooth and fast transactions with Xode.",
       unit: "XON",
@@ -79,7 +89,7 @@ export class NetworksService {
       image: "xode.png"
     },
     {
-      id: 7,
+      id: 8,
       name: "Hydration - Paseo",
       description: "Test decentralized trading and liquidity features on Hydration’s Paseo test network.",
       unit: "HDX",
@@ -89,7 +99,7 @@ export class NetworksService {
       image: "hydration-paseo.png"
     },
     {
-      id: 8,
+      id: 9,
       name: "Solana - Testnet",
       description: "Make low-cost transactions on the high-performance Solana blockchain.",
       unit: "SOL",
@@ -99,7 +109,7 @@ export class NetworksService {
       image: "solana.png"
     },
     {
-      id: 9,
+      id: 10,
       name: "Solana - Devnet",
       description: "Make low-cost transactions on the high-performance Solana blockchain.",
       unit: "SOL",
