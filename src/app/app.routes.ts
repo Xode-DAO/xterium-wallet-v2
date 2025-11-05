@@ -68,12 +68,21 @@ export const routes: Routes = [
         loadComponent: () => import('./xterium/pay/pay.page').then(m => m.PayPage),
         children: [
           {
+            path: 'select-qr-pay',
+            loadComponent: () => import('./xterium/pay/select-qr-pay/select-qr-pay.page').then( m => m.SelectQrPayPage)
+          },
+          {
             path: 'qr-scanner',
             loadComponent: () => import('./xterium/pay/qr-scanner/qr-scanner.page').then(m => m.QrScannerPage)
           },
           {
             path: 'qr-upload',
             loadComponent: () => import('./xterium/pay/qr-upload/qr-upload.page').then(m => m.QrUploadPage)
+          },
+          {
+            path: '',
+            redirectTo: '/xterium/pay/select-qr-pay',
+            pathMatch: 'full',
           },
         ]
       },
@@ -115,5 +124,6 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  }
+  },
+  
 ];

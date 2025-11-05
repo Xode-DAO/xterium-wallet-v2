@@ -14,11 +14,16 @@ import {
   IonCardTitle,
   IonCardContent,
   IonTextarea,
+  IonItem,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } from '@capacitor/barcode-scanner';
+import {
+  CapacitorBarcodeScanner,
+  CapacitorBarcodeScannerTypeHint,
+} from '@capacitor/barcode-scanner';
 
 @Component({
   selector: 'app-qr-scanner',
@@ -40,17 +45,41 @@ import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } from '@capac
     IonCardTitle,
     IonCardContent,
     IonTextarea,
+    IonItem,
+    IonLabel,
   ],
 })
 export class QrScannerPage implements OnInit {
   scannedResult: string | null = null;
   scanning = false;
+  parsedEMV: any = null;
 
-  constructor( private router: Router ) {
+  constructor(private router: Router) {
     addIcons({
       arrowBackOutline,
       close,
     });
+  }
+
+  formatEMVQR(data: string) {
+    const parsed: any = {};
+    let i = 0;
+
+    while (i < data.length) {
+      const tag = data.substring(i, 2);
+      const len = parseInt(data.substring(i + 2, 2), 10);
+      const value = data.substring(i + 4, len);
+
+      if (['27', '28', '62', '51'].includes(tag)) {
+        parsed[tag] = this.formatEMVQR(value);
+      } else {
+        parsed[tag] = value;
+      }
+
+      i += 4 + len;
+    }
+
+    return parsed;
   }
 
   async scanQrCode() {
@@ -67,8 +96,9 @@ export class QrScannerPage implements OnInit {
       }
 
       this.scannedResult = result.ScanResult;
-      this.scanning = false;
 
+      this.parsedEMV = this.formatEMVQR(result.ScanResult);
+      this.scanning = false;
     } catch (err) {
       console.warn('Scan cancelled or failed', err);
       this.returnToPayPage();
