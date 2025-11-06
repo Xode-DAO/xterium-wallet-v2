@@ -8,27 +8,20 @@
             <ion-input type="text" placeholder="e.g. My Wallet Name" [(ngModel)]="wallet.name"
               (ngModelChange)="updateWalletOnModelChange()"></ion-input>
           </ion-item>
+          <ion-item class="primary-textarea-item ion-margin-bottom" lines="none">
+            <ion-label position="stacked">Public Address:</ion-label>
+            <ion-textarea rows="3" placeholder="" readonly="true" [(ngModel)]="walletPublicKey"></ion-textarea>
+          </ion-item>
           <ion-item class="primary-input-item ion-margin-bottom" lines="none">
             <ion-label>Chain:</ion-label>
             <ion-input type="text" placeholder="" [(ngModel)]="currentWallet.chain.name" readonly="true"
               (ngModelChange)="updateWalletOnModelChange()"></ion-input>
           </ion-item>
-          <ion-item class="primary-textarea-item ion-margin-bottom" lines="none">
-            <ion-label position="stacked">Public Address:</ion-label>
-            <ion-textarea rows="3" placeholder="" readonly="true" [(ngModel)]="walletPublicKey"></ion-textarea>
-          </ion-item>
         </ion-list>
       </ion-col>
-      <ion-col size="12">
-        <div class="primary-button-wrapper">
-          <ion-button expand="block" size="default" class="secondary-button" (click)="copyToClipboard()">
-            <ion-icon name="copy-outline" slot="start"></ion-icon>
-            Copy Address
-          </ion-button>
-        </div>
-      </ion-col>
     </ion-row>
-    <ion-row class="show-secrets ion-margin-top">
+    <!-- Will implement this in the future -->
+    <!-- <ion-row class="show-secrets ion-margin-top">
       <ion-col size="12">
         <ion-list>
           <ion-item button lines="none" class="ion-margin-bottom">
@@ -43,10 +36,14 @@
           </ion-item>
         </ion-list>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
     <ion-row class="ion-margin-top">
       <ion-col size="12">
         <div class="primary-button-wrapper">
+          <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
+            (click)="copyToClipboard()">
+            COPY ADDRESS
+          </ion-button>
           <ion-button expand="block" size="default" class="ion-margin-bottom success-button" (click)="exportWallet()">
             EXPORT WALLET
           </ion-button>

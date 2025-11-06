@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { Clipboard } from '@capacitor/clipboard';
 import {
   IonButton,
-  IonIcon,
   IonGrid,
   IonRow,
   IonCol,
@@ -37,7 +36,6 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     CommonModule,
     FormsModule,
     IonButton,
-    IonIcon,
     IonGrid,
     IonRow,
     IonCol,

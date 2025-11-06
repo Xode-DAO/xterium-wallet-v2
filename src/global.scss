@@ -137,8 +137,15 @@ ion-content {
   --background: #1B1B1B !important;
 }
 
-.default-content-padding {
-  padding: 5px 8px;
+.parent-page-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .parent-page-inner-content {
+    max-width: 960px;
+    margin: auto;
+  }
 }
 
 ion-refresher {
@@ -212,7 +219,7 @@ ion-toolbar.main-modal-toolbar {
   --padding-top: 10px;
 }
 
-.token-action-buttons {
+.balance-action-buttons {
   ion-button {
     --padding-start: 0;
     --padding-end: 0;
@@ -338,5 +345,18 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
     100% {
       opacity: 0.6;
     }
+  }
+}
+
+.xterium-header {
+  h1 {
+    font-weight: bold;
+    font-size: 35px;
+    margin-top: 75px;
+    color: #ffffff;
+  }
+
+  span {
+    font-size: 16px;
   }
 }

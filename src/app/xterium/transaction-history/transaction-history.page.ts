@@ -223,17 +223,17 @@ export class TransactionHistoryPage implements OnInit {
   }
 
   async segmentChanged(event: any) {
-    // const segment = event.detail.value;
+    const segment = event.detail.value;
 
-    // if (segment === 'payments') {
-    //   await this.fetchPayments();
-    // } else if (segment === 'transfers') {
-    //   await this.fetchTransfers();
-    // } else if (segment === 'extrinsics') {
-    //   await this.fetchExtrinsics();
-    // } else {
-    //   await this.fetchData();
-    // }
+    if (segment === 'payments') {
+      await this.fetchPayments();
+    } else if (segment === 'transfers') {
+      await this.fetchTransfers();
+    } else if (segment === 'extrinsics') {
+      await this.fetchExtrinsics();
+    } else {
+      await this.fetchData();
+    }
   }
 
   ngOnInit() {

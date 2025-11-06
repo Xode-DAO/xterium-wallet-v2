@@ -1,0 +1,39 @@
+.select-pay-content {
+  ion-col {
+    ion-card.pay-card {
+      box-shadow: none;
+      border: 1px solid #4c4a4b;
+      border-radius: 25px;
+      background: #2a2a2a;
+      margin: 5px 0px;
+
+      div.pay-card-image {
+        height: 120px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
+
+    .powered-by {
+      margin-top: 10px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+
+      span {
+        font-size: 16px;
+      }
+
+      img {
+        margin-top: 15px;
+        width: 120px;
+        height: auto;
+      }
+    }
+  }
+}

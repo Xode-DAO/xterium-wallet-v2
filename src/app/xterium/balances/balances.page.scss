@@ -1,12 +1,5 @@
 .balances-content {
   ion-col {
-    .total-balance h1 {
-      font-weight: 700;
-      font-size: 42px;
-      margin-top: 75px;
-      color: #ffffff;
-    }
-
     .token-list-header {
       display: flex;
       justify-content: space-between;
@@ -29,5 +22,4 @@
       }
     }
   }
-
 }

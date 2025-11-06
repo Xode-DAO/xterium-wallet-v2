@@ -11,7 +11,11 @@ import { SyncWalletsService } from 'src/app/api/sync-wallets/sync-wallets.servic
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
   standalone: true,
-  imports: [IonRouterOutlet, CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonRouterOutlet
+  ],
 })
 export class OnboardingPage implements OnInit {
 

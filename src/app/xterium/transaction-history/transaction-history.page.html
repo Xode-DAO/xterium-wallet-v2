@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true" class="transaction-history-content">
   <div class="segments">
-    <ion-segment value="default" (ionChange)="segmentChanged($event)">
+    <ion-segment value="default">
       <ion-segment-button value="default" content-id="payments">
         <ion-label>Payments</ion-label>
       </ion-segment-button>
@@ -35,21 +35,31 @@
               </ion-item>
             </ion-col>
           </ion-row>
+        </ion-grid>
 
-          @if (isPaymentsLoading) {
-          <ion-row class="ion-justify-content-center ion-padding">
-            <ion-spinner name="crescent"></ion-spinner>
+        @if (isPaymentsLoading) {
+        <ion-grid class="global-loader-container">
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-col size="12" class="ion-text-center">
+              <ion-spinner name="lines"></ion-spinner>
+              <h3 class="global-loader-text">Loading transactions, please wait...</h3>
+            </ion-col>
           </ion-row>
-          }
+        </ion-grid>
+        }
 
-          @if (!isPaymentsLoading && payments.length === 0) {
+        @if (!isPaymentsLoading && payments.length === 0) {
+        <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center ion-padding">
               <ion-text color="medium">No transactions found.</ion-text>
             </ion-col>
           </ion-row>
-          }
+        </ion-grid>
+        }
 
+        @if (!isPaymentsLoading && payments.length > 0) {
+        <ion-grid>
           <ion-row>
             <ion-col size="12">
               @for (transaction of payments; track transaction.date) {
@@ -112,6 +122,7 @@
             </ion-col>
           </ion-row>
         </ion-grid>
+        }
       </div>
     </ion-segment-content>
 
@@ -128,21 +139,31 @@
               </ion-item>
             </ion-col>
           </ion-row>
+        </ion-grid>
 
-          @if (isTransfersLoading) {
-          <ion-row class="ion-justify-content-center ion-padding">
-            <ion-spinner name="crescent"></ion-spinner>
+        @if (isTransfersLoading) {
+        <ion-grid class="global-loader-container">
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-col size="12" class="ion-text-center">
+              <ion-spinner name="lines"></ion-spinner>
+              <h3 class="global-loader-text">Loading transactions, please wait...</h3>
+            </ion-col>
           </ion-row>
-          }
+        </ion-grid>
+        }
 
-          @if (!isTransfersLoading && transfers.length === 0) {
+        @if (!isTransfersLoading && transfers.length === 0) {
+        <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center ion-padding">
               <ion-text color="medium">No transactions found.</ion-text>
             </ion-col>
           </ion-row>
-          }
+        </ion-grid>
+        }
 
+        @if (!isTransfersLoading && transfers.length > 0) {
+        <ion-grid>
           <ion-row>
             <ion-col size="12">
               @for (transaction of transfers; track transaction.hash) {
@@ -216,6 +237,7 @@
             </ion-col>
           </ion-row>
         </ion-grid>
+        }
       </div>
     </ion-segment-content>
 
@@ -232,21 +254,31 @@
               </ion-item>
             </ion-col>
           </ion-row>
+        </ion-grid>
 
-          @if (isExtrinsicsLoading) {
-          <ion-row class="ion-justify-content-center ion-padding">
-            <ion-spinner name="crescent"></ion-spinner>
+        @if (isExtrinsicsLoading) {
+        <ion-grid class="global-loader-container">
+          <ion-row class="ion-justify-content-center ion-align-items-center">
+            <ion-col size="12" class="ion-text-center">
+              <ion-spinner name="lines"></ion-spinner>
+              <h3 class="global-loader-text">Loading transactions, please wait...</h3>
+            </ion-col>
           </ion-row>
-          }
+        </ion-grid>
+        }
 
-          @if (!isExtrinsicsLoading && extrinsics.length === 0) {
+        @if (!isExtrinsicsLoading && extrinsics.length === 0) {
+        <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center ion-padding">
               <ion-text color="medium">No transactions found.</ion-text>
             </ion-col>
           </ion-row>
-          }
+        </ion-grid>
+        }
 
+        @if (!isExtrinsicsLoading && extrinsics.length > 0) {
+        <ion-grid>
           <ion-row>
             <ion-col size="12">
               @for (transaction of extrinsics; track transaction.extrinsic_hash) {
@@ -304,6 +336,7 @@
             </ion-col>
           </ion-row>
         </ion-grid>
+        }
       </div>
     </ion-segment-content>
   </ion-segment-view>

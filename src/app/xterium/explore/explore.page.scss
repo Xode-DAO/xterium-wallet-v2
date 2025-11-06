@@ -1,13 +1,6 @@
 .explore-content {
   ion-col {
-    .title h1 {
-      font-weight: 700;
-      font-size: 42px;
-      margin-top: 75px;
-      color: #ffffff;
-    }
-
-    .explore-card {
+    ion-card.explore-card {
       box-shadow: none;
       border: 1px solid #4c4a4b;
       border-radius: 25px;
