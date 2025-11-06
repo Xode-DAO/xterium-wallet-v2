@@ -1,37 +1,189 @@
-ion-card.custom-card {
-    margin: 0px;
-    border-radius: 15px;
-    background: #2a2a2a;
+.payment-transaction-content {
+  margin: 20px 10px 10px;
 
-    .transaction-note {
-      font-size: 14px;
-      background: #2a2a2a;
+  .page-wrapper {
+    margin-top: 20px;
+  }
+
+  .bank-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 12px;
+
+    .bank-logo {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
     }
+
+    .bank-name {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+
+  ion-card.transaction-card {
+    margin: 12px 0;
+    border-radius: 25px;
+    background: #2a2a2a;
 
     ion-item {
       --background: #2a2a2a;
     }
 
-    ion-item.transaction-item {
-      --background: #2a2a2a;
-
-      .transaction-item-details {
-        font-size: 18px;
-        font-weight: 900;
-        background: #2a2a2a;
-      }
+    ion-card-content {
+      text-align: center;
+      padding: 20px 10px;
     }
 
-    ion-item.token-info {
-      --background: #2a2a2a;
+    .balance-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      .token-amount {
-        margin-bottom: 7px;
+    .balance-amount {
+      color: #fff;
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .insufficient-balance {
+      color: #ff6b6b;
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  ion-card.wallet-card {
+    margin: 12px 0;
+    background: #2a2a2a;
+    border-radius: 25px;
+
+    .wallet-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .wallet-name {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 4px;
       }
 
-      h2 {
-        color: #ffffff;
-        font-size: 15px;
+      .wallet-address {
+        color: #8b9bb3;
+        font-size: 14px;
+      }
+
+      ion-badge {
+        font-size: 12px;
+        padding: 6px 12px;
+        border-radius: 6px;
       }
     }
   }
+
+  ion-card.details-card {
+    margin: 12px 0;
+    background: #2a2a2a;
+    border-radius: 25px;
+    margin-bottom: 40px;
+
+    ion-card-content {
+      padding: 0;
+    }
+
+    ion-item.token-item,
+    ion-item.detail-item {
+      --background: transparent;
+      --padding-top: 10px;
+      --padding-start: 20px;
+      --padding-end: 20px;
+      --inner-padding-end: 0;
+
+      ion-label {
+        color: #8b9bb3;
+        font-size: 15px;
+      }
+
+      .token-value,
+      .detail-value {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+    }
+
+    .price-info {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+
+      .price-label {
+        color: #8b9bb3;
+        font-size: 15px;
+      }
+
+      .price-value {
+        color: #fff;
+        font-size: 15px;
+        font-weight: 500;
+      }
+    }
+
+    .account-details {
+      padding: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+      .account-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+
+        .account-label {
+          color: #8b9bb3;
+          font-size: 14px;
+        }
+
+        .account-value {
+          color: #fff;
+          font-size: 14px;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .section-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 25px 0 12px 5px;
+  }
+
+  .powered-by {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    img {
+      width: 80px;
+      height: auto;
+    }
+
+    ion-text {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+  }
+}

@@ -28,7 +28,6 @@ import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
@@ -83,7 +82,6 @@ export class QrScannerPage implements OnInit {
   constructor(
     private router: Router,
     private polkadotJsService: PolkadotJsService,
-    private chainsService: ChainsService,
     private walletsService: WalletsService
   ) {
     addIcons({

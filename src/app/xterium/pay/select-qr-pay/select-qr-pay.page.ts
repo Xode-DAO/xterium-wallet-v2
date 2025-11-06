@@ -9,7 +9,12 @@ import {
   IonIcon,
   IonGrid,
   IonRow,
-  IonCol
+  IonCol,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -29,6 +34,11 @@ import { qrCode, cloudUpload } from 'ionicons/icons';
     IonGrid, 
     IonRow,
     IonCol,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
   ]
 })
 export class SelectQrPayPage implements OnInit {
