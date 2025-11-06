@@ -1,24 +1,16 @@
 <ion-content [fullscreen]="true" class="swap-page">
-  <div class="swap-container">
+  <!-- <div class="swap-container">
     <div class="swap-section">
       <div class="section-label">
         <span>You Pay</span>
       </div>
-      
+
       <div class="amount-row">
-        <ion-input
-          type="number"
-          inputmode="decimal"
-          placeholder="0"
-          [(ngModel)]="fromAmount"
-          (ionInput)="onFromAmountChange($event)"
-          class="amount-input">
+        <ion-input type="number" inputmode="decimal" placeholder="0" [(ngModel)]="fromAmount"
+          (ionInput)="onFromAmountChange($event)" class="amount-input">
         </ion-input>
-        
-        <ion-button 
-          fill="clear" 
-          class="token-select-button"
-          (click)="openTokenSelectModal('from')">
+
+        <ion-button fill="clear" class="token-select-button" (click)="openTokenSelectModal('from')">
           <ion-avatar slot="start" class="token-avatar">
             <img [src]="fromToken?.token?.image || './assets/images/tokens/default.png'" />
           </ion-avatar>
@@ -26,7 +18,7 @@
           <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
         </ion-button>
       </div>
-      
+
       <div class="balance-actions">
         <div class="balance-label">
           Balance: {{ formatBalance(fromTokenBalance) }}
@@ -50,21 +42,13 @@
       <div class="section-label">
         <span>You Receive</span>
       </div>
-      
+
       <div class="amount-row">
-        <ion-input
-          type="number"
-          inputmode="decimal"
-          placeholder="0"
-          [(ngModel)]="toAmount"
-          readonly
+        <ion-input type="number" inputmode="decimal" placeholder="0" [(ngModel)]="toAmount" readonly
           class="amount-input">
         </ion-input>
-        
-        <ion-button 
-          fill="clear" 
-          class="token-select-button"
-          (click)="openTokenSelectModal('to')">
+
+        <ion-button fill="clear" class="token-select-button" (click)="openTokenSelectModal('to')">
           <ion-avatar slot="start" class="token-avatar">
             <img [src]="toToken?.token?.image || './assets/images/tokens/default.png'" />
           </ion-avatar>
@@ -72,7 +56,7 @@
           <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
         </ion-button>
       </div>
-      
+
       <div class="balance-actions">
         <div class="balance-label">
           Balance: {{ formatBalance(toTokenBalance) }}
@@ -86,11 +70,7 @@
     <ion-row class="ion-margin-top">
       <ion-col size="12">
         <div class="primary-button-wrapper">
-          <ion-button 
-            expand="block" 
-            size="default" 
-            class="swap-button"
-            (click)="executeSwap()"
+          <ion-button expand="block" size="default" class="swap-button" (click)="executeSwap()"
             [disabled]="!isSwapReady || isProcessing">
             <span *ngIf="isProcessing" class="button-loading">
               <ion-spinner name="crescent"></ion-spinner>
@@ -118,14 +98,12 @@
       </ion-toolbar>
       <ion-content>
         <div class="ion-padding-horizontal">
-          <app-tokens 
-            [refreshCounter]="refreshCounter" 
-            (onOpenToken)="selectToken($event)">
+          <app-tokens [refreshCounter]="refreshCounter" (onOpenToken)="selectToken($event)">
           </app-tokens>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
 
-  <ion-toast [duration]="5000"></ion-toast>
+  <ion-toast [duration]="5000"></ion-toast> -->
 </ion-content>

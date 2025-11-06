@@ -1,51 +1,46 @@
-<ion-content [fullscreen]="true" class="explore-page">
-  <div class="segments-header">
-    <div class="header-content">
-      <h1>Explore Xterium</h1>
-      <span>Discover amazing features</span>
-    </div>
-  </div>
-  <div class="ion-padding">
+<ion-content [fullscreen]="true" class="explore-content">
+  <div class="ion-padding-horizontal">
     <ion-grid>
       <ion-row>
         <ion-col size="12">
-          <div class="card-container ion-margin-top">
-            <ion-card class="feature-card">
-              <img alt="Xterium Xode Web3" src="./../../../assets/images/backgrounds/xode-web3.png" />
-              <ion-card-header>
-                <ion-card-subtitle>Web3 Infrastructure</ion-card-subtitle>
-                <ion-card-title>Xode Staking</ion-card-title>
-              </ion-card-header>
-              <ion-card-content>
-                Stake your assets on Xode's secure platform and earn competitive rewards. Our staking service provides
-                reliable infrastructure with high uptime and optimal returns for your investments.
-              </ion-card-content>
-              <ion-button fill="clear" (click)="redirectToNode()">
-                Explore
-              </ion-button>
-            </ion-card>
+          <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom title">
+            <h1 style="font-weight: bold">Explore</h1>
+            <span style="font-size: 16px;">
+              Discover amazing services and opportunities within the Xterium ecosystem.
+            </span>
           </div>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col size="12">
-          <div class="card-container ion-margin-top">
-            <ion-card class="feature-card">
-              <img alt="Xterium Ecosystem" src="./../../../assets/images/backgrounds/xode-web3.png" />
-              <ion-card-header>
-                <ion-card-subtitle>Digital Ecosystem</ion-card-subtitle>
-                <ion-card-title>Explore Xterium</ion-card-title>
-              </ion-card-header>
-
-              <ion-card-content>
-                Discover the complete Xterium ecosystem featuring decentralized applications, and innovative blockchain
-                solutions designed for the future of Web3.
-              </ion-card-content>
-              <ion-button fill="clear" (click)="redirectToXterium()">
-                Explore
-              </ion-button>
-            </ion-card>
-          </div>
+          <ion-card class="explore-card" (click)="goToStaking()">
+            <div class="explore-card-image">
+              <img src="./../../../assets/images/backgrounds/explore-staking.png" />
+            </div>
+            <ion-card-header>
+              <ion-card-title>Xode Staking</ion-card-title>
+              <ion-card-subtitle>Web3 Infrastructure</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              Stake your assets on Xode's secure platform and earn competitive rewards. Our staking service provides
+              reliable infrastructure with high uptime and optimal returns for your investments.
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12">
+          <ion-card class="explore-card" (click)="goToGovernance()">
+            <div class="explore-card-image">
+              <img src="./../../../assets/images/backgrounds/explore-governance.png" />
+            </div>
+            <ion-card-header>
+              <ion-card-title>Xode Governance</ion-card-title>
+              <ion-card-subtitle>Decentralized Decision Making</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              Participate in the governance of Xode by staking your assets and voting on key decisions. Our platform
+              empowers users to have a say in the future of the ecosystem.
+            </ion-card-content>
+          </ion-card>
         </ion-col>
       </ion-row>
     </ion-grid>

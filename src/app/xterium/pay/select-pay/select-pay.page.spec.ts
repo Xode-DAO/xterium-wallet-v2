@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SelectQrPayPage } from './select-qr-pay.page';
+import { SelectPayPage } from './select-pay.page';
 
-describe('SelectQrPayPage', () => {
-  let component: SelectQrPayPage;
-  let fixture: ComponentFixture<SelectQrPayPage>;
+describe('SelectPayPage', () => {
+  let component: SelectPayPage;
+  let fixture: ComponentFixture<SelectPayPage>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelectQrPayPage);
+    fixture = TestBed.createComponent(SelectPayPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

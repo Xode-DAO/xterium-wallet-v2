@@ -68,8 +68,8 @@ export const routes: Routes = [
         loadComponent: () => import('./xterium/pay/pay.page').then(m => m.PayPage),
         children: [
           {
-            path: 'select-qr-pay',
-            loadComponent: () => import('./xterium/pay/select-qr-pay/select-qr-pay.page').then(m => m.SelectQrPayPage)
+            path: 'select-pay',
+            loadComponent: () => import('./xterium/pay/select-pay/select-pay.page').then(m => m.SelectPayPage)
           },
           {
             path: 'qr-scanner',
@@ -81,7 +81,7 @@ export const routes: Routes = [
           },
           {
             path: '',
-            redirectTo: '/xterium/pay/select-qr-pay',
+            redirectTo: '/xterium/pay/select-pay',
             pathMatch: 'full',
           },
         ]

@@ -1,30 +1,33 @@
 .balances-content {
-  .total-balance h1 {
-    font-weight: 700;
-    font-size: 42px;
-    margin-top: 85px;
-    color: #ffffff;
-  }
-
-  .token-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 10px 5px 0px 5px;
-
-    h3 {
-      color: white;
-      font-size: 17px;
+  ion-col {
+    .total-balance h1 {
       font-weight: 700;
-      margin: 0;
+      font-size: 42px;
+      margin-top: 75px;
+      color: #ffffff;
     }
 
-    a {
-      font-size: 17px;
-      font-weight: 700;
-      color: #00bcd4;
-      cursor: pointer;
-      text-decoration: none;
+    .token-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 5px 0px 5px;
+
+      h3 {
+        color: white;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      a {
+        font-size: 17px;
+        font-weight: 700;
+        color: #00bcd4;
+        cursor: pointer;
+        text-decoration: none;
+      }
     }
   }
+
 }

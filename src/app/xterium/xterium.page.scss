@@ -1,6 +1,9 @@
 ion-toolbar.wallet-toolbar {
   --background: #1a1a1a;
+
   padding: 7px 15px;
+  margin: auto;
+  max-width: 960px;
 
   ion-icon {
     font-size: 27px;
@@ -37,20 +40,26 @@ ion-toolbar.wallet-toolbar {
   }
 }
 
-ion-tab-bar.xterium-tab-bar {
-  --color: white;
-  --color-selected: #0bbab5;
+ion-tabs {
+  margin: auto;
+  max-width: 960px;
 
-  height: 70px;
+  ion-tab-bar.xterium-tab-bar {
+    --color: white;
+    --color-selected: #0bbab5;
 
-  ion-tab-button {
-    padding: 16px 0;
+    height: 70px;
 
-    ion-icon {
-      font-size: 24px;
+    ion-tab-button {
+      padding: 16px 0;
+
+      ion-icon {
+        font-size: 24px;
+      }
     }
   }
 }
+
 
 ion-modal.create-wallet-modal {
   --height: auto;

@@ -3,10 +3,8 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { 
+import {
   IonContent,
-  IonButton,
-  IonIcon,
   IonGrid,
   IonRow,
   IonCol,
@@ -21,17 +19,15 @@ import { addIcons } from 'ionicons';
 import { qrCode, cloudUpload } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-select-qr-pay',
-  templateUrl: './select-qr-pay.page.html',
-  styleUrls: ['./select-qr-pay.page.scss'],
+  selector: 'app-select-pay',
+  templateUrl: './select-pay.page.html',
+  styleUrls: ['./select-pay.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
-    IonContent, 
-    IonButton, 
-    IonIcon, 
-    IonGrid, 
+    IonContent,
+    IonGrid,
     IonRow,
     IonCol,
     IonCard,
@@ -41,20 +37,20 @@ import { qrCode, cloudUpload } from 'ionicons/icons';
     IonCardSubtitle,
   ]
 })
-export class SelectQrPayPage implements OnInit {
+export class SelectPayPage implements OnInit {
 
-  constructor( private router: Router ) {
+  constructor(private router: Router) {
     addIcons({
       qrCode,
       cloudUpload,
     });
-   }
+  }
 
-  qrCodeScannerNavigation() {
+  selectScan() {
     this.router.navigate(['/xterium/pay/qr-scanner']);
   }
 
-  qrCodeUploadNavigation() {
+  selectUploadQR() {
     this.router.navigate(['/xterium/pay/qr-upload']);
   }
 

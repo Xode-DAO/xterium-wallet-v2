@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonContent,
-  IonButton,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -29,7 +28,6 @@ import {
     IonGrid,
     IonRow,
     IonCol,
-    IonButton,
     IonCard,
     IonCardHeader,
     IonCardTitle,
@@ -41,14 +39,12 @@ export class ExplorePage implements OnInit {
 
   constructor() { }
 
-  showIframe = false;
-
-  redirectToNode() {
-    window.open('https://node.xode.net/', '_blank');
+  goToStaking() {
+    window.open('https://staking.xode.net/', '_blank');
   }
 
-  redirectToXterium() {
-    window.open('https://xterium.app/', '_blank');
+  goToGovernance() {
+    window.open('https://governance.xode.net/', '_blank');
   }
 
   ngOnInit() { }
