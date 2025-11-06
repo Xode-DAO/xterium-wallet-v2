@@ -1,7 +1,9 @@
+import { Chain } from "src/models/chain.model";
+
 export class Wallet {
   id: string = "-";
   name: string = "-";
-  chain_id: number = 0;
+  chain: Chain = new Chain();
   mnemonic_phrase: string = "-";
   public_key: string = "-";
   private_key: string = "-";

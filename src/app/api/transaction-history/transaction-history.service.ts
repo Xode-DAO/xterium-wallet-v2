@@ -3,155 +3,85 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { firstValueFrom } from 'rxjs';
 
-import {
-  PaymentHistory,
-  TransactionHistory,
-  TransactionHistoryStatus,
-} from 'src/models/transaction-history.model';
+import { PaymentHistory, Transfers } from 'src/models/transaction-history.model';
 
-import { Chain } from 'src/models/chain.model';
+import { Chain, ScannerType } from 'src/models/chain.model';
+import { Wallet } from 'src/models/wallet.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TransactionHistoryService {
-  private readonly API_KEY = '4d0c8ba32dde4a06bda83d52af49120f';
-
-  private readonly SUBSCAN_API_KEYS: Record<string, string> = {
-    'Xode - Polkadot': 'https://polkadot.api.subscan.io/api/v2/scan/transfers',
-    // 'Asset Hub - Paseo': 'https://assethub-paseo.api.subscan.io/api/v2/scan/transfers',
-    'Asset Hub - Polkadot': 'https://assethub-polkadot.api.subscan.io/api/v2/scan/transfers',
-    // 'Asset Hub - Kusama': 'https://assethub-kusama.api.subscan.io/api/v2/scan/transfers',
-  };
-
-  private readonly SUBSCAN_API_KEYS_EXTRINSICS: Record<string, string> = {
-    'Xode - Polkadot': 'https://polkadot.api.subscan.io/api/scan/extrinsic',
-    // 'Asset Hub - Paseo': 'https://assethub-paseo.api.subscan.io/api/scan/extrinsic',
-    'Asset Hub - Polkadot': 'https://assethub-polkadot.api.subscan.io/api/scan/extrinsic',
-    // 'Asset Hub - Kusama': 'https://assethub-kusama.api.subscan.io/api/scan/extrinsic',
-  };
-
-  private readonly NATIVE_TOKENS: Record<string, string> = {
-    'Xode - Polkadot': 'XON',
-    // 'Asset Hub - Paseo': 'PAS',
-    'Asset Hub - Polkadot': 'DOT',
-    // 'Asset Hub - Kusama': 'KSM',
-  };
-
-  private readonly XODE_ENDPOINTS: Record<string, string> = {
-
-  }
 
   constructor(
     private http: HttpClient
   ) { }
 
-  fetchPaymentHistory() {
+  fetchPaymentHistoryTransactions(wallet: Wallet) {
 
   }
 
-  fetchTransactionHistory() {
+  async fetchTransfers(address: string, chain: Chain): Promise<Transfers[]> {
+    const transfers: Transfers[] = [];
 
-  }
+    if (chain.scanner && chain.scanner.type === ScannerType.Subsquid) {
 
-  async fetchTransfers(
-    address: string,
-    chain: Chain
-  ): Promise<TransactionHistory[]> {
-    const transfersApiUrl = this.SUBSCAN_API_KEYS[chain.name];
-    const extrinsicsApiUrl = this.SUBSCAN_API_KEYS_EXTRINSICS[chain.name];
-
-    if (!transfersApiUrl || !extrinsicsApiUrl) {
-      throw new Error('Unsupported chain for fetching transactions.');
     }
 
-    const nativeTokenSymbol = this.NATIVE_TOKENS[chain.name] || '';
-    const allTransfers: TransactionHistory[] = [];
-    const seenHashes = new Set<string>();
+    if (chain.scanner && chain.scanner.type === ScannerType.Subscan) {
+      let page = 0;
+      let row = 100;
 
-    let page = 0;
-    const rowsPerPage = 100;
-    let hasMore = true;
+      let hasMore = true;
+      while (hasMore) {
+        const body = {
+          address: address,
+          page: page,
+          row: row,
+        };
 
-    while (hasMore) {
-      const body = { address, row: rowsPerPage, page };
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json',
-        'X-API-Key': this.API_KEY,
-      });
-
-      const res: any = await firstValueFrom(
-        this.http.post(transfersApiUrl, body, { headers })
-      );
-
-      if (res.code !== 0) {
-        throw new Error(res.message || 'Failed to fetch data');
-      }
-
-      const transfersPage = res.data.transfers || [];
-
-      const transfersMapped: TransactionHistory[] = transfersPage.map(
-        (item: any) => {
-          const isNativeTransfer = item.asset_symbol === nativeTokenSymbol;
-          const isAssetTransfer = Boolean(item.asset_symbol) && item.asset_symbol !== nativeTokenSymbol;
-
-          const action = isAssetTransfer ? 'assets(transfer)'
-            : isNativeTransfer ? 'balances(transfer_allow_death)'
-              : item.action ?? 'unknown(transfer)';
-
-          return {
-            block_num: item.block_num,
-            amount: item.amount,
-            from: item.from,
-            to: item.to,
-            hash: item.hash,
-            block_timestamp: item.block_timestamp,
-            status: item.success === true
-              ? TransactionHistoryStatus.Success
-              : TransactionHistoryStatus.Fail,
-            action,
-            token_symbol: item.asset_symbol || nativeTokenSymbol || 'unknown',
-          };
-        }
-      );
-
-      for (const transfer of transfersMapped) {
-        if (!seenHashes.has(transfer.hash)) {
-          allTransfers.push(transfer);
-          seenHashes.add(transfer.hash);
-        }
-      }
-
-      page += 1;
-      hasMore = transfersPage.length === rowsPerPage;
-    }
-
-    const fetchExtrinsic = async (transfer: TransactionHistory) => {
-      if (!transfer.hash) return;
-      try {
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
-          'X-API-Key': this.API_KEY
+          'X-API-Key': '4d0c8ba32dde4a06bda83d52af49120f',
         });
-        const body = { hash: transfer.hash };
-        const extrinsicRes: any = await firstValueFrom(
-          this.http.post(extrinsicsApiUrl, body, { headers })
-        );
-        if (extrinsicRes.code === 0 && extrinsicRes.data) {
-          transfer.action = `${extrinsicRes.data.call_module}(${extrinsicRes.data.call_module_function})`;
-        }
-      } catch (_) { }
-    }
 
-    if (chain.name === 'Asset Hub - Paseo') {
-      await Promise.all(allTransfers.map(fetchExtrinsic));
-    } else {
-      for (const transfer of allTransfers) {
-        await fetchExtrinsic(transfer);
-        await new Promise((r) => setTimeout(r, 70));
+        const response: any = await firstValueFrom(
+          this.http.post(chain.scanner?.transfers_url || '', body, { headers })
+        );
+
+        const count = response.data.count;
+        const transfersData = response.data.transfers || [];
+
+        if (transfersData.length > 0) {
+          for (const item of transfersData) {
+            const isNativeTransfer = item.asset_symbol === chain.unit;
+            const isAssetTransfer = item.asset_symbol !== chain.unit;
+
+            const action = isAssetTransfer ? 'assets(transfer)' : isNativeTransfer ? 'balances(transfer_allow_death)' : '';
+            const newTransfers: Transfers = {
+              hash: item.hash || '',
+              status: item.success ? 'Success' : 'Fail',
+              from: item.from || '',
+              to: item.to || '',
+              amount: item.amount || '0',
+              token_symbol: item.asset_symbol || chain.unit,
+              block_number: item.block_num || 0,
+              action: action,
+              fee: item.fee || '0',
+              timestamp: item.block_timestamp || 0,
+            };
+
+            transfers.push(newTransfers);
+          }
+        }
+
+        page += 1;
+        hasMore = transfers.length < count;
       }
     }
 
-    return allTransfers;
+    return transfers;
   }
+
+
 }

@@ -35,7 +35,13 @@
       </ion-row>
     </ion-grid>
 
-    @if (isChromeExtension) {
+    @if (isPasswordExisting) {
+    <app-password-login (onLogin)="goToXteriumPage($event)"></app-password-login>
+    } @else {
+    <app-password-setup (onPasswordSetup)="goToXteriumPage($event)"></app-password-setup>
+    }
+
+    <!-- @if (isChromeExtension) {
     @if (isPasswordExisting) {
     <app-password-login (onLogin)="goToXteriumPage($event)"></app-password-login>
     } @else {
@@ -43,7 +49,7 @@
     }
     } @else {
     <app-biometric (onLogin)="goToXteriumPage($event)"></app-biometric>
-    }
+    } -->
   </div>
 
   <ion-toast [duration]="5000"></ion-toast>

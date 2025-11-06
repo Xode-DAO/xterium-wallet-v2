@@ -37,13 +37,15 @@ import {
   timeOutline,
 } from 'ionicons/icons';
 
-import { TransactionHistoryService } from 'src/app/api/transaction-history/transaction-history.service';
-import { TransactionHistory } from 'src/models/transaction-history.model';
-import { Chain } from 'src/models/chain.model';
-import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { Wallet } from 'src/models/wallet.model';
+import { Chain } from 'src/models/chain.model';
+import { Transfers } from 'src/models/transaction-history.model';
+
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
+import { TransactionHistoryService } from 'src/app/api/transaction-history/transaction-history.service';
+import { BalancesService } from 'src/app/api/balances/balances.service';
 
 @Component({
   selector: 'app-transaction-history',
@@ -77,18 +79,13 @@ import { ChainsService } from 'src/app/api/chains/chains.service';
   ],
 })
 export class TransactionHistoryPage implements OnInit {
-  @Input() wallet: Wallet = {} as Wallet;
-
-  transactions: TransactionHistory[] = [];
-  blockHash: string = '';
-  isLoading: boolean = false;
-  selectedDate: string = new Date().toISOString();
 
   constructor(
-    private transactionHistoryService: TransactionHistoryService,
+    private polkadotJsService: PolkadotJsService,
     private walletsService: WalletsService,
     private chainsService: ChainsService,
-    private polkadotJsService: PolkadotJsService
+    private transactionHistoryService: TransactionHistoryService,
+    private balancesService: BalancesService
   ) {
     addIcons({
       searchOutline,
@@ -101,112 +98,56 @@ export class TransactionHistoryPage implements OnInit {
     });
   }
 
-  walletPublicKey: string = '';
   currentWallet: Wallet = {} as Wallet;
-  walletChain: Chain = {} as Chain;
+  currentWalletPublicAddress: string = '';
+  currentChain: Chain = {} as Chain;
 
-  getWalletChain(): void {
-    const chain = this.chainsService.getChainById(this.wallet.chain_id);
-    if (chain) {
-      this.walletChain = chain;
-    }
-  }
+  selectedDate: string = new Date().toISOString();
 
-  async getCurrentWallet(): Promise<void> {
-    const currentWallet = await this.walletsService.getCurrentWallet();
-    if (currentWallet) {
-      this.currentWallet = currentWallet;
-    }
-  }
+  searchKeyword: string = '';
+
+  transfers: Transfers[] = [];
+  isTransfersLoading: boolean = false;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
-      publicKey.split(',').map((byte) => Number(byte.trim()))
+      publicKey.split(',').map(byte => Number(byte.trim()))
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
-  async loadCurrentWalletTransfers() {
-    this.isLoading = true;
-    this.transactions = [];
-
-    await this.encodePublicAddressByChainFormat(this.wallet.public_key, this.walletChain).then((encodedAddress) => {
-        this.walletPublicKey = encodedAddress;
-      });
-
-    try {
-      console.log('Fetching transfers for:', this.walletPublicKey, this.walletChain);
-
-      const allTransfers = await this.transactionHistoryService.fetchTransfers(
-        this.walletPublicKey,
-        // '12ouvKSvKnXAdXFR5oCL1vXimWrkDWG3joMNw3ETupTRs1ab', // test address
-        this.walletChain
-      );
-
-      this.transactions = allTransfers;
-      console.log('Transfers fetched:', this.transactions);
-    } catch (err) {
-      console.error('Error fetching current wallet transactions:', err);
-    } finally {
-      this.isLoading = false;
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain);
+      this.currentChain = this.currentWallet.chain;
     }
   }
 
-  async onSearchHash() {
-    const value = this.blockHash.trim();
-
-    if (value === '') {
-      this.loadCurrentWalletTransfers();
-      return;
-    }
-
-    this.isLoading = true;
-
-    try {
-      const allTransfers = await this.transactionHistoryService.fetchTransfers(
-        this.walletPublicKey,
-        // '12ouvKSvKnXAdXFR5oCL1vXimWrkDWG3joMNw3ETupTRs1ab', // test address
-        this.walletChain
-      );
-
-      this.transactions = allTransfers.filter((tx) =>
-        tx.hash.toLowerCase().includes(this.blockHash.toLowerCase())
-      );
-
-      if (this.transactions.length === 0) {
-        console.warn('No transactions found for the given hash.', this.walletPublicKey);
-      }
-    } catch (err) {
-      console.error('Error searching transactions:', err);
-    } finally {
-      this.isLoading = false;
-    }
+  formatBalance(amount: number, decimals: number): number {
+    return this.balancesService.formatBalance(amount, decimals);
   }
 
-  async loadCurrentWallet() {
-    const wallet = await this.walletsService.getCurrentWallet();
-    if (wallet) {
-      this.wallet = wallet;
-      this.walletPublicKey = wallet.public_key;
-    }
+  async fetchTransfers(): Promise<void> {
+    this.isTransfersLoading = true;
+    this.transfers = [];
+
+    this.transfers = await this.transactionHistoryService.fetchTransfers(
+      this.currentWalletPublicAddress,
+      this.currentChain
+    );
+    this.isTransfersLoading = false;
   }
 
-  async loadWalletChain(): Promise<void> {
-    const chain = this.chainsService.getChainById(this.wallet.chain_id);
-    if (chain) {
-      this.walletChain = chain;
-    }
-  }
-
-  trackByHash(index: number, transaction: TransactionHistory) {
-    return transaction.hash;
+  async fetchData(): Promise<void> {
+    await this.getCurrentWallet();
+    await this.fetchTransfers();
   }
 
   ngOnInit() {
-    this.loadCurrentWallet()
-    .then(() => this.loadWalletChain())
-    .then(() => this.loadCurrentWalletTransfers());
+    this.fetchData();
   }
 }

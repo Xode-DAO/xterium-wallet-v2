@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { ChainsService } from '../chains/chains.service';
 
 import { Wallet, WalletV1Mobile } from 'src/models/wallet.model';
 
@@ -10,6 +11,7 @@ import { Wallet, WalletV1Mobile } from 'src/models/wallet.model';
 export class SyncWalletsService {
   constructor(
     private walletsService: WalletsService,
+    private chainsService: ChainsService,
   ) { }
 
   syncWallets() {
@@ -24,10 +26,13 @@ export class SyncWalletsService {
     }
 
     parsedExistingWallets.forEach(async (oldWallet) => {
+      const chain = this.chainsService.getChainById(1);
+      if (!chain) return;
+
       const newWallet: Wallet = {
         id: oldWallet.id.toString(),
         name: oldWallet.name,
-        chain_id: 1,
+        chain: chain,
         mnemonic_phrase: oldWallet.mnemonic_phrase,
         public_key: oldWallet.public_key,
         private_key: oldWallet.private_key,

@@ -32,7 +32,8 @@ export class ChainsService {
       image: "polkadot.png",
       scanner: {
         type: ScannerType.Subscan,
-        url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsic"
+        transfers_url: "https://polkadot.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsic"
       }
     },
     {
@@ -47,7 +48,8 @@ export class ChainsService {
       image: "assethub.png",
       scanner: {
         type: ScannerType.Subscan,
-        url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsic"
+        transfers_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsic"
       }
     },
     {
@@ -62,7 +64,8 @@ export class ChainsService {
       image: "xode.png",
       scanner: {
         type: ScannerType.Subsquid,
-        url: "https://subsquid-v2.xode.net/graphql"
+        transfers_url: "https://subsquid-v2.xode.net/graphql",
+        extrinsics_url: "https://subsquid-v2.xode.net/graphql"
       }
     },
     {
@@ -77,7 +80,8 @@ export class ChainsService {
       image: "hydration.png",
       scanner: {
         type: ScannerType.Subscan,
-        url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/extrinsic"
+        transfers_url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/extrinsic"
       }
     },
     {
@@ -92,7 +96,8 @@ export class ChainsService {
       image: "polkadot.png",
       scanner: {
         type: ScannerType.Subscan,
-        url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsic"
+        transfers_url: "https://paseo.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://paseo.api.subscan.io/api/v2/scan/extrinsic"
       }
     },
     {
@@ -107,7 +112,8 @@ export class ChainsService {
       image: "paseo.png",
       scanner: {
         type: ScannerType.Subscan,
-        url: "https://assethub-paseo.api.subscan.io/api/v2/scan/extrinsic"
+        transfers_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/extrinsic"
       }
     },
     {
@@ -122,7 +128,8 @@ export class ChainsService {
       image: "xode.png",
       scanner: {
         type: ScannerType.Subsquid,
-        url: "https://subsquid-v2.xode.net/graphql"
+        transfers_url: "https://subsquid-v2.xode.net/graphql",
+        extrinsics_url: "https://subsquid-v2.xode.net/graphql"
       }
     },
     {
@@ -137,7 +144,8 @@ export class ChainsService {
       image: "hydration-paseo.png",
       scanner: {
         type: ScannerType.Subscan,
-        url: "https://hydration-paseo.api.subscan.io/api/v2/scan/extrinsic"
+        transfers_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/extrinsic"
       }
     },
     {
@@ -150,10 +158,7 @@ export class ChainsService {
       decimal: 9,
       address_prefix: null,
       image: "solana.png",
-      scanner: {
-        type: ScannerType.Solscan,
-        url: "https://api.mainnet-beta.solana.com"
-      }
+      scanner: undefined
     },
     {
       id: 10,
@@ -165,10 +170,7 @@ export class ChainsService {
       decimal: 9,
       address_prefix: null,
       image: "solana.png",
-      scanner: {
-        type: ScannerType.Solscan,
-        url: "https://api.testnet.solana.com"
-      }
+      scanner: undefined
     },
     {
       id: 11,
@@ -180,10 +182,7 @@ export class ChainsService {
       decimal: 9,
       address_prefix: null,
       image: "solana.png",
-      scanner: {
-        type: ScannerType.Solscan,
-        url: "https://api.devnet.solana.com"
-      }
+      scanner: undefined
     },
   ];
 

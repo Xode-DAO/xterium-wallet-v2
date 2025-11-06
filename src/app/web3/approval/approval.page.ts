@@ -87,7 +87,7 @@ export class ApprovalPage implements OnInit {
 
     for (const chain of this.chains) {
       const filtered = this.wallets.filter(
-        w => w.chain_id === chain.id
+        w => w.chain.id === chain.id
       );
 
       const mapped = await Promise.all(

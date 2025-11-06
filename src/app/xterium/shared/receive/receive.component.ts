@@ -67,12 +67,8 @@ export class ReceiveComponent implements OnInit {
     const currentWallet = await this.walletsService.getCurrentWallet();
     if (currentWallet) {
       this.currentWallet = currentWallet;
-
-      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
-      if (chain) {
-        this.currentChain = chain;
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
-      }
+      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
+      this.currentChain = this.currentWallet.chain;
     }
   }
 

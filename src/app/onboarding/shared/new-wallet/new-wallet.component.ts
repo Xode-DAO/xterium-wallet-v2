@@ -171,7 +171,7 @@ export class NewWalletComponent implements OnInit {
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
-        chain_id: this.selectedChain.id,
+        chain: this.selectedChain,
         mnemonic_phrase: encryptedMnemonicPhrase,
         public_key: keypair.publicKey.toString(),
         private_key: encryptedPrivateKey,

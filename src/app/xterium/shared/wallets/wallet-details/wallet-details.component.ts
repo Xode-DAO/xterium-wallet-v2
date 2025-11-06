@@ -68,17 +68,9 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   walletPublicKey: string = '';
-  walletChain: Chain = {} as Chain;
   updateTimeOut: any = null;
 
   currentWallet: Wallet = {} as Wallet;
-
-  getWalletChain(): void {
-    const chain = this.chainsService.getChainById(this.wallet.chain_id);
-    if (chain) {
-      this.walletChain = chain;
-    }
-  }
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -208,8 +200,7 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getWalletChain();
-    this.encodePublicAddressByChainFormat(this.wallet.public_key, this.walletChain).then(encodedAddress => {
+    this.encodePublicAddressByChainFormat(this.wallet.public_key, this.wallet.chain).then(encodedAddress => {
       this.walletPublicKey = encodedAddress;
     });
 

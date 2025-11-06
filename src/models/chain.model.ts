@@ -14,8 +14,9 @@ export enum ScannerType {
 }
 
 export class Scanner {
-  url: string = "https://polkadot.subscan.io";
   type: ScannerType = ScannerType.Subscan;
+  transfers_url?: string = "https://subsquid-v2.xode.net/graphql";
+  extrinsics_url?: string = "https://subsquid-v2.xode.net/graphql";
 }
 
 export class Chain {
@@ -29,7 +30,8 @@ export class Chain {
   address_prefix: string | number | null = 280;
   image: string = "src/assets/images/networks/xode.png";
   scanner?: Scanner = {
-    url: "https://xode.subscan.io",
     type: ScannerType.Subsquid,
+    transfers_url: "https://subsquid-v2.xode.net/graphql",
+    extrinsics_url: "https://subsquid-v2.xode.net/graphql"
   }
 }

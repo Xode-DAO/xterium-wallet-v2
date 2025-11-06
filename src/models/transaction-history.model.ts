@@ -7,20 +7,25 @@ export class PaymentHistory {
   chain_id!: string;
 }
 
-export class TransactionHistory {
-  block_num!: number
-  amount!: string
-  from!: string
-  to!: string
-  hash!: string
-  block_timestamp!: string
-  status?: TransactionHistoryStatus
-  action?: string
-  token_symbol?: string
+export class Transfers {
+  hash: string = "";
+  status: string = "";
+  from: string = "";
+  to: string = "";
+  amount: string = "";
+  token_symbol: string = "";
+  block_number: number = 0;
+  action: string = "";
+  fee: string = "";
+  timestamp: number = 0;
 }
 
-export enum TransactionHistoryStatus {
-  Success = 'Success',
-  Fail = 'Fail',
-  Finalized = 'Finalized',
+export class Extrinsics {
+  extrinsic_hash: string = "";
+  status: string = "";
+  amount: string = "";
+  token_symbol: string = "";
+  block_number: number = 0;
+  action: string = "";
+  timestamp: string = "";
 }

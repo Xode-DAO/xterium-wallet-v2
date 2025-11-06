@@ -31,7 +31,7 @@ import { clipboardOutline, scanOutline, chevronDownOutline, close } from 'ionico
 
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
-import { Chain } from 'src/models/chain.model';
+import { Chain, Network } from 'src/models/chain.model';
 
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
@@ -142,12 +142,9 @@ export class SendComponent implements OnInit {
     const currentWallet = await this.walletsService.getCurrentWallet();
     if (currentWallet) {
       this.currentWallet = currentWallet;
+      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
 
-      const chain = this.chainsService.getChainById(this.currentWallet.chain_id);
-      if (chain) {
-        this.selectedChain = chain;
-        this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain)
-      }
+      this.selectedChain = this.currentWallet.chain;
     }
   }
 
@@ -170,8 +167,8 @@ export class SendComponent implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
 
     if (!service) return;
 
@@ -271,8 +268,8 @@ export class SendComponent implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
-    if (this.currentWallet.chain_id === 1) service = this.assethubPolkadotService;
-    if (this.currentWallet.chain_id === 2) service = this.xodePolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
 
     if (!service) return;
 

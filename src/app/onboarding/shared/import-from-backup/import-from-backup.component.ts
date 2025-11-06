@@ -228,7 +228,7 @@ export class ImportFromBackupComponent implements OnInit {
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
-        chain_id: this.selectedChain.id,
+        chain: this.selectedChain,
         mnemonic_phrase: mnemonicPhrase,
         public_key: publicKey,
         private_key: privateKey

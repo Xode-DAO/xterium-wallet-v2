@@ -32,11 +32,6 @@ export class WalletsService {
     return value ? JSON.parse(value) : [];
   }
 
-  async getWalletsByChainId(chainId: number): Promise<Wallet[]> {
-    const wallets = await this.getAllWallets();
-    return wallets.filter(w => w.chain_id === chainId);
-  }
-
   async getWalletByPublicKey(publicKey: string): Promise<Wallet | undefined> {
     const wallets = await this.getAllWallets();
     return wallets.find(w => w.public_key === publicKey);
