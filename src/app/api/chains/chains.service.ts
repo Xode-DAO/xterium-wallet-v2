@@ -21,6 +21,18 @@ export class ChainsService {
       scanner: undefined
     },
     {
+      id: 0,
+      network: Network.Substrate,
+      name: "Substrate",
+      description: "Includes every supported Substrate-based blockchain network for selection.",
+      chain_id: 0,
+      unit: "UNIT",
+      decimal: 10,
+      address_prefix: 42,
+      image: "substrate.png",
+      scanner: undefined
+    },
+    {
       id: 1,
       network: Network.Polkadot,
       name: "Polkadot",

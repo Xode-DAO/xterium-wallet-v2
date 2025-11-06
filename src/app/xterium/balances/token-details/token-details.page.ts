@@ -201,7 +201,6 @@ export class TokenDetailsPage implements OnInit {
           this.currentWalletPublicAddress
         ).subscribe(balance => {
           this.balance = balance;
-          this.initCandlestickChart();
         });
       }
     }, 5000);
@@ -211,28 +210,30 @@ export class TokenDetailsPage implements OnInit {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
   }
 
-  generateDummyPriceHistory(symbol: string) {
-    return [
-      { x: new Date('2025-01-01'), y: [7.1, 7.4, 7.0, 7.3] },
-      { x: new Date('2025-01-02'), y: [7.3, 7.6, 7.2, 7.4] },
-      { x: new Date('2025-01-03'), y: [7.4, 7.8, 7.3, 7.7] },
-      { x: new Date('2025-01-04'), y: [7.7, 7.9, 7.5, 7.6] },
-      { x: new Date('2025-01-05'), y: [7.6, 7.8, 7.4, 7.5] }
-    ];
-  }
-
-  initCandlestickChart() {
-    if (!this.balance?.token?.symbol) return;
-
-    const history = this.generateDummyPriceHistory(this.balance.token.symbol);
-
-    this.candlestickSeries = [
-      {
-        name: `${this.balance.token.symbol} Price`,
-        data: history
-      }
-    ];
-  }
+  // Price history is currently not available
+  //
+  // generateDummyPriceHistory(symbol: string) {
+  //   return [
+  //     { x: new Date('2025-01-01'), y: [7.1, 7.4, 7.0, 7.3] },
+  //     { x: new Date('2025-01-02'), y: [7.3, 7.6, 7.2, 7.4] },
+  //     { x: new Date('2025-01-03'), y: [7.4, 7.8, 7.3, 7.7] },
+  //     { x: new Date('2025-01-04'), y: [7.7, 7.9, 7.5, 7.6] },
+  //     { x: new Date('2025-01-05'), y: [7.6, 7.8, 7.4, 7.5] }
+  //   ];
+  // }
+  //
+  // initCandlestickChart() {
+  //   if (!this.balance?.token?.symbol) return;
+  //
+  //   const history = this.generateDummyPriceHistory(this.balance.token.symbol);
+  //
+  //   this.candlestickSeries = [
+  //     {
+  //       name: `${this.balance.token.symbol} Price`,
+  //       data: history
+  //     }
+  //   ];
+  // }
 
   onClickSend(_: string) {
     this.tokenDetailsSendModal.dismiss();
@@ -249,7 +250,5 @@ export class TokenDetailsPage implements OnInit {
         this.balance = JSON.parse(params['balance']);
       }
     });
-
-    this.initCandlestickChart();
   }
 }

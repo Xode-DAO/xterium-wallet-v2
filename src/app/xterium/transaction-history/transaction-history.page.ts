@@ -29,6 +29,8 @@ import {
 import { addIcons } from 'ionicons';
 import {
   searchOutline,
+  person,
+  informationCircle,
   arrowUpOutline,
   arrowDownOutline,
   cashOutline,
@@ -39,13 +41,14 @@ import {
 } from 'ionicons/icons';
 
 import { Wallet } from 'src/models/wallet.model';
-import { Chain } from 'src/models/chain.model';
-import { Transfers, Extrinsics } from 'src/models/transaction-history.model';
+import { Chain, Network } from 'src/models/chain.model';
+import { Payments, Transfers, Extrinsics } from 'src/models/transaction-history.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
-import { TransactionHistoryService } from 'src/app/api/transaction-history/transaction-history.service';
+import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
+import { ScannerService } from 'src/app/api/scanner/scanner.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 
 @Component({
@@ -85,11 +88,14 @@ export class TransactionHistoryPage implements OnInit {
     private polkadotJsService: PolkadotJsService,
     private walletsService: WalletsService,
     private chainsService: ChainsService,
-    private transactionHistoryService: TransactionHistoryService,
+    private multipayxApiService: MultipayxApiService,
+    private scannerService: ScannerService,
     private balancesService: BalancesService
   ) {
     addIcons({
       searchOutline,
+      person,
+      informationCircle,
       arrowUpOutline,
       arrowDownOutline,
       cashOutline,
@@ -106,6 +112,9 @@ export class TransactionHistoryPage implements OnInit {
   selectedDate: string = new Date().toISOString();
 
   searchKeyword: string = '';
+
+  payments: { date: string; list: Payments[] }[] = [];
+  isPaymentsLoading: boolean = false;
 
   transfers: Transfers[] = [];
   isTransfersLoading: boolean = false;
@@ -134,11 +143,58 @@ export class TransactionHistoryPage implements OnInit {
     return this.balancesService.formatBalance(amount, decimals);
   }
 
+  async fetchPayments(): Promise<void> {
+    this.isPaymentsLoading = true;
+
+    this.payments = [];
+
+    const substrateChain = this.chainsService.getChainsByNetwork(Network.Substrate)[0];
+    const address = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, substrateChain);
+
+    const paymentsData = await this.multipayxApiService.fetchPayments(address);
+    this.payments = this.groupPaymentsByDate(paymentsData);
+
+    this.isPaymentsLoading = false;
+  }
+
+  private groupPaymentsByDate(payments: Payments[]): { date: string; list: Payments[] }[] {
+    const grouped: { [key: string]: Payments[] } = {};
+
+    for (const payment of payments) {
+      const date = new Date(payment.timestamp).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(payment);
+    }
+
+    return Object.entries(grouped).map(([date, list]) => ({ date, list }));
+  }
+
+  maskName(name: string): string {
+    if (!name) return '';
+
+    const cleanName = name.replace(/\s+/g, '').toUpperCase();
+
+    if (cleanName.length <= 4) {
+      return cleanName[0] + '*'.repeat(cleanName.length - 2) + cleanName.slice(-1);
+    }
+
+    const first = cleanName.slice(0, 2);
+    const last = cleanName.slice(-2);
+    const masked = '*'.repeat(cleanName.length - 4);
+
+    return `${first}${masked}${last}`;
+  }
+
   async fetchTransfers(): Promise<void> {
     this.isTransfersLoading = true;
 
     this.transfers = [];
-    this.transfers = await this.transactionHistoryService.fetchTransfers(
+    this.transfers = await this.scannerService.fetchTransfers(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
     );
@@ -150,7 +206,7 @@ export class TransactionHistoryPage implements OnInit {
     this.isExtrinsicsLoading = true;
 
     this.extrinsics = [];
-    this.extrinsics = await this.transactionHistoryService.fetchExtrinsics(
+    this.extrinsics = await this.scannerService.fetchExtrinsics(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
     );
@@ -161,8 +217,23 @@ export class TransactionHistoryPage implements OnInit {
   async fetchData(): Promise<void> {
     await this.getCurrentWallet();
 
+    await this.fetchPayments();
     await this.fetchTransfers();
     await this.fetchExtrinsics();
+  }
+
+  async segmentChanged(event: any) {
+    const segment = event.detail.value;
+
+    if (segment === 'payments') {
+      await this.fetchPayments();
+    } else if (segment === 'transfers') {
+      await this.fetchTransfers();
+    } else if (segment === 'extrinsics') {
+      await this.fetchExtrinsics();
+    } else {
+      await this.fetchData();
+    }
   }
 
   ngOnInit() {
