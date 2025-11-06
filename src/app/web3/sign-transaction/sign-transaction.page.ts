@@ -120,7 +120,6 @@ export class SignTransactionPage implements OnInit {
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
-  currentChain: Chain = {} as Chain;
 
   transaction: Transaction<any, any, any, void | undefined> | null = null;
 
@@ -144,7 +143,6 @@ export class SignTransactionPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
-      this.currentChain = this.currentWallet.chain;
     }
   }
 

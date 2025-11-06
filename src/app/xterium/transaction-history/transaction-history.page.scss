@@ -34,7 +34,7 @@
     }
   }
 
-  .payment-history-segment-content {
+  .payments-segment-content {
     ion-row.date-as-of {
       --border-radius: 25px;
       margin-top: 10px;
@@ -166,6 +166,20 @@
 
         .label-value {
           font-weight: 700;
+        }
+
+        .chip-text {
+          max-width: 200px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .chip-text ion-label {
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }

@@ -71,6 +71,7 @@ export class WalletDetailsComponent implements OnInit {
   updateTimeOut: any = null;
 
   currentWallet: Wallet = {} as Wallet;
+  currentWalletPublicAddress: string = '';
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -79,6 +80,14 @@ export class WalletDetailsComponent implements OnInit {
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+  }
+
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+      this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
+    }
   }
 
   async copyToClipboard() {
@@ -94,13 +103,6 @@ export class WalletDetailsComponent implements OnInit {
     });
 
     await toast.present();
-  }
-
-  async getCurrentWallet(): Promise<void> {
-    const currentWallet = await this.walletsService.getCurrentWallet();
-    if (currentWallet) {
-      this.currentWallet = currentWallet;
-    }
   }
 
   async updateWalletOnModelChange() {

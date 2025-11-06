@@ -23,9 +23,9 @@ export class Transfers {
 export class Extrinsics {
   extrinsic_hash: string = "";
   status: string = "";
-  amount: string = "";
-  token_symbol: string = "";
   block_number: number = 0;
-  action: string = "";
-  timestamp: string = "";
+  call_module: string = "";
+  call_module_function: string = "";
+  fee: string = "";
+  timestamp: number = 0;
 }

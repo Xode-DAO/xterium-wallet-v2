@@ -35,11 +35,12 @@ import {
   cubeOutline,
   swapHorizontalOutline,
   timeOutline,
+  constructOutline
 } from 'ionicons/icons';
 
 import { Wallet } from 'src/models/wallet.model';
 import { Chain } from 'src/models/chain.model';
-import { Transfers } from 'src/models/transaction-history.model';
+import { Transfers, Extrinsics } from 'src/models/transaction-history.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
@@ -95,12 +96,12 @@ export class TransactionHistoryPage implements OnInit {
       cubeOutline,
       swapHorizontalOutline,
       timeOutline,
+      constructOutline
     });
   }
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
-  currentChain: Chain = {} as Chain;
 
   selectedDate: string = new Date().toISOString();
 
@@ -108,6 +109,9 @@ export class TransactionHistoryPage implements OnInit {
 
   transfers: Transfers[] = [];
   isTransfersLoading: boolean = false;
+
+  extrinsics: Extrinsics[] = [];
+  isExtrinsicsLoading: boolean = false;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -123,7 +127,6 @@ export class TransactionHistoryPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain);
-      this.currentChain = this.currentWallet.chain;
     }
   }
 
@@ -133,18 +136,33 @@ export class TransactionHistoryPage implements OnInit {
 
   async fetchTransfers(): Promise<void> {
     this.isTransfersLoading = true;
-    this.transfers = [];
 
+    this.transfers = [];
     this.transfers = await this.transactionHistoryService.fetchTransfers(
       this.currentWalletPublicAddress,
-      this.currentChain
+      this.currentWallet.chain,
     );
+
     this.isTransfersLoading = false;
+  }
+
+  async fetchExtrinsics(): Promise<void> {
+    this.isExtrinsicsLoading = true;
+
+    this.extrinsics = [];
+    this.extrinsics = await this.transactionHistoryService.fetchExtrinsics(
+      this.currentWalletPublicAddress,
+      this.currentWallet.chain,
+    );
+
+    this.isExtrinsicsLoading = false;
   }
 
   async fetchData(): Promise<void> {
     await this.getCurrentWallet();
+
     await this.fetchTransfers();
+    await this.fetchExtrinsics();
   }
 
   ngOnInit() {

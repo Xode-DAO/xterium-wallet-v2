@@ -101,6 +101,7 @@ export class SendComponent implements OnInit {
 
   currentWallet: Wallet = {} as Wallet;
   currentWalletPublicAddress: string = '';
+
   selectedChain: Chain = {} as Chain;
 
   balancesObservableTimeout: any = null;

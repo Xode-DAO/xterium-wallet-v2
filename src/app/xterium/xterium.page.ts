@@ -127,16 +127,16 @@ export class XteriumPage implements OnInit {
     return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
-  truncateAddress(address: string): string {
-    return this.polkadotJsService.truncateAddress(address);
-  }
-
   async getCurrentWallet(): Promise<void> {
     const currentWallet = await this.walletsService.getCurrentWallet();
     if (currentWallet) {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
     }
+  }
+
+  truncateAddress(address: string): string {
+    return this.polkadotJsService.truncateAddress(address);
   }
 
   openMyWalletsModal() {

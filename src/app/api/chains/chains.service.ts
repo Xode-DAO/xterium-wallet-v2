@@ -33,7 +33,7 @@ export class ChainsService {
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://polkadot.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsic"
+        extrinsics_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {
@@ -49,7 +49,7 @@ export class ChainsService {
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsic"
+        extrinsics_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {
@@ -81,7 +81,7 @@ export class ChainsService {
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/extrinsic"
+        extrinsics_url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {
@@ -97,7 +97,7 @@ export class ChainsService {
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://paseo.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://paseo.api.subscan.io/api/v2/scan/extrinsic"
+        extrinsics_url: "https://paseo.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {
@@ -113,7 +113,7 @@ export class ChainsService {
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/extrinsic"
+        extrinsics_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {
@@ -145,7 +145,7 @@ export class ChainsService {
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/extrinsic"
+        extrinsics_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {

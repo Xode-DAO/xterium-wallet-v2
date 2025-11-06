@@ -49,7 +49,6 @@ export class ReceiveComponent implements OnInit {
   ) { }
 
   currentWallet: Wallet = {} as Wallet;
-  currentChain: Chain = {} as Chain;
   currentWalletPublicAddress: string = '';
 
   qrImageIcon: string = "./../../../assets/icon/xterium-logo.png";
@@ -68,7 +67,6 @@ export class ReceiveComponent implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
-      this.currentChain = this.currentWallet.chain;
     }
   }
 
@@ -86,7 +84,7 @@ export class ReceiveComponent implements OnInit {
       if (this.token) {
         await this.tokensService.attachIcon(this.token);
       } else {
-        this.qrImageIcon = "./../../../assets/images/chains/" + this.currentChain.image;
+        this.qrImageIcon = "./../../../assets/images/chains/" + this.currentWallet.chain.image;
       }
     }, 500);
   }
