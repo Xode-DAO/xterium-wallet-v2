@@ -12,7 +12,8 @@ import {
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
-  IonCardSubtitle
+  IonCardSubtitle,
+  IonButton,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -35,6 +36,7 @@ import { qrCode, cloudUpload } from 'ionicons/icons';
     IonCardHeader,
     IonCardTitle,
     IonCardSubtitle,
+    IonButton,
   ]
 })
 export class SelectPayPage implements OnInit {
