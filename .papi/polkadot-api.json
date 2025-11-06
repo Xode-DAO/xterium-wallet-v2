@@ -6,7 +6,7 @@
       "chain": "polkadot",
       "metadata": ".papi/metadata/polkadot.scale",
       "genesis": "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3",
-      "codeHash": "0xa4d527cb0db4146686eeffb216b562fe68440185d5067e6177d1681ff7bb3043"
+      "codeHash": "0x625e4190035e51bfaa349c61bc198ed4103658fb4bd5f6716015a4a7f0412bdd"
     },
     "assethubPolkadot": {
       "chain": "polkadot_asset_hub",
@@ -19,6 +19,12 @@
       "metadata": ".papi/metadata/xodePolkadot.scale",
       "genesis": "0xb2985e778bb748c70e450dcc084cc7da79fe742cc23d3b040abd7028187de69c",
       "codeHash": "0xd9879490ee930531a5377110f46d19a2f9c7d7eb06612e49f396b0456e9fc71a"
+    },
+    "hydrationPolkadot": {
+      "wsUrl": "wss://hydration-rpc.n.dwellir.com",
+      "metadata": ".papi/metadata/hydrationPolkadot.scale",
+      "genesis": "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d",
+      "codeHash": "0x252af19a9ac83c621c4f1307ded240c6054fe5c09b40e81c073ba74a3a06d898"
     }
   }
 }

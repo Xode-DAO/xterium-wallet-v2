@@ -36,9 +36,10 @@ import { Chain, Network } from 'src/models/chain.model';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
+import { PolkadotService } from 'src/app/api/polkadot-api/polkadot/polkadot.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
-import { ChainsService } from 'src/app/api/chains/chains.service';
+import { HydrationService } from 'src/app/api/polkadot-api/hydration/hydration.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 
@@ -83,9 +84,10 @@ export class SendComponent implements OnInit {
   constructor(
     private balancesService: BalancesService,
     private polkadotJsService: PolkadotJsService,
+    private polkadotService: PolkadotService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private chainsService: ChainsService,
+    private hydrationService: HydrationService,
     private walletsService: WalletsService,
     private multipayxApiService: MultipayxApiService,
     private toastController: ToastController,
@@ -168,8 +170,10 @@ export class SendComponent implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
 
     if (!service) return;
 
@@ -269,8 +273,10 @@ export class SendComponent implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
 
     if (!service) return;
 

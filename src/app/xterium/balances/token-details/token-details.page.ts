@@ -38,8 +38,10 @@ import { Balance } from 'src/models/balance.model';
 
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
+import { PolkadotService } from 'src/app/api/polkadot-api/polkadot/polkadot.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
+import { HydrationService } from 'src/app/api/polkadot-api/hydration/hydration.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -84,8 +86,10 @@ export class TokenDetailsPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private polkadotJsService: PolkadotJsService,
+    private polkadotService: PolkadotService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
+    private hydrationService: HydrationService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     private balancesService: BalancesService,
@@ -189,8 +193,10 @@ export class TokenDetailsPage implements OnInit {
 
     let service: PolkadotApiService | null = null;
 
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
 
     if (!service) return;
 
