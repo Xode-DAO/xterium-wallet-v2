@@ -21,7 +21,7 @@ export class ChainsService {
       scanner: undefined
     },
     {
-      id: 0,
+      id: 1,
       network: Network.Substrate,
       name: "Substrate",
       description: "Includes every supported Substrate-based blockchain network for selection.",
@@ -33,7 +33,7 @@ export class ChainsService {
       scanner: undefined
     },
     {
-      id: 1,
+      id: 2,
       network: Network.Polkadot,
       name: "Polkadot",
       description: "Connect to the Polkadot mainnet and its ecosystem.",
@@ -49,7 +49,7 @@ export class ChainsService {
       }
     },
     {
-      id: 2,
+      id: 3,
       network: Network.Polkadot,
       name: "AssetHub - Polkadot",
       description: "Manage your assets easily on the AssetHub parachain.",
@@ -65,7 +65,7 @@ export class ChainsService {
       }
     },
     {
-      id: 3,
+      id: 4,
       network: Network.Polkadot,
       name: "Xode - Polkadot",
       description: "Experience smooth and fast transactions with Xode.",
@@ -81,7 +81,7 @@ export class ChainsService {
       }
     },
     {
-      id: 4,
+      id: 5,
       network: Network.Polkadot,
       name: "Hydration",
       description: "Participate in decentralized trading and liquidity on the Hydration network.",
@@ -97,7 +97,7 @@ export class ChainsService {
       }
     },
     {
-      id: 5,
+      id: 6,
       network: Network.Paseo,
       name: "Paseo",
       description: "Connect to the Paseo mainnet and its ecosystem.",
@@ -113,7 +113,7 @@ export class ChainsService {
       }
     },
     {
-      id: 6,
+      id: 7,
       network: Network.Paseo,
       name: "AssetHub - Paseo",
       description: "Manage your assets easily on the Paseo AssetHub parachain.",
@@ -129,7 +129,7 @@ export class ChainsService {
       }
     },
     {
-      id: 7,
+      id: 8,
       network: Network.Paseo,
       name: "Xode - Paseo",
       description: "Experience smooth and fast transactions with Xode.",
@@ -145,7 +145,7 @@ export class ChainsService {
       }
     },
     {
-      id: 8,
+      id: 9,
       network: Network.Paseo,
       name: "Hydration - Paseo",
       description: "Test decentralized trading and liquidity features on Hydration’s Paseo test network.",
@@ -161,7 +161,7 @@ export class ChainsService {
       }
     },
     {
-      id: 9,
+      id: 10,
       network: Network.Solana,
       name: "Solana",
       description: "Make low-cost transactions on the high-performance Solana blockchain.",
@@ -173,7 +173,7 @@ export class ChainsService {
       scanner: undefined
     },
     {
-      id: 10,
+      id: 11,
       network: Network.SolanaTestnet,
       name: "Solana - Testnet",
       description: "Make low-cost transactions on the high-performance Solana blockchain.",
@@ -185,7 +185,7 @@ export class ChainsService {
       scanner: undefined
     },
     {
-      id: 11,
+      id: 12,
       network: Network.SolanaDevnet,
       name: "Solana - Devnet",
       description: "Make low-cost transactions on the high-performance Solana blockchain.",
