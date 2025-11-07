@@ -106,7 +106,7 @@ export class TransactionHistoryPage implements OnInit {
     });
   }
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   selectedDate: string = new Date().toISOString();
@@ -237,6 +237,8 @@ export class TransactionHistoryPage implements OnInit {
   }
 
   ngOnInit() {
-    this.fetchData();
+    this.walletsService.currentWalletObservable.subscribe(wallet => {
+      this.fetchData();
+    });
   }
 }

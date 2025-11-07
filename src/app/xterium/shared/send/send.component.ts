@@ -74,7 +74,7 @@ import { Router } from '@angular/router';
   ]
 })
 export class SendComponent implements OnInit {
-  @Input() balance: Balance = {} as Balance;
+  @Input() balance: Balance = new Balance();
 
   @Output() onClickSend = new EventEmitter<string>();
   @Output() onSendSuccessful = new EventEmitter<string>();
@@ -101,10 +101,10 @@ export class SendComponent implements OnInit {
     });
   }
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  selectedChain: Chain = {} as Chain;
+  selectedChain: Chain = new Chain();
 
   balancesObservableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
@@ -286,7 +286,11 @@ export class SendComponent implements OnInit {
     const encodedHex = (await transaction.getEncodedData()).asHex();
     this.onClickSend.emit(encodedHex);
 
-    this.router.navigate(['/web3/sign-transaction/' + encodedHex]);
+    this.router.navigate(['/web3/sign-transaction'], {
+      queryParams: {
+        encodedHex: encodedHex
+      }
+    });
   }
 
   ngOnInit() {

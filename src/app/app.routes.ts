@@ -95,7 +95,7 @@ export const routes: Routes = [
         loadComponent: () => import('./web3/approval/approval.page').then(m => m.ApprovalPage)
       },
       {
-        path: 'sign-transaction/:encodedhex',
+        path: 'sign-transaction',
         loadComponent: () => import('./web3/sign-transaction/sign-transaction.page').then(m => m.SignTransactionPage)
       },
       {

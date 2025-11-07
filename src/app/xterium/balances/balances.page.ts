@@ -72,7 +72,7 @@ export class BalancesPage implements OnInit {
   refreshCounter: number = 0;
   totalAmount: number = 0;
 
-  selectedBalance: Balance = {} as Balance
+  selectedBalance: Balance = new Balance();
 
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;

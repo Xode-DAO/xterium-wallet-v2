@@ -48,7 +48,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
   ]
 })
 export class WalletDetailsComponent implements OnInit {
-  @Input() wallet: Wallet = {} as Wallet;
+  @Input() wallet: Wallet = new Wallet();
 
   @Output() onUpdatedWallet = new EventEmitter<boolean>();
   @Output() onDeletedWallet = new EventEmitter<boolean>();
@@ -68,7 +68,7 @@ export class WalletDetailsComponent implements OnInit {
   walletPublicKey: string = '';
   updateTimeOut: any = null;
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {

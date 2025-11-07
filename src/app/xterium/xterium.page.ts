@@ -112,10 +112,10 @@ export class XteriumPage implements OnInit {
     });
   }
 
-  selectedChain: Chain = {} as Chain;
-  newlyAddedWallet: Wallet = {} as Wallet;
+  selectedChain: Chain = new Chain();
+  newlyAddedWallet: Wallet = new Wallet();
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {

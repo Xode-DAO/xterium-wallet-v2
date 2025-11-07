@@ -64,7 +64,7 @@ export class PaymentDetailsPage implements OnInit {
     });
   }
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   formattedAmountValue: string = "0";
@@ -74,7 +74,7 @@ export class PaymentDetailsPage implements OnInit {
     amount: 9.969981,
     price: 1.003011,
   };
-  payDetails: PayDetails = {} as PayDetails;
+  payDetails: PayDetails = new PayDetails();
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(

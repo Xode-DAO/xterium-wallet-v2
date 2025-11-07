@@ -46,10 +46,5 @@ export class HomePage {
       localStorage.clear();
       await this.router.navigate(['/onboarding'], { replaceUrl: true });
     }
-
-    window.history.pushState(null, '', window.location.href);
-    window.onpopstate = () => {
-      window.history.go(1);
-    };
   }
 }

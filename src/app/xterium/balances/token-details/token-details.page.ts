@@ -103,9 +103,9 @@ export class TokenDetailsPage implements OnInit {
     });
   }
 
-  balance: Balance = {} as Balance;
+  balance: Balance = new Balance();
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   observableTimeout: any = null;

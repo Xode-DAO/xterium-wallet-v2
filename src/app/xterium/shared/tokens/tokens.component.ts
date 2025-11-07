@@ -63,7 +63,7 @@ export class TokensComponent implements OnInit {
   tokenPrices: TokenPrice[] = [];
   balances: Balance[] = [];
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   observableTimeout: any = null;

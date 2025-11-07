@@ -120,7 +120,7 @@ export class SignTransactionPage implements OnInit {
   isChromeExtension = false;
   isPasswordExisting = false;
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   transaction: Transaction<any, any, any, void | undefined> | null = null;
@@ -166,28 +166,31 @@ export class SignTransactionPage implements OnInit {
   async initTransaction(): Promise<void> {
     await this.getCurrentWallet();
 
-    this.route.paramMap.subscribe(params => {
-      let service: PolkadotApiService | null = null;
+    this.route.queryParams.subscribe(params => {
+      if (params['encodedHex']) {
+        const encodedHex = params['encodedHex'];
 
-      if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
-      if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
-      if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
-      if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
+        let service: PolkadotApiService | null = null;
 
-      if (!service) return;
+        if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
+        if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
+        if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
+        if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
 
-      const encodedhex = params.get('encodedhex') || '';
-      service.getTransactionInfo(encodedhex).then(async (transactionInfo) => {
-        this.transaction = transactionInfo;
-        this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
+        if (!service) return;
 
-        setTimeout(async () => {
-          const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
+        service.getTransactionInfo(encodedHex).then(async (transactionInfo) => {
+          this.transaction = transactionInfo;
+          this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
 
-          this.estimatedFee = Number(fee.partial_fee);
-          this.isLoadingFee = false;
-        }, 1000);
-      });
+          setTimeout(async () => {
+            const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
+
+            this.estimatedFee = Number(fee.partial_fee);
+            this.isLoadingFee = false;
+          }, 1000);
+        });
+      }
     });
   }
 

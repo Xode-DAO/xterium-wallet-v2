@@ -69,7 +69,7 @@ export class ImportOptionsPage implements OnInit {
     });
   }
 
-  selectedChain: Chain = {} as Chain;
+  selectedChain: Chain = new Chain();
 
   openImportSeedPhraseModal() {
     this.importSeedPhraseModal.present();

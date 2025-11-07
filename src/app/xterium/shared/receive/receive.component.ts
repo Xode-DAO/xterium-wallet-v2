@@ -48,7 +48,7 @@ export class ReceiveComponent implements OnInit {
     private tokensService: TokensService,
   ) { }
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   qrImageIcon: string = "./../../../assets/icon/xterium-logo.png";

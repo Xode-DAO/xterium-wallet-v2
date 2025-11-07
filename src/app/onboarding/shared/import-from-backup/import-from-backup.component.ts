@@ -65,7 +65,7 @@ import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 export class ImportFromBackupComponent implements OnInit {
   @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
 
-  @Input() selectedChain: Chain = {} as Chain;
+  @Input() selectedChain: Chain = new Chain();
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(

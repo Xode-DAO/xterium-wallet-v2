@@ -26,7 +26,7 @@ export class ScannerService {
 
     if (chain.scanner && chain.scanner.type === ScannerType.Subscan) {
       let page = 0;
-      let row = 100;
+      let row = 50;
 
       let hasMore = true;
       while (hasMore) {
@@ -88,7 +88,7 @@ export class ScannerService {
 
     if (chain.scanner && chain.scanner.type === ScannerType.Subscan) {
       let page = 0;
-      let row = 100;
+      let row = 50;
 
       let hasMore = true;
       while (hasMore) {

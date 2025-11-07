@@ -59,7 +59,7 @@ export class WalletsComponent implements OnInit {
   @ViewChild('selectChainModal', { read: IonModal }) selectChainModal!: IonModal;
   @ViewChild('walletDetailsModal', { read: IonModal }) walletDetailsModal!: IonModal;
 
-  @Input() newlyAddedWallet: Wallet = {} as Wallet;
+  @Input() newlyAddedWallet: Wallet = new Wallet();
 
   @Output() onFilteredChain = new EventEmitter<Chain>();
   @Output() onSetCurrentWallet = new EventEmitter<Wallet>();
@@ -80,10 +80,10 @@ export class WalletsComponent implements OnInit {
   chainsByName: Record<string, Chain[]> = {};
   walletsByChain: Record<string, Wallet[]> = {};
 
-  selectedChain: Chain = {} as Chain;
-  selectedWallet: Wallet = {} as Wallet;
+  selectedChain: Chain = new Chain();
+  selectedWallet: Wallet = new Wallet();
 
-  currentWallet: Wallet = {} as Wallet;
+  currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   getChains(): void {

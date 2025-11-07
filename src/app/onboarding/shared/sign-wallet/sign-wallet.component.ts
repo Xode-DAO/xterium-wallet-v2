@@ -43,5 +43,4 @@ export class SignWalletComponent implements OnInit {
     this.isChromeExtension = this.environmentService.isChromeExtension();
     this.initSecurity();
   }
-
 }

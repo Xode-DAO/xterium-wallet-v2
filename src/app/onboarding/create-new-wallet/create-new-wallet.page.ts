@@ -50,7 +50,7 @@ export class CreateNewWalletPage implements OnInit {
     });
   }
 
-  selectedChain: Chain = {} as Chain;
+  selectedChain: Chain = new Chain();
 
   onCreatedWallet(wallet: Wallet) {
     this.router.navigate(['/xterium'], { replaceUrl: true });
