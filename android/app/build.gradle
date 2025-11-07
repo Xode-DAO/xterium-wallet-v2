@@ -1,10 +1,22 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "io.ionic.starter"
+    namespace "com.xterium.wallet"
     compileSdk rootProject.ext.compileSdkVersion
+
+    signingConfigs {
+        release {
+            if (System.getenv("ANDROID_KEYSTORE_PATH")) {
+                storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     defaultConfig {
-        applicationId "io.ionic.starter"
+        applicationId "com.xterium.wallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -27,7 +39,6 @@ android {
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
-		dirs '../../node_modules/@capacitor/background-runner/android/src/main/libs', 'libs'
     }
 }
 
