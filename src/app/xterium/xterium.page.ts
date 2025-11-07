@@ -21,6 +21,7 @@ import {
   IonAvatar,
   IonLabel,
   IonModal,
+  AlertController,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -33,7 +34,8 @@ import {
   qrCode,
   timer,
   compass,
-  chevronDownOutline
+  chevronDownOutline, 
+  logOutOutline 
 } from 'ionicons/icons';
 
 import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
@@ -49,6 +51,7 @@ import { Wallet } from 'src/models/wallet.model';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { AuthService } from '../api/auth/auth.service';
 
 @Component({
   selector: 'app-xterium',
@@ -97,7 +100,9 @@ export class XteriumPage implements OnInit {
   constructor(
     private polkadotJsService: PolkadotJsService,
     private chainsService: ChainsService,
-    private walletsService: WalletsService
+    private walletsService: WalletsService,
+    private authService: AuthService,
+    private alertCtrl: AlertController
   ) {
     addIcons({
       addCircle,
@@ -108,7 +113,8 @@ export class XteriumPage implements OnInit {
       qrCode,
       timer,
       compass,
-      chevronDownOutline
+      chevronDownOutline,
+      logOutOutline
     });
   }
 
@@ -133,6 +139,19 @@ export class XteriumPage implements OnInit {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
     }
+  }
+
+  async confirmLogout() {
+    const alert = await this.alertCtrl.create({
+      header: 'Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        { text: 'Logout', handler: () => this.authService.logout() }
+      ]
+    });
+
+    await alert.present();
   }
 
   truncateAddress(address: string): string {
@@ -213,6 +232,10 @@ export class XteriumPage implements OnInit {
 
   openSettingsModal() {
     this.settingsModal.present();
+  }
+
+  logout() {
+    this.authService.logout();
   }
 
   ngOnInit() {

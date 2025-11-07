@@ -12,8 +12,11 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="openSettingsModal()">
+      <!-- <ion-button fill="clear" (click)="openSettingsModal()">
         <ion-icon name="settings-outline" size=""></ion-icon>
+      </ion-button> -->
+      <ion-button fill="clear" (click)="confirmLogout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
