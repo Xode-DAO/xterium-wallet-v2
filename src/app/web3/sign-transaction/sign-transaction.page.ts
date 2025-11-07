@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Transaction } from 'polkadot-api';
-
 import {
   IonContent,
   IonGrid,
@@ -123,7 +121,7 @@ export class SignTransactionPage implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  transaction: Transaction<any, any, any, void | undefined> | null = null;
+  encodedCallDataHex: string = "";
 
   extrinsic: string = "";
   estimatedFee: number = 0;
@@ -167,8 +165,8 @@ export class SignTransactionPage implements OnInit {
     await this.getCurrentWallet();
 
     this.route.queryParams.subscribe(params => {
-      if (params['encodedHex']) {
-        const encodedHex = params['encodedHex'];
+      if (params['encodedCallDataHex']) {
+        this.encodedCallDataHex = params['encodedCallDataHex'];
 
         let service: PolkadotApiService | null = null;
 
@@ -179,10 +177,8 @@ export class SignTransactionPage implements OnInit {
 
         if (!service) return;
 
-        service.getTransactionInfo(encodedHex).then(async (transactionInfo) => {
-          this.transaction = transactionInfo;
+        service.decodeCallData(this.encodedCallDataHex).then(async (transactionInfo) => {
           this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
-
           setTimeout(async () => {
             const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
 
@@ -199,26 +195,24 @@ export class SignTransactionPage implements OnInit {
   }
 
   async confirmSignTransaction(decryptedPassword: string) {
-    if (!this.transaction) {
-      console.error('Transaction data or transaction object is missing');
-      return;
-    }
-
     this.isProcessing = true;
 
     let service: PolkadotApiService | null = null;
 
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
 
     if (!service) return;
 
     const decryptedPrivateKey = await this.encryptionService.decrypt(this.currentWallet.private_key, decryptedPassword);
     const walletSigner: WalletSigner = {
+      public_key: this.currentWallet.public_key,
       private_key: decryptedPrivateKey
     };
 
-    service.signTransactions(this.transaction, walletSigner).subscribe({
+    service.signAndSubmitTransaction(this.encodedCallDataHex, walletSigner).subscribe({
       next: async (event) => {
         this.confirmSignTransactionModal.dismiss();
 

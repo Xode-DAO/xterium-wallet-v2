@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PolkadotClient, TypedApi, Transaction, TxEvent } from 'polkadot-api';
+import { PolkadotClient, TypedApi, Transaction, TxEvent, HexString } from 'polkadot-api';
 
 import { Token, TokenPrice } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
@@ -15,8 +15,6 @@ export abstract class PolkadotApiService {
   protected abstract client: PolkadotClient;
   protected abstract chainApi: TypedApi<any>;
 
-  abstract getTransactionInfo(encodedData: string): Promise<Transaction<any, any, any, void | undefined>>;
-
   abstract getTokens(): Promise<Token[]>;
   abstract getBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Promise<Balance[]>;
 
@@ -24,6 +22,8 @@ export abstract class PolkadotApiService {
   abstract watchBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Observable<Balance[]>;
   abstract watchBalance(balance: Balance, publicKey: string): Observable<Balance>;
 
-  abstract transfer(balance: Balance, destPublicKey: string, value: number): Transaction<any, any, any, void | undefined>;
-  abstract signTransactions(transaction: Transaction<any, any, any, void | undefined>, walletSigner: WalletSigner): Observable<TxEvent>;
+  abstract transfer(balance: Balance, destPublicKey: string, value: number): Transaction<any, any, any, void | undefined>
+
+  abstract decodeCallData(encodedCallDataHex: HexString): Promise<Transaction<any, any, any, void | undefined>>;
+  abstract signAndSubmitTransaction(encodedCallDataHex: HexString, walletSigner: WalletSigner): Observable<TxEvent>;
 }

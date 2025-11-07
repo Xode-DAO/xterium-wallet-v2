@@ -20,7 +20,12 @@
           <div class="ion-text-center">
             <ion-chip [color]="'success'">
               <ion-icon [name]="'cube'"></ion-icon>
+              @if (isLoadingFee) {
+              <ion-spinner name="lines"></ion-spinner>
+              }
+              @else {
               <ion-label>{{ extrinsic }}</ion-label>
+              }
             </ion-chip>
           </div>
         </ion-col>
@@ -75,7 +80,7 @@
                 <ion-text slot="end" class="label-value">
                   @if (isLoadingFee) {
                   <div class="fee-loading">
-                    <ion-spinner name="crescent"></ion-spinner>
+                    <ion-spinner name="lines"></ion-spinner>
                   </div>
                   }
                   @else {
@@ -141,7 +146,13 @@
         </div>
 
         <div class="ion-padding-horizontal">
-          @if (isChromeExtension) {
+          @if (isPasswordExisting) {
+          <app-password-login (onLogin)="confirmSignTransaction($event)"></app-password-login>
+          } @else {
+          <app-password-setup></app-password-setup>
+          }
+
+          <!-- @if (isChromeExtension) {
           @if (isPasswordExisting) {
           <app-password-login (onLogin)="confirmSignTransaction($event)"></app-password-login>
           } @else {
@@ -149,7 +160,7 @@
           }
           } @else {
           <app-biometric (onLogin)="confirmSignTransaction($event)"></app-biometric>
-          }
+          } -->
         </div>
       </div>
     </ion-content>

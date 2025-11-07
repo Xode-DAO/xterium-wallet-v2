@@ -224,8 +224,7 @@ export class SendComponent implements OnInit {
 
     const [integer, decimal] = rawValue.split('.');
     const withCommas = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    this.formattedAmountValue =
-      decimal !== undefined ? `${withCommas}.${decimal}` : `${withCommas}.00`;
+    this.formattedAmountValue = decimal !== undefined ? `${withCommas}.${decimal}` : `${withCommas}.00`;
   }
 
   onAmountKeyDown(event: KeyboardEvent) {
@@ -283,12 +282,12 @@ export class SendComponent implements OnInit {
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
     const transaction = service.transfer(this.balance, this.recipientAddress, parseAmount);
 
-    const encodedHex = (await transaction.getEncodedData()).asHex();
-    this.onClickSend.emit(encodedHex);
+    const encodedCallDataHex = (await transaction.getEncodedData()).asHex();
+    this.onClickSend.emit(encodedCallDataHex);
 
     this.router.navigate(['/web3/sign-transaction'], {
       queryParams: {
-        encodedHex: encodedHex
+        encodedCallDataHex: encodedCallDataHex
       }
     });
   }

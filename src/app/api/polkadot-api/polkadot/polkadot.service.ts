@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { polkadot, MultiAddress } from "@polkadot-api/descriptors"
-import { createClient, Transaction, TxEvent, InvalidTxError, Binary } from 'polkadot-api';
+import { createClient, Transaction, TxEvent, InvalidTxError, Binary, HexString } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider/web';
 import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
@@ -22,12 +22,6 @@ export class PolkadotService extends PolkadotApiService {
   protected wsProvider = "wss://polkadot-rpc.n.dwellir.com";
   protected client = createClient(getWsProvider(this.wsProvider));
   protected chainApi = this.client.getTypedApi(polkadot);
-
-  async getTransactionInfo(encodedData: string): Promise<Transaction<any, any, any, void | undefined>> {
-    const binary = Binary.fromHex(encodedData);
-    const decodedTx = await this.chainApi.txFromCallData(binary);
-    return decodedTx;
-  }
 
   async getTokens(): Promise<Token[]> {
     const xodeChainSpecs = this.client.getChainSpecData();
@@ -229,29 +223,40 @@ export class PolkadotService extends PolkadotApiService {
     });
   }
 
-  signTransactions(transaction: Transaction<any, any, any, void | undefined>, walletSigner: WalletSigner): Observable<TxEvent> {
+  async decodeCallData(encodedCallDataHex: string): Promise<Transaction<any, any, any, void | undefined>> {
+    const binary = Binary.fromHex(encodedCallDataHex);
+    const transaction = await this.chainApi.txFromCallData(binary);
+    return transaction;
+  }
+
+  signAndSubmitTransaction(encodedCallDataHex: HexString, walletSigner: WalletSigner): Observable<TxEvent> {
     return new Observable<TxEvent>(subscriber => {
       const subscriptions: any[] = [];
 
-      const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
-      const signer = getPolkadotSigner(
-        sr25519.getPublicKey(secretKey),
-        "Sr25519",
-        (input) => sr25519.sign(input, secretKey),
-      );
+      (async () => {
+        const binary = Binary.fromHex(encodedCallDataHex);
+        const transaction = await this.chainApi.txFromCallData(binary);
 
-      const signTransactionSubscription = transaction
-        .signSubmitAndWatch(signer)
-        .subscribe({
-          next: (event: TxEvent) => {
-            subscriber.next(event);
-          },
-          error(err: InvalidTxError) {
-            subscriber.error(err);
-          },
-        });
+        const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
+        const signer = getPolkadotSigner(
+          sr25519.getPublicKey(secretKey),
+          "Sr25519",
+          (input) => sr25519.sign(input, secretKey),
+        );
 
-      subscriptions.push(signTransactionSubscription);
+        const signTransactionSubscription = transaction
+          .signSubmitAndWatch(signer)
+          .subscribe({
+            next: (event: TxEvent) => {
+              subscriber.next(event);
+            },
+            error(err: InvalidTxError) {
+              subscriber.error(err);
+            },
+          });
+
+        subscriptions.push(signTransactionSubscription);
+      })();
 
       return () => subscriptions.forEach(s => s.unsubscribe());
     });
