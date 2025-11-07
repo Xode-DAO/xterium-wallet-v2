@@ -21,7 +21,8 @@ import {
   IonAvatar,
   IonLabel,
   IonModal,
-  AlertController,
+  ToastController,
+  ActionSheetController,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -102,7 +103,8 @@ export class XteriumPage implements OnInit {
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     private authService: AuthService,
-    private alertCtrl: AlertController
+    private toastController: ToastController,
+    private actionSheetController: ActionSheetController,
   ) {
     addIcons({
       addCircle,
@@ -142,16 +144,36 @@ export class XteriumPage implements OnInit {
   }
 
   async confirmLogout() {
-    const alert = await this.alertCtrl.create({
-      header: 'Logout',
-      message: 'Are you sure you want to logout?',
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Are you sure you want to logout?',
+      subHeader: 'You will need to login again.',
       buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        { text: 'Logout', handler: () => this.authService.logout() }
+        {
+          text: 'Logout',
+          role: 'destructive',
+          handler: async () => {
+            await this.authService.logout();
+
+            actionSheet.dismiss();
+
+            const toast = await this.toastController.create({
+              message: 'Logged out successfully!',
+              color: 'success',
+              duration: 1500,
+              position: 'top'
+            });
+
+            await toast.present();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
       ]
     });
 
-    await alert.present();
+    await actionSheet.present();
   }
 
   truncateAddress(address: string): string {
@@ -232,10 +254,6 @@ export class XteriumPage implements OnInit {
 
   openSettingsModal() {
     this.settingsModal.present();
-  }
-
-  logout() {
-    this.authService.logout();
   }
 
   ngOnInit() {
