@@ -19,7 +19,7 @@
         <ion-grid>
           <ion-row class="date-as-of">
             <ion-col size="12">
-              <ion-item lines="none">
+              <!-- <ion-item lines="none">
                 <div slot="start">
                   <ion-label>Date as of:</ion-label>
                 </div>
@@ -32,7 +32,7 @@
                     </ng-template>
                   </ion-modal>
                 </div>
-              </ion-item>
+              </ion-item> -->
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -70,7 +70,18 @@
                   <ion-label>
                     <b>{{ payment.timestamp | date: 'shortTime' }}</b> - {{ payment.bank_name }}
                   </ion-label>
-                  <ion-chip color="success" slot="end">
+                  <ion-chip [color]="
+                      payment.status === 'failed'
+                        ? 'danger'
+                        : payment.status === 'processing'
+                        ? 'primary'
+                        : payment.status === 'pending'
+                        ? 'secondary'
+                        : payment.status === 'completed'
+                        ? 'success'
+                        : 'medium'
+                    "
+                    slot="end">
                     <ion-label> {{ payment.status }} </ion-label>
                   </ion-chip>
                 </ion-item>
@@ -131,12 +142,12 @@
         <ion-grid>
           <ion-row class="search-hash">
             <ion-col size="12">
-              <ion-item>
-                <ion-input [(ngModel)]="searchKeyword" placeholder="Enter transaction hash"></ion-input>
-                <ion-button fill="clear" slot="end">
+              <!-- <ion-item>
+                <ion-input [(ngModel)]="searchKeyword" placeholder="Enter transaction hash" (ionInput)="filterTransactions()"></ion-input>
+                <ion-button fill="clear" slot="end" (click)="filterTransactions()">
                   <ion-icon name="search-outline" size="small"></ion-icon>
                 </ion-button>
-              </ion-item>
+              </ion-item> -->
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -246,12 +257,12 @@
         <ion-grid>
           <ion-row class="search-hash">
             <ion-col size="12">
-              <ion-item>
+              <!-- <ion-item>
                 <ion-input [(ngModel)]="searchKeyword" placeholder="Enter transaction hash"></ion-input>
                 <ion-button fill="clear" slot="end">
                   <ion-icon name="search-outline" size="small"></ion-icon>
                 </ion-button>
-              </ion-item>
+              </ion-item> -->
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -288,7 +299,13 @@
                     <strong> {{ transaction.extrinsic_hash | slice:0:10 }}...{{ transaction.extrinsic_hash | slice:-4 }}
                     </strong>
                   </ion-label>
-                  <ion-chip color="success" slot="end">
+                 <ion-chip [color]="transaction.status === 'Fail'
+                        ? 'danger'
+                        : transaction.status === 'Success'
+                        ? 'success'
+                        : 'medium'
+                    "
+                    slot="end">
                     <ion-label> {{ transaction.status }} </ion-label>
                   </ion-chip>
                 </ion-item>
