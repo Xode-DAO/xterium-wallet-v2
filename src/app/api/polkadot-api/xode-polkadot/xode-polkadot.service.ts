@@ -9,7 +9,7 @@ import { getWsProvider } from 'polkadot-api/ws-provider/web';
 import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
 
-import { Token, TokenPrice } from 'src/models/token.model';
+import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { WalletSigner } from 'src/models/wallet.model';
 
@@ -19,7 +19,7 @@ import { PolkadotApiService } from '../polkadot-api.service';
   providedIn: 'root'
 })
 export class XodePolkadotService extends PolkadotApiService {
-  protected wsProvider = "wss://polkadot-rpcnode.xode.net";
+  protected wsProvider = "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc";
   protected client = createClient(getWsProvider(this.wsProvider));
   protected chainApi = this.client.getTypedApi(xodePolkadot);
 
@@ -73,7 +73,7 @@ export class XodePolkadotService extends PolkadotApiService {
     return tokens;
   }
 
-  async getBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Promise<Balance[]> {
+  async getBalances(tokens: Token[], publicKey: string): Promise<Balance[]> {
     const balances: Balance[] = [];
 
     if (tokens.length > 0) {
@@ -81,19 +81,14 @@ export class XodePolkadotService extends PolkadotApiService {
 
       await Promise.all(
         tokens.map(async (token) => {
-          let price = 0;
-          if (tokenPrices.length > 0) {
-            price = tokenPrices.find(p => p.token.id === token.id)?.price || 0;
-          }
-
           if (token.type === 'native') {
             const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
             balances.push({
               id: uuidv4(),
               token,
               quantity: Number(balanceAccount.data.free),
-              price,
-              amount: Number(balanceAccount.data.free) * price,
+              price: 0,
+              amount: 0,
             });
           } else {
             const assetId = token.reference_id;
@@ -105,8 +100,8 @@ export class XodePolkadotService extends PolkadotApiService {
                 id: uuidv4(),
                 token,
                 quantity: Number(account.balance),
-                price,
-                amount: Number(account.balance) * price,
+                price: 0,
+                amount: 0,
               });
             }
           }
@@ -221,7 +216,7 @@ export class XodePolkadotService extends PolkadotApiService {
     });
   }
 
-  watchBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Observable<Balance[]> {
+  watchBalances(tokens: Token[], publicKey: string): Observable<Balance[]> {
     return new Observable<Balance[]>(subscriber => {
       const subscriptions: any[] = [];
       const balances: Balance[] = [];
@@ -229,19 +224,14 @@ export class XodePolkadotService extends PolkadotApiService {
       (async () => {
         const balanceList = await Promise.all(
           tokens.map(async token => {
-            let price = 0;
-            if (tokenPrices.length > 0) {
-              price = tokenPrices.find(p => p.token.symbol.toLowerCase() === token.symbol.toLowerCase())?.price || 0;
-            }
-
             if (token.type === 'native') {
               const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
               return <Balance>{
                 id: uuidv4(),
                 token,
                 quantity: Number(balanceAccount.data.free),
-                price,
-                amount: Number(balanceAccount.data.free) * price,
+                price: 0,
+                amount: 0,
               };
             } else {
               const assetId = token.reference_id;
@@ -253,8 +243,8 @@ export class XodePolkadotService extends PolkadotApiService {
                 id: uuidv4(),
                 token,
                 quantity: Number(account.balance),
-                price,
-                amount: Number(account.balance) * price,
+                price: 0,
+                amount: 0,
               };
             }
           })
@@ -267,11 +257,6 @@ export class XodePolkadotService extends PolkadotApiService {
         subscriber.next([...balances]);
 
         newBalances.forEach(balance => {
-          let price = 0;
-          if (tokenPrices.length > 0) {
-            price = tokenPrices.find(p => p.token.symbol.toLowerCase() === balance.token.symbol.toLowerCase())?.price || 0;
-          }
-
           if (balance.token.type === 'native') {
             const systemAccountSubscription = this.chainApi.query.System.Account
               .watchValue(publicKey, "best")
@@ -282,8 +267,8 @@ export class XodePolkadotService extends PolkadotApiService {
                   balances[idx] = {
                     ...balances[idx],
                     quantity: Number(account.data.free),
-                    price,
-                    amount: Number(account.data.free) * price,
+                    price: 0,
+                    amount: 0,
                   };
 
                   subscriber.next([...balances]);
@@ -302,8 +287,6 @@ export class XodePolkadotService extends PolkadotApiService {
                     balances[idx] = {
                       ...balances[idx],
                       quantity: Number(account.balance),
-                      price,
-                      amount: Number(account.balance) * price,
                     };
 
                     subscriber.next([...balances]);
@@ -332,8 +315,8 @@ export class XodePolkadotService extends PolkadotApiService {
               id: balance.id,
               token: balance.token,
               quantity: Number(account.data.free),
-              price: balance.price,
-              amount: Number(account.data.free) * balance.price,
+              price: 0,
+              amount: 0,
             };
 
             subscriber.next(newBalance);
@@ -350,8 +333,8 @@ export class XodePolkadotService extends PolkadotApiService {
                 id: balance.id,
                 token: balance.token,
                 quantity: Number(account.balance),
-                price: balance.price,
-                amount: Number(account.balance) * balance.price,
+                price: 0,
+                amount: 0,
               };
 
               subscriber.next(newBalance);
@@ -407,7 +390,6 @@ export class XodePolkadotService extends PolkadotApiService {
           .signSubmitAndWatch(signer)
           .subscribe({
             next: (event: TxEvent) => {
-              console.log('Transaction event:', event);
               subscriber.next(event);
             },
             error(err: InvalidTxError) {

@@ -9,8 +9,3 @@ export class Token {
   type: string = "native";
   image: string = "";
 }
-
-export class TokenPrice {
-  token: Token = new Token();
-  price: number = 0;
-}

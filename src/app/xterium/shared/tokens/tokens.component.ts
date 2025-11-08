@@ -11,8 +11,9 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 
-import { Token, TokenPrice } from 'src/models/token.model';
+import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
+import { Price } from 'src/models/price.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Chain, Network } from 'src/models/chain.model';
 
@@ -60,8 +61,8 @@ export class TokensComponent implements OnInit {
   ) { }
 
   tokens: Token[] = [];
-  tokenPrices: TokenPrice[] = [];
   balances: Balance[] = [];
+  prices: Price[] = [];
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
@@ -97,77 +98,23 @@ export class TokensComponent implements OnInit {
     if (!service) return;
 
     this.tokens = await service.getTokens();
-    await this.getTokenPrices();
+    await this.getAndWatchBalances(service);
   }
 
-  async getTokenPrices(): Promise<void> {
-    let tokenPrices: TokenPrice[] = [];
-
-    let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency("USD");
-    if (pricePerCurrency.data.length > 0) {
-      await Promise.all(
-        pricePerCurrency.data.map(item => {
-          const token = this.tokens.find(token => token.symbol.toLowerCase() === item.symbol.toLowerCase());
-          if (token) {
-            tokenPrices.push({
-              token: token,
-              price: item.price
-            });
-          }
-        })
-      );
-    }
-
-    this.tokenPrices = tokenPrices;
-  }
-
-  async getBalances(): Promise<void> {
-    let service: PolkadotApiService | null = null;
-
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
-
-    if (!service) return;
-
-    this.balances = await service.getBalances(this.tokens, this.tokenPrices, this.currentWalletPublicAddress);
-    this.computeTotalBalanceAmount();
-
+  async getAndWatchBalances(service: PolkadotApiService): Promise<void> {
+    this.balances = await service.getBalances(this.tokens, this.currentWalletPublicAddress);
     await this.getBalanceTokenImages();
 
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
-        this.balancesSubscription = service.watchBalances(
-          this.tokens,
-          this.tokenPrices,
-          this.currentWalletPublicAddress
-        ).subscribe(balances => {
+        this.balancesSubscription = service.watchBalances(this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
           this.balances = balances;
-          this.computeTotalBalanceAmount();
+          this.computeBalancesAmount();
         });
       }
     }, 5000);
-  }
 
-  computeTotalBalanceAmount(): void {
-    setTimeout(() => {
-      let totalAmount = 0;
-
-      for (const token of this.tokens) {
-        const filtered = this.balances.find(
-          w => w.token?.reference_id === token.reference_id
-        );
-
-        if (filtered) {
-          let amount = filtered.amount;
-          let formattedAmount = this.formatBalance(amount, token.decimals);
-          totalAmount += Number(formattedAmount);
-
-          this.onTotalAmount.emit(totalAmount);
-        }
-      }
-    }, 1500);
+    await this.getPrices();
   }
 
   async getBalanceTokenImages(): Promise<void> {
@@ -183,6 +130,57 @@ export class TokensComponent implements OnInit {
     }, 500);
   }
 
+  async getPrices(): Promise<void> {
+    let prices: Price[] = [];
+
+    let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency("USD");
+    if (pricePerCurrency.data.length > 0) {
+      pricePerCurrency.data.map(item => {
+        const token = this.tokens.find(token => token.symbol.toLowerCase() === item.symbol.toLowerCase());
+        if (token) {
+          prices.push({
+            id: item.id,
+            token: token,
+            price: item.price
+          });
+        }
+      })
+    }
+
+    this.prices = prices;
+    this.computeBalancesAmount();
+  }
+
+  computeBalancesAmount(): void {
+    this.balances = this.balances.map(asset => {
+      const priceObj = this.prices.find(p => p.token.symbol.toLowerCase() === asset.token.symbol.toLowerCase());
+      const price = priceObj ? priceObj.price : 0;
+      const amount = asset.quantity * price;
+
+      return {
+        ...asset,
+        price,
+        amount
+      };
+    });
+
+    this.computeTotalBalanceAmount();
+  }
+
+  computeTotalBalanceAmount(): void {
+    setTimeout(() => {
+      let totalAmount = 0;
+
+      for (const balance of this.balances) {
+        let amount = balance.amount;
+        let formattedAmount = this.formatBalance(amount, balance.token.decimals);
+        totalAmount += Number(formattedAmount);
+
+        this.onTotalAmount.emit(totalAmount);
+      }
+    }, 1500);
+  }
+
   async fetchData(): Promise<void> {
     clearTimeout(this.observableTimeout);
     if (!this.balancesSubscription.closed) this.balancesSubscription.unsubscribe();
@@ -193,7 +191,6 @@ export class TokensComponent implements OnInit {
     this.onTotalAmount.emit(0);
 
     await this.getTokens();
-    await this.getBalances();
   }
 
   formatBalance(amount: number, decimals: number): number {

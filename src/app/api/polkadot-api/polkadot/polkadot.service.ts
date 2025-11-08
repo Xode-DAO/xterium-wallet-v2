@@ -9,7 +9,7 @@ import { getWsProvider } from 'polkadot-api/ws-provider/web';
 import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
 
-import { Token, TokenPrice } from 'src/models/token.model';
+import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { WalletSigner } from 'src/models/wallet.model';
 
@@ -50,7 +50,7 @@ export class PolkadotService extends PolkadotApiService {
     return tokens;
   }
 
-  async getBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Promise<Balance[]> {
+  async getBalances(tokens: Token[], publicKey: string): Promise<Balance[]> {
     const balances: Balance[] = [];
 
     if (tokens.length > 0) {
@@ -58,18 +58,13 @@ export class PolkadotService extends PolkadotApiService {
 
       await Promise.all(
         tokens.map(async (token) => {
-          let price = 0;
-          if (tokenPrices.length > 0) {
-            price = tokenPrices.find(p => p.token.id === token.id)?.price || 0;
-          }
-
           const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
           balances.push({
             id: uuidv4(),
             token,
             quantity: Number(balanceAccount.data.free),
-            price,
-            amount: Number(balanceAccount.data.free) * price,
+            price: 0,
+            amount: 0,
           });
         })
       );
@@ -129,7 +124,7 @@ export class PolkadotService extends PolkadotApiService {
     });
   }
 
-  watchBalances(tokens: Token[], tokenPrices: TokenPrice[], publicKey: string): Observable<Balance[]> {
+  watchBalances(tokens: Token[], publicKey: string): Observable<Balance[]> {
     return new Observable<Balance[]>(subscriber => {
       const subscriptions: any[] = [];
       const balances: Balance[] = [];
@@ -137,18 +132,11 @@ export class PolkadotService extends PolkadotApiService {
       (async () => {
         const balanceList = await Promise.all(
           tokens.map(async token => {
-            let price = 0;
-            if (tokenPrices.length > 0) {
-              price = tokenPrices.find(p => p.token.symbol.toLowerCase() === token.symbol.toLowerCase())?.price || 0;
-            }
-
             const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
             return <Balance>{
               id: uuidv4(),
               token,
               quantity: Number(balanceAccount.data.free),
-              price,
-              amount: Number(balanceAccount.data.free) * price,
             };
           })
         );
@@ -160,11 +148,6 @@ export class PolkadotService extends PolkadotApiService {
         subscriber.next([...balances]);
 
         newBalances.forEach(balance => {
-          let price = 0;
-          if (tokenPrices.length > 0) {
-            price = tokenPrices.find(p => p.token.symbol.toLowerCase() === balance.token.symbol.toLowerCase())?.price || 0;
-          }
-
           const systemAccountSubscription = this.chainApi.query.System.Account
             .watchValue(publicKey, "best")
             .subscribe(account => {
@@ -174,8 +157,6 @@ export class PolkadotService extends PolkadotApiService {
                 balances[idx] = {
                   ...balances[idx],
                   quantity: Number(account.data.free),
-                  price,
-                  amount: Number(account.data.free) * price,
                 };
 
                 subscriber.next([...balances]);
@@ -201,8 +182,8 @@ export class PolkadotService extends PolkadotApiService {
             id: balance.id,
             token: balance.token,
             quantity: Number(account.data.free),
-            price: balance.price,
-            amount: Number(account.data.free) * balance.price,
+            price: 0,
+            amount: 0,
           };
 
           subscriber.next(newBalance);

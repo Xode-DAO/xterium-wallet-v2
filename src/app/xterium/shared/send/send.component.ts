@@ -156,10 +156,10 @@ export class SendComponent implements OnInit {
     if (!this.balancesSubscription.closed) this.balancesSubscription.unsubscribe();
 
     await this.getCurrentWallet();
-    await this.getTokenPrice();
+    await this.getPrice();
   }
 
-  async getTokenPrice(): Promise<void> {
+  async getPrice(): Promise<void> {
     let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency("USD");
     if (pricePerCurrency.data.length > 0) {
       let price = pricePerCurrency.data.filter(item => item.symbol.toLowerCase() === this.balance.token.symbol.toLowerCase())
