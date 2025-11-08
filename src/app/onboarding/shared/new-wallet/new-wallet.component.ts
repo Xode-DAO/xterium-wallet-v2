@@ -178,7 +178,6 @@ export class NewWalletComponent implements OnInit {
       };
 
       await this.walletsService.create(wallet);
-      this.onCreatedWallet.emit({ ...wallet });
 
       const wallets = await this.walletsService.getAllWallets();
       if (wallets.length === 1) {
@@ -217,6 +216,8 @@ export class NewWalletComponent implements OnInit {
       });
 
       await toast.present();
+
+      this.onCreatedWallet.emit({ ...wallet });
     } else {
       this.confirmSaveWalletModal.dismiss();
       this.isProcessing = false;

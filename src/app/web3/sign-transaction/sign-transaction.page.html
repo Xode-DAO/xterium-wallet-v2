@@ -148,13 +148,7 @@
         </div>
 
         <div class="ion-padding-horizontal">
-          @if (isPasswordExisting) {
-          <app-password-login (onLogin)="confirmSignTransaction($event)"></app-password-login>
-          } @else {
-          <app-password-setup></app-password-setup>
-          }
-
-          <!-- @if (isChromeExtension) {
+          @if (isChromeExtension) {
           @if (isPasswordExisting) {
           <app-password-login (onLogin)="confirmSignTransaction($event)"></app-password-login>
           } @else {
@@ -162,7 +156,7 @@
           }
           } @else {
           <app-biometric (onLogin)="confirmSignTransaction($event)"></app-biometric>
-          } -->
+          }
         </div>
       </div>
     </ion-content>

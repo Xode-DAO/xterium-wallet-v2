@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -35,8 +36,8 @@ import {
   qrCode,
   timer,
   compass,
-  chevronDownOutline, 
-  logOutOutline 
+  chevronDownOutline,
+  logOutOutline
 } from 'ionicons/icons';
 
 import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
@@ -99,6 +100,7 @@ export class XteriumPage implements OnInit {
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
 
   constructor(
+    private router: Router,
     private polkadotJsService: PolkadotJsService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
@@ -118,6 +120,8 @@ export class XteriumPage implements OnInit {
       chevronDownOutline,
       logOutOutline
     });
+
+    this.initAuthentication();
   }
 
   selectedChain: Chain = new Chain();
@@ -140,6 +144,34 @@ export class XteriumPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
+    }
+  }
+
+  truncateAddress(address: string): string {
+    return this.polkadotJsService.truncateAddress(address);
+  }
+
+  async initAuthentication() {
+    const auth = await this.authService.getAuth();
+
+    if (auth) {
+      const isAuthExpired = auth.expires_at ? Date.now() > auth.expires_at : false;
+      if (isAuthExpired) {
+        await this.router.navigate(['/security'], { replaceUrl: true });
+      } else {
+        const wallets = await this.walletsService.getAllWallets();
+        const currentWallet = await this.walletsService.getCurrentWallet();
+
+        if (wallets.length === 0 || !currentWallet) {
+          localStorage.clear();
+
+          await this.router.navigate(['/onboarding'], { replaceUrl: true });
+          return;
+        }
+      }
+    } else {
+      localStorage.clear();
+      await this.router.navigate(['/onboarding'], { replaceUrl: true });
     }
   }
 
@@ -174,10 +206,6 @@ export class XteriumPage implements OnInit {
     });
 
     await actionSheet.present();
-  }
-
-  truncateAddress(address: string): string {
-    return this.polkadotJsService.truncateAddress(address);
   }
 
   openMyWalletsModal() {

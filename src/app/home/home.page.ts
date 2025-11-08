@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 
 import { IonRouterOutlet } from '@ionic/angular/standalone';
 
-import { AuthService } from '../api/auth/auth.service';
-import { WalletsService } from '../api/wallets/wallets.service';
+import { AuthService } from 'src/app/api/auth/auth.service';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
   selector: 'app-home',

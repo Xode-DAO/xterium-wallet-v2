@@ -14,12 +14,16 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonButton,
+  IonAlert,
+  AlertController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
 import { qrCode, cloudUpload } from 'ionicons/icons';
 
 import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } from '@capacitor/barcode-scanner';
+
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 
 import { PayDetails } from 'src/models/pay.model';
 
@@ -41,16 +45,23 @@ import { PayDetails } from 'src/models/pay.model';
     IonCardTitle,
     IonCardSubtitle,
     IonButton,
+    IonAlert
   ]
 })
 export class PayPage implements OnInit {
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private environmentService: EnvironmentService,
+    private alertController: AlertController
+  ) {
     addIcons({
       qrCode,
       cloudUpload,
     });
   }
+
+  isChromeExtension = false;
 
   formatEMVQR(data: string) {
     const parsed: any = {};
@@ -74,6 +85,20 @@ export class PayPage implements OnInit {
   }
 
   async scan() {
+    if (this.isChromeExtension) {
+      const alert = await this.alertController.create({
+        header: 'Scanning Not Supported',
+        subHeader: 'Chrome Extension Limitation',
+        message: 'Scanning QR codes is not supported in the Chrome Extension version of the app. Please use the mobile app to scan QR codes.',
+        backdropDismiss: true,
+        buttons: ['Ok'],
+      });
+
+      await alert.present();
+      return;
+    }
+
+
     const result = await CapacitorBarcodeScanner.scanBarcode({
       hint: CapacitorBarcodeScannerTypeHint.ALL
     });
@@ -107,6 +132,8 @@ export class PayPage implements OnInit {
     console.log('Upload QR clicked');
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+  }
 
 }

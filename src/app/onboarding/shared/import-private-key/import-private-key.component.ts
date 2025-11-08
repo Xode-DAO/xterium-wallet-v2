@@ -167,7 +167,6 @@ export class ImportPrivateKeyComponent implements OnInit {
       };
 
       await this.walletsService.create(wallet);
-      this.onImportedWallet.emit({ ...wallet });
 
       const wallets = await this.walletsService.getAllWallets();
       if (wallets.length === 1) {
@@ -208,6 +207,8 @@ export class ImportPrivateKeyComponent implements OnInit {
       });
 
       await toast.present();
+
+      this.onImportedWallet.emit({ ...wallet });
     } else {
       this.confirmImportWalletModal.dismiss();
       this.isProcessing = false;
