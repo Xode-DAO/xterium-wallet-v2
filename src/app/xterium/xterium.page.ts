@@ -21,6 +21,8 @@ import {
   IonAvatar,
   IonLabel,
   IonModal,
+  ToastController,
+  ActionSheetController,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -33,7 +35,8 @@ import {
   qrCode,
   timer,
   compass,
-  chevronDownOutline
+  chevronDownOutline, 
+  logOutOutline 
 } from 'ionicons/icons';
 
 import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
@@ -49,6 +52,7 @@ import { Wallet } from 'src/models/wallet.model';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { AuthService } from '../api/auth/auth.service';
 
 @Component({
   selector: 'app-xterium',
@@ -97,7 +101,10 @@ export class XteriumPage implements OnInit {
   constructor(
     private polkadotJsService: PolkadotJsService,
     private chainsService: ChainsService,
-    private walletsService: WalletsService
+    private walletsService: WalletsService,
+    private authService: AuthService,
+    private toastController: ToastController,
+    private actionSheetController: ActionSheetController,
   ) {
     addIcons({
       addCircle,
@@ -108,7 +115,8 @@ export class XteriumPage implements OnInit {
       qrCode,
       timer,
       compass,
-      chevronDownOutline
+      chevronDownOutline,
+      logOutOutline
     });
   }
 
@@ -133,6 +141,39 @@ export class XteriumPage implements OnInit {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
     }
+  }
+
+  async confirmLogout() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Are you sure you want to logout?',
+      subHeader: 'You will need to login again.',
+      buttons: [
+        {
+          text: 'Logout',
+          role: 'destructive',
+          handler: async () => {
+            await this.authService.logout();
+
+            actionSheet.dismiss();
+
+            const toast = await this.toastController.create({
+              message: 'Logged out successfully!',
+              color: 'success',
+              duration: 1500,
+              position: 'top'
+            });
+
+            await toast.present();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await actionSheet.present();
   }
 
   truncateAddress(address: string): string {
