@@ -9,7 +9,7 @@
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
             <h1 style="font-weight: bold">
-              Authorize Transaction
+              Sign Transaction
             </h1>
             <span style="font-size: 15px;">Please review before confirming your transaction</span>
           </div>
@@ -52,43 +52,45 @@
         <ion-col size="12">
           <div class="payload-container">
             <ion-card class="transaction-card">
-              <ion-item lines="none">
-                <ion-label>
-                  <strong>Transaction Status:</strong>
-                </ion-label>
-                <ion-chip color="secondary" slot="end">
-                  <ion-label>Queued</ion-label>
-                </ion-chip>
-              </ion-item>
-              <ion-item lines="none">
-                <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
-                <ion-label>Source:</ion-label>
-                <ion-text slot="end" class="label-value">
-                  {{ truncateAddress(currentWalletPublicAddress) }}
-                </ion-text>
-              </ion-item>
-              <ion-item lines="none">
-                <ion-icon name="globe-outline" size="small" slot="start"></ion-icon>
-                <ion-label>Chain:</ion-label>
-                <ion-text slot="end" class="label-value">
-                  {{ currentWallet.chain.name }}
-                </ion-text>
-              </ion-item>
-              <ion-item lines="none">
-                <ion-icon name="flame" size="small" slot="start"></ion-icon>
-                <ion-label>Estimated Fee:</ion-label>
-                <ion-text slot="end" class="label-value">
-                  @if (isLoadingFee) {
-                  <div class="fee-loading">
-                    <ion-spinner name="lines"></ion-spinner>
-                  </div>
-                  }
-                  @else {
-                  {{ formatBalance(estimatedFee, currentWallet.chain.decimal).toFixed(5) }} {{ currentWallet.chain.unit
-                  }}
-                  }
-                </ion-text>
-              </ion-item>
+              <ion-list>
+                <ion-item lines="none">
+                  <ion-label>
+                    <strong>Transaction Status:</strong>
+                  </ion-label>
+                  <ion-chip color="secondary" slot="end">
+                    <ion-label>Queued</ion-label>
+                  </ion-chip>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
+                  <ion-label>Source:</ion-label>
+                  <ion-text slot="end" class="label-value">
+                    {{ truncateAddress(currentWalletPublicAddress) }}
+                  </ion-text>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-icon name="globe-outline" size="small" slot="start"></ion-icon>
+                  <ion-label>Chain:</ion-label>
+                  <ion-text slot="end" class="label-value">
+                    {{ currentWallet.chain.name }}
+                  </ion-text>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-icon name="flame" size="small" slot="start"></ion-icon>
+                  <ion-label>Estimated Fee:</ion-label>
+                  <ion-text slot="end" class="label-value">
+                    @if (isLoadingFee) {
+                    <div class="fee-loading">
+                      <ion-spinner name="lines"></ion-spinner>
+                    </div>
+                    }
+                    @else {
+                    {{ formatBalance(estimatedFee, currentWallet.chain.decimal).toFixed(5) }}
+                    {{ currentWallet.chain.unit }}
+                    }
+                  </ion-text>
+                </ion-item>
+              </ion-list>
             </ion-card>
           </div>
         </ion-col>

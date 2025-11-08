@@ -16,10 +16,10 @@
   <ion-segment-view>
     <ion-segment-content id="payments" class="payments-segment-content">
       <div class="ion-padding-horizontal">
-        <ion-grid>
+        <!-- <ion-grid>
           <ion-row class="date-as-of">
             <ion-col size="12">
-              <!-- <ion-item lines="none">
+              <ion-item lines="none">
                 <div slot="start">
                   <ion-label>Date as of:</ion-label>
                 </div>
@@ -32,10 +32,10 @@
                     </ng-template>
                   </ion-modal>
                 </div>
-              </ion-item> -->
+              </ion-item>
             </ion-col>
           </ion-row>
-        </ion-grid>
+        </ion-grid> -->
 
         @if (isPaymentsLoading) {
         <ion-grid class="global-loader-container">
@@ -66,67 +66,58 @@
               <div class="transaction-date">{{ transaction.date }}</div>
               @for (payment of transaction.list; track payment.id) {
               <ion-card class="transaction-card">
-                <ion-item lines="none">
-                  <ion-label>
-                    <b>{{ payment.timestamp | date: 'shortTime' }}</b> - {{ payment.bank_name }}
-                  </ion-label>
-                  <ion-chip [color]="
-                      payment.status === 'failed'
-                        ? 'danger'
+                <ion-list>
+                  <ion-item lines="none">
+                    <ion-label>
+                      <b>{{ payment.timestamp | date: 'shortTime' }}</b> - {{ payment.bank_name }}
+                    </ion-label>
+                    <ion-chip [color]="payment.status === 'pending'
+                        ? 'secondary'
                         : payment.status === 'processing'
                         ? 'primary'
-                        : payment.status === 'pending'
-                        ? 'secondary'
+                        : payment.status === 'failed'
+                        ? 'danger'
                         : payment.status === 'completed'
-                        ? 'success'
-                        : 'medium'
-                    "
-                    slot="end">
-                    <ion-label> {{ payment.status }} </ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none" class="transaction-item">
-                  <ion-label>
-                    <div class="transaction-item-details">{{ maskName(payment.account_name) }}</div>
-                  </ion-label>
-                  <div class="transaction-item-details">
-                    {{ payment.currency }} {{ payment.amount | number: '1.2-5' }}
-                  </div>
-                </ion-item>
-
-                <div class="item-divider">
-                  <div></div>
-                </div>
-
-                <ion-item lines="none">
-                  <ion-icon name="person" size="small" slot="start"></ion-icon>
-                  <ion-label>Account No.:</ion-label>
-                  <ion-text slot="end" class="label-value">
-                    {{ payment.account_identifier | slice:0:10 }}...{{ payment.account_identifier | slice:-4 }}
-                  </ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="information-circle" size="small" slot="start"></ion-icon>
-                  <ion-label>Ref:</ion-label>
-                  <ion-text slot="end" class="label-value">
-                    {{ payment.tx_hash | slice:0:10 }}...{{ payment.tx_hash | slice:-4 }}
-                  </ion-text>
-                </ion-item>
-
-                <ion-item lines="none" class="token-info">
-                  <ion-avatar slot="start">
-                    <img [src]="'../../../assets/images/tokens/' + payment.token_symbol.toLowerCase() + '.png'"
-                      alt="{{ payment.token_symbol }} Token" />
-                  </ion-avatar>
-                  <ion-label>
-                    <h2>{{ payment.token_symbol }}</h2>
-                  </ion-label>
-                  <div slot="end" class="ion-text-right token-amount">
-                    <h2>{{ payment.token_amount | number: '1.2-5' }}</h2>
-                  </div>
-                </ion-item>
+                        ? 'success' : 'medium'
+                    " slot="end">
+                      <ion-label> {{ payment.status }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+                  <ion-item lines="none" class="transaction-item">
+                    <ion-label>
+                      <div class="transaction-item-details">{{ maskName(payment.account_name) }}</div>
+                    </ion-label>
+                    <div class="transaction-item-details">
+                      {{ payment.currency }} {{ payment.amount | number: '1.2-5' }}
+                    </div>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="person" size="small" slot="start"></ion-icon>
+                    <ion-label>Account No.:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ payment.account_identifier | slice:0:10 }}...{{ payment.account_identifier | slice:-4 }}
+                    </ion-text>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="information-circle" size="small" slot="start"></ion-icon>
+                    <ion-label>Ref:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ payment.tx_hash | slice:0:10 }}...{{ payment.tx_hash | slice:-4 }}
+                    </ion-text>
+                  </ion-item>
+                  <ion-item lines="none" class="token-info">
+                    <ion-avatar slot="start">
+                      <img [src]="'../../../assets/images/tokens/' + payment.token_symbol.toLowerCase() + '.png'"
+                        alt="{{ payment.token_symbol }} Token" />
+                    </ion-avatar>
+                    <ion-label>
+                      <h2>{{ payment.token_symbol }}</h2>
+                    </ion-label>
+                    <div slot="end" class="ion-text-right token-amount">
+                      <h2>{{ payment.token_amount | number: '1.2-5' }}</h2>
+                    </div>
+                  </ion-item>
+                </ion-list>
               </ion-card>
               }
               }
@@ -139,18 +130,18 @@
 
     <ion-segment-content id="transfers" class="transfers-segment-content">
       <div class="ion-padding-horizontal">
-        <ion-grid>
+        <!-- <ion-grid>
           <ion-row class="search-hash">
             <ion-col size="12">
-              <!-- <ion-item>
+              <ion-item>
                 <ion-input [(ngModel)]="searchKeyword" placeholder="Enter transaction hash" (ionInput)="filterTransactions()"></ion-input>
                 <ion-button fill="clear" slot="end" (click)="filterTransactions()">
                   <ion-icon name="search-outline" size="small"></ion-icon>
                 </ion-button>
-              </ion-item> -->
+              </ion-item>
             </ion-col>
           </ion-row>
-        </ion-grid>
+        </ion-grid> -->
 
         @if (isTransfersLoading) {
         <ion-grid class="global-loader-container">
@@ -179,70 +170,66 @@
             <ion-col size="12">
               @for (transaction of transfers; track transaction.hash) {
               <ion-card class="transaction-card">
-                <ion-item lines="none">
-                  <ion-label>
-                    <strong> {{ transaction.hash | slice:0:10 }}...{{ transaction.hash | slice:-4 }} </strong>
-                  </ion-label>
-                  <ion-chip color="success" slot="end">
-                    <ion-label> {{ transaction.status }} </ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>From:</ion-label>
-                  <ion-text slot="end" class="label-value">
-                    {{ transaction.from | slice:0:10 }} ... {{ transaction.from | slice:-4 }}
-                  </ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="arrow-down-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>To:</ion-label>
-                  <ion-text slot="end" class="label-value">
-                    {{ transaction.to | slice:0:10 }} ... {{ transaction.to | slice:-4 }}
-                  </ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Amount:</ion-label>
-                  <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
-                    <span>{{ transaction.amount }}</span>
-                    <span> {{ transaction.token_symbol }} </span>
-                  </div>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Block No.:</ion-label>
-                  <ion-text slot="end" class="label-value"> {{ transaction.block_number }} </ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Action:</ion-label>
-                  <ion-chip color="secondary" slot="end">
-                    <ion-label> {{ transaction.action }} </ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Fee:</ion-label>
-                  <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
-                    <span>{{ formatBalance(+transaction.fee, currentWallet.chain.decimal).toFixed(5) }}</span>
-                    <span> {{ currentWallet.chain.unit }} </span>
-                  </div>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Time Stamp:</ion-label>
-                  <ion-text slot="end" class="label-value">
-                    {{ (transaction.timestamp * 1000) | date:'medium' }}
-                  </ion-text>
-                </ion-item>
+                <ion-list>
+                  <ion-item lines="none">
+                    <ion-label>
+                      <strong> {{ transaction.hash | slice:0:10 }}...{{ transaction.hash | slice:-4 }} </strong>
+                    </ion-label>
+                    <ion-chip [color]="transaction.status === 'Fail' ? 'danger'
+                        : transaction.status === 'Success' ? 'success' : 'medium'" slot="end">
+                      <ion-label> {{ transaction.status }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>From:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ transaction.from | slice:0:10 }} ... {{ transaction.from | slice:-4 }}
+                    </ion-text>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="arrow-down-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>To:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ transaction.to | slice:0:10 }} ... {{ transaction.to | slice:-4 }}
+                    </ion-text>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Amount:</ion-label>
+                    <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
+                      <span>{{ transaction.amount }}</span>
+                      <span> {{ transaction.token_symbol }} </span>
+                    </div>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Block No.:</ion-label>
+                    <ion-text slot="end" class="label-value"> {{ transaction.block_number }} </ion-text>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Action:</ion-label>
+                    <ion-chip color="secondary" slot="end">
+                      <ion-label> {{ transaction.action }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Fee:</ion-label>
+                    <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
+                      <span>{{ formatBalance(+transaction.fee, currentWallet.chain.decimal).toFixed(5) }}</span>
+                      <span> {{ currentWallet.chain.unit }} </span>
+                    </div>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Time Stamp:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ (transaction.timestamp * 1000) | date:'medium' }}
+                    </ion-text>
+                  </ion-item>
+                </ion-list>
               </ion-card>
               }
             </ion-col>
@@ -254,18 +241,18 @@
 
     <ion-segment-content id="transactions" class="transactions-segment-content">
       <div class="ion-padding-horizontal">
-        <ion-grid>
+        <!-- <ion-grid>
           <ion-row class="search-hash">
             <ion-col size="12">
-              <!-- <ion-item>
+              <ion-item>
                 <ion-input [(ngModel)]="searchKeyword" placeholder="Enter transaction hash"></ion-input>
                 <ion-button fill="clear" slot="end">
                   <ion-icon name="search-outline" size="small"></ion-icon>
                 </ion-button>
-              </ion-item> -->
+              </ion-item>
             </ion-col>
           </ion-row>
-        </ion-grid>
+        </ion-grid> -->
 
         @if (isExtrinsicsLoading) {
         <ion-grid class="global-loader-container">
@@ -294,60 +281,53 @@
             <ion-col size="12">
               @for (transaction of extrinsics; track transaction.extrinsic_hash) {
               <ion-card class="transaction-card">
-                <ion-item lines="none">
-                  <ion-label>
-                    <strong> {{ transaction.extrinsic_hash | slice:0:10 }}...{{ transaction.extrinsic_hash | slice:-4 }}
-                    </strong>
-                  </ion-label>
-                 <ion-chip [color]="transaction.status === 'Fail'
-                        ? 'danger'
-                        : transaction.status === 'Success'
-                        ? 'success'
-                        : 'medium'
-                    "
-                    slot="end">
-                    <ion-label> {{ transaction.status }} </ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Block No.:</ion-label>
-                  <ion-text slot="end" class="label-value"> {{ transaction.block_number }} </ion-text>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Call Module:</ion-label>
-                  <ion-chip color="secondary" slot="end" class="chip-text">
-                    <ion-label> {{ transaction.call_module }} </ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="construct-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Function:</ion-label>
-                  <ion-chip color="tertiary" slot="end" class="chip-text">
-                    <ion-label> {{ transaction.call_module_function }} </ion-label>
-                  </ion-chip>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Fee:</ion-label>
-                  <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
-                    <span>{{ formatBalance(+transaction.fee, currentWallet.chain.decimal).toFixed(5) }}</span>
-                    <span> {{ currentWallet.chain.unit }} </span>
-                  </div>
-                </ion-item>
-
-                <ion-item lines="none">
-                  <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Time Stamp:</ion-label>
-                  <ion-text slot="end" class="label-value">
-                    {{ (transaction.timestamp * 1000) | date:'medium' }}
-                  </ion-text>
-                </ion-item>
+                <ion-list>
+                  <ion-item lines="none">
+                    <ion-label>
+                      <strong> {{ transaction.extrinsic_hash | slice:0:10 }}...{{ transaction.extrinsic_hash | slice:-4
+                        }}
+                      </strong>
+                    </ion-label>
+                    <ion-chip [color]="transaction.status === 'Fail' ? 'danger'
+                        : transaction.status === 'Success' ? 'success' : 'medium'" slot="end">
+                      <ion-label> {{ transaction.status }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Block No.:</ion-label>
+                    <ion-text slot="end" class="label-value"> {{ transaction.block_number }} </ion-text>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Call Module:</ion-label>
+                    <ion-chip color="secondary" slot="end" class="chip-text">
+                      <ion-label> {{ transaction.call_module }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="construct-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Function:</ion-label>
+                    <ion-chip color="tertiary" slot="end" class="chip-text">
+                      <ion-label> {{ transaction.call_module_function }} </ion-label>
+                    </ion-chip>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Fee:</ion-label>
+                    <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
+                      <span>{{ formatBalance(+transaction.fee, currentWallet.chain.decimal).toFixed(5) }}</span>
+                      <span> {{ currentWallet.chain.unit }} </span>
+                    </div>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
+                    <ion-label>Time Stamp:</ion-label>
+                    <ion-text slot="end" class="label-value">
+                      {{ (transaction.timestamp * 1000) | date:'medium' }}
+                    </ion-text>
+                  </ion-item>
+                </ion-list>
               </ion-card>
               }
             </ion-col>

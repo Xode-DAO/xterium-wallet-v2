@@ -105,7 +105,7 @@ export class ChainsService {
       unit: "DOT",
       decimal: 10,
       address_prefix: 0,
-      image: "polkadot.png",
+      image: "paseo.png",
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://paseo.api.subscan.io/api/v2/scan/transfers",
@@ -121,7 +121,7 @@ export class ChainsService {
       unit: "PAS",
       decimal: 10,
       address_prefix: 0,
-      image: "paseo.png",
+      image: "assethub.png",
       scanner: {
         type: ScannerType.Subscan,
         transfers_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/transfers",

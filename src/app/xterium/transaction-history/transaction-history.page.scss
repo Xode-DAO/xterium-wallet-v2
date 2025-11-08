@@ -43,9 +43,13 @@
         font-weight: 700;
       }
 
-      ion-item {
-        --background: #333333;
-        --border-radius: 25px;
+      ion-list {
+        background: transparent;
+
+        ion-item {
+          --background: #333333;
+          --border-radius: 25px;
+        }
       }
     }
 
@@ -88,18 +92,6 @@
         h2 {
           color: #ffffff;
           font-size: 15px;
-        }
-      }
-
-      div.item-divider {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        div {
-          margin: 10px;
-          border: 1px solid rgb(73, 73, 73);
-          width: 100%;
         }
       }
     }
