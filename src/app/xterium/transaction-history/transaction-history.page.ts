@@ -20,6 +20,9 @@ import {
   IonIcon,
   IonChip,
   IonSpinner,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  InfiniteScrollCustomEvent
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -72,6 +75,8 @@ import { BalancesService } from 'src/app/api/balances/balances.service';
     IonIcon,
     IonChip,
     IonSpinner,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
   ],
 })
 export class TransactionHistoryPage implements OnInit {
@@ -110,6 +115,10 @@ export class TransactionHistoryPage implements OnInit {
 
   transfers: Transfers[] = [];
   isTransfersLoading: boolean = false;
+  isLoadingMoreTransfers: boolean = false;
+  page: number = 0;
+  row: number = 10;
+  transfersHasMore: boolean = true;
 
   extrinsics: Extrinsics[] = [];
   isExtrinsicsLoading: boolean = false;
@@ -182,16 +191,49 @@ export class TransactionHistoryPage implements OnInit {
     return `${first}${masked}${last}`;
   }
 
-  async fetchTransfers(): Promise<void> {
-    this.isTransfersLoading = true;
+  
+  async fetchTransfers(reset: boolean = true): Promise<void> {
+    if (reset) {
+      this.isTransfersLoading = true;
+      this.transfers = [];
+      this.page = 1;
+      this.transfersHasMore = true;
+    } else {
+      this.isLoadingMoreTransfers = true;
+    }
 
-    this.transfers = [];
-    this.transfers = await this.scannerService.fetchTransfers(
+    const newTransfers = await this.scannerService.fetchTransfers(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
+      this.page,
+      this.row
     );
 
-    this.isTransfersLoading = false;
+    if (newTransfers && newTransfers.length > 0) {
+      for (let i = 0; i < newTransfers.length; i++) {
+        this.transfers.push(newTransfers[i]);
+      }
+
+      this.transfersHasMore = newTransfers.length === this.row;
+
+      this.page++;
+    } else {
+      this.transfersHasMore = false;
+    }
+
+    if (reset) {
+      this.isTransfersLoading = false;
+    } else {
+      this.isLoadingMoreTransfers = false;
+    }
+  }
+
+
+  async fetchTransfersPage(event: InfiniteScrollCustomEvent) {
+    await this.fetchTransfers(false);
+    setTimeout(() => {
+      event.target.complete();
+    }, 500);
   }
 
   async fetchExtrinsics(): Promise<void> {
