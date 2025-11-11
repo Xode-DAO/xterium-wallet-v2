@@ -30,8 +30,12 @@
     <ion-row class="ion-margin-top">
       <ion-col size="12">
         <div class="primary-button-wrapper">
-          <ion-button expand="block" size="default" id="import-seed-phrase">
-            SHARE ADDRESS
+          <ion-button 
+            expand="block" 
+            size="default" 
+            (click)="shareAddress()" 
+            [disabled]="isSharing || !currentWalletPublicAddress">
+            {{ isSharing ? 'SHARING...' : 'SHARE ADDRESS' }}
           </ion-button>
         </div>
       </ion-col>
