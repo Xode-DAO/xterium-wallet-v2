@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true" class="transaction-history-content">
   <div class="segments">
-    <ion-segment value="default">
+    <ion-segment value="default" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="default" content-id="payments">
         <ion-label>Payments</ion-label>
       </ion-segment-button>
@@ -226,7 +226,7 @@
                     <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
                     <ion-label>Time Stamp:</ion-label>
                     <ion-text slot="end" class="label-value">
-                      {{ (transaction.timestamp * 1000) | date:'medium' }}
+                      {{ (transaction.timestamp) | date:'medium' }}
                     </ion-text>
                   </ion-item>
                 </ion-list>
@@ -237,6 +237,10 @@
         </ion-grid>
         }
       </div>
+
+      <ion-infinite-scroll (ionInfinite)="fetchDataOnInfinite($event)">
+        <ion-infinite-scroll-content [loadingSpinner]="'lines'"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-segment-content>
 
     <ion-segment-content id="transactions" class="transactions-segment-content">
@@ -335,6 +339,10 @@
         </ion-grid>
         }
       </div>
+
+      <ion-infinite-scroll (ionInfinite)="fetchDataOnInfinite($event)">
+        <ion-infinite-scroll-content [loadingSpinner]="'lines'"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-segment-content>
   </ion-segment-view>
 </ion-content>
