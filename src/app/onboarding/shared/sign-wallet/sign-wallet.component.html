@@ -19,7 +19,13 @@
   </div>
 
   <div class="ion-padding-horizontal">
-    @if (isChromeExtension) {
+    @if (isPasswordExisting) {
+    <app-password-login (onLogin)="signWallet($event)"></app-password-login>
+    } @else {
+    <app-password-setup (onPasswordSetup)="signWallet($event)"></app-password-setup>
+    }
+
+    <!-- @if (isChromeExtension) {
     @if (isPasswordExisting) {
     <app-password-login (onLogin)="signWallet($event)"></app-password-login>
     } @else {
@@ -27,6 +33,6 @@
     }
     } @else {
     <app-biometric (onLogin)="signWallet($event)"></app-biometric>
-    }
+    } -->
   </div>
 </div>

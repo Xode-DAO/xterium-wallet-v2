@@ -22,7 +22,7 @@ import {
   IonSpinner,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
-  InfiniteScrollCustomEvent
+  InfiniteScrollCustomEvent,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -107,9 +107,9 @@ export class TransactionHistoryPage implements OnInit {
   currentWalletPublicAddress: string = '';
 
   selectedDate: string = new Date().toISOString();
-
   searchKeyword: string = '';
 
+  currentSegment: string = 'payments';
 
   payments: { date: string; list: Payments[] }[] = [];
   isPaymentsLoading: boolean = false;
@@ -117,16 +117,14 @@ export class TransactionHistoryPage implements OnInit {
   transfers: Transfers[] = [];
   isTransfersLoading: boolean = false;
   isLoadingMoreTransfers: boolean = false;
-  transfersHasMore: boolean = true;
   transfersPage: number = 1;
-  transfersRow: number = 10;
+  transfersRow: number = 50;
 
   extrinsics: Extrinsics[] = [];
   isExtrinsicsLoading: boolean = false;
   isLoadingMoreExtrinsics: boolean = false;
-  extrinsicsHasMore: boolean = true;
   extrinsicsPage: number = 1;
-  extrinsicsRow: number = 10;
+  extrinsicsRow: number = 50;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -196,13 +194,7 @@ export class TransactionHistoryPage implements OnInit {
     return `${first}${masked}${last}`;
   }
 
-  async fetchTransfers(reset: boolean = true): Promise<void> {
-    if (reset) {
-      this.isTransfersLoading = true;
-      this.transfers = [];
-      this.transfersPage = 1;
-    }
-
+  async fetchTransfers(): Promise<void> {
     const newTransfers = await this.scannerService.fetchTransfers(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
@@ -218,20 +210,7 @@ export class TransactionHistoryPage implements OnInit {
     this.isTransfersLoading = false;
   }
 
-
-  fetchTransfersPage(event: InfiniteScrollCustomEvent) {
-    this.fetchTransfers(false).then(() => {
-      event.target.complete();
-    });
-  }
-
-  async fetchExtrinsics(reset: boolean = true): Promise<void> {
-    if (reset) {
-      this.isExtrinsicsLoading = true;
-      this.extrinsics = [];
-      this.extrinsicsPage = 1;
-    }
-
+  async fetchExtrinsics(): Promise<void> {
     const newExtrinsics = await this.scannerService.fetchExtrinsics(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
@@ -247,12 +226,6 @@ export class TransactionHistoryPage implements OnInit {
     this.isExtrinsicsLoading = false;
   }
 
-  async fetchExtrinsicsPage(event: InfiniteScrollCustomEvent) {
-    this.fetchExtrinsics(false).then(() => {
-      event.target.complete();
-    });
-  }
-
   async fetchData(): Promise<void> {
     await this.getCurrentWallet();
 
@@ -261,18 +234,33 @@ export class TransactionHistoryPage implements OnInit {
     await this.fetchExtrinsics();
   }
 
+  async fetchDataOnInfinite(event: InfiniteScrollCustomEvent): Promise<void> {
+    if (this.currentSegment === 'transfers') {
+      this.isLoadingMoreTransfers = true;
+
+      await this.fetchTransfers();
+
+      this.isLoadingMoreTransfers = false;
+      event.target.complete();
+    }
+
+    if (this.currentSegment === 'transactions') {
+      this.isLoadingMoreExtrinsics = true;
+
+      await this.fetchExtrinsics();
+
+      this.isLoadingMoreExtrinsics = false;
+      event.target.complete();
+    }
+
+    setTimeout(() => {
+      event.target.complete();
+    }, 500);
+  }
+
   async segmentChanged(event: any) {
     const segment = event.detail.value;
-
-    if (segment === 'payments') {
-      await this.fetchPayments();
-    } else if (segment === 'transfers') {
-      await this.fetchTransfers();
-    } else if (segment === 'extrinsics') {
-      await this.fetchExtrinsics();
-    } else {
-      await this.fetchData();
-    }
+    this.currentSegment = segment;
   }
 
   ngOnInit() {

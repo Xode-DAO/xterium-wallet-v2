@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true" class="transaction-history-content">
   <div class="segments">
-    <ion-segment value="default">
+    <ion-segment value="default" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="default" content-id="payments">
         <ion-label>Payments</ion-label>
       </ion-segment-button>
@@ -237,11 +237,10 @@
         </ion-grid>
         }
       </div>
-      @if (!isTransfersLoading && transfers.length > 0) {
-        <ion-infinite-scroll (ionInfinite)="fetchTransfersPage($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
-      }
+
+      <ion-infinite-scroll (ionInfinite)="fetchDataOnInfinite($event)">
+        <ion-infinite-scroll-content [loadingSpinner]="'lines'"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-segment-content>
 
     <ion-segment-content id="transactions" class="transactions-segment-content">
@@ -340,11 +339,10 @@
         </ion-grid>
         }
       </div>
-      @if (!isExtrinsicsLoading && extrinsics.length > 0) {
-        <ion-infinite-scroll (ionInfinite)="fetchExtrinsicsPage($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll>
-      }
+
+      <ion-infinite-scroll (ionInfinite)="fetchDataOnInfinite($event)">
+        <ion-infinite-scroll-content [loadingSpinner]="'lines'"></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-segment-content>
   </ion-segment-view>
 </ion-content>
