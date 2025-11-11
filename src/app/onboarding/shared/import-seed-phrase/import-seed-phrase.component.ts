@@ -91,6 +91,14 @@ export class ImportSeedPhraseComponent implements OnInit {
 
   isProcessing: boolean = false;
 
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  trimInput(index: number) {
+    this.walletMnemonicPhrase[index] = this.walletMnemonicPhrase[index].trim();
+  }
+
   async pasteFromClipboard() {
     const { type, value } = await Clipboard.read();
 

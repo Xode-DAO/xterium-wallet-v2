@@ -28,6 +28,10 @@ import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+import { Capacitor } from '@capacitor/core';
+
 @Component({
   selector: 'app-wallet-details',
   templateUrl: './wallet-details.component.html',
@@ -133,17 +137,65 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   async exportWallet() {
-    const walletData = JSON.stringify(this.wallet);
-    const blob = new Blob([walletData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const walletData = JSON.stringify(this.wallet, null, 2);
+    const fileName = `${this.walletPublicKey}.json`;
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${this.walletPublicKey}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if (Capacitor.isNativePlatform()) {
+      const base64Data = btoa(unescape(encodeURIComponent(walletData)));
+      
+      const result = await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: Directory.Cache,
+        recursive: true
+      });
+
+      let fileUri = result.uri;
+      
+      if (Capacitor.getPlatform() === 'android') {
+        const fileInfo = await Filesystem.getUri({
+          path: fileName,
+          directory: Directory.Cache
+        });
+        fileUri = fileInfo.uri;
+      }
+
+      await Share.share({
+        title: this.wallet.name,
+        text: 'Wallet backup file',
+        url: fileUri,
+        dialogTitle: 'Save as JSON'
+      });
+
+      const toast = await this.toastController.create({
+        message: 'Wallet export shared!',
+        color: 'success',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+    } else {
+      const blob = new Blob([walletData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      const toast = await this.toastController.create({
+        message: 'Wallet exported successfully!',
+        color: 'success',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+    }
   }
 
   async deleteWallet() {

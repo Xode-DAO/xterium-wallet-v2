@@ -11,11 +11,11 @@
       </ion-col>
     </ion-row>
     <ion-row class="ion-margin-bottom">
-      @for (word of walletMnemonicPhrase; track word; let index = $index) {
+      @for (word of walletMnemonicPhrase; track trackByIndex($index); let index = $index) {
       <ion-col size="6">
         <ion-list>
           <ion-item class="primary-input-item">
-            <ion-input type="text" [(ngModel)]="walletMnemonicPhrase[index]" autocomplete="off"></ion-input>
+            <ion-input type="text" [(ngModel)]="walletMnemonicPhrase[index]" (ionInput)="trimInput(index)" autocomplete="off"></ion-input>
           </ion-item>
         </ion-list>
       </ion-col>
