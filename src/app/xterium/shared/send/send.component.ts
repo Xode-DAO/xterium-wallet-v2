@@ -23,7 +23,8 @@ import {
   IonContent,
   IonTitle,
   IonToolbar,
-  ToastController
+  ToastController,
+  AlertController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -45,6 +46,8 @@ import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.ser
 
 import { ChainsComponent } from '../chains/chains.component';
 import { Router } from '@angular/router';
+import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } from '@capacitor/barcode-scanner';
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 
 @Component({
   selector: 'app-send',
@@ -91,7 +94,9 @@ export class SendComponent implements OnInit {
     private walletsService: WalletsService,
     private multipayxApiService: MultipayxApiService,
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private environmentService: EnvironmentService,
+    private alertController: AlertController
   ) {
     addIcons({
       clipboardOutline,
@@ -114,6 +119,7 @@ export class SendComponent implements OnInit {
   formattedAmountValue: string = "0";
 
   isProcessing: boolean = false;
+  isChromeExtension = false;
 
   openSelectChainModal() {
     this.selectChainModal.present();
@@ -255,6 +261,40 @@ export class SendComponent implements OnInit {
     this.formattedAmountValue = this.formatBalanceWithSuffix(fillAmount, this.balance.token.decimals);
   }
 
+  async scan() {
+    if (this.isChromeExtension) {
+      const alert = await this.alertController.create({
+        header: 'Scanning Not Supported',
+        subHeader: 'Chrome Extension Limitation',
+        message: 'Scanning QR codes is not supported in the Chrome Extension version of the app. Please use the mobile app to scan QR codes.',
+        backdropDismiss: true,
+        buttons: ['Ok'],
+      });
+      await alert.present();
+      return;
+    }
+
+    const result = await CapacitorBarcodeScanner.scanBarcode({
+      hint: CapacitorBarcodeScannerTypeHint.ALL
+    });
+
+    if (!result?.ScanResult) return;
+
+    const scannedAddress = result.ScanResult.trim();
+
+    if (!this.polkadotJsService.isValidAddress(scannedAddress)) {
+      const alert = await this.alertController.create({
+        header: 'Invalid Address',
+        message: 'The scanned QR code does not contain a valid Substrate/Polkadot address.',
+        buttons: ['Ok'],
+      });
+      await alert.present();
+      return;
+    }
+
+    this.recipientAddress = scannedAddress;
+  }
+
   async send(): Promise<void> {
     if (this.recipientAddress === "" || this.formattedAmountValue === "0" || this.formattedAmountValue === "0.00") {
       const toast = await this.toastController.create({
@@ -293,6 +333,7 @@ export class SendComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
     this.fetchData();
   }
 }

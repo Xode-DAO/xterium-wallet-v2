@@ -11,7 +11,7 @@ import {
 } from "@polkadot/util-crypto"
 import { Keypair } from '@polkadot/util-crypto/types';
 import { u8aToHex, hexToU8a } from '@polkadot/util';
-import { encodeAddress } from '@polkadot/keyring';
+import { encodeAddress, decodeAddress } from '@polkadot/keyring';
 import { u8aEq } from '@polkadot/util';
 
 @Injectable({
@@ -105,5 +105,14 @@ export class PolkadotJsService {
     if (!address) return '';
     if (address.length <= start + end) return address;
     return `${address.slice(0, start)}...${address.slice(-end)}`;
+  }
+
+  isValidAddress(address: string): boolean {
+    try {
+      const decoded = decodeAddress(address);
+      return !!decoded;
+    } catch (e) {
+      return false;
+    }
   }
 }
