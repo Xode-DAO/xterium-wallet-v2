@@ -286,25 +286,26 @@ export class ReceiveComponent implements OnInit {
 
     ctx.drawImage(roundedQrCanvas, qrX - borderWidth, qrY - borderWidth);
 
-    // Address Display
+     // Network Display
+    const networkY = qrY + qrSize + 60 * scaleFactor;
     ctx.font = `${18 * scaleFactor}px Arial, sans-serif`;
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
-    ctx.fillText('Address:', finalCanvas.width / 2, qrY + qrSize + 60 * scaleFactor);
-
-    ctx.font = `bold ${20 * scaleFactor}px Arial, sans-serif`;
-    const address = this.currentWalletPublicAddress;
-    const midPoint = Math.floor(address.length / 2);
-    ctx.fillText(address.substring(0, midPoint), finalCanvas.width / 2, qrY + qrSize + 90 * scaleFactor);
-    ctx.fillText(address.substring(midPoint), finalCanvas.width / 2, qrY + qrSize + 120 * scaleFactor);
-
-    // Network Display
-    const networkY = qrY + qrSize + 170 * scaleFactor;
-    ctx.font = `${18 * scaleFactor}px Arial, sans-serif`;
     ctx.fillText('Network:', finalCanvas.width / 2, networkY);
 
     ctx.font = `bold ${20 * scaleFactor}px Arial, sans-serif`;
     ctx.fillText(this.currentWallet.chain.name, finalCanvas.width / 2, networkY + 30 * scaleFactor);
+
+    // Address Display
+    const addressY = qrY + qrSize + 140 * scaleFactor;
+    ctx.font = `${18 * scaleFactor}px Arial, sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText('Address:', finalCanvas.width / 2, addressY);
+
+    ctx.font = `bold ${20 * scaleFactor}px Arial, sans-serif`;
+    const address = this.currentWalletPublicAddress;
+    ctx.fillText(address.substring(0), finalCanvas.width / 2, addressY + 30 * scaleFactor);
 
     return finalCanvas;
   }
