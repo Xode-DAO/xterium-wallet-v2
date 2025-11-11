@@ -24,8 +24,8 @@
             <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
               <img [src]="'./../../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />
             </ion-avatar>
-            <ion-modal #selectChainModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-              [expandToScroll]="false">
+
+            <ion-modal #selectChainModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
               <ng-template>
                 <ion-toolbar class="main-modal-toolbar">
                   <ion-title>Destination Chain</ion-title>

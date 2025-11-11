@@ -270,6 +270,7 @@ export class SendComponent implements OnInit {
         backdropDismiss: true,
         buttons: ['Ok'],
       });
+
       await alert.present();
       return;
     }
@@ -288,6 +289,7 @@ export class SendComponent implements OnInit {
         message: 'The scanned QR code does not contain a valid Substrate/Polkadot address.',
         buttons: ['Ok'],
       });
+
       await alert.present();
       return;
     }

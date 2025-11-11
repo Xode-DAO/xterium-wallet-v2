@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -104,11 +104,8 @@ export class ReceiveComponent implements OnInit {
 
     try {
       const canvas = await this.createHighQualityQRCodeImage();
-      
       const dataUrl = canvas.toDataURL('image/png', 1.0);
-      
       const base64Data = dataUrl.split(',')[1];
-      
       const fileName = `${this.currentWallet.name}.png`;
 
       if (Capacitor.isNativePlatform()) {
@@ -120,12 +117,13 @@ export class ReceiveComponent implements OnInit {
         });
 
         let fileUri = result.uri;
-        
+
         if (Capacitor.getPlatform() === 'android') {
           const fileInfo = await Filesystem.getUri({
             path: fileName,
             directory: Directory.Cache
           });
+
           fileUri = fileInfo.uri;
         }
 
@@ -157,7 +155,7 @@ export class ReceiveComponent implements OnInit {
 
           if (navigator.canShare(shareData)) {
             await navigator.share(shareData);
-            
+
             const toast = await this.toastController.create({
               message: 'Address shared successfully!',
               color: 'success',
@@ -174,8 +172,6 @@ export class ReceiveComponent implements OnInit {
         }
       }
     } catch (error) {
-      console.error('Error sharing address:', error);
-      
       const toast = await this.toastController.create({
         message: 'Failed to share address. Please try again.',
         color: 'danger',
@@ -193,11 +189,11 @@ export class ReceiveComponent implements OnInit {
     try {
       const link = document.createElement('a');
       link.download = `${this.currentWallet.name}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0); 
+      link.href = canvas.toDataURL('image/png', 1.0);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       const toast = await this.toastController.create({
         message: 'QR code downloaded successfully!',
         color: 'success',
@@ -207,8 +203,6 @@ export class ReceiveComponent implements OnInit {
 
       await toast.present();
     } catch (error) {
-      console.error('Error downloading QR code:', error);
-      
       const toast = await this.toastController.create({
         message: 'Failed to download QR code.',
         color: 'danger',
@@ -220,7 +214,7 @@ export class ReceiveComponent implements OnInit {
     }
   }
 
-   private async dataURLToBlob(dataUrl: string): Promise<Blob> {
+  private async dataURLToBlob(dataUrl: string): Promise<Blob> {
     const response = await fetch(dataUrl);
     return await response.blob();
   }
@@ -286,7 +280,6 @@ export class ReceiveComponent implements OnInit {
 
     ctx.drawImage(roundedQrCanvas, qrX - borderWidth, qrY - borderWidth);
 
-     // Network Display
     const networkY = qrY + qrSize + 60 * scaleFactor;
     ctx.font = `${18 * scaleFactor}px Arial, sans-serif`;
     ctx.fillStyle = '#ffffff';
@@ -296,7 +289,6 @@ export class ReceiveComponent implements OnInit {
     ctx.font = `bold ${20 * scaleFactor}px Arial, sans-serif`;
     ctx.fillText(this.currentWallet.chain.name, finalCanvas.width / 2, networkY + 30 * scaleFactor);
 
-    // Address Display
     const addressY = qrY + qrSize + 140 * scaleFactor;
     ctx.font = `${18 * scaleFactor}px Arial, sans-serif`;
     ctx.fillStyle = '#ffffff';

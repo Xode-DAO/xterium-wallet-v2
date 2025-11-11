@@ -14,7 +14,6 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonButton,
-  IonAlert,
   AlertController
 } from '@ionic/angular/standalone';
 
@@ -45,7 +44,6 @@ import { PayDetails } from 'src/models/pay.model';
     IonCardTitle,
     IonCardSubtitle,
     IonButton,
-    IonAlert
   ]
 })
 export class PayPage implements OnInit {
