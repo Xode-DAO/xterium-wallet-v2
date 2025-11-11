@@ -110,18 +110,23 @@ export class TransactionHistoryPage implements OnInit {
 
   searchKeyword: string = '';
 
+
   payments: { date: string; list: Payments[] }[] = [];
   isPaymentsLoading: boolean = false;
 
   transfers: Transfers[] = [];
   isTransfersLoading: boolean = false;
   isLoadingMoreTransfers: boolean = false;
-  page: number = 0;
-  row: number = 10;
   transfersHasMore: boolean = true;
+  transfersPage: number = 1;
+  transfersRow: number = 10;
 
   extrinsics: Extrinsics[] = [];
   isExtrinsicsLoading: boolean = false;
+  isLoadingMoreExtrinsics: boolean = false;
+  extrinsicsHasMore: boolean = true;
+  extrinsicsPage: number = 1;
+  extrinsicsRow: number = 10;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -191,61 +196,61 @@ export class TransactionHistoryPage implements OnInit {
     return `${first}${masked}${last}`;
   }
 
-  
   async fetchTransfers(reset: boolean = true): Promise<void> {
     if (reset) {
       this.isTransfersLoading = true;
       this.transfers = [];
-      this.page = 1;
-      this.transfersHasMore = true;
-    } else {
-      this.isLoadingMoreTransfers = true;
+      this.transfersPage = 1;
     }
 
     const newTransfers = await this.scannerService.fetchTransfers(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
-      this.page,
-      this.row
+      this.transfersPage,
+      this.transfersRow
     );
 
     if (newTransfers && newTransfers.length > 0) {
-      for (let i = 0; i < newTransfers.length; i++) {
-        this.transfers.push(newTransfers[i]);
-      }
-
-      this.transfersHasMore = newTransfers.length === this.row;
-
-      this.page++;
-    } else {
-      this.transfersHasMore = false;
+      this.transfers.push(...newTransfers);
+      this.transfersPage++;
     }
 
-    if (reset) {
-      this.isTransfersLoading = false;
-    } else {
-      this.isLoadingMoreTransfers = false;
-    }
+    this.isTransfersLoading = false;
   }
 
 
-  async fetchTransfersPage(event: InfiniteScrollCustomEvent) {
-    await this.fetchTransfers(false);
-    setTimeout(() => {
+  fetchTransfersPage(event: InfiniteScrollCustomEvent) {
+    this.fetchTransfers(false).then(() => {
       event.target.complete();
-    }, 500);
+    });
   }
 
-  async fetchExtrinsics(): Promise<void> {
-    this.isExtrinsicsLoading = true;
+  async fetchExtrinsics(reset: boolean = true): Promise<void> {
+    if (reset) {
+      this.isExtrinsicsLoading = true;
+      this.extrinsics = [];
+      this.extrinsicsPage = 1;
+    }
 
-    this.extrinsics = [];
-    this.extrinsics = await this.scannerService.fetchExtrinsics(
+    const newExtrinsics = await this.scannerService.fetchExtrinsics(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
+      this.extrinsicsPage,
+      this.extrinsicsRow
     );
 
+    if (newExtrinsics && newExtrinsics.length > 0) {
+      this.extrinsics.push(...newExtrinsics);
+      this.extrinsicsPage++;
+    }
+
     this.isExtrinsicsLoading = false;
+  }
+
+  async fetchExtrinsicsPage(event: InfiniteScrollCustomEvent) {
+    this.fetchExtrinsics(false).then(() => {
+      event.target.complete();
+    });
   }
 
   async fetchData(): Promise<void> {

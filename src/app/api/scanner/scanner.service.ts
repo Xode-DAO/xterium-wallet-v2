@@ -15,12 +15,12 @@ export class ScannerService {
     private http: HttpClient,
   ) { }
 
-  async fetchTransfers(address: string, chain: Chain, page = 0, limit = 10): Promise<Transfers[]> {
+  async fetchTransfers(address: string, chain: Chain, page: number, limit: number): Promise<Transfers[]> {
     const transfers: Transfers[] = [];
 
     if (chain.scanner && chain.scanner.type === ScannerType.Subsquid) {
       if (chain.chain_id === 3417) {
-        const skip = (page + 1) * limit;
+        const skip = (page - 1) * limit;
 
         const url = `${chain.scanner?.transfers_url}/transfer?limit=${limit}&skip=${skip}`;
         const headers = new HttpHeaders({
@@ -30,6 +30,8 @@ export class ScannerService {
         const response: any = await firstValueFrom(this.http.get(url, { headers }));
 
         const blocks = response || [];
+
+        console.log("API response", blocks)
 
         for (const block of blocks) {
           const transferData = block.transfers || [];
@@ -62,7 +64,7 @@ export class ScannerService {
     }
 
     if (chain.scanner && chain.scanner.type === ScannerType.Subscan) {
-      const body = { address, page: page + 1, row: limit };
+      const body = { address, page: page - 1, row: limit };
 
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
@@ -106,14 +108,15 @@ export class ScannerService {
     return transfers;
   }
 
-  async fetchExtrinsics(address: string, chain: Chain, page = 0, limit = 10): Promise<Extrinsics[]> {
+  async fetchExtrinsics(address: string, chain: Chain, page: number, limit: number): Promise<Extrinsics[]> {
     const extrinsics: Extrinsics[] = [];
 
     if (chain.scanner && chain.scanner.type === ScannerType.Subsquid) {
       if (chain.chain_id === 3417) {
-        const skip = (page + 1) * limit;
+        
+        const skip = (page - 1) * limit;
 
-        const url = `${chain.scanner?.transfers_url}/extrinsics?limit=${limit}&skip=${skip}`;
+        const url = `${chain.scanner?.extrinsics_url}/extrinsics?limit=${limit}&skip=${skip}`;
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
         });
@@ -141,16 +144,7 @@ export class ScannerService {
     }
 
     if (chain.scanner && chain.scanner.type === ScannerType.Subscan) {
-      let page = 0;
-      let row = 50;
-
-      let hasMore = true;
-      while (hasMore) {
-        const body = {
-          address: address,
-          page: page,
-          row: row,
-        };
+        const body = { address, page: page - 1, row: limit };
 
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
@@ -179,11 +173,7 @@ export class ScannerService {
             extrinsics.push(newTransfers);
           }
         }
-
-        page += 1;
-        hasMore = extrinsics.length < count;
       }
-    }
 
     return extrinsics;
   }
