@@ -226,7 +226,7 @@
                     <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
                     <ion-label>Time Stamp:</ion-label>
                     <ion-text slot="end" class="label-value">
-                      {{ (transaction.timestamp * 1000) | date:'medium' }}
+                      {{ (transaction.timestamp) | date:'medium' }}
                     </ion-text>
                   </ion-item>
                 </ion-list>
@@ -237,6 +237,11 @@
         </ion-grid>
         }
       </div>
+      @if (!isTransfersLoading && transfers.length > 0) {
+        <ion-infinite-scroll (ionInfinite)="fetchTransfersPage($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      }
     </ion-segment-content>
 
     <ion-segment-content id="transactions" class="transactions-segment-content">
@@ -335,6 +340,11 @@
         </ion-grid>
         }
       </div>
+      @if (!isExtrinsicsLoading && extrinsics.length > 0) {
+        <ion-infinite-scroll (ionInfinite)="fetchExtrinsicsPage($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+      }
     </ion-segment-content>
   </ion-segment-view>
 </ion-content>
