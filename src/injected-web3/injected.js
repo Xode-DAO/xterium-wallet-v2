@@ -28,7 +28,7 @@
   }
 
   window.injectedWeb3["xterium"] = {
-    version: "2.0.0",
+    version: "2.0.1",
     enable: async (origin) => {
       const requestApproval = await postAndWait("xterium-request-approval", {
         origin: origin,

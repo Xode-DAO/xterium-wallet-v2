@@ -34,7 +34,7 @@ export class ChainsService {
     },
     {
       id: 2,
-      network: Network.Polkadot,
+      network: Network.UnknownNetwork,
       name: "Polkadot",
       description: "Connect to the Polkadot mainnet and its ecosystem.",
       chain_id: 0,
