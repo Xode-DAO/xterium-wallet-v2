@@ -43,6 +43,8 @@ export class ScannerService {
             const action = isAssetTransfer ? 'assets(transfer)' : isNativeTransfer ? 'balances(transfer_allow_death)' : '';
             const timeStamp = item.timestamp || 0;
 
+
+
             const newTransfers: Transfers = {
               hash: item.hash || '',
               status: 'Success',
@@ -50,6 +52,7 @@ export class ScannerService {
               to: item.to || '',
               amount: item.amount || '0',
               token_symbol: item.token || chain.unit,
+              token_decimals: item.token_metadata ? item.token_metadata.decimals : null,
               block_number: block.blockNumber || 0,
               action: action,
               fee: item.fee || '0',
@@ -97,6 +100,7 @@ export class ScannerService {
             to: item.to || '',
             amount: item.amount || '0',
             token_symbol: item.asset_symbol || chain.unit,
+            token_decimals: 0,
             block_number: item.block_num || 0,
             action: action,
             fee: item.fee || '0',
@@ -118,7 +122,7 @@ export class ScannerService {
       if (chain.chain_id === 3417) {
         const skip = (page - 1) * row;
 
-        const url = `${chain.scanner?.extrinsics_url}/extrinsics?limit=${row}&skip=${skip}&contains=${address}`;
+        const url = `${chain.scanner?.extrinsics_url}/extrinsics?limit=${row}&skip=${skip}`;
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
         });

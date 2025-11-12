@@ -149,9 +149,7 @@ export class TransactionHistoryPage implements OnInit {
 
   formatAmount(amount: number): number {
     const decimals = this.currentWallet.chain.decimal;
-    if (decimals == 12 ) {
-      return amount / Math.pow(10, decimals)
-    }
+    
 
     return amount
   }
