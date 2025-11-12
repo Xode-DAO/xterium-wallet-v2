@@ -147,6 +147,15 @@ export class TransactionHistoryPage implements OnInit {
     return this.balancesService.formatBalance(amount, decimals);
   }
 
+  formatAmount(amount: number): number {
+    const decimals = this.currentWallet.chain.decimal;
+    if (decimals == 12 ) {
+      return amount / Math.pow(10, decimals)
+    }
+
+    return amount
+  }
+
   async fetchPayments(): Promise<void> {
     this.isPaymentsLoading = true;
 

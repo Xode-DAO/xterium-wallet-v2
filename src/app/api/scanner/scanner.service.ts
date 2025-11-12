@@ -118,7 +118,7 @@ export class ScannerService {
       if (chain.chain_id === 3417) {
         const skip = (page - 1) * row;
 
-        const url = `${chain.scanner?.extrinsics_url}/extrinsics?limit=${row}&skip=${skip}`;
+        const url = `${chain.scanner?.extrinsics_url}/extrinsics?limit=${row}&skip=${skip}&contains=${address}`;
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
         });
@@ -132,6 +132,8 @@ export class ScannerService {
         for (const block of blocks) {
           const extrinsicsData = block.extrinsics || [];
           for (const item of extrinsicsData) {
+            const timeStamp = item.timestamp || 0;
+
             const newTransfers: Extrinsics = {
               extrinsic_hash: item.txHash || '',
               status: item.success ? 'Success' : 'Fail',
@@ -139,7 +141,7 @@ export class ScannerService {
               call_module: item.section || '',
               call_module_function: item.method || '',
               fee: item.fee || 0,
-              timestamp: 0,
+              timestamp: timeStamp,
             };
             extrinsics.push(newTransfers);
           }
@@ -163,11 +165,13 @@ export class ScannerService {
         this.http.post(chain.scanner?.extrinsics_url || '', body, { headers })
       );
 
-      const count = response.data.count;
       const extrinsicsData = response.data.extrinsics || [];
 
       if (extrinsicsData.length > 0) {
         for (const item of extrinsicsData) {
+          const rawTimestamp = item.block_timestamp || 0;
+          const timeStamp = rawTimestamp * 1000;
+
           const newTransfers: Extrinsics = {
             extrinsic_hash: item.extrinsic_hash || '',
             status: item.success ? 'Success' : 'Fail',
@@ -175,7 +179,7 @@ export class ScannerService {
             call_module: item.call_module || '',
             call_module_function: item.call_module_function || '',
             fee: item.fee || '0',
-            timestamp: item.block_timestamp || 0,
+            timestamp: timeStamp,
           };
 
           extrinsics.push(newTransfers);
