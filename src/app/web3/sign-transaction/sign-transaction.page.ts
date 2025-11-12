@@ -40,6 +40,7 @@ import { Wallet, WalletSigner } from 'src/models/wallet.model';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
+import { BiometricService } from 'src/app/api/biometric/biometric.service';
 import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
 import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
 import { PolkadotService } from 'src/app/api/polkadot-api/polkadot/polkadot.service';
@@ -53,6 +54,8 @@ import { LocalNotificationsService } from 'src/app/api/local-notifications/local
 
 import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
 import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
+import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
+import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
 import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
 
 @Component({
@@ -84,6 +87,8 @@ import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.
     IonToolbar,
     PasswordSetupComponent,
     PasswordLoginComponent,
+    PinSetupComponent,
+    PinLoginComponent,
     BiometricComponent
   ],
 })
@@ -95,6 +100,7 @@ export class SignTransactionPage implements OnInit {
     private router: Router,
     private environmentService: EnvironmentService,
     private authService: AuthService,
+    private biometricService: BiometricService,
     private polkadotJsService: PolkadotJsService,
     private polkadotService: PolkadotService,
     private assethubPolkadotService: AssethubPolkadotService,
@@ -117,6 +123,7 @@ export class SignTransactionPage implements OnInit {
 
   isChromeExtension = false;
   isPasswordExisting = false;
+  isBiometricAvailable = false;
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
@@ -159,6 +166,9 @@ export class SignTransactionPage implements OnInit {
     if (auth) {
       this.isPasswordExisting = true;
     }
+
+    const availability = await this.biometricService.isAvailable();
+    this.isBiometricAvailable = availability.available;
   }
 
   async initTransaction(): Promise<void> {

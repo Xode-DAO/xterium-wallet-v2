@@ -9,47 +9,46 @@
         <ion-col size="12">
           <div class="ion-text-center" style="margin-top: -75px">
             <h1 style="font-weight: bold">
-              @if (isChromeExtension) {
-              @if (isPasswordExisting) {
+              @if (isChromeExtension && isPasswordExisting) {
               Login
-              } @else {
+              } @else if (isChromeExtension && !isPasswordExisting) {
               Set Up Your Password
-              }
-              } @else {
+              } @else if (!isChromeExtension && isBiometricAvailable) {
               Login
+              } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
+              Enter PIN
+              } @else {
+              Set Up Your PIN
               }
             </h1>
             <span style="font-size: 15px;">
-              @if (isChromeExtension) {
-              @if (isPasswordExisting) {
+              @if (isChromeExtension && isPasswordExisting) {
               Please enter your password to unlock your wallet.
-              } @else {
+              } @else if (isChromeExtension && !isPasswordExisting) {
               Please set up a password to secure your wallet.
-              }
+              } @else if (!isChromeExtension && isBiometricAvailable) {
+              Sign in with Face ID or fingerprint — or use your PIN to unlock the wallet.
+              } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
+              Please enter your PIN to unlock your wallet.
               } @else {
-              Sign in securely with your device’s biometric authentication (Face ID or fingerprint).
+              Please set up a PIN to secure your wallet.
               }
             </span>
           </div>
         </ion-col>
       </ion-row>
     </ion-grid>
-
-    @if (isPasswordExisting) {
+    @if (isChromeExtension && isPasswordExisting) {
     <app-password-login (onLogin)="goToXteriumPage($event)"></app-password-login>
-    } @else {
+    } @else if (isChromeExtension && !isPasswordExisting) {
     <app-password-setup (onPasswordSetup)="goToXteriumPage($event)"></app-password-setup>
-    }
-
-    <!-- @if (isChromeExtension) {
-    @if (isPasswordExisting) {
-    <app-password-login (onLogin)="goToXteriumPage($event)"></app-password-login>
-    } @else {
-    <app-password-setup (onPasswordSetup)="goToXteriumPage($event)"></app-password-setup>
-    }
-    } @else {
+    } @else if (!isChromeExtension && isBiometricAvailable) {
     <app-biometric (onLogin)="goToXteriumPage($event)"></app-biometric>
-    } -->
+    } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
+    <app-pin-login (onLogin)="goToXteriumPage($event)"></app-pin-login>
+    } @else {
+    <app-pin-setup (onPasswordSetup)="goToXteriumPage($event)"></app-pin-setup>
+    }
   </div>
 
   <ion-toast [duration]="5000"></ion-toast>
