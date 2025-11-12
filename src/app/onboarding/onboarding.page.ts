@@ -7,7 +7,6 @@ import { IonRouterOutlet } from '@ionic/angular/standalone';
 
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
-import { SyncWalletsService } from 'src/app/api/sync-wallets/sync-wallets.service';
 
 @Component({
   selector: 'app-onboarding',
@@ -26,7 +25,6 @@ export class OnboardingPage implements OnInit {
     private router: Router,
     private authService: AuthService,
     private walletsService: WalletsService,
-    private syncWalletsService: SyncWalletsService
   ) {
     this.initAuthentication();
   }
@@ -54,7 +52,6 @@ export class OnboardingPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.syncWalletsService.syncWallets();
-  }
+  ngOnInit() { }
+
 }
