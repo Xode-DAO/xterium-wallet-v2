@@ -6,6 +6,7 @@ export enum Network {
   Solana = 'Solana',
   SolanaTestnet = 'Solana Testnet',
   SolanaDevnet = 'Solana Devnet',
+  UnknownNetwork = 'Unknown Network',
 }
 
 export enum ScannerType {
