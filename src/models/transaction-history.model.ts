@@ -26,6 +26,7 @@ export class Transfers {
   to: string = "";
   amount: string = "";
   token_symbol: string = "";
+  token_decimals: number | null = null;
   block_number: number = 0;
   action: string = "";
   fee: string = "";
