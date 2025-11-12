@@ -5,27 +5,41 @@
   <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
     <h1 style="font-weight: bold">Confirm Save</h1>
     <span style="font-size: 15px;">
-      @if (isChromeExtension && isPasswordExisting) {
-      To securely save your wallet, please authenticate using your existing password.
-      } @else if (isChromeExtension && !isPasswordExisting) {
-      To securely save your wallet, please create a new password.
-      } @else if (!isChromeExtension && isBiometricAvailable) {
-      To securely save your wallet, please authenticate using your biometric data.
-      } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
-      To securely save your wallet, please enter your existing PIN.
+      @if (isChromeExtension && currentAuth) {
+      To confirm saving your wallet, please authenticate using your password.
+      } @else if (isChromeExtension && !currentAuth) {
+      To confirm saving your wallet, please set up a password.
+      } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type ===
+      'biometric')) {
+      To confirm saving your wallet, please authenticate using your biometric data.
+      } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
+      To confirm saving your wallet, please authenticate using your PIN.
+      } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
+      Something went wrong. Your biometric authentication is unavailable.
+      } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
+      To confirm saving your wallet, please authenticate using your PIN.
       } @else {
-      To securely save your wallet, please set up a new PIN.
+      To confirm saving your wallet, please set up a PIN.
       }
     </span>
   </div>
   <div class="ion-padding-horizontal">
-    @if (isChromeExtension && isPasswordExisting) {
+    @if (isChromeExtension && currentAuth) {
     <app-password-login (onLogin)="signWallet($event)"></app-password-login>
-    } @else if (isChromeExtension && !isPasswordExisting) {
+    } @else if (isChromeExtension && !currentAuth) {
     <app-password-setup (onPasswordSetup)="signWallet($event)"></app-password-setup>
-    } @else if (!isChromeExtension && isBiometricAvailable) {
+    } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type === 'biometric')) {
     <app-biometric (onLogin)="signWallet($event)"></app-biometric>
-    } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
+    } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
+    <app-pin-login (onLogin)="signWallet($event)"></app-pin-login>
+    } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
+    <div class="biometric-unavailable">
+      <p class="unavailable-text">
+        You've previously set up biometric authentication, but it's currently unavailable on this device.
+        Please set up your biometric authentication again to continue.
+      </p>
+    </div>
+    } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
     <app-pin-login (onLogin)="signWallet($event)"></app-pin-login>
     } @else {
     <app-pin-setup (onPasswordSetup)="signWallet($event)"></app-pin-setup>

@@ -13,10 +13,11 @@ export class AuthService {
 
   constructor(private router: Router,) { }
 
-  async setupPassword(encrypted_password: string): Promise<void> {
+  async setupPassword(encrypted_password: string, type: string): Promise<void> {
     const auth: Auth = {
       encrypted_password: encrypted_password,
-      expires_at: Date.now() + this.AUTH_EXPIRES_IN_MS
+      expires_at: Date.now() + this.AUTH_EXPIRES_IN_MS,
+      type: type
     }
 
     await Preferences.set({

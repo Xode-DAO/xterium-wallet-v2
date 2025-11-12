@@ -4,6 +4,8 @@ import { EnvironmentService } from 'src/app/api/environment/environment.service'
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { BiometricService } from 'src/app/api/biometric/biometric.service';
 
+import { Auth } from 'src/models/auth.model';
+
 import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
 import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
@@ -32,13 +34,14 @@ export class SignWalletComponent implements OnInit {
   ) { }
 
   isChromeExtension = false;
-  isPasswordExisting = false;
+
+  currentAuth: Auth | null = null;
   isBiometricAvailable = false;
 
   async initSecurity() {
     const auth = await this.authService.getAuth();
     if (auth) {
-      this.isPasswordExisting = true;
+      this.currentAuth = auth;
     }
 
     const availability = await this.biometricService.isAvailable();

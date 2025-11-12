@@ -1,6 +1,7 @@
 export class Auth {
   encrypted_password: string = "";
   expires_at: number | null = null;
+  type: string | 'biometric' | 'pin' | 'password' = 'password';
 }
 
 export class PasswordLogin {

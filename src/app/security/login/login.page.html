@@ -9,26 +9,36 @@
         <ion-col size="12">
           <div class="ion-text-center" style="margin-top: -75px">
             <h1 style="font-weight: bold">
-              @if (isChromeExtension && isPasswordExisting) {
+              @if (isChromeExtension && currentAuth) {
               Login
-              } @else if (isChromeExtension && !isPasswordExisting) {
+              } @else if (isChromeExtension && !currentAuth) {
               Set Up Your Password
-              } @else if (!isChromeExtension && isBiometricAvailable) {
-              Login
-              } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
+              } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type ===
+              'biometric')) {
+              Biometric Authentication
+              } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
+              Enter Pin
+              } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
+              Biometric Authentication
+              } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
               Enter PIN
               } @else {
               Set Up Your PIN
               }
             </h1>
             <span style="font-size: 15px;">
-              @if (isChromeExtension && isPasswordExisting) {
+              @if (isChromeExtension && currentAuth) {
               Please enter your password to unlock your wallet.
-              } @else if (isChromeExtension && !isPasswordExisting) {
+              } @else if (isChromeExtension && !currentAuth) {
               Please set up a password to secure your wallet.
-              } @else if (!isChromeExtension && isBiometricAvailable) {
-              Sign in with Face ID or fingerprint — or use your PIN to unlock the wallet.
-              } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
+              } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type ===
+              'biometric')) {
+              To unlock your wallet, please authenticate using your biometric data or enter your PIN.
+              } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
+              Please enter your PIN to unlock your wallet.
+              } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
+              Semething went wrong. Your biometric authentication is unavailable. .
+              } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
               Please enter your PIN to unlock your wallet.
               } @else {
               Please set up a PIN to secure your wallet.
@@ -38,13 +48,22 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    @if (isChromeExtension && isPasswordExisting) {
+    @if (isChromeExtension && currentAuth) {
     <app-password-login (onLogin)="goToXteriumPage($event)"></app-password-login>
-    } @else if (isChromeExtension && !isPasswordExisting) {
+    } @else if (isChromeExtension && !currentAuth) {
     <app-password-setup (onPasswordSetup)="goToXteriumPage($event)"></app-password-setup>
-    } @else if (!isChromeExtension && isBiometricAvailable) {
+    } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type === 'biometric')) {
     <app-biometric (onLogin)="goToXteriumPage($event)"></app-biometric>
-    } @else if (!isChromeExtension && !isBiometricAvailable && isPasswordExisting) {
+    } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
+    <app-pin-login (onLogin)="goToXteriumPage($event)"></app-pin-login>
+    } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
+    <div class="biometric-unavailable">
+      <p class="unavailable-text">
+        You've previously set up biometric authentication, but it's currently unavailable on this device.
+        Please set up your biometric authentication again to continue.
+      </p>
+    </div>
+    } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
     <app-pin-login (onLogin)="goToXteriumPage($event)"></app-pin-login>
     } @else {
     <app-pin-setup (onPasswordSetup)="goToXteriumPage($event)"></app-pin-setup>

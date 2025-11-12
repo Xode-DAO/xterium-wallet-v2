@@ -52,6 +52,8 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 
+import { Auth } from 'src/models/auth.model';
+
 import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
 import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
@@ -122,7 +124,8 @@ export class SignTransactionPage implements OnInit {
   }
 
   isChromeExtension = false;
-  isPasswordExisting = false;
+
+  currentAuth: Auth | null = null;
   isBiometricAvailable = false;
 
   currentWallet: Wallet = new Wallet();
@@ -164,7 +167,7 @@ export class SignTransactionPage implements OnInit {
   async initSecurity() {
     const auth = await this.authService.getAuth();
     if (auth) {
-      this.isPasswordExisting = true;
+      this.currentAuth = auth;
     }
 
     const availability = await this.biometricService.isAvailable();

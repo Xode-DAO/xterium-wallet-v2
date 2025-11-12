@@ -95,7 +95,7 @@ export class PasswordSetupComponent implements OnInit {
     this.isProcessing = true;
 
     const encryptedPassword = await this.encryptionService.encrypt(this.passwordSetup.password, this.passwordSetup.password);
-    await this.authService.setupPassword(encryptedPassword);
+    await this.authService.setupPassword(encryptedPassword, 'password');
 
     this.onPasswordSetup.emit(this.passwordSetup.password);
     this.isProcessing = false;

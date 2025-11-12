@@ -70,7 +70,7 @@ export class BiometricComponent implements OnInit {
       const credentials = await this.biometricService.getCredentials();
 
       const encryptedPassword = await this.encryptionService.encrypt(credentials.password, credentials.password);
-      await this.authService.setupPassword(encryptedPassword);
+      await this.authService.setupPassword(encryptedPassword, 'biometric');
 
       const toast = await this.toastController.create({
         message: 'Biometric setup complete! Please login again.',

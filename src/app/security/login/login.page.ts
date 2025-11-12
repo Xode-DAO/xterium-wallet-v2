@@ -22,6 +22,8 @@ import { EnvironmentService } from 'src/app/api/environment/environment.service'
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { BiometricService } from 'src/app/api/biometric/biometric.service';
 
+import { Auth } from 'src/models/auth.model';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -53,13 +55,14 @@ export class LoginPage implements OnInit {
   ) { }
 
   isChromeExtension = false;
-  isPasswordExisting = false;
+
+  currentAuth: Auth | null = null;
   isBiometricAvailable = false;
 
   async initSecurity() {
     const auth = await this.authService.getAuth();
     if (auth) {
-      this.isPasswordExisting = true;
+      this.currentAuth = auth;
     }
 
     const availability = await this.biometricService.isAvailable();
