@@ -147,15 +147,6 @@ export class TransactionHistoryPage implements OnInit {
     return this.balancesService.formatBalance(amount, decimals);
   }
 
-  formatAmount(amount: number): number {
-    const decimals = this.currentWallet.chain.decimal;
-    if (decimals == 12 ) {
-      return amount / Math.pow(10, decimals)
-    }
-
-    return amount
-  }
-
   async fetchPayments(): Promise<void> {
     this.isPaymentsLoading = true;
 
@@ -204,6 +195,10 @@ export class TransactionHistoryPage implements OnInit {
   }
 
   async fetchTransfers(): Promise<void> {
+    this.isTransfersLoading = true;
+
+    this.transfers = [];
+
     const newTransfers = await this.scannerService.fetchTransfers(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
@@ -220,6 +215,10 @@ export class TransactionHistoryPage implements OnInit {
   }
 
   async fetchExtrinsics(): Promise<void> {
+    this.isExtrinsicsLoading = true;
+
+    this.extrinsics = [];
+
     const newExtrinsics = await this.scannerService.fetchExtrinsics(
       this.currentWalletPublicAddress,
       this.currentWallet.chain,
