@@ -122,7 +122,7 @@ export class ScannerService {
       if (chain.chain_id === 3417) {
         const skip = (page - 1) * row;
 
-        const url = `${chain.scanner?.extrinsics_url}/extrinsics?limit=${row}&skip=${skip}`;
+        const url = `${chain.scanner?.extrinsics_url}/extrinsics?limit=${row}&skip=${skip}&contains=${address}`;
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
         });
