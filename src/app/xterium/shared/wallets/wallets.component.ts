@@ -24,7 +24,8 @@ import { ellipsisVerticalOutline } from 'ionicons/icons';
 import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
 import { WalletDetailsComponent } from 'src/app/xterium/shared/wallets/wallet-details/wallet-details.component';
 
-import { Chain, Network } from 'src/models/chain.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';

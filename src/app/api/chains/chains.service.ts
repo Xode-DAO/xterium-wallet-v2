@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { Chain, Network, ScannerType } from "src/models/chain.model"
+import { Network } from "src/models/network.model"
+import { Chain, ScannerType } from "src/models/chain.model"
 
 @Injectable({
   providedIn: 'root'

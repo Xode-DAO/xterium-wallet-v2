@@ -30,15 +30,16 @@ import { close } from 'ionicons/icons';
 import { HeaderComponent } from 'src/app/onboarding/shared/header/header.component';
 import { TermsAndConditionComponent } from 'src/app/onboarding/shared/terms-and-condition/terms-and-condition.component'
 
-import { Chain } from 'src/models/chain.model';
+import { Network, NetworkMetadata } from 'src/models/network.model';
 
 import { ChainsService } from 'src/app/api/chains/chains.service';
+import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 
 @Component({
-  selector: 'app-select-chain',
-  templateUrl: './select-chain.page.html',
-  styleUrls: ['./select-chain.page.scss'],
+  selector: 'app-select-network',
+  templateUrl: './select-network.page.html',
+  styleUrls: ['./select-network.page.scss'],
   standalone: true,
   imports: [
     RouterModule,
@@ -66,13 +67,14 @@ import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
     TermsAndConditionComponent,
   ],
 })
-export class SelectChainPage implements OnInit {
+export class SelectNetworkPage implements OnInit {
   @ViewChild('termsAndConditionModal', { read: IonModal })
   termsAndConditionModal!: IonModal;
 
   constructor(
     private router: Router,
     private chainsService: ChainsService,
+    private networkMetadataService: NetworkMetadataService,
     private onboardingService: OnboardingService
   ) {
     addIcons({
@@ -80,24 +82,28 @@ export class SelectChainPage implements OnInit {
     });
   }
 
-  selectedChainId: number = 0;
-  selectedChain: Chain | null = null;
+  public Network = Network;
+
+  selectedNetwork: Network = Network.Polkadot;
+  selectedNetworkMetadata: NetworkMetadata | null = null;
 
   isAgreed: boolean = false;
 
-  selectChain(id: number) {
-    this.selectedChainId = id;
+  selectNetworkMetadata(network: Network) {
+    this.selectedNetwork = network;
 
-    const chainByName = this.chainsService.getChainById(id);
-    if (chainByName) {
-      this.selectedChain = chainByName;
+    const networkMetadata = this.networkMetadataService.getNetworkMetadataByNetwork(network);
+    if (networkMetadata) {
+      this.selectedNetworkMetadata = networkMetadata;
     }
   }
 
   async getStarted() {
-    if (this.selectedChain) {
+    if (this.selectedNetworkMetadata) {
+      const selectedChain = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
+
       await this.onboardingService.set({
-        step1_selected_chain: this.selectedChain,
+        step1_selected_chain: selectedChain[0],
         step2_accepted_terms: this.isAgreed,
         step3_created_wallet: null,
         step4_completed: false,
@@ -111,11 +117,6 @@ export class SelectChainPage implements OnInit {
     this.termsAndConditionModal.present();
   }
 
-  ngOnInit() {
-    const defaultChain = this.chainsService.getChainById(1);
-    if (defaultChain) {
-      this.selectedChain = defaultChain;
-    }
-  }
+  ngOnInit() { }
 
 }

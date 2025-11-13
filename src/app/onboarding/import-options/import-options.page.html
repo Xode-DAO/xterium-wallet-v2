@@ -54,7 +54,7 @@
         </div>
 
         <div class="ion-padding-horizontal">
-          <app-import-seed-phrase [selectedChain]="selectedChain"
+          <app-import-seed-phrase [selectedNetworkMetadata]="selectedNetworkMetadata"
             (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
         </div>
       </ion-content>
@@ -78,7 +78,7 @@
         </div>
 
         <div class="ion-padding-horizontal">
-          <app-import-private-key [selectedChain]="selectedChain"
+          <app-import-private-key [selectedNetworkMetadata]="selectedNetworkMetadata"
             (onImportedWallet)="onImportWalletPrivateKey($event)"></app-import-private-key>
         </div>
       </ion-content>
@@ -102,7 +102,7 @@
         </div>
 
         <div class="ion-padding-horizontal">
-          <app-import-from-backup [selectedChain]="selectedChain"
+          <app-import-from-backup [selectedNetworkMetadata]="selectedNetworkMetadata"
             (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
         </div>
       </ion-content>

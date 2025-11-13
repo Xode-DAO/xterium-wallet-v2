@@ -11,9 +11,9 @@ import {
   IonAvatar
 } from '@ionic/angular/standalone';
 
-import { Chain, Network } from 'src/models/chain.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 
-import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 
 @Component({
@@ -36,7 +36,6 @@ export class ChainsComponent implements OnInit {
   @Output() onSelectedChain = new EventEmitter<Chain>();
 
   constructor(
-    private utilsService: UtilsService,
     private chainsService: ChainsService,
   ) { }
 

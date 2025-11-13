@@ -1,13 +1,4 @@
-export enum Network {
-  All = 'All',
-  Substrate = 'Substrate',
-  Polkadot = 'Polkadot',
-  Paseo = 'Paseo',
-  Solana = 'Solana',
-  SolanaTestnet = 'Solana Testnet',
-  SolanaDevnet = 'Solana Devnet',
-  UnknownNetwork = 'Unknown Network',
-}
+import { Network } from "./network.model";
 
 export enum ScannerType {
   Subscan = 'Subscan',

@@ -19,9 +19,10 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { Chain } from 'src/models/chain.model';
+import { NetworkMetadata } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model';
 
+import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 
 import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
@@ -61,7 +62,8 @@ export class ImportOptionsPage implements OnInit {
 
   constructor(
     private router: Router,
-    private onboardingService: OnboardingService
+    private onboardingService: OnboardingService,
+    private networkMetadataService: NetworkMetadataService,
   ) {
     addIcons({
       arrowBackOutline,
@@ -69,7 +71,7 @@ export class ImportOptionsPage implements OnInit {
     });
   }
 
-  selectedChain: Chain = new Chain();
+  selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
 
   openImportSeedPhraseModal() {
     this.importSeedPhraseModal.present();
@@ -102,7 +104,10 @@ export class ImportOptionsPage implements OnInit {
     this.onboardingService.get().then(onboarding => {
       if (onboarding) {
         if (onboarding.step1_selected_chain) {
-          this.selectedChain = onboarding.step1_selected_chain;
+          const networkMetadata = this.networkMetadataService.getNetworkMetadataByNetwork(onboarding.step1_selected_chain.network);
+          if (networkMetadata) {
+            this.selectedNetworkMetadata = networkMetadata;
+          }
         }
       }
     });

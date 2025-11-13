@@ -1,0 +1,21 @@
+<div class="networks-list">
+  <ion-grid>
+    <ion-row>
+      @for (networkMetadata of networkMetadatas; track networkMetadata;) {
+      <ion-col size="12">
+        <ion-list>
+          <ion-item button detail="false" lines="none" (click)="selectNetworkMetadata(networkMetadata)">
+            <ion-avatar slot="start">
+              <img [src]="'/../../../../assets/images/networks/' + networkMetadata.image" />
+            </ion-avatar>
+            <ion-label>
+              <h2>{{ networkMetadata.network }}</h2>
+              <p>{{ networkMetadata.description }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+</div>

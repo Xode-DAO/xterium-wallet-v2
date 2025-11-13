@@ -23,6 +23,7 @@
   </div>
 
   <div class="ion-padding-horizontal">
-    <app-new-wallet [selectedChain]="selectedChain" (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
+    <app-new-wallet [selectedNetworkMetadata]="selectedNetworkMetadata"
+      (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
   </div>
 </ion-content>

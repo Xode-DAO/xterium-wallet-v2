@@ -33,7 +33,8 @@ import { clipboardOutline, scanOutline, chevronDownOutline, close } from 'ionico
 
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
-import { Chain, Network } from 'src/models/chain.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
