@@ -24,7 +24,7 @@ import { copyOutline } from 'ionicons/icons';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
@@ -58,7 +58,7 @@ export class WalletDetailsComponent implements OnInit {
   @Output() onDeletedWallet = new EventEmitter<boolean>();
 
   constructor(
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     private toastController: ToastController,
@@ -81,7 +81,7 @@ export class WalletDetailsComponent implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async getCurrentWallet(): Promise<void> {
@@ -142,7 +142,7 @@ export class WalletDetailsComponent implements OnInit {
 
     if (Capacitor.isNativePlatform()) {
       const base64Data = btoa(unescape(encodeURIComponent(walletData)));
-      
+
       const result = await Filesystem.writeFile({
         path: fileName,
         data: base64Data,
@@ -151,7 +151,7 @@ export class WalletDetailsComponent implements OnInit {
       });
 
       let fileUri = result.uri;
-      
+
       if (Capacitor.getPlatform() === 'android') {
         const fileInfo = await Filesystem.getUri({
           path: fileName,

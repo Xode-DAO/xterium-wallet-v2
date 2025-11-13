@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { ApiPromise } from '@polkadot/api';
+import { ISubmittableResult } from '@polkadot/types/types';
+
 import {
   IonContent,
   IonGrid,
@@ -41,12 +44,12 @@ import { Wallet, WalletSigner } from 'src/models/wallet.model';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { BiometricService } from 'src/app/api/biometric/biometric.service';
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
-import { PolkadotService } from 'src/app/api/polkadot-api/polkadot/polkadot.service';
-import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
-import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
-import { HydrationService } from 'src/app/api/polkadot-api/hydration/hydration.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
+import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
+import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot/polkadot.service';
+import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
+import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
+import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -103,11 +106,11 @@ export class SignTransactionPage implements OnInit {
     private environmentService: EnvironmentService,
     private authService: AuthService,
     private biometricService: BiometricService,
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private polkadotService: PolkadotService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private hydrationService: HydrationService,
+    private hydrationPolkadotService: HydrationPolkadotService,
     private walletsService: WalletsService,
     private encryptionService: EncryptionService,
     private balancesService: BalancesService,
@@ -122,6 +125,8 @@ export class SignTransactionPage implements OnInit {
       flame
     });
   }
+
+  pJsApi!: ApiPromise;
 
   isChromeExtension = false;
 
@@ -145,7 +150,7 @@ export class SignTransactionPage implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async getCurrentWallet(): Promise<void> {
@@ -157,7 +162,7 @@ export class SignTransactionPage implements OnInit {
   }
 
   truncateAddress(address: string): string {
-    return this.polkadotJsService.truncateAddress(address);
+    return this.utilsService.truncateAddress(address);
   }
 
   formatBalance(amount: number, decimals: number): number {
@@ -177,28 +182,33 @@ export class SignTransactionPage implements OnInit {
   async initTransaction(): Promise<void> {
     await this.getCurrentWallet();
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       if (params['encodedCallDataHex']) {
         this.encodedCallDataHex = params['encodedCallDataHex'];
 
-        let service: PolkadotApiService | null = null;
+        let service: PolkadotJsService | null = null;
 
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
-        if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
+        if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
 
         if (!service) return;
 
-        service.decodeCallData(this.encodedCallDataHex).then(async (transactionInfo) => {
-          this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
-          setTimeout(async () => {
-            const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
+        this.pJsApi = await service.connect();
 
-            this.estimatedFee = Number(fee.partial_fee);
-            this.isLoadingFee = false;
-          }, 1000);
-        });
+        // service.decodeCallData(this.pApi, this.encodedCallDataHex).then(async (transactionInfo) => {
+        //   this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
+        //   setTimeout(async () => {
+        //     const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
+
+        //     this.estimatedFee = Number(fee.partial_fee);
+        //     this.isLoadingFee = false;
+        //   }, 1000);
+        // });
+
+        this.estimatedFee = 0;
+        this.isLoadingFee = false;
       }
     });
   }
@@ -210,24 +220,27 @@ export class SignTransactionPage implements OnInit {
   async confirmSignTransaction(decryptedPassword: string) {
     this.isProcessing = true;
 
-    let service: PolkadotApiService | null = null;
+    let service: PolkadotJsService | null = null;
 
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
 
     if (!service) return;
 
+    const decryptedMnemonicPhrase = await this.encryptionService.decrypt(this.currentWallet.mnemonic_phrase, decryptedPassword);
     const decryptedPrivateKey = await this.encryptionService.decrypt(this.currentWallet.private_key, decryptedPassword);
     const walletSigner: WalletSigner = {
+      mnemonic_phrase: decryptedMnemonicPhrase,
       public_key: this.currentWallet.public_key,
       private_key: decryptedPrivateKey
     };
 
-    service.signAndSubmitTransaction(this.encodedCallDataHex, walletSigner).subscribe({
+    service.signAndSubmitTransaction(this.pJsApi, this.encodedCallDataHex, walletSigner).subscribe({
       next: async (event) => {
         this.confirmSignTransactionModal.dismiss();
+        console.log('Signing transaction with encoded call data hex:', decryptedPassword);
 
         this.router.navigate(['/xterium/balances']);
         this.handleTransactionEvent(event);
@@ -238,45 +251,43 @@ export class SignTransactionPage implements OnInit {
     });
   }
 
-  async handleTransactionEvent(event: any) {
+  async handleTransactionEvent(event: ISubmittableResult) {
     let title = '';
     let body = '';
 
     const hashInfo = event.txHash ? `\nTx Hash: ${event.txHash}` : '';
 
-    switch (event.type) {
-      case "signed":
+    switch (event.status.toString()) {
+      case "isReady":
         title = "Transaction Signed";
         body = `Your transfer request has been signed and is ready to be sent.${hashInfo}`;
         break;
 
-      case "broadcasted":
+      case "isBroadcast":
         title = "Transaction Sent";
         body = `Your transfer has been broadcasted to the chain.${hashInfo}`;
         break;
 
-      case "txBestBlocksState":
-        if (event.found) {
+      case "isInBlock":
+        if (event.events.length > 0) {
           title = "Transaction Included in Block";
 
-          const eventMessages = event.events.map((e: any, idx: number) => {
-            if (e.type === "ExtrinsicSuccess") return `Step ${idx + 1}: Transfer succeeded.`;
-            if (e.type === "ExtrinsicFailed") return `Step ${idx + 1}: Transfer failed.`;
-            return `Step ${idx + 1}: ${e.type} event detected.`;
+          const eventMessages = event.events.map((data) => {
+            console.log('event data', data);
           });
 
           body = `Your transaction is included in a block.${hashInfo}\n` + eventMessages.join("\n");
         }
         break;
 
-      case "finalized":
+      case "isFinalized":
         title = "Transaction Completed";
         body = `Your transfer is now finalized and confirmed on the blockchain.${hashInfo}`;
         break;
 
       default:
         title = "Transaction Update";
-        body = `Received event: ${event.type}${hashInfo}`;
+        body = `Received event: ${event.events[0]}${hashInfo}`;
     }
 
     const id = Math.floor(Math.random() * 100000);

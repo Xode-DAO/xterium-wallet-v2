@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angu
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { ApiPromise } from '@polkadot/api';
 import { Subscription } from 'rxjs';
 
 import { Clipboard } from '@capacitor/clipboard';
@@ -35,12 +36,12 @@ import { Wallet } from 'src/models/wallet.model';
 import { Chain, Network } from 'src/models/chain.model';
 
 import { BalancesService } from 'src/app/api/balances/balances.service';
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
-import { PolkadotService } from 'src/app/api/polkadot-api/polkadot/polkadot.service';
-import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
-import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
-import { HydrationService } from 'src/app/api/polkadot-api/hydration/hydration.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
+import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
+import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot/polkadot.service';
+import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
+import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
+import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 
@@ -86,11 +87,11 @@ export class SendComponent implements OnInit {
 
   constructor(
     private balancesService: BalancesService,
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private polkadotService: PolkadotService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private hydrationService: HydrationService,
+    private hydrationPolkadotService: HydrationPolkadotService,
     private walletsService: WalletsService,
     private multipayxApiService: MultipayxApiService,
     private toastController: ToastController,
@@ -105,6 +106,8 @@ export class SendComponent implements OnInit {
       close
     });
   }
+
+  pJsApi!: ApiPromise;
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
@@ -144,7 +147,7 @@ export class SendComponent implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async getCurrentWallet(): Promise<void> {
@@ -162,7 +165,32 @@ export class SendComponent implements OnInit {
     if (!this.balancesSubscription.closed) this.balancesSubscription.unsubscribe();
 
     await this.getCurrentWallet();
+    await this.getAndWatchBalances();
     await this.getPrice();
+  }
+
+  async getAndWatchBalances(): Promise<void> {
+    let service: PolkadotJsService | null = null;
+
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+
+    if (!service) return;
+
+    this.pJsApi = await service.connect();
+    this.balancesObservableTimeout = setTimeout(() => {
+      if (this.balancesSubscription.closed) {
+        this.balancesSubscription = service.watchBalance(
+          this.pJsApi,
+          this.balance,
+          this.currentWalletPublicAddress
+        ).subscribe(balance => {
+          this.balance = balance;
+        });
+      }
+    }, 5000);
   }
 
   async getPrice(): Promise<void> {
@@ -173,26 +201,6 @@ export class SendComponent implements OnInit {
         this.balance.price = price[0].price;
       }
     }
-
-    let service: PolkadotApiService | null = null;
-
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
-
-    if (!service) return;
-
-    this.balancesObservableTimeout = setTimeout(() => {
-      if (this.balancesSubscription.closed) {
-        this.balancesSubscription = service.watchBalance(
-          this.balance,
-          this.currentWalletPublicAddress
-        ).subscribe(balance => {
-          this.balance = balance;
-        });
-      }
-    }, 5000);
   }
 
   formatBalanceWithSuffix(amount: number, decimals: number): string {
@@ -283,7 +291,7 @@ export class SendComponent implements OnInit {
 
     const scannedAddress = result.ScanResult.trim();
 
-    if (!this.polkadotJsService.isValidAddress(scannedAddress)) {
+    if (!this.utilsService.isValidAddress(scannedAddress)) {
       const alert = await this.alertController.create({
         header: 'Invalid Address',
         message: 'The scanned QR code does not contain a valid Substrate/Polkadot address.',
@@ -312,24 +320,23 @@ export class SendComponent implements OnInit {
 
     this.isProcessing = true;
 
-    let service: PolkadotApiService | null = null;
+    let service: PolkadotJsService | null = null;
 
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
 
     if (!service) return;
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
-    const transaction = service.transfer(this.balance, this.recipientAddress, parseAmount);
+    const transactionHex = await service.transfer(this.pJsApi, this.balance, this.recipientAddress, parseAmount);
 
-    const encodedCallDataHex = (await transaction.getEncodedData()).asHex();
-    this.onClickSend.emit(encodedCallDataHex);
+    this.onClickSend.emit(transactionHex);
 
     this.router.navigate(['/web3/sign-transaction'], {
       queryParams: {
-        encodedCallDataHex: encodedCallDataHex
+        encodedCallDataHex: transactionHex
       }
     });
   }

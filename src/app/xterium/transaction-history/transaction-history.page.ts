@@ -43,7 +43,7 @@ import { Wallet } from 'src/models/wallet.model';
 import { Chain, Network } from 'src/models/chain.model';
 import { Payments, Transfers, Extrinsics } from 'src/models/transaction-history.model';
 
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
@@ -82,7 +82,7 @@ import { BalancesService } from 'src/app/api/balances/balances.service';
 export class TransactionHistoryPage implements OnInit {
 
   constructor(
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private walletsService: WalletsService,
     private chainsService: ChainsService,
     private multipayxApiService: MultipayxApiService,
@@ -132,7 +132,7 @@ export class TransactionHistoryPage implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async getCurrentWallet(): Promise<void> {

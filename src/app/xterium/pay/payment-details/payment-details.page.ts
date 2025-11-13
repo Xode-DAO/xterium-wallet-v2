@@ -25,7 +25,7 @@ import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 import { USDTTokenDetails, PayDetails } from 'src/models/pay.model';
 
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 @Component({
@@ -55,7 +55,7 @@ export class PaymentDetailsPage implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private walletsService: WalletsService
   ) {
     addIcons({
@@ -82,7 +82,7 @@ export class PaymentDetailsPage implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async getCurrentWallet(): Promise<void> {
@@ -94,7 +94,7 @@ export class PaymentDetailsPage implements OnInit {
   }
 
   truncateAddress(address: string): string {
-    return this.polkadotJsService.truncateAddress(address);
+    return this.utilsService.truncateAddress(address);
   }
 
   getUSDTTokenDetails() {

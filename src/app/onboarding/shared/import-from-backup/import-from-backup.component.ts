@@ -30,7 +30,7 @@ import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
@@ -70,7 +70,7 @@ export class ImportFromBackupComponent implements OnInit {
 
   constructor(
     private environmentService: EnvironmentService,
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private onboardingService: OnboardingService,
     private encryptionService: EncryptionService,
     private walletsService: WalletsService,
@@ -137,11 +137,11 @@ export class ImportFromBackupComponent implements OnInit {
 
     if (this.selectedChain.network === Network.Polkadot) {
       const decryptedPrivateKey = await this.encryptionService.decrypt(this.wallet.private_key!, password);
-      const privateKeyHex = this.polkadotJsService.encodePrivateKeyToHex(
+      const privateKeyHex = this.utilsService.encodePrivateKeyToHex(
         new Uint8Array(decryptedPrivateKey.split(',').map(Number) ?? [])
       );
 
-      let validatedKeypair = await this.polkadotJsService.validatePrivateKey(privateKeyHex);
+      let validatedKeypair = await this.utilsService.validatePrivateKey(privateKeyHex);
       if (validatedKeypair && !validatedKeypair.valid) {
         this.confirmImportWalletModal.dismiss();
         this.isProcessing = false;
@@ -164,7 +164,7 @@ export class ImportFromBackupComponent implements OnInit {
       if (this.wallet.mnemonic_phrase !== "" && this.wallet.mnemonic_phrase !== "-") {
         const decryptedMnemonicPhrase = await this.encryptionService.decrypt(this.wallet.mnemonic_phrase!, password);
 
-        let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(decryptedMnemonicPhrase);
+        let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(decryptedMnemonicPhrase);
         if (!isMnemonicPhraseValid) {
           this.confirmImportWalletModal.dismiss();
           this.isProcessing = false;
@@ -180,11 +180,11 @@ export class ImportFromBackupComponent implements OnInit {
           return;
         }
 
-        const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(decryptedMnemonicPhrase);
-        const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
-        const privateKeyFromSeedsHex = this.polkadotJsService.encodePrivateKeyToHex(keypair.secretKey);
+        const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(decryptedMnemonicPhrase);
+        const keypair = await this.utilsService.createKeypairFromSeed(seed);
+        const privateKeyFromSeedsHex = this.utilsService.encodePrivateKeyToHex(keypair.secretKey);
 
-        if (!this.polkadotJsService.arePrivateKeysEqual(privateKeyHex, privateKeyFromSeedsHex)) {
+        if (!this.utilsService.arePrivateKeysEqual(privateKeyHex, privateKeyFromSeedsHex)) {
           this.confirmImportWalletModal.dismiss();
           this.isProcessing = false;
 
@@ -249,7 +249,7 @@ export class ImportFromBackupComponent implements OnInit {
             );
 
             return {
-              address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
+              address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
               name: wallet.name,
             };
           })

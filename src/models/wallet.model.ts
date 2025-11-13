@@ -10,6 +10,7 @@ export class Wallet {
 }
 
 export class WalletSigner {
+  mnemonic_phrase: string = "-";
   public_key: string = "";
   private_key: string = "-";
 }
