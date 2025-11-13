@@ -135,7 +135,7 @@
                 <p>Total Supply</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
-                <h2>{{ formatBalanceWithSuffix(balance.token.total_supply, balance.token.decimals) }}</h2>
+                <h2>{{ formatBalanceWithSuffix(+balance.token.total_supply, balance.token.decimals) }}</h2>
               </div>
             </ion-item>
             <ion-item detail="false" lines="none">

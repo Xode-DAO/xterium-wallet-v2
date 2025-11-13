@@ -24,7 +24,7 @@ import { Chain } from 'src/models/chain.model';
 import { Token } from 'src/models/token.model';
 
 import { ChainsService } from 'src/app/api/chains/chains.service';
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { TokensService } from 'src/app/api/tokens/tokens.service';
 
@@ -50,7 +50,7 @@ export class ReceiveComponent implements OnInit {
   @ViewChild('qrcode', { static: false }) qrcodeElement!: QRCodeComponent;
 
   constructor(
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     private tokensService: TokensService,
@@ -69,7 +69,7 @@ export class ReceiveComponent implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async getCurrentWallet(): Promise<void> {
@@ -81,7 +81,7 @@ export class ReceiveComponent implements OnInit {
   }
 
   truncateAddress(address: string): string {
-    return this.polkadotJsService.truncateAddress(address);
+    return this.utilsService.truncateAddress(address);
   }
 
   async fetchData(): Promise<void> {

@@ -19,7 +19,7 @@ import {
 import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
@@ -49,7 +49,7 @@ export class ApprovalPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     public environmentService: EnvironmentService,
@@ -107,11 +107,11 @@ export class ApprovalPage implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   truncateAddress(address: string): string {
-    return this.polkadotJsService.truncateAddress(address);
+    return this.utilsService.truncateAddress(address);
   }
 
   toggleCheckbox(wallet: Wallet, event: any) {
@@ -155,7 +155,7 @@ export class ApprovalPage implements OnInit {
             );
 
             return {
-              address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 42),
+              address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, 42),
               name: wallet.name,
             };
           })

@@ -3,6 +3,8 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { ApiPromise } from '@polkadot/api';
+
 import { Subscription } from 'rxjs';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
@@ -37,12 +39,12 @@ import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Balance } from 'src/models/balance.model';
 
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
-import { PolkadotApiService } from 'src/app/api/polkadot-api/polkadot-api.service';
-import { PolkadotService } from 'src/app/api/polkadot-api/polkadot/polkadot.service';
-import { AssethubPolkadotService } from 'src/app/api/polkadot-api/assethub-polkadot/assethub-polkadot.service';
-import { XodePolkadotService } from 'src/app/api/polkadot-api/xode-polkadot/xode-polkadot.service';
-import { HydrationService } from 'src/app/api/polkadot-api/hydration/hydration.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
+import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
+import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot/polkadot.service';
+import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
+import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
+import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -87,11 +89,11 @@ export class TokenDetailsPage implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private polkadotService: PolkadotService,
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
-    private hydrationService: HydrationService,
+    private hydrationPolkadotService: HydrationPolkadotService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     private balancesService: BalancesService,
@@ -104,6 +106,8 @@ export class TokenDetailsPage implements OnInit {
       swapHorizontal,
     });
   }
+
+  pJsApi!: ApiPromise;
 
   balance: Balance = new Balance();
 
@@ -152,7 +156,7 @@ export class TokenDetailsPage implements OnInit {
     );
 
     const ss58Format = typeof chain.address_prefix === 'number' ? chain.address_prefix : 0;
-    return await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
   async getCurrentWallet(): Promise<void> {
@@ -185,26 +189,29 @@ export class TokenDetailsPage implements OnInit {
   }
 
   async getPrice(): Promise<void> {
-    let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency("USD");
-    if (pricePerCurrency.data.length > 0) {
-      let price = pricePerCurrency.data.filter(item => item.symbol.toLowerCase() === this.balance.token.symbol.toLowerCase())
-      if (price) {
-        this.balance.price = price[0].price;
+    this.multipayxApiService.getPricePerCurrency("USD").then(async pricePerCurrency => {
+      if (pricePerCurrency.data.length > 0) {
+        let price = pricePerCurrency.data.filter(item => item.symbol.toLowerCase() === this.balance.token.symbol.toLowerCase())
+        if (price) {
+          this.balance.price = price[0].price;
+        }
       }
-    }
+    });
 
-    let service: PolkadotApiService | null = null;
+    let service: PolkadotJsService | null = null;
 
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
-    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationService;
+    if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
 
     if (!service) return;
 
+    this.pJsApi = await service.connect();
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
+          this.pJsApi,
           this.balance,
           this.currentWalletPublicAddress
         ).subscribe(balance => {

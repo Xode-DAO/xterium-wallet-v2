@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HydrationService } from './hydration.service';
+import { XodePolkadotService } from './xode-polkadot.service';
 
-describe('HydrationService', () => {
-  let service: HydrationService;
+describe('XodePolkadotService', () => {
+  let service: XodePolkadotService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HydrationService);
+    service = TestBed.inject(XodePolkadotService);
   });
 
   it('should be created', () => {
