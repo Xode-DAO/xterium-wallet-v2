@@ -11,8 +11,12 @@ import {
   IonAvatar,
   IonLabel,
   IonButton,
+  IonIcon,
   ToastController,
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons'; 
+import { copyOutline } from 'ionicons/icons';
 
 import { QRCodeComponent } from 'angularx-qrcode';
 
@@ -43,6 +47,7 @@ import { TokensService } from 'src/app/api/tokens/tokens.service';
     IonAvatar,
     IonLabel,
     IonButton,
+    IonIcon,
     QRCodeComponent
   ]
 })
@@ -56,7 +61,9 @@ export class ReceiveComponent implements OnInit {
     private walletsService: WalletsService,
     private tokensService: TokensService,
     private toastController: ToastController
-  ) { }
+  ) { 
+    addIcons({ copyOutline });
+  }
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
