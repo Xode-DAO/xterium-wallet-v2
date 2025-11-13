@@ -57,7 +57,7 @@
                   <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
                 </ion-button>
               </div>
-              <h2>{{ wallet.name }}</h2>
+              <h2>{{ wallet.name | slice:0:10 }}</h2>
               <p>{{ truncateAddress(wallet.public_key) }}</p>
             </ion-label>
           </ion-item>
