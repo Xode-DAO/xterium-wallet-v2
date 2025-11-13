@@ -138,8 +138,8 @@ export class SignTransactionPage implements OnInit {
 
   encodedCallDataHex: string = "";
 
-  extrinsic: string = "";
-  estimatedFee: number = 0;
+  extrinsic: string = "transfer";
+  estimatedFee: number = 0.0014;
   isLoadingFee: boolean = true;
 
   isProcessing: boolean = false;
