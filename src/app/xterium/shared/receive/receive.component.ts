@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Clipboard } from '@capacitor/clipboard';
 
 import {
   IonGrid,
@@ -10,8 +11,12 @@ import {
   IonAvatar,
   IonLabel,
   IonButton,
+  IonIcon,
   ToastController,
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons'; 
+import { copyOutline } from 'ionicons/icons';
 
 import { QRCodeComponent } from 'angularx-qrcode';
 
@@ -42,6 +47,7 @@ import { TokensService } from 'src/app/api/tokens/tokens.service';
     IonAvatar,
     IonLabel,
     IonButton,
+    IonIcon,
     QRCodeComponent
   ]
 })
@@ -55,7 +61,9 @@ export class ReceiveComponent implements OnInit {
     private walletsService: WalletsService,
     private tokensService: TokensService,
     private toastController: ToastController
-  ) { }
+  ) { 
+    addIcons({ copyOutline });
+  }
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
@@ -82,6 +90,23 @@ export class ReceiveComponent implements OnInit {
 
   truncateAddress(address: string): string {
     return this.utilsService.truncateAddress(address);
+  }
+
+  async copyAddressToClipboard(): Promise<void> {
+    if (!this.currentWalletPublicAddress) return;
+
+    await Clipboard.write({
+      string: this.currentWalletPublicAddress
+    });
+
+    const toast = await this.toastController.create({
+      message: 'Address copied to clipboard!',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+
+    await toast.present();
   }
 
   async fetchData(): Promise<void> {
