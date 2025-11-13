@@ -21,6 +21,7 @@ import { addIcons } from 'ionicons';
 import { qrCode, cloudUpload } from 'ionicons/icons';
 
 import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } from '@capacitor/barcode-scanner';
+import QrScanner from "qr-scanner";
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 
@@ -117,6 +118,16 @@ export class PayPage implements OnInit {
       amount: parsedEMVQR?.['54'] ? parseFloat(parsedEMVQR['54']) : 0,
     };
 
+    if (!payDetails.account_number && !payDetails.recipient_name) {
+      const alert = await this.alertController.create({
+        header: 'Invalid QR',
+        message: 'The QR code does not contain valid account information.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+
     setTimeout(() => {
       this.router.navigate(['/xterium/payment-details'], {
         queryParams: {
@@ -126,8 +137,62 @@ export class PayPage implements OnInit {
     }, 500);
   }
 
-  upload() {
-    console.log('Upload QR clicked');
+  async upload() {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+
+        try {
+          const qrText = await QrScanner.scanImage(file);
+
+          const parsedEMVQR = this.formatEMVQR(qrText);
+
+          const payDetails: PayDetails = {
+            recipient_name: parsedEMVQR?.['59'] || '',
+            account_number:
+              parsedEMVQR?.['26']?.['04'] ||
+              parsedEMVQR?.['26']?.['01'] ||
+              parsedEMVQR?.['27']?.['04'] ||
+              parsedEMVQR?.['27']?.['01'] || '',
+            amount: parsedEMVQR?.['54'] ? parseFloat(parsedEMVQR['54']) : 0,
+          };
+
+          if (!payDetails.account_number && !payDetails.recipient_name) {
+            const alert = await this.alertController.create({
+              header: 'Invalid QR',
+              message: 'The QR code does not contain valid account information.',
+              buttons: ['OK']
+            });
+            await alert.present();
+            return;
+          }
+
+          this.router.navigate(['/xterium/payment-details'], {
+            queryParams: {
+              payDetails: JSON.stringify(payDetails)
+            }
+          });
+
+        } catch (err) {
+          console.error('QR decode failed', err);
+          const alert = await this.alertController.create({
+            header: 'Invalid QR',
+            message: 'Unable to decode the QR from the image.',
+            buttons: ['OK']
+          });
+          alert.present();
+        }
+      };
+
+      input.click();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   ngOnInit() {

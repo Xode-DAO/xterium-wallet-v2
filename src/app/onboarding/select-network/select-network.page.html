@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" class="select-chain-content">
+<ion-content [fullscreen]="true" class="select-network-content">
   <div class="ion-text-center">
     <app-header></app-header>
   </div>
@@ -10,8 +10,8 @@
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
             <h1 style="font-weight: bold">Welcome!</h1>
             <span style="font-size: 15px;">
-              Get started by choosing a chain you want to connect with. This
-              will be the blockchain your wallet operates on.
+              Get started by selecting your preferred network. This will be used to configure your wallet
+              settings.
             </span>
           </div>
         </ion-col>
@@ -19,56 +19,20 @@
       <ion-row class="ion-margin-top">
         <ion-col size="12" class="">
           <ion-list>
-            <!-- <ion-item lines="none">
-              <ion-card button class="chain-card" [class.active]="selectedChainId === 2" (click)="selectChain(2)">
+            <ion-item lines="none">
+              <ion-card button class="network-card" [class.active]="selectedNetwork === Network.Polkadot"
+                (click)="selectNetworkMetadata(Network.Polkadot)">
                 <ion-card-content>
                   <ion-avatar slot="start">
-                    <img src="../../../assets/images/chains/polkadot.png" alt="Polkadot" />
+                    <img src="../../../assets/images/networks/polkadot.png" alt="AssetHub" />
                   </ion-avatar>
                   <ion-label>
                     <h2>Polkadot</h2>
                     <p>
-                      Connect to the Polkadot mainnet and its ecosystem.
+                      Connect to the Polkadot network, a leading
+                      multi-chain platform for interoperability and
+                      scalability.
                     </p>
-                  </ion-label>
-                </ion-card-content>
-              </ion-card>
-            </ion-item> -->
-            <ion-item lines="none">
-              <ion-card button class="chain-card" [class.active]="selectedChainId === 3" (click)="selectChain(3)">
-                <ion-card-content>
-                  <ion-avatar slot="start">
-                    <img src="../../../assets/images/chains/assethub.png" alt="AssetHub" />
-                  </ion-avatar>
-                  <ion-label>
-                    <h2>AssetHub - Polkadot</h2>
-                    <p>Manage your assets easily on the AssetHub parachain.</p>
-                  </ion-label>
-                </ion-card-content>
-              </ion-card>
-            </ion-item>
-            <ion-item lines="none">
-              <ion-card button class="chain-card" [class.active]="selectedChainId === 4" (click)="selectChain(4)">
-                <ion-card-content>
-                  <ion-avatar slot="start">
-                    <img src="../../../assets/images/chains/xode.png" alt="Xode" />
-                  </ion-avatar>
-                  <ion-label>
-                    <h2>Xode - Polkadot</h2>
-                    <p>Experience smooth and fast transactions with Xode.</p>
-                  </ion-label>
-                </ion-card-content>
-              </ion-card>
-            </ion-item>
-            <ion-item lines="none">
-              <ion-card button class="chain-card" [class.active]="selectedChainId === 5" (click)="selectChain(5)">
-                <ion-card-content>
-                  <ion-avatar slot="start">
-                    <img src="../../../assets/images/chains/hydration.png" alt="Hydration" />
-                  </ion-avatar>
-                  <ion-label>
-                    <h2>Hydration</h2>
-                    <p>Participate in decentralized trading and liquidity on the Hydration network.</p>
                   </ion-label>
                 </ion-card-content>
               </ion-card>

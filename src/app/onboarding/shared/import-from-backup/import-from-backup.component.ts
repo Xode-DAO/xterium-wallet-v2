@@ -26,13 +26,14 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
 
-import { Chain, Network } from 'src/models/chain.model';
+import { Network, NetworkMetadata } from 'src/models/network.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
@@ -65,7 +66,7 @@ import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 export class ImportFromBackupComponent implements OnInit {
   @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
 
-  @Input() selectedChain: Chain = new Chain();
+  @Input() selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(
@@ -73,6 +74,7 @@ export class ImportFromBackupComponent implements OnInit {
     private utilsService: UtilsService,
     private onboardingService: OnboardingService,
     private encryptionService: EncryptionService,
+    private chainsService: ChainsService,
     private walletsService: WalletsService,
     private toastController: ToastController
   ) {
@@ -135,7 +137,7 @@ export class ImportFromBackupComponent implements OnInit {
   async onSignWallet(password: string) {
     this.isProcessing = true;
 
-    if (this.selectedChain.network === Network.Polkadot) {
+    if (this.selectedNetworkMetadata.network === Network.Polkadot) {
       const decryptedPrivateKey = await this.encryptionService.decrypt(this.wallet.private_key!, password);
       const privateKeyHex = this.utilsService.encodePrivateKeyToHex(
         new Uint8Array(decryptedPrivateKey.split(',').map(Number) ?? [])
@@ -207,7 +209,7 @@ export class ImportFromBackupComponent implements OnInit {
         privateKey = encryptedPrivateKey;
       }
 
-      const newId = uuidv4();
+      let newId = uuidv4();
 
       let getExistingWallet = await this.walletsService.getWalletById(newId);
       if (getExistingWallet) {
@@ -225,10 +227,25 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
+      const chains = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
+      if (chains.length === 0) {
+        this.isProcessing = false;
+
+        const toast = await this.toastController.create({
+          message: 'No chains available. Please try again later.',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
+
+        await toast.present();
+        return;
+      }
+
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
-        chain: this.selectedChain,
+        chain: chains[0],
         mnemonic_phrase: mnemonicPhrase,
         public_key: publicKey,
         private_key: privateKey
@@ -241,7 +258,23 @@ export class ImportFromBackupComponent implements OnInit {
         await this.walletsService.setCurrentWallet(newId);
       }
 
+      for (let i = 1; i < chains.length; i++) {
+        newId = uuidv4();
+
+        const wallet: Wallet = {
+          id: newId,
+          name: this.walletName,
+          chain: chains[i],
+          mnemonic_phrase: mnemonicPhrase,
+          public_key: publicKey,
+          private_key: privateKey
+        };
+
+        await this.walletsService.create(wallet);
+      }
+
       if (this.isChromeExtension) {
+        const newlySavedWallets = await this.walletsService.getAllWallets();
         const encodedWallets = await Promise.all(
           wallets.map(async (wallet) => {
             const publicKeyU8a = new Uint8Array(
@@ -280,7 +313,7 @@ export class ImportFromBackupComponent implements OnInit {
       this.isProcessing = false;
 
       const toast = await this.toastController.create({
-        message: this.selectedChain.name + ' chain is not yet supported.',
+        message: this.selectedNetworkMetadata.network.toString() + ' network is not yet supported.',
         color: 'warning',
         duration: 1500,
         position: 'top',

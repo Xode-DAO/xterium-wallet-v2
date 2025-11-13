@@ -35,7 +35,8 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
 
-import { Chain, Network } from 'src/models/chain.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Balance } from 'src/models/balance.model';
 

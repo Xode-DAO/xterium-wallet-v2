@@ -221,7 +221,7 @@ export class AssethubPolkadotService extends PolkadotJsService {
         });
       })();
 
-      return () => subscriptions.forEach(s => s.unsubscribe());
+      return () => subscriptions.forEach(unsub => unsub());
     });
   }
 
@@ -262,7 +262,7 @@ export class AssethubPolkadotService extends PolkadotJsService {
         subscriptions.push(assetAccountSubscription);
       }
 
-      return () => subscriptions.forEach(s => s.unsubscribe());
+      return () => subscriptions.forEach(unsub => unsub());
     });
   }
 
@@ -310,14 +310,14 @@ export class AssethubPolkadotService extends PolkadotJsService {
         const call = api.createType('Extrinsic', txBytes);
         const tx = api.tx(call);
 
-        const unsub = await tx.signAndSend(pair, { nonce: -1 }, (data) => {
+        const txSignAndSendSubscription = await tx.signAndSend(pair, { nonce: -1 }, (data) => {
           subscriber.next(data);
         });
 
-        subscriptions.push(unsub);
+        subscriptions.push(txSignAndSendSubscription);
       })();
 
-      return () => subscriptions.forEach(s => s.unsubscribe());
+      return () => subscriptions.forEach(unsub => unsub());
     });
   }
 }

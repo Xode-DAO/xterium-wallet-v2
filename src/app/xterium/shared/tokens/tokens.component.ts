@@ -17,7 +17,8 @@ import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { Price } from 'src/models/price.model';
 import { Wallet } from 'src/models/wallet.model';
-import { Chain, Network } from 'src/models/chain.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';

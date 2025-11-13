@@ -10,8 +10,8 @@ export const routes: Routes = [
     loadComponent: () => import('./onboarding/onboarding.page').then(m => m.OnboardingPage),
     children: [
       {
-        path: 'select-chain',
-        loadComponent: () => import('./onboarding/select-chain/select-chain.page').then(m => m.SelectChainPage)
+        path: 'select-network',
+        loadComponent: () => import('./onboarding/select-network/select-network.page').then(m => m.SelectNetworkPage)
       },
       {
         path: 'setup-wallet',
@@ -27,7 +27,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/onboarding/select-chain',
+        redirectTo: '/onboarding/select-network',
         pathMatch: 'full',
       },
     ]

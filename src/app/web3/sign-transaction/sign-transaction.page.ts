@@ -38,7 +38,8 @@ import {
   flame
 } from 'ionicons/icons';
 
-import { Chain, Network } from 'src/models/chain.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet, WalletSigner } from 'src/models/wallet.model';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';

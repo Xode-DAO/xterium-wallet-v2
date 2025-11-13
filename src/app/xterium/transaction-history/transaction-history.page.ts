@@ -40,7 +40,8 @@ import {
 } from 'ionicons/icons';
 
 import { Wallet } from 'src/models/wallet.model';
-import { Chain, Network } from 'src/models/chain.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Payments, Transfers, Extrinsics } from 'src/models/transaction-history.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';

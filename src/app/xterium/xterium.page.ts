@@ -40,20 +40,21 @@ import {
   logOutOutline
 } from 'ionicons/icons';
 
-import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
+import { NetworksComponent } from "src/app/xterium/shared/networks/networks.component";
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
 import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 
-import { Chain, Network } from 'src/models/chain.model';
+import { NetworkMetadata } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
-import { ChainsService } from 'src/app/api/chains/chains.service';
+import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
-import { AuthService } from '../api/auth/auth.service';
+import { AuthService } from 'src/app/api/auth/auth.service';
 
 @Component({
   selector: 'app-xterium',
@@ -82,7 +83,7 @@ import { AuthService } from '../api/auth/auth.service';
     IonLabel,
     IonModal,
     WalletsComponent,
-    ChainsComponent,
+    NetworksComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
     ImportPrivateKeyComponent,
@@ -92,7 +93,7 @@ import { AuthService } from '../api/auth/auth.service';
 export class XteriumPage implements OnInit {
   @ViewChild('myWalletsModal', { read: IonModal }) myWalletsModal!: IonModal;
   @ViewChild('createWalletModal', { read: IonModal }) createWalletModal!: IonModal;
-  @ViewChild('selectChainModal', { read: IonModal }) selectChainModal!: IonModal;
+  @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
   @ViewChild('createNewAccountModal', { read: IonModal }) createNewAccountModal!: IonModal;
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
   @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
@@ -102,7 +103,7 @@ export class XteriumPage implements OnInit {
   constructor(
     private router: Router,
     private utilsService: UtilsService,
-    private chainsService: ChainsService,
+    private networkMetadataService: NetworkMetadataService,
     private walletsService: WalletsService,
     private authService: AuthService,
     private toastController: ToastController,
@@ -124,7 +125,7 @@ export class XteriumPage implements OnInit {
     this.initAuthentication();
   }
 
-  selectedChain: Chain = new Chain();
+  selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
   newlyAddedWallet: Wallet = new Wallet();
 
   currentWallet: Wallet = new Wallet();
@@ -221,19 +222,13 @@ export class XteriumPage implements OnInit {
     this.createWalletModal.present();
   }
 
-  openSelectChainModal() {
-    this.selectChainModal.present();
+  openSelectNetworkModal() {
+    this.selectNetworkModal.present();
   }
 
-  onSelectedChain(chain: Chain) {
-    this.selectedChain = chain;
-    this.selectChainModal.dismiss();
-  }
-
-  onFilteredChain(chain: Chain) {
-    if (chain.name !== "All Chains") {
-      this.selectedChain = chain;
-    }
+  onSelectedNetworkMetadata(networkMetadata: NetworkMetadata) {
+    this.selectedNetworkMetadata = networkMetadata;
+    this.selectNetworkModal.dismiss();
   }
 
   openCreateNewAccountModal() {
@@ -285,7 +280,7 @@ export class XteriumPage implements OnInit {
   }
 
   ngOnInit() {
-    this.selectedChain = this.chainsService.getChainsByNetwork(Network.Polkadot)[0];
+    this.selectedNetworkMetadata = this.networkMetadataService.getAllNetworkMetadatas()[0];
 
     setTimeout(() => {
       this.getCurrentWallet();
