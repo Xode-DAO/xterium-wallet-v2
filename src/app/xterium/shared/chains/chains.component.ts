@@ -13,7 +13,7 @@ import {
 
 import { Chain, Network } from 'src/models/chain.model';
 
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class ChainsComponent implements OnInit {
   @Output() onSelectedChain = new EventEmitter<Chain>();
 
   constructor(
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private chainsService: ChainsService,
   ) { }
 

@@ -15,9 +15,9 @@ import { encodeAddress, decodeAddress } from '@polkadot/keyring';
 import { u8aEq } from '@polkadot/util';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class PolkadotJsService {
+export class UtilsService {
 
   private cryptoReady: Promise<boolean>;
 

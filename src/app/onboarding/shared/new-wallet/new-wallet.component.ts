@@ -31,7 +31,7 @@ import { Chain, Network } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
-import { PolkadotJsService } from 'src/app/api/polkadot-js/polkadot-js.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
@@ -71,7 +71,7 @@ export class NewWalletComponent implements OnInit {
 
   constructor(
     private environmentService: EnvironmentService,
-    private polkadotJsService: PolkadotJsService,
+    private utilsService: UtilsService,
     private onboardingService: OnboardingService,
     private encryptionService: EncryptionService,
     private walletsService: WalletsService,
@@ -128,7 +128,7 @@ export class NewWalletComponent implements OnInit {
     this.isProcessing = true;
 
     if (this.selectedChain.network === Network.Polkadot) {
-      let isMnemonicPhraseValid = await this.polkadotJsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
+      let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
       if (!isMnemonicPhraseValid) {
         this.confirmSaveWalletModal.dismiss();
         this.isProcessing = false;
@@ -144,8 +144,8 @@ export class NewWalletComponent implements OnInit {
         return;
       }
 
-      const seed: Uint8Array = await this.polkadotJsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
-      const keypair = await this.polkadotJsService.createKeypairFromSeed(seed);
+      const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
+      const keypair = await this.utilsService.createKeypairFromSeed(seed);
 
       const newId = uuidv4();
 
@@ -192,7 +192,7 @@ export class NewWalletComponent implements OnInit {
             );
 
             return {
-              address: await this.polkadotJsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
+              address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
               name: wallet.name,
             };
           })
@@ -236,7 +236,7 @@ export class NewWalletComponent implements OnInit {
   ngOnInit() {
     this.isChromeExtension = this.environmentService.isChromeExtension();
 
-    this.polkadotJsService.generateMnemonic().then(mnemonicPhrase => {
+    this.utilsService.generateMnemonic().then(mnemonicPhrase => {
       this.walletMnemonicPhrase = mnemonicPhrase.split(' ');
     });
   }

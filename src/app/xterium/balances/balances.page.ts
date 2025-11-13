@@ -100,6 +100,8 @@ export class BalancesPage implements OnInit {
   }
 
   goToTokenDetails(balance: Balance) {
+    balance.token.total_supply = balance.token.total_supply.toString();
+
     this.router.navigate(['/xterium/token-details'], {
       queryParams: {
         balance: JSON.stringify(balance)

@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
-import { hydrationPolkadot, MultiAddress } from "@polkadot-api/descriptors"
+import { Polkadot, polkadot, MultiAddress } from "@polkadot-api/descriptors"
 import { createClient, Transaction, TxEvent, InvalidTxError, Binary, HexString } from 'polkadot-api';
-import { getWsProvider } from 'polkadot-api/ws-provider/web';
+import { getWsProvider } from 'polkadot-api/ws-provider';
 import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
 
@@ -13,23 +13,44 @@ import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
 import { WalletSigner } from 'src/models/wallet.model';
 
-import { PolkadotApiService } from '../polkadot-api.service';
+import { Api, PolkadotApiService } from 'src/app/api/polkadot/blockchains/polkadot-api/polkadot-api.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HydrationService extends PolkadotApiService {
-  protected wsProvider = "wss://hydration-rpc.n.dwellir.com";
-  protected client = createClient(getWsProvider(this.wsProvider));
-  protected chainApi = this.client.getTypedApi(hydrationPolkadot);
+export class PolkadotService extends PolkadotApiService {
+  async connect(): Promise<Api<Polkadot>> {
+    const initClient = createClient(getWsProvider([
+      "light://substrate-connect/polkadot",
+      "wss://polkadot-rpc.publicnode.com",
+      "wss://polkadot-public-rpc.blockops.network/ws",
+      "wss://polkadot-rpc.n.dwellir.com",
+      "wss://polkadot-rpc-tn.dwellir.com",
+      "wss://rpc-polkadot.helixstreet.io",
+      "wss://rpc.ibp.network/polkadot",
+      "wss://polkadot.dotters.network",
+      "wss://rpc-polkadot.luckyfriday.io",
+      "wss://polkadot.api.onfinality.io/public-ws",
+      "wss://polkadot.rpc.permanence.io",
+      "wss://polkadot.public.curie.radiumblock.co/ws",
+      "wss://spectrum-03.simplystaking.xyz/cG9sa2Fkb3QtMDMtOTFkMmYwZGYtcG9sa2Fkb3Q/LjwBJpV3dIKyWQ/polkadot/mainnet/",
+      "wss://dot-rpc.stakeworld.io",
+      "wss://polkadot.rpc.subquery.network/public/ws",
+    ]));
 
-  async getTokens(): Promise<Token[]> {
-    const xodeChainSpecs = this.client.getChainSpecData();
+    return {
+      client: initClient,
+      chainApi: initClient.getTypedApi(polkadot)
+    }
+  }
+
+  async getTokens(api: Api<Polkadot>): Promise<Token[]> {
+    const xodeChainSpecs = api.client.getChainSpecData();
 
     const xodeChainName = (await xodeChainSpecs).name;
     const xodeTokenSymbol = (await xodeChainSpecs).properties['tokenSymbol'];
     const xodeTokenDecimals = (await xodeChainSpecs).properties['tokenDecimals'];
-    const xodeTotalTokenSupply = Number(await this.chainApi.query.Balances.TotalIssuance.getValue({ at: "best" }))
+    const xodeTotalTokenSupply = BigInt(await api.chainApi.query.Balances.TotalIssuance.getValue({ at: "best" }))
 
     const tokens: Token[] = [];
 
@@ -50,7 +71,7 @@ export class HydrationService extends PolkadotApiService {
     return tokens;
   }
 
-  async getBalances(tokens: Token[], publicKey: string): Promise<Balance[]> {
+  async getBalances(api: Api<Polkadot>, tokens: Token[], publicKey: string): Promise<Balance[]> {
     const balances: Balance[] = [];
 
     if (tokens.length > 0) {
@@ -58,7 +79,7 @@ export class HydrationService extends PolkadotApiService {
 
       await Promise.all(
         tokens.map(async (token) => {
-          const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
+          const balanceAccount = await api.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
           balances.push({
             id: uuidv4(),
             token,
@@ -76,55 +97,7 @@ export class HydrationService extends PolkadotApiService {
     return balances;
   }
 
-  watchTokens(): Observable<Token[]> {
-    return new Observable<Token[]>(subscriber => {
-      const subscriptions: any[] = [];
-      const tokens: Token[] = [];
-
-      (async () => {
-        const assethubChainSpecs = this.client.getChainSpecData();
-
-        const assethubChainName = (await assethubChainSpecs).name;
-        const assethubTokenSymbol = (await assethubChainSpecs).properties['tokenSymbol'];
-        const assethubTokenDecimals = (await assethubChainSpecs).properties['tokenDecimals'];
-        const assethubTotalTokenSupply = Number(await this.chainApi.query.Balances.TotalIssuance.getValue({ at: "best" }));
-
-        tokens.push({
-          id: uuidv4(),
-          reference_id: 0,
-          chain_id: 1,
-          name: assethubChainName,
-          symbol: assethubTokenSymbol,
-          decimals: assethubTokenDecimals,
-          total_supply: assethubTotalTokenSupply,
-          type: "native",
-          image: ""
-        });
-
-        subscriber.next([...tokens]);
-
-        const totalIssuanceSub = this.chainApi.query.Balances.TotalIssuance
-          .watchValue("best")
-          .subscribe(totalIssuance => {
-            const idx = tokens.findIndex(t => t.type === "native");
-            if (idx >= 0) {
-              tokens[idx] = {
-                ...tokens[idx],
-                total_supply: Number(totalIssuance)
-              };
-
-              subscriber.next([...tokens]);
-            }
-          });
-
-        subscriptions.push(totalIssuanceSub);
-      })();
-
-      return () => subscriptions.forEach(s => s.unsubscribe());
-    });
-  }
-
-  watchBalances(tokens: Token[], publicKey: string): Observable<Balance[]> {
+  watchBalances(api: Api<Polkadot>, tokens: Token[], publicKey: string): Observable<Balance[]> {
     return new Observable<Balance[]>(subscriber => {
       const subscriptions: any[] = [];
       const balances: Balance[] = [];
@@ -132,7 +105,7 @@ export class HydrationService extends PolkadotApiService {
       (async () => {
         const balanceList = await Promise.all(
           tokens.map(async token => {
-            const balanceAccount = await this.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
+            const balanceAccount = await api.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
             return <Balance>{
               id: uuidv4(),
               token,
@@ -148,7 +121,7 @@ export class HydrationService extends PolkadotApiService {
         subscriber.next([...balances]);
 
         newBalances.forEach(balance => {
-          const systemAccountSubscription = this.chainApi.query.System.Account
+          const systemAccountSubscription = api.chainApi.query.System.Account
             .watchValue(publicKey, "best")
             .subscribe(account => {
               const idx = balances.findIndex(t => t.id === balance.id);
@@ -171,11 +144,11 @@ export class HydrationService extends PolkadotApiService {
     });
   }
 
-  watchBalance(balance: Balance, publicKey: string): Observable<Balance> {
+  watchBalance(api: Api<Polkadot>, balance: Balance, publicKey: string): Observable<Balance> {
     return new Observable<Balance>(subscriber => {
       const subscriptions: any[] = [];
 
-      const systemAccountSubscription = this.chainApi.query.System.Account
+      const systemAccountSubscription = api.chainApi.query.System.Account
         .watchValue(publicKey, "best")
         .subscribe(account => {
           const newBalance: Balance = {
@@ -195,28 +168,24 @@ export class HydrationService extends PolkadotApiService {
     });
   }
 
-  transfer(balance: Balance, destPublicKey: string, value: number): Transaction<any, any, any, void | undefined> {
+  async transfer(api: Api<Polkadot>, balance: Balance, destPublicKey: string, value: number): Promise<HexString> {
     const bigValue = BigInt(value);
 
-    return this.chainApi.tx.Balances.transfer_allow_death({
-      dest: destPublicKey,
+    const transferExtrinsic = api.chainApi.tx.Balances.transfer_allow_death({
+      dest: MultiAddress.Id(destPublicKey),
       value: bigValue,
     });
+
+    return (await transferExtrinsic.getEncodedData()).asHex()
   }
 
-  async decodeCallData(encodedCallDataHex: string): Promise<Transaction<any, any, any, void | undefined>> {
-    const binary = Binary.fromHex(encodedCallDataHex);
-    const transaction = await this.chainApi.txFromCallData(binary);
-    return transaction;
-  }
-
-  signAndSubmitTransaction(encodedCallDataHex: HexString, walletSigner: WalletSigner): Observable<TxEvent> {
+  signAndSubmitTransaction(api: Api<Polkadot>, encodedCallDataHex: HexString, walletSigner: WalletSigner): Observable<TxEvent> {
     return new Observable<TxEvent>(subscriber => {
       const subscriptions: any[] = [];
 
       (async () => {
         const binary = Binary.fromHex(encodedCallDataHex);
-        const transaction = await this.chainApi.txFromCallData(binary);
+        const transaction = await api.chainApi.txFromCallData(binary);
 
         const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
         const signer = getPolkadotSigner(
