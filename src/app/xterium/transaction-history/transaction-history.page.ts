@@ -177,17 +177,22 @@ export class TransactionHistoryPage implements OnInit {
   maskName(name: string): string {
     if (!name) return '';
 
-    const cleanName = name.replace(/\s+/g, '').toUpperCase();
-
-    if (cleanName.length <= 4) {
-      return cleanName[0] + '*'.repeat(cleanName.length - 2) + cleanName.slice(-1);
-    }
-
-    const first = cleanName.slice(0, 2);
-    const last = cleanName.slice(-2);
-    const masked = '*'.repeat(cleanName.length - 4);
-
-    return `${first}${masked}${last}`;
+    const names = name.trim().split(/\s+/);
+    const upperCaseName = names.map(name => name.toUpperCase());
+    
+    const maskedParts = upperCaseName.map((namePart, index) => {
+      if (index === upperCaseName.length - 1) {
+        return `${namePart[0]}.`;
+      } else {
+        if (namePart.length <= 3) {
+          return `${namePart[0]}${'*'.repeat(namePart.length - 1)}`;
+        } else {
+          return `${namePart.slice(0, 2)}${'*'.repeat(namePart.length - 3)}${namePart.slice(-1)}`;
+        }
+      }
+    });
+    
+    return maskedParts.join(' ');
   }
 
   formatAccountNumber(accountNumber: string): string {
