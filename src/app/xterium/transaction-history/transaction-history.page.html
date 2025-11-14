@@ -95,7 +95,7 @@
                     <ion-icon name="person" size="small" slot="start"></ion-icon>
                     <ion-label>Account No.:</ion-label>
                     <ion-text slot="end" class="label-value">
-                      {{ payment.account_identifier | slice:0:10 }}...{{ payment.account_identifier | slice:-4 }}
+                      {{ formatAccountNumber(payment.account_identifier) }}
                     </ion-text>
                   </ion-item>
                   <ion-item lines="none">

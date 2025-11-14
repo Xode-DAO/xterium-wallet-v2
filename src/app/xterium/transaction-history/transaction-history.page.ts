@@ -195,6 +195,32 @@ export class TransactionHistoryPage implements OnInit {
     return `${first}${masked}${last}`;
   }
 
+  formatAccountNumber(accountNumber: string): string {
+    if (!accountNumber) return '';
+
+    const cleanAccount = accountNumber.replace(/\s+/g, '');
+
+    if (cleanAccount.startsWith('09') && cleanAccount.length === 11) {
+      return `${cleanAccount.slice(0, 4)}***${cleanAccount.slice(7)}`;
+    }
+    if ((cleanAccount.startsWith('+639') || cleanAccount.startsWith('639')) && cleanAccount.length >= 10) {
+      const normalized = '09' + cleanAccount.slice(cleanAccount.startsWith('+639') ? 4 : 3);
+      if (normalized.length === 11) {
+        return `${normalized.slice(0, 4)}***${normalized.slice(7)}`;
+      }
+    }
+
+    const length = cleanAccount.length;
+    
+    if (length <= 8) {
+      return `${cleanAccount.slice(0, 4)}***${cleanAccount.slice(-2)}`;
+    } else if (length <= 12) {
+      return `${cleanAccount.slice(0, 5)}***${cleanAccount.slice(-3)}`;
+    } else {
+      return `${cleanAccount.slice(0, 6)}***${cleanAccount.slice(-4)}`;
+    }
+  }
+
   async fetchTransfers(): Promise<void> {
     this.isTransfersLoading = true;
 
