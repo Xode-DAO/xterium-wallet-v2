@@ -237,12 +237,22 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-        }
-      </div>
 
-      <ion-infinite-scroll (ionInfinite)="fetchDataOnInfinite($event)">
-        <ion-infinite-scroll-content [loadingSpinner]="'lines'"></ion-infinite-scroll-content>
-      </ion-infinite-scroll>
+        @if (!isLoadingMoreTransfers) {
+          <div class="primary-button-wrapper">
+            <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
+              (click)="loadMoreData()">
+              Load more
+            </ion-button>
+          </div>
+          } @else {
+            <div class="spinner-wrapper">
+              <ion-spinner></ion-spinner>
+            </div>
+          }
+        }
+
+      </div>
     </ion-segment-content>
 
     <ion-segment-content id="transactions" class="transactions-segment-content">
@@ -339,12 +349,22 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-        }
-      </div>
 
-      <ion-infinite-scroll (ionInfinite)="fetchDataOnInfinite($event)">
-        <ion-infinite-scroll-content [loadingSpinner]="'lines'"></ion-infinite-scroll-content>
-      </ion-infinite-scroll>
+        @if (!isLoadingMoreExtrinsics) {
+          <div class="primary-button-wrapper">
+            <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
+              (click)="loadMoreData()">
+              Load more
+            </ion-button>
+          </div>
+          } @else {
+            <div class="spinner-wrapper">
+              <ion-spinner></ion-spinner>
+            </div>
+          }
+        }
+
+      </div>
     </ion-segment-content>
   </ion-segment-view>
 </ion-content>
