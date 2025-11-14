@@ -235,21 +235,24 @@
               </ion-card>
               }
             </ion-col>
+
+            @if (isLoadingMoreTransfers) {
+            <ion-col size="12" class="ion-text-center">
+              <ion-spinner name="lines"></ion-spinner>
+              <p style="font-size: 15px;">Loading transactions, please wait...</p>
+            </ion-col>
+            } @else {
+            <ion-col size="12" class="ion-text-center">
+              <div class="primary-button-wrapper">
+                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
+                  (click)="loadMoreData()">
+                  Load more
+                </ion-button>
+              </div>
+            </ion-col>
+            }
           </ion-row>
         </ion-grid>
-
-        @if (!isLoadingMoreTransfers) {
-          <div class="primary-button-wrapper">
-            <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
-              (click)="loadMoreData()">
-              Load more
-            </ion-button>
-          </div>
-          } @else {
-            <div class="spinner-wrapper">
-              <ion-spinner></ion-spinner>
-            </div>
-          }
         }
 
       </div>
@@ -347,21 +350,24 @@
               </ion-card>
               }
             </ion-col>
+
+            @if (isLoadingMoreExtrinsics) {
+            <ion-col size="12" class="ion-text-center">
+              <ion-spinner name="lines"></ion-spinner>
+              <p style="font-size: 15px;">Loading transactions, please wait...</p>
+            </ion-col>
+            } @else {
+            <ion-col size="12" class="ion-text-center">
+              <div class="primary-button-wrapper">
+                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
+                  (click)="loadMoreData()">
+                  Load more
+                </ion-button>
+              </div>
+            </ion-col>
+            }
           </ion-row>
         </ion-grid>
-
-        @if (!isLoadingMoreExtrinsics) {
-          <div class="primary-button-wrapper">
-            <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
-              (click)="loadMoreData()">
-              Load more
-            </ion-button>
-          </div>
-          } @else {
-            <div class="spinner-wrapper">
-              <ion-spinner></ion-spinner>
-            </div>
-          }
         }
 
       </div>

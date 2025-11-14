@@ -20,9 +20,6 @@ import {
   IonIcon,
   IonChip,
   IonSpinner,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  InfiniteScrollCustomEvent,
   IonButton
 } from '@ionic/angular/standalone';
 
@@ -77,8 +74,6 @@ import { BalancesService } from 'src/app/api/balances/balances.service';
     IonIcon,
     IonChip,
     IonSpinner,
-    IonInfiniteScroll,
-    IonInfiniteScrollContent,
     IonButton,
   ],
 })
@@ -115,16 +110,16 @@ export class TransactionHistoryPage implements OnInit {
   currentSegment: string = 'payments';
 
   payments: { date: string; list: Payments[] }[] = [];
-  isPaymentsLoading: boolean = false;
+  isPaymentsLoading: boolean = true;
 
   transfers: Transfers[] = [];
-  isTransfersLoading: boolean = false;
+  isTransfersLoading: boolean = true;
   isLoadingMoreTransfers: boolean = false;
   transfersPage: number = 1;
   transfersRow: number = 10;
 
   extrinsics: Extrinsics[] = [];
-  isExtrinsicsLoading: boolean = false;
+  isExtrinsicsLoading: boolean = true;
   isLoadingMoreExtrinsics: boolean = false;
   extrinsicsPage: number = 1;
   extrinsicsRow: number = 10;
@@ -151,8 +146,6 @@ export class TransactionHistoryPage implements OnInit {
   }
 
   async fetchPayments(): Promise<void> {
-    this.isPaymentsLoading = true;
-
     this.payments = [];
 
     const substrateChain = this.chainsService.getChainsByNetwork(Network.Substrate)[0];
@@ -230,19 +223,8 @@ export class TransactionHistoryPage implements OnInit {
   }
 
   async fetchData(): Promise<void> {
-  this.isTransfersLoading = true;
-  this.isExtrinsicsLoading = true;
-
-    if (this.transfersPage > 1 || this.extrinsicsPage > 1) {
-      this.transfersPage = 1;
-      this.extrinsicsPage = 1;
-
-      this.transfers = [];
-      this.extrinsics = [];
-    }
-    
     await this.getCurrentWallet();
-    
+
     await this.fetchPayments();
     await this.fetchTransfers();
     await this.fetchExtrinsics();
@@ -253,7 +235,6 @@ export class TransactionHistoryPage implements OnInit {
       this.isLoadingMoreTransfers = true;
 
       await this.fetchTransfers();
-
       this.isLoadingMoreTransfers = false;
     }
 
@@ -261,7 +242,6 @@ export class TransactionHistoryPage implements OnInit {
       this.isLoadingMoreExtrinsics = true;
 
       await this.fetchExtrinsics();
-
       this.isLoadingMoreExtrinsics = false;
     }
   }
@@ -273,6 +253,19 @@ export class TransactionHistoryPage implements OnInit {
 
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
+      this.isPaymentsLoading = true;
+      this.payments = [];
+
+      this.isTransfersLoading = true;
+      this.transfers = [];
+      this.transfersPage = 1;
+      this.transfersRow = 10;
+
+      this.isExtrinsicsLoading = true;
+      this.extrinsics = [];
+      this.extrinsicsPage = 1;
+      this.extrinsicsRow = 10;
+
       this.fetchData();
     });
   }
