@@ -161,10 +161,10 @@ export class ImportFromBackupComponent implements OnInit {
 
       let mnemonicPhrase = "-";
       let publicKey = this.wallet.public_key;
-      let privateKey = this.wallet.private_key;
+      let privateKey = decryptedPrivateKey;
 
       if (this.wallet.mnemonic_phrase !== "" && this.wallet.mnemonic_phrase !== "-") {
-        const decryptedMnemonicPhrase = await this.encryptionService.decrypt(this.wallet.mnemonic_phrase!, password);
+        const decryptedMnemonicPhrase = await this.encryptionService.decrypt(this.wallet.mnemonic_phrase, password);
 
         let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(decryptedMnemonicPhrase);
         if (!isMnemonicPhraseValid) {
@@ -184,29 +184,10 @@ export class ImportFromBackupComponent implements OnInit {
 
         const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(decryptedMnemonicPhrase);
         const keypair = await this.utilsService.createKeypairFromSeed(seed);
-        const privateKeyFromSeedsHex = this.utilsService.encodePrivateKeyToHex(keypair.secretKey);
 
-        if (!this.utilsService.arePrivateKeysEqual(privateKeyHex, privateKeyFromSeedsHex)) {
-          this.confirmImportWalletModal.dismiss();
-          this.isProcessing = false;
-
-          const toast = await this.toastController.create({
-            message: 'This backup file has invalid mnemonic phrase or private key.',
-            color: 'danger',
-            duration: 1500,
-            position: 'top',
-          });
-
-          await toast.present();
-          return;
-        }
-
-        const encryptedMnemonicPhrase = await this.encryptionService.encrypt(decryptedMnemonicPhrase, password);
-        const encryptedPrivateKey = await this.encryptionService.encrypt(keypair.secretKey!.toString(), password);
-
-        mnemonicPhrase = encryptedMnemonicPhrase;
-        publicKey = keypair.publicKey!.toString();
-        privateKey = encryptedPrivateKey;
+        mnemonicPhrase = decryptedMnemonicPhrase;
+        publicKey = keypair.publicKey.toString();
+        privateKey = keypair.secretKey.toString();
       }
 
       let newId = uuidv4();
@@ -242,13 +223,16 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
+      const encryptedMnemonicPhrase = await this.encryptionService.encrypt(mnemonicPhrase, password);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(privateKey, password);
+
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
         chain: chains[0],
-        mnemonic_phrase: mnemonicPhrase,
+        mnemonic_phrase: encryptedMnemonicPhrase,
         public_key: publicKey,
-        private_key: privateKey
+        private_key: encryptedPrivateKey
       };
 
       await this.walletsService.create(wallet);
@@ -265,9 +249,9 @@ export class ImportFromBackupComponent implements OnInit {
           id: newId,
           name: this.walletName,
           chain: chains[i],
-          mnemonic_phrase: mnemonicPhrase,
+          mnemonic_phrase: encryptedMnemonicPhrase,
           public_key: publicKey,
-          private_key: privateKey
+          private_key: encryptedPrivateKey
         };
 
         await this.walletsService.create(wallet);
@@ -276,7 +260,7 @@ export class ImportFromBackupComponent implements OnInit {
       if (this.isChromeExtension) {
         const newlySavedWallets = await this.walletsService.getAllWallets();
         const encodedWallets = await Promise.all(
-          wallets.map(async (wallet) => {
+          newlySavedWallets.map(async (wallet) => {
             const publicKeyU8a = new Uint8Array(
               wallet.public_key.split(",").map((byte) => Number(byte.trim()))
             );

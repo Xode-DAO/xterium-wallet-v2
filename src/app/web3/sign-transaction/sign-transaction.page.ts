@@ -241,7 +241,6 @@ export class SignTransactionPage implements OnInit {
     service.signAndSubmitTransaction(this.pJsApi, this.encodedCallDataHex, walletSigner).subscribe({
       next: async (event) => {
         this.confirmSignTransactionModal.dismiss();
-        console.log('Signing transaction with encoded call data hex:', decryptedPassword);
 
         this.router.navigate(['/xterium/balances']);
         this.handleTransactionEvent(event);

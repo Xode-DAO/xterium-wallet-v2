@@ -1,3 +1,154 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
 </ion-app>
+
+<ion-modal #existingWalletsModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false"
+  [canDismiss]="false">
+  <ng-template>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>Backup & Sync</ion-title>
+    </ion-toolbar>
+    <ion-content>
+      <div class="ion-padding-horizontal">
+        <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+          <h1 style="font-weight: bold">Existing Wallets Detected</h1>
+          <span style="font-size: 15px;">
+            We have detected existing wallets from a previous version of Xterium. You can back them up and sync them
+            to continue using them in this version. Please make sure to review each wallet's details after syncing.
+          </span>
+        </div>
+
+        <div class="wallets-list">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12">
+                <ion-list>
+                  @for (wallet of existingWallets; track wallet) {
+                  <ion-item class="wallet-item" lines="none">
+                    <ion-label>
+                      <h2>{{ wallet.name }}</h2>
+                      <p>{{ wallet.public_key }}</p>
+                    </ion-label>
+                  </ion-item>
+                  }
+                </ion-list>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </div>
+    </ion-content>
+
+    <ion-footer class="ion-no-border">
+      <div class="ion-padding-horizontal">
+        <div class="primary-button-wrapper">
+          <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="backupAndSyncWallets()"
+            [disabled]="isProcessing">
+            Backup & Sync
+          </ion-button>
+        </div>
+      </div>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #enterOldPinModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+  <ng-template>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>
+        @if (isChromeExtension) {
+        Enter Your Previous Password
+        } @else {
+        Enter Your Previous Pin
+        }
+      </ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="enterOldPinModal.dismiss()">
+          <ion-icon name="close" style="color: white;"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-content>
+      <div class="enter-old-pin">
+        <div class="ion-text-center ion-margin-bottom">
+          <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
+        </div>
+        <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+          <h1 style="font-weight: bold">
+            @if (isChromeExtension) {
+            Previous Password
+            } @else {
+            Previous Pin
+            }
+          </h1>
+          <span style="font-size: 15px;">
+            @if (isChromeExtension) {
+            To proceed with backing up and syncing your wallets, please enter the password you used in the previous
+            version of Xterium.
+            } @else {
+            To proceed with backing up and syncing your wallets, please enter the pin you used in the previous version
+            of Xterium.
+            }
+          </span>
+        </div>
+        <div class="ion-padding-horizontal">
+          <ion-grid>
+            <ion-row class="ion-margin-top">
+              <ion-col size="12">
+                <ion-list>
+                  @if (isChromeExtension) {
+                  <ion-item lines="none" class="primary-input-item">
+                    <ion-input type="password" [placeholder]="'Enter your old password'" [(ngModel)]="previousPassword"
+                      [disabled]="isProcessing"></ion-input>
+                  </ion-item>
+                  } @else {
+                  <ion-item lines="none" class="pin-item">
+                    <div class="pin-input-wrapper">
+                      <ion-input-otp length="6" type="number" fill="solid" class="pin-input" id="otpInput"
+                        (ionInput)="maskPin($event)" (ionInput)="onPinChange($event)"></ion-input-otp>
+                    </div>
+                  </ion-item>
+                  }
+                </ion-list>
+              </ion-col>
+            </ion-row>
+            <ion-row class="ion-margin-top">
+              <ion-col size="12">
+                <div class="primary-button-wrapper">
+                  <ion-button expand="block" class="ion-margin-bottom" size="default"
+                    (click)="proceedBackupAndSyncWallets()" [disabled]="isProcessing">
+                    Proceed
+                  </ion-button>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12">
+                <div class="ion-text-center security-tips">
+                  <ion-icon name="shield-checkmark"></ion-icon>
+                  <span style="font-size: 15px;">Your data is encrypted locally</span>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #confirmSyncWalletsModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+  <ng-template>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>Confirm Sync</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="confirmSyncWalletsModal.dismiss()">
+          <ion-icon name="close" style="color: white;"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-content>
+      <app-sign-wallet (onSignWallet)="confirmSyncWallets($event)"></app-sign-wallet>
+    </ion-content>
+  </ng-template>
+</ion-modal>
