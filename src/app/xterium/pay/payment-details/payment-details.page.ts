@@ -101,27 +101,6 @@ export class PaymentDetailsPage implements OnInit {
 
   }
 
-  formatEMVQR(data: string) {
-    const parsed: any = {};
-    let i = 0;
-
-    while (i < data.length) {
-      const tag = data.substring(i, i + 2);
-      const len = parseInt(data.substring(i + 2, i + 4), 10);
-      const value = data.substring(i + 4, i + 4 + len);
-
-      if (['26', '27', '28', '62', '51'].includes(tag)) {
-        parsed[tag] = this.formatEMVQR(value);
-      } else {
-        parsed[tag] = value;
-      }
-
-      i += 4 + len;
-    }
-
-    return parsed;
-  }
-
   onAmountFocus(event: any) {
     let rawValue = this.formattedAmountValue;
     rawValue = rawValue.replace(/,/g, '');
@@ -178,7 +157,14 @@ export class PaymentDetailsPage implements OnInit {
   }
 
   send() {
-    console.log('Send money clicked');
+    this.router.navigate(['/xterium/payment-summary'], {
+      queryParams: {
+        payDetails: JSON.stringify(this.payDetails),
+        formattedAmount: this.formattedAmountValue,
+        wallet: JSON.stringify(this.currentWallet),
+        walletAddress: this.currentWalletPublicAddress
+      }
+    });
   }
 
   ngOnInit() {
