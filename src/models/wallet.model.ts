@@ -27,5 +27,12 @@ export class WalletV1Mobile {
 }
 
 export class WalletV1ChromeExtension {
-
+  id: number = 0;
+  name: string = "";
+  mnemonic_phrase: string = "";
+  public_key: string = "";
+  secret_key: string = "";
+  private_key: string = "";
+  type: string = "";
+  address_type: string = "";
 }

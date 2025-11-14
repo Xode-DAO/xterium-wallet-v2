@@ -5,6 +5,11 @@ import * as CryptoJS from 'crypto-js';
   providedIn: 'root',
 })
 export class EncryptionService {
+  async hash(data: string): Promise<string> {
+    const hashed = CryptoJS.SHA256(data).toString();
+    return hashed;
+  }
+
   async encrypt(data: string, password: string): Promise<string> {
     return CryptoJS.AES.encrypt(data, password).toString();
   }
