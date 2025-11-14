@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { Clipboard } from '@capacitor/clipboard';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+import { Capacitor } from '@capacitor/core';
+
 import {
   IonButton,
   IonGrid,
@@ -27,10 +31,6 @@ import { Wallet } from 'src/models/wallet.model';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
-
-import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
-import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-wallet-details',

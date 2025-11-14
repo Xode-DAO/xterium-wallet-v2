@@ -140,7 +140,9 @@ export class ImportPrivateKeyComponent implements OnInit {
         return;
       }
 
-      const keypair = validatedKeypair;
+      let publicKey = validatedKeypair.publicKey;
+      let privateKey = validatedKeypair.secretKey;
+
       let newId = uuidv4();
 
       let getExistingWallet = await this.walletsService.getWalletById(newId);
@@ -174,14 +176,14 @@ export class ImportPrivateKeyComponent implements OnInit {
         return;
       }
 
-      const encryptedPrivateKey = await this.encryptionService.encrypt(keypair.secretKey!.toString(), password);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(privateKey!.toString(), password);
 
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
         chain: chains[0],
         mnemonic_phrase: "-",
-        public_key: keypair.publicKey!.toString(),
+        public_key: publicKey?.toString() || "",
         private_key: encryptedPrivateKey
       };
 
@@ -200,7 +202,7 @@ export class ImportPrivateKeyComponent implements OnInit {
           name: this.walletName,
           chain: chains[i],
           mnemonic_phrase: "-",
-          public_key: keypair.publicKey!.toString(),
+          public_key: publicKey?.toString() || "",
           private_key: encryptedPrivateKey
         };
 

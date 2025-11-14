@@ -93,8 +93,8 @@ export class ChainsService {
       image: "hydration.png",
       scanner: {
         type: ScannerType.Subscan,
-        transfers_url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://hydration-polkadot.api.subscan.io/api/v2/scan/extrinsics"
+        transfers_url: "https://hydration.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://hydration.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {
