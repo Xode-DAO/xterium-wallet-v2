@@ -223,7 +223,7 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
-      const encryptedMnemonicPhrase = await this.encryptionService.encrypt(mnemonicPhrase, password);
+      const encryptedMnemonicPhrase = mnemonicPhrase !== "-" ? await this.encryptionService.encrypt(mnemonicPhrase, password) : "-";
       const encryptedPrivateKey = await this.encryptionService.encrypt(privateKey, password);
 
       const wallet: Wallet = {
