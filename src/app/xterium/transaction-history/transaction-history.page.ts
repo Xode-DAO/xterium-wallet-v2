@@ -177,17 +177,48 @@ export class TransactionHistoryPage implements OnInit {
   maskName(name: string): string {
     if (!name) return '';
 
-    const cleanName = name.replace(/\s+/g, '').toUpperCase();
+    const names = name.trim().split(/\s+/);
+    const upperCaseName = names.map(name => name.toUpperCase());
+    
+    const maskedParts = upperCaseName.map((namePart, index) => {
+      if (index === upperCaseName.length - 1) {
+        return `${namePart[0]}.`;
+      } else {
+        if (namePart.length <= 3) {
+          return `${namePart[0]}${'*'.repeat(namePart.length - 1)}`;
+        } else {
+          return `${namePart.slice(0, 2)}${'*'.repeat(namePart.length - 3)}${namePart.slice(-1)}`;
+        }
+      }
+    });
+    
+    return maskedParts.join(' ');
+  }
 
-    if (cleanName.length <= 4) {
-      return cleanName[0] + '*'.repeat(cleanName.length - 2) + cleanName.slice(-1);
+  formatAccountNumber(accountNumber: string): string {
+    if (!accountNumber) return '';
+
+    const cleanAccount = accountNumber.replace(/\s+/g, '');
+
+    if (cleanAccount.startsWith('09') && cleanAccount.length === 11) {
+      return `${cleanAccount.slice(0, 4)}***${cleanAccount.slice(7)}`;
+    }
+    if ((cleanAccount.startsWith('+639') || cleanAccount.startsWith('639')) && cleanAccount.length >= 10) {
+      const normalized = '09' + cleanAccount.slice(cleanAccount.startsWith('+639') ? 4 : 3);
+      if (normalized.length === 11) {
+        return `${normalized.slice(0, 4)}***${normalized.slice(7)}`;
+      }
     }
 
-    const first = cleanName.slice(0, 2);
-    const last = cleanName.slice(-2);
-    const masked = '*'.repeat(cleanName.length - 4);
-
-    return `${first}${masked}${last}`;
+    const length = cleanAccount.length;
+    
+    if (length <= 8) {
+      return `${cleanAccount.slice(0, 4)}***${cleanAccount.slice(-2)}`;
+    } else if (length <= 12) {
+      return `${cleanAccount.slice(0, 5)}***${cleanAccount.slice(-3)}`;
+    } else {
+      return `${cleanAccount.slice(0, 6)}***${cleanAccount.slice(-4)}`;
+    }
   }
 
   async fetchTransfers(): Promise<void> {
