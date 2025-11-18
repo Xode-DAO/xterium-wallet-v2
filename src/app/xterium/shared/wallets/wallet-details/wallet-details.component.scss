@@ -29,3 +29,34 @@
     margin: 10px auto;
   }
 }
+
+.sign-transaction {
+  .logo {
+    margin-top: 20px;
+    height: 80px;
+  }
+}
+
+ion-grid {
+  max-width: 500px;
+  width: 100%;
+
+  ion-col {
+    padding: 3px;
+
+    ion-card.explore-card {
+      box-shadow: none;
+      border: 1px solid #4c4a4b;
+      border-radius: 25px;
+      text-align: center;
+      padding: 15px;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+    }
+
+    ion-list{
+      background: transparent !important;
+    }
+  }
+}
