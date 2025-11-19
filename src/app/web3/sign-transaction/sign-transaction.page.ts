@@ -255,39 +255,29 @@ export class SignTransactionPage implements OnInit {
     let title = '';
     let body = '';
 
-    const hashInfo = event.txHash ? `\nTx Hash: ${event.txHash}` : '';
+    const eventStatus = event.status.type.toString();
+    const txHashValue = event.txHash.toHex();
+    const shortTxHash = `${txHashValue.slice(0, 6)}...${txHashValue.slice(-4)}`;
 
-    switch (event.status.toString()) {
-      case "isReady":
-        title = "Transaction Signed";
-        body = `Your transfer request has been signed and is ready to be sent.${hashInfo}`;
+    switch (eventStatus) {
+      case "Broadcast":
+        title = "📤 Sending Your Transaction";
+        body = `We’re starting to send your transaction. It’s on its way and will be processed shortly.\nRef: ${shortTxHash}`;
         break;
 
-      case "isBroadcast":
-        title = "Transaction Sent";
-        body = `Your transfer has been broadcasted to the chain.${hashInfo}`;
+      case "InBlock":
+        title = "✅ Transaction Sent";
+        body = `Your transaction has been successfully sent and is now reflected in your account. You can check your updated balance.\nRef: ${shortTxHash}`;
         break;
 
-      case "isInBlock":
-        if (event.events.length > 0) {
-          title = "Transaction Included in Block";
-
-          const eventMessages = event.events.map((data) => {
-            console.log('event data', data);
-          });
-
-          body = `Your transaction is included in a block.${hashInfo}\n` + eventMessages.join("\n");
-        }
-        break;
-
-      case "isFinalized":
-        title = "Transaction Completed";
-        body = `Your transfer is now finalized and confirmed on the blockchain.${hashInfo}`;
+      case "Finalized":
+        title = "🎉 Transaction Completed";
+        body = `Everything is finalized! Your transaction is fully confirmed and recorded. No further action is needed.\nRef: ${shortTxHash}`;
         break;
 
       default:
-        title = "Transaction Update";
-        body = `Received event: ${event.events[0]}${hashInfo}`;
+        title = "⏳ Processing";
+        body = `We’re still working on your transaction. Please hold on a moment while we complete the process.\nRef: ${shortTxHash}`;
     }
 
     const id = Math.floor(Math.random() * 100000);

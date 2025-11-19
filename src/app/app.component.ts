@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { v4 as uuidv4 } from 'uuid';
 
 import { StatusBar, Style } from '@capacitor/status-bar';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { Capacitor } from '@capacitor/core';
@@ -132,6 +133,8 @@ export class AppComponent {
       this.isChromeExtension = this.environmentService.isChromeExtension();
 
       await this.initStatusBar();
+      await this.initNotifications();
+
       await this.checkExistingWallets();
 
       this.initDeepLinks();
@@ -150,6 +153,10 @@ export class AppComponent {
     } catch (error) {
       console.error('StatusBar setup failed:', error);
     }
+  }
+
+  async initNotifications() {
+    await LocalNotifications.requestPermissions();
   }
 
   async checkExistingWallets() {
