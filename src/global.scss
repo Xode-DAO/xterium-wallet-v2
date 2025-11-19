@@ -129,8 +129,8 @@
   }
 }
 
-html, body, ion-app, ion-content, * {
-  font-family: 'Poppins', sans-serif;
+:root {
+  --ion-font-family: 'Poppins', sans-serif !important;
 }
 
 ion-content {
