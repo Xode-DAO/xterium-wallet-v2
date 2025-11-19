@@ -19,7 +19,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { ellipsisVerticalOutline } from 'ionicons/icons';
+import { ellipsisVerticalOutline, createOutline } from 'ionicons/icons';
 
 import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
 import { WalletDetailsComponent } from 'src/app/xterium/shared/wallets/wallet-details/wallet-details.component';
@@ -72,6 +72,7 @@ export class WalletsComponent implements OnInit {
   ) {
     addIcons({
       ellipsisVerticalOutline,
+      createOutline
     });
   }
 

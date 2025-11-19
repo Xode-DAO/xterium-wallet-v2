@@ -108,7 +108,7 @@ export class SendComponent implements OnInit {
     });
   }
 
-  pJsApi!: ApiPromise;
+  pjsApi!: ApiPromise;
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
@@ -180,11 +180,11 @@ export class SendComponent implements OnInit {
 
     if (!service) return;
 
-    this.pJsApi = await service.connect();
+    this.pjsApi = await service.connect();
     this.balancesObservableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
-          this.pJsApi,
+          this.pjsApi,
           this.balance,
           this.currentWalletPublicAddress
         ).subscribe(balance => {
@@ -331,7 +331,7 @@ export class SendComponent implements OnInit {
     if (!service) return;
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
-    const transactionHex = await service.transfer(this.pJsApi, this.balance, this.recipientAddress, parseAmount);
+    const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
 
     this.onClickSend.emit(transactionHex);
 

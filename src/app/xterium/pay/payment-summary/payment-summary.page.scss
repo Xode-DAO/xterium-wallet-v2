@@ -2,7 +2,7 @@
   --padding-start: 0;
   --padding-end: 0;
   border: none;
-  
+
   div.bank-details-header {
     display: flex;
     flex-direction: column;
@@ -29,8 +29,8 @@
 
     .label {
       font-size: 0.9rem;
+      font-weight: 600;
       margin: 10px;
-      font-weight: 700;
     }
 
     ion-list {
@@ -78,7 +78,7 @@
     h2 {
       color: #ffffff;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 600;
       margin: 0px;
       padding: 8px 0px 2px 0px;
     }
@@ -95,7 +95,7 @@
     h2 {
       color: #ffffff;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 600;
       margin: 0px;
       padding: 8px 0px 2px 0px;
     }

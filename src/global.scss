@@ -129,8 +129,8 @@
   }
 }
 
-body {
-  font-family: 'Poppins', sans-serif;
+:root {
+  --ion-font-family: 'Poppins', sans-serif !important;
 }
 
 ion-content {
@@ -184,7 +184,7 @@ ion-refresher {
     &::part(native) {
       background: center / 100% 100% no-repeat url("assets/images/backgrounds/main-button.png");
       transition: background-size 0.2s ease;
-      font-weight: 900;
+      font-weight: 600;
     }
 
     &.secondary-button::part(native) {
@@ -236,7 +236,7 @@ ion-toolbar.main-modal-toolbar {
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-weight: 700;
+    font-weight: 600;
     margin: 5px 0px;
   }
 
@@ -268,7 +268,7 @@ ion-item.primary-select-button-item {
   box-shadow: none !important;
 
   ion-label {
-    font-weight: 700;
+    font-weight: 600;
   }
 }
 
@@ -350,7 +350,7 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 
 .xterium-header {
   h1 {
-    font-weight: bold;
+    font-weight: 600;
     font-size: 35px;
     margin-top: 75px;
     color: #ffffff;

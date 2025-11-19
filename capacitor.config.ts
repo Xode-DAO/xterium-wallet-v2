@@ -16,7 +16,12 @@ const config: CapacitorConfig = {
     CustomURLScheme: {
       URL_SCHEME: 'xterium',
       HOST: 'app'
-    }
+    },
+    StatusBar: {
+      overlaysWebView: false,
+      style: "DARK",
+      backgroundColor: "#1B1B1B",
+    },
   },
 };
 

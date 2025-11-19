@@ -127,7 +127,7 @@ export class SignTransactionPage implements OnInit {
     });
   }
 
-  pJsApi!: ApiPromise;
+  pjsApi!: ApiPromise;
 
   isChromeExtension = false;
 
@@ -196,7 +196,7 @@ export class SignTransactionPage implements OnInit {
 
         if (!service) return;
 
-        this.pJsApi = await service.connect();
+        this.pjsApi = await service.connect();
 
         // service.decodeCallData(this.pApi, this.encodedCallDataHex).then(async (transactionInfo) => {
         //   this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
@@ -238,7 +238,7 @@ export class SignTransactionPage implements OnInit {
       private_key: decryptedPrivateKey
     };
 
-    service.signAndSubmitTransaction(this.pJsApi, this.encodedCallDataHex, walletSigner).subscribe({
+    service.signAndSubmitTransaction(this.pjsApi, this.encodedCallDataHex, walletSigner).subscribe({
       next: async (event) => {
         this.confirmSignTransactionModal.dismiss();
 
