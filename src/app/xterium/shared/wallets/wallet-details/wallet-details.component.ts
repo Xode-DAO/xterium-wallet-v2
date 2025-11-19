@@ -2,7 +2,8 @@ import { Component, OnInit, EventEmitter, Output, Input, ViewChild } from '@angu
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { Clipboard } from '@capacitor/clipboard';
+import { u8aToHex, hexToU8a } from '@polkadot/util';
+
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { Capacitor } from '@capacitor/core';
@@ -47,6 +48,7 @@ import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/po
 import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
 import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
+import { ClipboardService } from 'src/app/api/clipboard/clipboard.service';
 
 import { Auth } from 'src/models/auth.model';
 
@@ -90,6 +92,7 @@ import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.
 export class WalletDetailsComponent implements OnInit {
   @ViewChild('confirmSignTransactionModal', { read: IonModal }) confirmSignTransactionModal!: IonModal;
   @ViewChild('mnemonicRecoveryModal', { read: IonModal }) mnemonicRecoveryModal!: IonModal;
+  @ViewChild('privateKeyRecoveryModal', { read: IonModal }) privateKeyRecoveryModal!: IonModal;
 
   @Input() wallet: Wallet = new Wallet();
 
@@ -108,7 +111,8 @@ export class WalletDetailsComponent implements OnInit {
     private walletsService: WalletsService,
     private encryptionService: EncryptionService,
     private toastController: ToastController,
-    private actionSheetController: ActionSheetController
+    private actionSheetController: ActionSheetController,
+    private clipboardService: ClipboardService
   ) {
     addIcons({
       copyOutline,
@@ -129,23 +133,19 @@ export class WalletDetailsComponent implements OnInit {
   isProcessing: boolean = false;
 
   walletMnemonicPhrase: string[] = new Array(12).fill('');
-  recoveryPhrase: string = "";
+  privateKey: string = '';
 
-  async copyToClipboard() {
-    const mnemonic = this.walletMnemonicPhrase.join(' ');
+  recoveryMode: 'mnemonicPhrase' | 'privateKey' = 'mnemonicPhrase';
 
-    await Clipboard.write({
-      string: mnemonic
-    });
+  copyPublicKey() {
+    this.clipboardService.copy(this.walletPublicKey, 'Public key copied to clipboard!');
+  }
+  copyMnemonicPhrase() {
+    this.clipboardService.copy(this.walletMnemonicPhrase.join(' '), 'Mnemonic phrase copied to clipboard!');
+  }
 
-    const toast = await this.toastController.create({
-      message: 'Mnemonic phrase copied to clipboard!',
-      color: 'success',
-      duration: 1500,
-      position: 'top',
-    });
-
-    await toast.present();
+  copyPrivateKey() {
+    this.clipboardService.copy(this.privateKey, 'Private key copied to clipboard!');
   }
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
@@ -175,7 +175,23 @@ export class WalletDetailsComponent implements OnInit {
     this.isBiometricAvailable = availability.available;
   }
 
-  signTransactions() {
+  signTransactions(mode: 'mnemonicPhrase' | 'privateKey') {
+    this.recoveryMode = mode;
+
+      if (mode === 'mnemonicPhrase') {
+      if (!this.wallet.mnemonic_phrase || this.wallet.mnemonic_phrase.trim() === '-') {
+
+        this.toastController.create({
+          message: 'No Mnemonic phrase available',
+          color: 'danger',
+          duration: 1500,
+          position: 'top'
+        }).then(t => t.present());
+
+        return; 
+      }
+    }
+
     this.confirmSignTransactionModal.present();
   }
 
@@ -191,17 +207,41 @@ export class WalletDetailsComponent implements OnInit {
 
     if (!service) return;
 
-    const encryptedMnemonic = this.currentWallet.mnemonic_phrase;
-
-    const mnemonicPhrase = await this.encryptionService.decrypt(
-      encryptedMnemonic,
-      decryptedPassword
-    );
-
-    this.walletMnemonicPhrase = mnemonicPhrase.trim().split(/\s+/);
-
     this.confirmSignTransactionModal.dismiss();
-    this.mnemonicRecoveryModal.present();
+
+    if (this.recoveryMode === 'mnemonicPhrase') {
+      const encryptedMnemonic = this.wallet.mnemonic_phrase;
+
+      const mnemonicPhrase = await this.encryptionService.decrypt(
+        encryptedMnemonic,
+        decryptedPassword
+      );
+
+      this.walletMnemonicPhrase = mnemonicPhrase.trim().split(/\s+/);
+
+      this.mnemonicRecoveryModal.present();
+    } else {
+      const encryptedPrivateKey = this.wallet.private_key;
+
+      let privateKey = await this.encryptionService.decrypt(
+        encryptedPrivateKey,
+        decryptedPassword
+      );
+
+      let privateKeyU8: Uint8Array;
+      if (privateKey.includes(",")) {
+        privateKeyU8 = new Uint8Array(
+          privateKey.split(",").map(x => Number(x.trim()))
+        );
+      } else {
+        privateKeyU8 = hexToU8a(privateKey);
+      }
+
+      const privateKeyHex = u8aToHex(privateKeyU8);
+
+      this.privateKey = privateKeyHex;
+      this.privateKeyRecoveryModal.present();
+    }
   }
 
   async updateWalletOnModelChange() {
