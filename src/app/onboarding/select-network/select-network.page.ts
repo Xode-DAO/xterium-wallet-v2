@@ -99,6 +99,7 @@ export class SelectNetworkPage implements OnInit {
   }
 
   async getStarted() {
+    console.log('Selected Network:', this.selectedNetworkMetadata);
     if (this.selectedNetworkMetadata) {
       const selectedChain = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
 
@@ -117,6 +118,10 @@ export class SelectNetworkPage implements OnInit {
     this.termsAndConditionModal.present();
   }
 
-  ngOnInit() { }
-
+  ngOnInit() {
+    const networkMetadata = this.networkMetadataService.getNetworkMetadataByNetwork(this.selectedNetwork);
+    if (networkMetadata) {
+      this.selectedNetworkMetadata = networkMetadata;
+    }
+  }
 }

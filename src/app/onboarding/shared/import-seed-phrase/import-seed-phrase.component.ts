@@ -206,11 +206,6 @@ export class ImportSeedPhraseComponent implements OnInit {
 
       await this.walletsService.create(wallet);
 
-      const wallets = await this.walletsService.getAllWallets();
-      if (wallets.length === 1) {
-        await this.walletsService.setCurrentWallet(newId);
-      }
-
       for (let i = 1; i < chains.length; i++) {
         newId = uuidv4();
 
@@ -224,6 +219,13 @@ export class ImportSeedPhraseComponent implements OnInit {
         };
 
         await this.walletsService.create(wallet);
+
+        if (i === 1) {
+          const wallets = await this.walletsService.getAllWallets();
+          if (wallets.length === 2) {
+            await this.walletsService.setCurrentWallet(newId);
+          }
+        }
       }
 
       if (this.isChromeExtension) {
