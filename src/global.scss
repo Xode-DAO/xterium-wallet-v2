@@ -129,7 +129,7 @@
   }
 }
 
-body {
+html, body, ion-app, ion-content, * {
   font-family: 'Poppins', sans-serif;
 }
 
@@ -161,7 +161,6 @@ ion-refresher {
 
   position: absolute;
   z-index: 100;
-  font-family: 'Poppins', sans-serif;
   font-size: 24px;
 }
 
@@ -185,7 +184,6 @@ ion-refresher {
     &::part(native) {
       background: center / 100% 100% no-repeat url("assets/images/backgrounds/main-button.png");
       transition: background-size 0.2s ease;
-      font-family: 'Poppins', sans-serif;
       font-weight: 600;
     }
 
@@ -238,7 +236,6 @@ ion-toolbar.main-modal-toolbar {
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-family: 'Poppins', sans-serif;
     font-weight: 600;
     margin: 5px 0px;
   }
@@ -250,14 +247,12 @@ ion-toolbar.main-modal-toolbar {
     padding: 15px 5px;
 
     ion-icon {
-      font-family: 'Poppins', sans-serif;
       font-size: 30px;
       margin-bottom: 10px;
       color: white;
     }
 
     .label {
-      font-family: 'Poppins', sans-serif;
       font-size: 15px;
       color: white;
     }
@@ -273,7 +268,6 @@ ion-item.primary-select-button-item {
   box-shadow: none !important;
 
   ion-label {
-    font-family: 'Poppins', sans-serif;
     font-weight: 600;
   }
 }
@@ -334,7 +328,6 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 
   h3.global-loader-text {
     margin-top: 12px;
-    font-family: 'Poppins', sans-serif;
     font-size: 1rem;
     font-weight: 500;
     animation: fadePulse 1.5s infinite;
@@ -357,7 +350,6 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 
 .xterium-header {
   h1 {
-    font-family: 'Poppins', sans-serif;
     font-weight: 600;
     font-size: 35px;
     margin-top: 75px;
@@ -365,7 +357,6 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
   }
 
   span {
-    font-family: 'Poppins', sans-serif;
     font-size: 16px;
   }
 }

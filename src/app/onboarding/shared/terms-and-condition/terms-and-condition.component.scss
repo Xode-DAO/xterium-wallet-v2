@@ -12,7 +12,6 @@
     }
 
     .segments {
-      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       margin-top: 10px;
       color: #ffffff;
@@ -28,7 +27,6 @@
           --padding-bottom: 10px;
           --border-radius: 25px;
 
-          font-family: 'Poppins', sans-serif;
           font-size: 14px;
 
           &.segment-button-checked {
@@ -46,19 +44,16 @@
     }
 
     .text-header {
-      font-family: 'Poppins', sans-serif;
       font-weight: bold;
       font-size: 30px;
     }
 
     .text-sub-header {
-      font-family: 'Poppins', sans-serif;
       font-weight: bold;
       font-size: 18px;
     }
 
     .text-content {
-      font-family: 'Poppins', sans-serif;
       font-size: 14px;
     }
   }

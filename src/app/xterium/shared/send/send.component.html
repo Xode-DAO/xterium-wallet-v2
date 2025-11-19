@@ -19,7 +19,7 @@
             <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
           </ion-item>
           <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
-            <ion-label style="font-family: 'Poppins', sans-serif; font-size: 15px;">Destination</ion-label>
+            <ion-label style="font-size: 15px;">Destination</ion-label>
             <ion-label slot="end">{{ selectedChain.name || 'Select Chain' }}</ion-label>
             <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
               <img [src]="'./../../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />

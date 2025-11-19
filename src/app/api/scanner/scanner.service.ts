@@ -43,8 +43,6 @@ export class ScannerService {
             const action = isAssetTransfer ? 'assets(transfer)' : isNativeTransfer ? 'balances(transfer_allow_death)' : '';
             const timeStamp = item.timestamp || 0;
 
-
-
             const newTransfers: Transfers = {
               hash: item.hash || '',
               status: 'Success',
