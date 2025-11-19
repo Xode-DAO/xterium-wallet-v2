@@ -126,8 +126,8 @@ export class PolkadotService extends PolkadotJsService {
 
         subscriber.next([...balances]);
 
-        newBalances.forEach(balance => {
-          const systemAccountSubscription = api.query['system']['account'](publicKey, (data: any) => {
+        newBalances.forEach(async balance => {
+          const systemAccountSubscription = await api.query['system']['account'](publicKey, (data: any) => {
             const account = data?.toJSON() as any;
             const idx = balances.findIndex(t => t.id === balance.id);
 
@@ -155,20 +155,22 @@ export class PolkadotService extends PolkadotJsService {
     return new Observable<Balance>(subscriber => {
       const subscriptions: any[] = [];
 
-      const systemAccountSubscription = api.query['system']['account'](publicKey, (data: any) => {
-        const account = data?.toJSON() as any;
-        const newBalance: Balance = {
-          id: balance.id,
-          token: balance.token,
-          quantity: Number(account.data.free),
-          price: 0,
-          amount: 0,
-        };
+      (async () => {
+        const systemAccountSubscription = await api.query['system']['account'](publicKey, (data: any) => {
+          const account = data?.toJSON() as any;
+          const newBalance: Balance = {
+            id: balance.id,
+            token: balance.token,
+            quantity: Number(account.data.free),
+            price: 0,
+            amount: 0,
+          };
 
-        subscriber.next(newBalance);
-      });
+          subscriber.next(newBalance);
+        });
 
-      subscriptions.push(systemAccountSubscription);
+        subscriptions.push(systemAccountSubscription);
+      })();
 
       return () => subscriptions.forEach(unsub => unsub());
     });

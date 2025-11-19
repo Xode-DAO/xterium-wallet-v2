@@ -63,7 +63,7 @@ export class TokensComponent implements OnInit {
     private multipayxApiService: MultipayxApiService,
   ) { }
 
-  pJsApi!: ApiPromise;
+  pjsApi!: ApiPromise;
 
   tokens: Token[] = [];
   balances: Balance[] = [];
@@ -102,8 +102,8 @@ export class TokensComponent implements OnInit {
 
     if (!service) return;
 
-    this.pJsApi = await service.connect();
-    this.tokens = await service.getTokens(this.pJsApi);
+    this.pjsApi = await service.connect();
+    this.tokens = await service.getTokens(this.pjsApi);
 
     setTimeout(async () => {
       await this.getAndWatchBalances(service);
@@ -111,12 +111,12 @@ export class TokensComponent implements OnInit {
   }
 
   async getAndWatchBalances(service: PolkadotJsService): Promise<void> {
-    this.balances = await service.getBalances(this.pJsApi, this.tokens, this.currentWalletPublicAddress);
+    this.balances = await service.getBalances(this.pjsApi, this.tokens, this.currentWalletPublicAddress);
     await this.getBalanceTokenImages();
 
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
-        this.balancesSubscription = service.watchBalances(this.pJsApi, this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
+        this.balancesSubscription = service.watchBalances(this.pjsApi, this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
           this.balances = balances;
           this.computeBalancesAmount();
         });
@@ -196,7 +196,9 @@ export class TokensComponent implements OnInit {
 
     await this.getCurrentWallet();
 
+    this.tokens = [];
     this.balances = [];
+
     this.onTotalAmount.emit(0);
 
     await this.getTokens();

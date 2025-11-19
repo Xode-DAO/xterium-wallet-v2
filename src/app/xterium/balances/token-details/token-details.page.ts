@@ -108,7 +108,7 @@ export class TokenDetailsPage implements OnInit {
     });
   }
 
-  pJsApi!: ApiPromise;
+  pjsApi!: ApiPromise;
 
   balance: Balance = new Balance();
 
@@ -208,11 +208,11 @@ export class TokenDetailsPage implements OnInit {
 
     if (!service) return;
 
-    this.pJsApi = await service.connect();
+    this.pjsApi = await service.connect();
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
-          this.pJsApi,
+          this.pjsApi,
           this.balance,
           this.currentWalletPublicAddress
         ).subscribe(balance => {

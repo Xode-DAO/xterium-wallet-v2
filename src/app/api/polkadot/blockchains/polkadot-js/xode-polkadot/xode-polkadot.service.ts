@@ -171,9 +171,9 @@ export class XodePolkadotService extends PolkadotJsService {
 
         subscriber.next([...balances]);
 
-        newBalances.forEach(balance => {
+        newBalances.forEach(async balance => {
           if (balance.token.type === 'native') {
-            const systemAccountSubscription = api.query['system']['account'](publicKey, (data: any) => {
+            const systemAccountSubscription = await api.query['system']['account'](publicKey, (data: any) => {
               const account = data?.toJSON() as any;
               const idx = balances.findIndex(t => t.id === balance.id);
 
@@ -192,7 +192,7 @@ export class XodePolkadotService extends PolkadotJsService {
             subscriptions.push(systemAccountSubscription);
           } else {
             const assetId = balance.token.reference_id;
-            const assetAccountSubscription = api.query['assets']['account'](Number(assetId), publicKey, (data: any) => {
+            const assetAccountSubscription = await api.query['assets']['account'](Number(assetId), publicKey, (data: any) => {
               const account = data.toJSON() as any;
 
               if (account?.balance > 0) {
@@ -222,38 +222,41 @@ export class XodePolkadotService extends PolkadotJsService {
     return new Observable<Balance>(subscriber => {
       const subscriptions: any[] = [];
 
-      if (balance.token.type === 'native') {
-        const systemAccountSubscription = api.query['system']['account'](publicKey, (data: any) => {
-          const account = data?.toJSON() as any;
-          const newBalance: Balance = {
-            id: balance.id,
-            token: balance.token,
-            quantity: Number(account.data.free),
-            price: 0,
-            amount: 0,
-          };
 
-          subscriber.next(newBalance);
-        });
+      (async () => {
+        if (balance.token.type === 'native') {
+          const systemAccountSubscription = await api.query['system']['account'](publicKey, (data: any) => {
+            const account = data?.toJSON() as any;
+            const newBalance: Balance = {
+              id: balance.id,
+              token: balance.token,
+              quantity: Number(account.data.free),
+              price: 0,
+              amount: 0,
+            };
 
-        subscriptions.push(systemAccountSubscription);
-      } else {
-        const assetId = balance.token.reference_id;
-        const assetAccountSubscription = api.query['assets']['account'](Number(assetId), publicKey, (data: any) => {
-          const account = data.toJSON() as any;
-          const newBalance: Balance = {
-            id: balance.id,
-            token: balance.token,
-            quantity: Number(account.balance),
-            price: 0,
-            amount: 0,
-          };
+            subscriber.next(newBalance);
+          });
 
-          subscriber.next(newBalance);
-        });
+          subscriptions.push(systemAccountSubscription);
+        } else {
+          const assetId = balance.token.reference_id;
+          const assetAccountSubscription = await api.query['assets']['account'](Number(assetId), publicKey, (data: any) => {
+            const account = data.toJSON() as any;
+            const newBalance: Balance = {
+              id: balance.id,
+              token: balance.token,
+              quantity: Number(account.balance),
+              price: 0,
+              amount: 0,
+            };
 
-        subscriptions.push(assetAccountSubscription);
-      }
+            subscriber.next(newBalance);
+          });
+
+          subscriptions.push(assetAccountSubscription);
+        }
+      })();
 
       return () => subscriptions.forEach(unsub => unsub());
     });
