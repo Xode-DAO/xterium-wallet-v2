@@ -142,9 +142,9 @@ export class AppComponent {
     try {
       if (this.isChromeExtension) return;
 
-      await StatusBar.setOverlaysWebView({ overlay: false });
-      await StatusBar.setStyle({ style: Style.Dark });
       await StatusBar.setBackgroundColor({ color: '#1B1B1B' });
+      await StatusBar.setStyle({ style: Style.Dark });
+      await StatusBar.setOverlaysWebView({ overlay: false });
     } catch (error) {
       console.error('StatusBar setup failed:', error);
     }
