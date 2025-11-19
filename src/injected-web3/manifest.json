@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Xterium Browser Extension",
-  "version": "2.0",
+  "name": "Xterium",
+  "version": "2.0.3",
   "description": "A web3 wallet designed to interact with Xode and other Polkadot blockchains.",
   "permissions": [
     "activeTab",
     "scripting",
     "storage",
     "clipboardRead",
-    "clipboardWrite",
-    "userMedia"
+    "clipboardWrite"
   ],
   "host_permissions": [
     "<all_urls>"

@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { Price } from 'src/models/multipayx-api.model';
 import { Payments } from 'src/models/transaction-history.model';
 import { search } from 'ionicons/icons';
+import { BankDetails } from 'src/models/pay.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class MultipayxApiService {
     secret_key: "44A6C686C46E4FBB11621E969931E",
     receive_address: "14mBB3gpUGA4SVYV8bxGf1c1LBjxwK54vdZKNUu9LAnXozCW",
   };
+  private readonly currencyUrl = 'https://open.er-api.com/v6/latest/USD'
 
   constructor(
     private http: HttpClient
@@ -117,5 +119,55 @@ export class MultipayxApiService {
     }
 
     return payments;
+  }
+
+  async getBankCodeAndLogo(bankName: string): Promise<BankDetails[]> {
+    try {
+      const response: any = await firstValueFrom(
+        this.http.get(`${this.rampApiUrl}/payout-bank?pageSize=100`, {
+          headers: {
+            'accept': '*/*',
+          },
+        })
+      );
+
+      if (response?.success && response?.data?.result) {
+        const filteredBanks: BankDetails[] = response.data.result.filter((bank: BankDetails) =>
+          bank.bankName.toLowerCase().includes(bankName.toLowerCase())
+        );
+
+        return filteredBanks;
+      }
+
+      return [];
+    } catch (error) {
+      console.error('Error fetching bank details:', error);
+      return [];
+    }
+  }
+
+  async getCurrencyConversion(fromCurrency: string, toCurrency: string): Promise<number> {
+    try {
+      const response: any = await firstValueFrom(this.http.get(this.currencyUrl));
+
+      if (response?.result === 'success' && response?.rates) {
+        const rates = response.rates;
+
+        const fromRate = rates[fromCurrency.toUpperCase()];
+        const toRate = rates[toCurrency.toUpperCase()];
+
+        if (fromRate === undefined || toRate === undefined) {
+          throw new Error(`Currency not supported: ${fromCurrency} or ${toCurrency}`);
+        }
+
+        const conversionRate = toRate / fromRate;
+        return conversionRate;
+      }
+
+      throw new Error('Failed to fetch currency rates');
+    } catch (error) {
+      console.error('Error fetching currency conversion:', error);
+      throw error;
+    }
   }
 }

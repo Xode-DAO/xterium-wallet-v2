@@ -22,10 +22,12 @@ import { qrCode, cloudUpload } from 'ionicons/icons';
 
 import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } from '@capacitor/barcode-scanner';
 import QrScanner from "qr-scanner";
+import BANK_SWIFT_TO_NAME_MAP_JSON from 'src/data/banks.data.json'
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 
 import { PayDetails } from 'src/models/pay.model';
+import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 
 @Component({
   selector: 'app-pay',
@@ -52,7 +54,8 @@ export class PayPage implements OnInit {
   constructor(
     private router: Router,
     private environmentService: EnvironmentService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private multipayxService: MultipayxApiService
   ) {
     addIcons({
       qrCode,
@@ -61,6 +64,8 @@ export class PayPage implements OnInit {
   }
 
   isChromeExtension = false;
+
+  BANK_SWIFT_TO_NAME_MAP: Record<string, string> = BANK_SWIFT_TO_NAME_MAP_JSON;
 
   formatEMVQR(data: string) {
     const parsed: any = {};
@@ -81,6 +86,35 @@ export class PayPage implements OnInit {
     }
 
     return parsed;
+  }
+
+  getBankCode(emv: any): string {
+    const parentTags = ['26', '27', '28'];
+
+    for (const tag of parentTags) {
+      if (emv[tag]) {
+        const pan = emv[tag]['01']; 
+        if (pan && typeof pan === 'string') {
+          return pan.substring(0, 11); 
+        }
+      }
+    }
+
+    return '';
+  }
+
+  getBankName(bankCode: string): string {
+    if (!bankCode) return '';
+
+    if (this.BANK_SWIFT_TO_NAME_MAP[bankCode]) {
+      return this.BANK_SWIFT_TO_NAME_MAP[bankCode];
+    }
+    const shortCode = bankCode.substring(0, 8);
+    const matchedKey = Object.keys(this.BANK_SWIFT_TO_NAME_MAP).find(key =>
+      key.startsWith(shortCode)
+    );
+
+    return matchedKey ? this.BANK_SWIFT_TO_NAME_MAP[matchedKey] : '';
   }
 
   async scan() {
@@ -107,6 +141,11 @@ export class PayPage implements OnInit {
     }
 
     const parsedEMVQR = this.formatEMVQR(result.ScanResult);
+    const bankSwift = this.getBankCode(parsedEMVQR);
+    const bankName = this.getBankName(bankSwift);
+    const bankDetails = await this.multipayxService.getBankCodeAndLogo(bankName);
+    const bankCode = bankDetails.length > 0 ? bankDetails[0].bankCode : '';
+    const bankIcon = bankDetails.length > 0 ? bankDetails[0].bankIcon : '';
     const payDetails: PayDetails = {
       recipient_name: parsedEMVQR?.['59'] || '',
       account_number:
@@ -115,6 +154,10 @@ export class PayPage implements OnInit {
         parsedEMVQR?.['27']?.['04'] ||
         parsedEMVQR?.['27']?.['01'] ||
         '',
+      bank_swift: bankSwift,
+      bank_name: bankName,
+      bank_code: bankCode,
+      bank_icon: bankIcon,
       amount: parsedEMVQR?.['54'] ? parseFloat(parsedEMVQR['54']) : 0,
     };
 
@@ -151,7 +194,12 @@ export class PayPage implements OnInit {
           const qrText = await QrScanner.scanImage(file);
 
           const parsedEMVQR = this.formatEMVQR(qrText);
-
+          const bankSwift = this.getBankCode(parsedEMVQR);
+          const bankName = this.getBankName(bankSwift);
+          const bankDetails = await this.multipayxService.getBankCodeAndLogo(bankName);
+          const bankCode = bankDetails.length > 0 ? bankDetails[0].bankCode : '';
+          const bankIcon = bankDetails.length > 0 ? bankDetails[0].bankIcon : '';
+          console.log('Bank Icon URL:', bankIcon);
           const payDetails: PayDetails = {
             recipient_name: parsedEMVQR?.['59'] || '',
             account_number:
@@ -159,6 +207,10 @@ export class PayPage implements OnInit {
               parsedEMVQR?.['26']?.['01'] ||
               parsedEMVQR?.['27']?.['04'] ||
               parsedEMVQR?.['27']?.['01'] || '',
+            bank_swift: bankSwift,
+            bank_name: bankName,
+            bank_code: bankCode,
+            bank_icon: bankIcon,
             amount: parsedEMVQR?.['54'] ? parseFloat(parsedEMVQR['54']) : 0,
           };
 
