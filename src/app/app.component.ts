@@ -145,6 +145,8 @@ export class AppComponent {
       await StatusBar.setBackgroundColor({ color: '#1B1B1B' });
       await StatusBar.setStyle({ style: Style.Dark });
       await StatusBar.setOverlaysWebView({ overlay: false });
+
+      console.log(await StatusBar.getInfo());
     } catch (error) {
       console.error('StatusBar setup failed:', error);
     }
