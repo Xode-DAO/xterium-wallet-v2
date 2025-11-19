@@ -1,4 +1,6 @@
-<img width="6144" height="4608" alt="image" src="https://github.com/user-attachments/assets/0f4adb55-6ee5-4c8a-91ed-d881163f5bd2" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0f4adb55-6ee5-4c8a-91ed-d881163f5bd2" alt="image" width="500"/>
+</p>
 
 # Xterium Wallet
 
