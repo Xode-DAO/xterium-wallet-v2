@@ -14,7 +14,7 @@ Xterium Wallet is a secure, seamless, and powerful multi-platform wallet for man
 - Non-custodial & secure key management
 - Fast on-chain transactions
 - Multi-network interoperability
-- Integrated Hydration LP swaps
+- Integrated Hydration LP swaps (Coming Soon)
 - Direct Pay support in USDT
 - Earn passive income through Xode staking
 
