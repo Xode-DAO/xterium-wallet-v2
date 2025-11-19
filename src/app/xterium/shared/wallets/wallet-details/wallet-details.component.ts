@@ -26,7 +26,6 @@ import {
   IonButtons,
   IonIcon,
   IonContent,
-  IonCard,
   ToastController,
   ActionSheetController,
 } from '@ionic/angular/standalone';
@@ -81,7 +80,6 @@ import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.
     IonButtons,
     IonIcon,
     IonContent,
-    IonCard,
     PasswordSetupComponent,
     PasswordLoginComponent,
     PinSetupComponent,
