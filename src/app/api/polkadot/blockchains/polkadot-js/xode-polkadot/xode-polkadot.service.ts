@@ -222,7 +222,6 @@ export class XodePolkadotService extends PolkadotJsService {
     return new Observable<Balance>(subscriber => {
       const subscriptions: any[] = [];
 
-
       (async () => {
         if (balance.token.type === 'native') {
           const systemAccountSubscription = await api.query['system']['account'](publicKey, (data: any) => {
