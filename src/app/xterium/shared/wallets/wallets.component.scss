@@ -41,8 +41,12 @@
   .menu-button {
     --color: #bdbdbd;
 
-    margin: 0;
-    margin-right: -17px;
+    margin-right: -10px;
+
+    ion-icon {
+      font-size: 27px;
+      margin-bottom: 2px;
+    }
 
     &:hover {
       --color: #ffffff;
