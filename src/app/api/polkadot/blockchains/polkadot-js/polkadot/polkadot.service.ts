@@ -71,6 +71,15 @@ export class PolkadotService extends PolkadotJsService {
     return tokens;
   }
 
+  async getExistentialDepositOfNativeToken(api: ApiPromise): Promise<number> {
+    const existentialDeposit = api.consts['balances']['existentialDeposit'];
+    return Number(existentialDeposit.toString());
+  };
+
+  async getMinimumBalanceOfAssetToken(api: ApiPromise, reference_id: number): Promise<number | null> {
+    return null;
+  };
+
   async getBalances(api: ApiPromise, tokens: Token[], publicKey: string): Promise<Balance[]> {
     const balances: Balance[] = [];
 
@@ -151,7 +160,22 @@ export class PolkadotService extends PolkadotJsService {
     });
   }
 
-  watchBalance(api: ApiPromise, balance: Balance, publicKey: string): Observable<Balance> {
+  async getBalance(api: ApiPromise, token: Token, publicKey: string): Promise<Balance> {
+    const systemAccount = await api.query['system']['account'](publicKey);
+    const account = systemAccount.toJSON() as any;
+
+    const balance: Balance = {
+      id: uuidv4(),
+      token,
+      quantity: Number(account.data.free),
+      price: 0,
+      amount: 0,
+    };
+
+    return balance;
+  }
+
+  watchBalance(api: ApiPromise, token: Token, publicKey: string): Observable<Balance> {
     return new Observable<Balance>(subscriber => {
       const subscriptions: any[] = [];
 
@@ -159,8 +183,8 @@ export class PolkadotService extends PolkadotJsService {
         const systemAccountSubscription = await api.query['system']['account'](publicKey, (data: any) => {
           const account = data?.toJSON() as any;
           const newBalance: Balance = {
-            id: balance.id,
-            token: balance.token,
+            id: uuidv4(),
+            token,
             quantity: Number(account.data.free),
             price: 0,
             amount: 0,
@@ -179,12 +203,22 @@ export class PolkadotService extends PolkadotJsService {
   async transfer(api: ApiPromise, balance: Balance, destPublicKey: string, value: number): Promise<string> {
     const bigIntAmount = BigInt(value);
 
-    const transferExtrinsic = api.tx['balances']['transferAllowDeath'](
+    const transferExtrinsic = api.tx['balances']['transferKeepAlive'](
       destPublicKey,
       bigIntAmount
     );
 
     return transferExtrinsic.toHex();
+  }
+
+  async estimatedFees(api: ApiPromise, encodedCallDataHex: string, publicKey: string, token: Token | null): Promise<number> {
+    const txBytes = hexToU8a(encodedCallDataHex);
+    const call = api.createType('Extrinsic', txBytes);
+    const tx = api.tx(call);
+
+    const { partialFee } = await tx.paymentInfo(publicKey);
+
+    return Number(BigInt(partialFee.toString()));
   }
 
   signAndSubmitTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult> {

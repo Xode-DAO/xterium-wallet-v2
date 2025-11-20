@@ -186,10 +186,10 @@ export class SendComponent implements OnInit {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
           this.pjsApi,
-          this.balance,
+          this.balance.token,
           this.currentWalletPublicAddress
         ).subscribe(balance => {
-          this.balance = balance;
+          this.balance.quantity = balance.quantity;
         });
       }
     }, 5000);
@@ -332,27 +332,27 @@ export class SendComponent implements OnInit {
     if (!service) return;
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
+    const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
 
-    this.pjsApi = await service.connect();
-    const existentialDeposit = this.pjsApi.consts['balances']['existentialDeposit'];
-    const formattedExistentailDeposit = Number(existentialDeposit.toString());
+    const existentialDeposit = await service.getExistentialDepositOfNativeToken(this.pjsApi);
+    const estimatedFee = await service.estimatedFees(this.pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
 
-    const balanceRequired = parseAmount + formattedExistentailDeposit + this.estimatedFee;
-    const formattedBalanceRequired = this.balancesService.formatBalance(Number(balanceRequired), this.balance.token.decimals);
+    const balanceAmountRequired = parseAmount + existentialDeposit + estimatedFee;
 
-    if (balanceRequired > this.balance.quantity) {
+    if (balanceAmountRequired > this.balance.quantity) {
+      const formattedBalanceRequired = this.balancesService.formatBalance(Number(balanceAmountRequired), this.currentWallet.chain.decimal);
       const toast = await this.toastController.create({
-        message: `Insufficient balance. You need at least ${formattedBalanceRequired} ${this.balance.token.symbol}`,
+        message: `Insufficient balance. You need at least ${formattedBalanceRequired.toFixed(5)} ${this.currentWallet.chain.unit}`,
         color: 'danger',
         duration: 2500,
         position: 'top',
       });
+
       await toast.present();
       this.isProcessing = false;
+
       return;
     }
-
-    const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
 
     this.onClickSend.emit(transactionHex);
 

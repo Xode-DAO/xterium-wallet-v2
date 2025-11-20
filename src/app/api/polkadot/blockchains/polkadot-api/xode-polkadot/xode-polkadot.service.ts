@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { XodePolkadot, xodePolkadot, MultiAddress } from "@polkadot-api/descriptors"
-import { createClient, Transaction, TxEvent, InvalidTxError, Binary, HexString } from 'polkadot-api';
+import { createClient, TxEvent, InvalidTxError, Binary, HexString } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider';
 import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
@@ -211,17 +211,48 @@ export class XodePolkadotService extends PolkadotApiService {
     });
   }
 
-  watchBalance(api: Api<XodePolkadot>, balance: Balance, publicKey: string): Observable<Balance> {
+  async getBalance(api: Api<XodePolkadot>, token: Token, publicKey: string): Promise<Balance> {
+    let balance: Balance = new Balance();
+
+    if (token.type === 'native') {
+      const balanceAccount = await api.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
+      balance = {
+        id: uuidv4(),
+        token,
+        quantity: Number(balanceAccount.data.free),
+        price: 0,
+        amount: 0,
+      };
+    } else {
+      const assetId = token.reference_id;
+      const account = await api.chainApi.query.Assets.Account.getValue(Number(assetId), publicKey, { at: "best" });
+      const metadata = await api.chainApi.query.Assets.Metadata.getValue(Number(assetId), { at: "best" });
+
+      if (account && metadata) {
+        balance = {
+          id: uuidv4(),
+          token,
+          quantity: Number(account.balance),
+          price: 0,
+          amount: 0,
+        };
+      }
+    }
+
+    return balance;
+  }
+
+  watchBalance(api: Api<XodePolkadot>, token: Token, publicKey: string): Observable<Balance> {
     return new Observable<Balance>(subscriber => {
       const subscriptions: any[] = [];
 
-      if (balance.token.type === 'native') {
+      if (token.type === 'native') {
         const systemAccountSubscription = api.chainApi.query.System.Account
           .watchValue(publicKey, "best")
           .subscribe(account => {
             const newBalance: Balance = {
-              id: balance.id,
-              token: balance.token,
+              id: uuidv4(),
+              token,
               quantity: Number(account.data.free),
               price: 0,
               amount: 0,
@@ -232,14 +263,14 @@ export class XodePolkadotService extends PolkadotApiService {
 
         subscriptions.push(systemAccountSubscription);
       } else {
-        const assetId = balance.token.reference_id;
+        const assetId = token.reference_id;
         const assetAccountSubscription = api.chainApi.query.Assets.Account
           .watchValue(Number(assetId), publicKey, "best")
           .subscribe(account => {
             if (account && Number(account.balance) > 0) {
               const newBalance: Balance = {
-                id: balance.id,
-                token: balance.token,
+                id: uuidv4(),
+                token,
                 quantity: Number(account.balance),
                 price: 0,
                 amount: 0,
@@ -260,7 +291,7 @@ export class XodePolkadotService extends PolkadotApiService {
     const bigValue = BigInt(value);
 
     if (balance.token.type === 'native') {
-      const transferExtrinsic = api.chainApi.tx.Balances.transfer_allow_death({
+      const transferExtrinsic = api.chainApi.tx.Balances.transfer_keep_alive({
         dest: MultiAddress.Id(destPublicKey),
         value: bigValue,
       });

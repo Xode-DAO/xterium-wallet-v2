@@ -118,38 +118,38 @@ export class TokenDetailsPage implements OnInit {
   observableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
 
-  candlestickSeries: ApexAxisChartSeries = [];
+  // candlestickSeries: ApexAxisChartSeries = [];
 
-  candlestickChart: ApexChart = {
-    type: "candlestick",
-    height: 350,
-  };
+  // candlestickChart: ApexChart = {
+  //   type: "candlestick",
+  //   height: 350,
+  // };
 
-  candlestickTitle: ApexTitleSubtitle = {
-    text: "Price History",
-    align: "left",
-    style: {
-      color: "#ffffff",
-    }
-  };
+  // candlestickTitle: ApexTitleSubtitle = {
+  //   text: "Price History",
+  //   align: "left",
+  //   style: {
+  //     color: "#ffffff",
+  //   }
+  // };
 
-  candlestickXaxis: ApexXAxis = {
-    type: "datetime",
-    labels: {
-      style: {
-        colors: "#ffffff",
-        cssClass: 'label-bg'
-      }
-    }
-  };
+  // candlestickXaxis: ApexXAxis = {
+  //   type: "datetime",
+  //   labels: {
+  //     style: {
+  //       colors: "#ffffff",
+  //       cssClass: 'label-bg'
+  //     }
+  //   }
+  // };
 
-  candlestickYaxis = {
-    labels: {
-      style: {
-        colors: "#ffffff"
-      }
-    }
-  };
+  // candlestickYaxis = {
+  //   labels: {
+  //     style: {
+  //       colors: "#ffffff"
+  //     }
+  //   }
+  // };
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -213,10 +213,11 @@ export class TokenDetailsPage implements OnInit {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
           this.pjsApi,
-          this.balance,
+          this.balance.token,
           this.currentWalletPublicAddress
         ).subscribe(balance => {
-          this.balance = balance;
+          this.balance.quantity = balance.quantity;
+          this.balance.amount = this.balance.quantity * this.balance.price;
         });
       }
     }, 5000);

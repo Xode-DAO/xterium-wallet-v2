@@ -19,7 +19,6 @@ import {
   IonItem,
   IonItemDivider,
   IonIcon,
-  IonAvatar,
   IonLabel,
   IonModal,
   ToastController,
@@ -40,7 +39,6 @@ import {
   logOutOutline
 } from 'ionicons/icons';
 
-import { NetworksComponent } from "src/app/xterium/shared/networks/networks.component";
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
@@ -79,11 +77,9 @@ import { AuthService } from 'src/app/api/auth/auth.service';
     IonItem,
     IonItemDivider,
     IonIcon,
-    IonAvatar,
     IonLabel,
     IonModal,
     WalletsComponent,
-    NetworksComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
     ImportPrivateKeyComponent,

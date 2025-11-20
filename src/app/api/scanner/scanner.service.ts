@@ -40,7 +40,7 @@ export class ScannerService {
             const isNativeTransfer = item.token === chain.unit;
             const isAssetTransfer = item.token !== chain.unit;
 
-            const action = isAssetTransfer ? 'assets(transfer)' : isNativeTransfer ? 'balances(transfer_allow_death)' : '';
+            const action = isAssetTransfer ? 'assets(transfer)' : isNativeTransfer ? 'balances(transfer_keep_alive)' : '';
             const timeStamp = item.timestamp || 0;
 
             const newTransfers: Transfers = {
@@ -86,7 +86,7 @@ export class ScannerService {
           const isNativeTransfer = item.asset_symbol === chain.unit;
           const isAssetTransfer = item.asset_symbol !== chain.unit;
 
-          const action = isAssetTransfer ? 'assets(transfer)' : isNativeTransfer ? 'balances(transfer_allow_death)' : '';
+          const action = isAssetTransfer ? 'assets(transfer)' : isNativeTransfer ? 'balances(transfer_keep_alive)' : '';
 
           const rawTimestamp = item.block_timestamp || 0;
           const timeStamp = rawTimestamp * 1000;

@@ -139,8 +139,8 @@ export class SignTransactionPage implements OnInit {
 
   encodedCallDataHex: string = "";
 
-  extrinsic: string = "transfer";
-  estimatedFee: number = 0.0014;
+  extrinsic: string = "Transfer Keep Alive";
+  estimatedFee: number = 0;
   isLoadingFee: boolean = true;
 
   isProcessing: boolean = false;
@@ -197,18 +197,9 @@ export class SignTransactionPage implements OnInit {
         if (!service) return;
 
         this.pjsApi = await service.connect();
+        const estimatedFee = await service.estimatedFees(this.pjsApi, this.encodedCallDataHex, this.currentWalletPublicAddress, null);
 
-        // service.decodeCallData(this.pApi, this.encodedCallDataHex).then(async (transactionInfo) => {
-        //   this.extrinsic = transactionInfo.decodedCall.type + "." + transactionInfo.decodedCall.value.type;
-        //   setTimeout(async () => {
-        //     const fee = await transactionInfo.getPaymentInfo(this.currentWalletPublicAddress);
-
-        //     this.estimatedFee = Number(fee.partial_fee);
-        //     this.isLoadingFee = false;
-        //   }, 1000);
-        // });
-
-        this.estimatedFee = 0;
+        this.estimatedFee = estimatedFee;
         this.isLoadingFee = false;
       }
     });

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PolkadotClient, TypedApi, Transaction, TxEvent, HexString, ChainDefinition } from 'polkadot-api';
+import { PolkadotClient, TypedApi, TxEvent, HexString, ChainDefinition } from 'polkadot-api';
 
 import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
@@ -19,10 +19,12 @@ export abstract class PolkadotApiService {
   abstract connect(): Promise<Api<ChainDefinition>>;
 
   abstract getTokens(api: Api<ChainDefinition>): Promise<Token[]>;
-  abstract getBalances(api: Api<ChainDefinition>, tokens: Token[], publicKey: string): Promise<Balance[]>;
 
+  abstract getBalances(api: Api<ChainDefinition>, tokens: Token[], publicKey: string): Promise<Balance[]>;
   abstract watchBalances(api: Api<ChainDefinition>, tokens: Token[], publicKey: string): Observable<Balance[]>;
-  abstract watchBalance(api: Api<ChainDefinition>, balance: Balance, publicKey: string): Observable<Balance>;
+
+  abstract getBalance(api: Api<ChainDefinition>, token: Token, publicKey: string): Promise<Balance>;
+  abstract watchBalance(api: Api<ChainDefinition>, token: Token, publicKey: string): Observable<Balance>;
 
   abstract transfer(api: Api<ChainDefinition>, balance: Balance, destPublicKey: string, value: number): Promise<HexString>;
 

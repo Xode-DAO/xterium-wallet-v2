@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { HydrationPolkadot, hydrationPolkadot } from "@polkadot-api/descriptors"
-import { createClient, Transaction, TxEvent, InvalidTxError, Binary, HexString } from 'polkadot-api';
+import { createClient, TxEvent, InvalidTxError, Binary, HexString } from 'polkadot-api';
 import { getWsProvider } from 'polkadot-api/ws-provider';
 import { sr25519 } from "@polkadot-labs/hdkd-helpers"
 import { getPolkadotSigner } from "polkadot-api/signer"
@@ -134,7 +134,20 @@ export class HydrationPolkadotService extends PolkadotApiService {
     });
   }
 
-  watchBalance(api: Api<HydrationPolkadot>, balance: Balance, publicKey: string): Observable<Balance> {
+  async getBalance(api: Api<HydrationPolkadot>, token: Token, publicKey: string): Promise<Balance> {
+    const balanceAccount = await api.chainApi.query.System.Account.getValue(publicKey, { at: "best" });
+    const balance = {
+      id: uuidv4(),
+      token,
+      quantity: Number(balanceAccount.data.free),
+      price: 0,
+      amount: 0,
+    };
+
+    return balance;
+  }
+
+  watchBalance(api: Api<HydrationPolkadot>, token: Token, publicKey: string): Observable<Balance> {
     return new Observable<Balance>(subscriber => {
       const subscriptions: any[] = [];
 
@@ -142,8 +155,8 @@ export class HydrationPolkadotService extends PolkadotApiService {
         .watchValue(publicKey, "best")
         .subscribe(account => {
           const newBalance: Balance = {
-            id: balance.id,
-            token: balance.token,
+            id: uuidv4(),
+            token,
             quantity: Number(account.data.free),
             price: 0,
             amount: 0,
@@ -161,7 +174,7 @@ export class HydrationPolkadotService extends PolkadotApiService {
   async transfer(api: Api<HydrationPolkadot>, balance: Balance, destPublicKey: string, value: number): Promise<HexString> {
     const bigValue = BigInt(value);
 
-    const transferExtrinsic = api.chainApi.tx.Balances.transfer_allow_death({
+    const transferExtrinsic = api.chainApi.tx.Balances.transfer_keep_alive({
       dest: destPublicKey,
       value: bigValue,
     });
