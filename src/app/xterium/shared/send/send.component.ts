@@ -121,6 +121,7 @@ export class SendComponent implements OnInit {
 
   recipientAddress: string = "";
   formattedAmountValue: string = "0";
+  estimatedFee: number = 140000000;
 
   isProcessing: boolean = false;
   isChromeExtension = false;
@@ -331,6 +332,26 @@ export class SendComponent implements OnInit {
     if (!service) return;
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
+
+    this.pjsApi = await service.connect();
+    const existentialDeposit = this.pjsApi.consts['balances']['existentialDeposit'];
+    const formattedExistentailDeposit = Number(existentialDeposit.toString());
+
+    const balanceRequired = parseAmount + formattedExistentailDeposit + this.estimatedFee;
+    const formattedBalanceRequired = this.balancesService.formatBalance(Number(balanceRequired), this.balance.token.decimals);
+
+    if (balanceRequired > this.balance.quantity) {
+      const toast = await this.toastController.create({
+        message: `Insufficient balance. You need at least ${formattedBalanceRequired} ${this.balance.token.symbol}`,
+        color: 'danger',
+        duration: 2500,
+        position: 'top',
+      });
+      await toast.present();
+      this.isProcessing = false;
+      return;
+    }
+
     const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
 
     this.onClickSend.emit(transactionHex);

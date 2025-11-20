@@ -69,6 +69,20 @@ div.secrets {
           font-size: 15px;
         }
       }
+
+      .secret-recovery-secondary {
+        text-align: center;
+        padding: 25px;
+        background: rgba(var(--ion-color-secondary-rgb), 0.1);
+        border-radius: 25px;
+        border: 3px solid rgba(var(--ion-color-secondary-rgb), 0.2);
+
+        .secondary-text {
+          color: var(--ion-color-secondary);
+          margin: 0;
+          font-size: 15px;
+        }
+      }
     }
   }
 }
