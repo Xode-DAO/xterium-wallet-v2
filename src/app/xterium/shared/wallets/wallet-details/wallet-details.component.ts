@@ -2,8 +2,6 @@ import { Component, OnInit, EventEmitter, Output, Input, ViewChild } from '@angu
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { u8aToHex } from '@polkadot/util';
-
 import { Clipboard } from '@capacitor/clipboard';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
