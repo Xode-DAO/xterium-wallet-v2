@@ -219,11 +219,10 @@ export class WalletDetailsComponent implements OnInit {
       this.secretMnemonicRecoveryModal.present();
     } else {
       const encryptedPrivateKey = this.wallet.private_key;
-      const privateKey = await this.encryptionService.decrypt(encryptedPrivateKey, decryptedPassword);
-      const privateKeyU8 = new Uint8Array(
-        privateKey.split(",").map(x => Number(x.trim()))
+      const decryptedPrivateKey = await this.encryptionService.decrypt(encryptedPrivateKey, decryptedPassword);
+      const privateKeyHex = this.utilsService.encodePrivateKeyToHex(
+        new Uint8Array(decryptedPrivateKey.split(',').map(Number) ?? [])
       );
-      const privateKeyHex = u8aToHex(privateKeyU8);
 
       this.secretPrivateKey = privateKeyHex;
       this.secretPrivateKeyRecoveryModal.present();

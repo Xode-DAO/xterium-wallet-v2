@@ -6,10 +6,7 @@ import {
   mnemonicToMiniSecret,
   mnemonicValidate,
   sr25519PairFromSeed,
-  ed25519PairFromSeed,
-  secp256k1PairFromSeed
 } from "@polkadot/util-crypto"
-import { Keypair } from '@polkadot/util-crypto/types';
 import { u8aToHex, hexToU8a } from '@polkadot/util';
 import { encodeAddress, decodeAddress } from '@polkadot/keyring';
 import { u8aEq } from '@polkadot/util';
@@ -59,28 +56,26 @@ export class UtilsService {
 
     try {
       let privateKey = hexToU8a(privateKeyHex);
+      const keyLength = privateKey.length;
 
-      if (privateKey.length === 64) {
-        privateKey = privateKey.slice(0, 32);
-      }
-
-      if (privateKey.length !== 32) {
+      if (keyLength !== 32 && keyLength !== 64) {
         return { valid: false, error: "Invalid key length. Must be 32 or 64 bytes." };
       }
 
-      let keypair: Keypair | undefined;
+      if (keyLength === 64) {
+        privateKey = privateKey.slice(0, 32);
+      }
 
-      try { keypair = sr25519PairFromSeed(privateKey); } catch (_) { }
-      if (!keypair) { try { keypair = ed25519PairFromSeed(privateKey); } catch (_) { } }
-      if (!keypair) { try { keypair = secp256k1PairFromSeed(privateKey); } catch (_) { } }
+      try {
+        const seed = privateKey.length === 64 ? privateKey.slice(0, 32) : privateKey;
+        const keypair = sr25519PairFromSeed(seed);
 
-      if (keypair) {
         return {
           valid: true,
           publicKey: keypair.publicKey,
           secretKey: keypair.secretKey
         };
-      }
+      } catch (_) { }
 
       return { valid: false, error: "Unsupported crypto type or invalid private key." };
     } catch (e: any) {
