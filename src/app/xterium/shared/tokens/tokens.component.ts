@@ -30,6 +30,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { TokensService } from 'src/app/api/tokens/tokens.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 @Component({
   selector: 'app-tokens',
@@ -61,6 +62,7 @@ export class TokensComponent implements OnInit {
     private tokensService: TokensService,
     private balancesService: BalancesService,
     private multipayxApiService: MultipayxApiService,
+    private settingsService: SettingsService,
   ) { }
 
   pjsApi!: ApiPromise;
@@ -219,6 +221,12 @@ export class TokensComponent implements OnInit {
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
       this.fetchData();
+    });
+
+    this.settingsService.currentSettingsObservable.subscribe(settings => {
+      if (settings) {
+        this.fetchData();
+      }
     });
 
     this.tokensService.tokenImageObservable.subscribe(tokenImage => {

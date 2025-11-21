@@ -45,6 +45,7 @@
         <ion-col size="12">
           <div class="token-list-header">
             <h3>Tokens</h3>
+            <ion-toggle [checked]="isZeroBalancesHidden" (ionChange)="hideZeroBalances($event)">Hide Zero Balances</ion-toggle>
             <!-- <a (click)="openManageTokensModal()">Manage</a> -->
           </div>
         </ion-col>
