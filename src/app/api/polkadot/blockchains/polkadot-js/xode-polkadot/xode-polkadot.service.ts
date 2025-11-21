@@ -9,6 +9,7 @@ import { hexToString, hexToU8a, } from '@polkadot/util';
 import { ISubmittableResult } from '@polkadot/types/types';
 
 import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
@@ -18,6 +19,13 @@ import { WalletSigner } from 'src/models/wallet.model';
   providedIn: 'root',
 })
 export class XodePolkadotService extends PolkadotJsService {
+
+  constructor(
+    private settingsService: SettingsService,
+  ) {
+    super();
+  }
+
   async connect(): Promise<ApiPromise> {
     await cryptoWaitReady();
 
@@ -119,11 +127,17 @@ export class XodePolkadotService extends PolkadotJsService {
             const assetsAccount = await api.query['assets']['account'](Number(assetId), publicKey);
             const account = assetsAccount.toJSON() as any;
 
-            if (account?.balance > 0) {
+            const settings = await this.settingsService.get();
+            const isZeroBalancesHidden = settings?.user_preferences.hide_zero_balances ?? false;
+
+            const balance = Number(account?.balance || 0);
+            const shouldInclude = !isZeroBalancesHidden || balance > 0;
+
+            if (shouldInclude) {
               assetBalances.push({
                 id: uuidv4(),
                 token,
-                quantity: Number(account?.balance || 0),
+                quantity: balance,
                 price: 0,
                 amount: 0,
               });
@@ -163,11 +177,17 @@ export class XodePolkadotService extends PolkadotJsService {
               const assetsAccount = await api.query['assets']['account'](Number(assetId), publicKey);
               const account = assetsAccount.toJSON() as any;
 
-              if (account?.balance > 0) {
+              const settings = await this.settingsService.get();
+              const isZeroBalancesHidden = settings?.user_preferences.hide_zero_balances ?? false;
+
+              const balance = Number(account?.balance || 0);
+              const shouldInclude = !isZeroBalancesHidden || balance > 0;
+
+              if (shouldInclude) {
                 return <Balance>{
                   id: uuidv4(),
                   token,
-                  quantity: Number(account?.balance || 0),
+                  quantity: balance,
                   price: 0,
                   amount: 0,
                 };

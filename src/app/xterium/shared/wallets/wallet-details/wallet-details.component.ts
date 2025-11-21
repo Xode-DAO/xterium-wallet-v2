@@ -29,7 +29,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { copyOutline } from 'ionicons/icons';
+import { copyOutline, informationCircleOutline } from 'ionicons/icons';
 
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
@@ -111,6 +111,7 @@ export class WalletDetailsComponent implements OnInit {
   ) {
     addIcons({
       copyOutline,
+      informationCircleOutline
     });
   }
 

@@ -20,7 +20,7 @@
         </ion-list>
       </ion-col>
     </ion-row>
-    <ion-row class="show-secrets ion-margin-top">
+    <ion-row class="show-secrets">
       <ion-col size="12">
         <ion-list>
           <ion-item button lines="none" class="ion-margin-bottom" (click)="showRecoverySecrets('mnemonicPhrase')">
@@ -117,8 +117,8 @@
 
 <ion-modal #secretMnemonicRecoveryModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
   <ng-template>
-    <ion-toolbar class="main-modal-toolbar"> 
-      <ion-title>Your Seed Phrase</ion-title>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>Show Recovery Phrase</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="secretMnemonicRecoveryModal.dismiss()">
           <ion-icon name="close" style="color: white;"></ion-icon>
@@ -128,18 +128,20 @@
     <ion-content>
       <div class="ion-padding-horizontal secrets">
         <ion-grid>
-          <ion-row class="ion-margin-bottom">
+          <ion-row>
             <ion-col size="12">
-              <div class="secret-recovery-warning">
-                <h2>Do not share your Recovery Phrase</h2>
-                <p class="warning-text">
-                  If someone has your Recovery Phrase they will have full control of your
-                  wallet.
-                </p>
+              <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+                <h1 style="font-weight: bold;">
+                  Your Recovery Phrase
+                </h1>
+                <span style="font-size: 15px;">
+                  Below are the words that make up your wallet's Recovery Phrase. Keep it secure and never share it with
+                  anyone.
+                </span>
               </div>
             </ion-col>
           </ion-row>
-          <ion-row>
+          <ion-row class="ion-margin-bottom">
             @for (word of secretMnemonicPhrase; track word; let index = $index) {
             <ion-col size="6">
               <ion-list>
@@ -151,14 +153,46 @@
             </ion-col>
             }
           </ion-row>
-          <ion-row class="ion-margin-top">
+          <ion-row class="ion-margin-bottom">
             <ion-col size="12">
               <div class="primary-button-wrapper">
-                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
-                  (click)="copyMnemonicPhrase()">
+                <ion-button expand="block" size="default" class="secondary-button" (click)="copyMnemonicPhrase()">
                   <ion-icon name="copy-outline" slot="start" [size]="'small'"></ion-icon>
                   COPY TO CLIPBOARD
                 </ion-button>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-margin-bottom">
+            <ion-col size="12">
+              <div class="secret-recovery-warning">
+                <h2>Do not share your Recovery Phrase</h2>
+                <br />
+                <p class="warning-text">
+                  If someone has your Recovery Phrase they will have full control of your wallet. Keep it secure and
+                  never share it with anyone.
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-margin-bottom">
+            <ion-col size="12">
+              <div class="secret-recovery-secondary">
+                <h2>
+                  Important Security Tips
+                </h2>
+                <br />
+                <p class="secondary-text">
+                  Recovery Phrases are typically a series of 12, 18, or 24 words that are difficult to remember. It is
+                  crucial to store your Recovery Phrase securely, as losing it may result in permanent loss of access to
+                  your wallet
+                  and its funds.
+                </p>
+                <br />
+                <p class="secondary-text">
+                  Consider using a reputable password manager or writing it down and storing it in a safe place.
+                  Avoid sharing your Recovery Phrase with anyone or storing it in easily accessible locations.
+                </p>
               </div>
             </ion-col>
           </ion-row>
@@ -173,7 +207,7 @@
 <ion-modal #secretPrivateKeyRecoveryModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
   <ng-template>
     <ion-toolbar class="main-modal-toolbar">
-      <ion-title>Your Private Key</ion-title>
+      <ion-title>Show Private Key</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="secretPrivateKeyRecoveryModal.dismiss()">
           <ion-icon name="close" style="color: white;"></ion-icon>
@@ -183,18 +217,19 @@
     <ion-content>
       <div class="ion-padding-horizontal secrets">
         <ion-grid>
-          <ion-row class="ion-margin-bottom">
+          <ion-row>
             <ion-col size="12">
-              <div class="secret-recovery-warning">
-                <h2>Do not share your Private Key</h2>
-                <p class="warning-text">
-                  If someone has your Private Key they will have full control of your
-                  wallet.
-                </p>
+              <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+                <h1 style="font-weight: bold;">
+                  Your Private Key
+                </h1>
+                <span style="font-size: 15px;">
+                  Below is your wallet's Private Key. Keep it secure and never share it with anyone.
+                </span>
               </div>
             </ion-col>
           </ion-row>
-          <ion-row>
+          <ion-row class="ion-margin-bottom">
             <ion-col size="12">
               <ion-list>
                 <ion-item class="primary-textarea-item" lines="none">
@@ -204,22 +239,45 @@
               </ion-list>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-margin-top">
+          <ion-row class="ion-margin-bottom">
             <ion-col size="12">
               <div class="primary-button-wrapper">
-                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
-                  (click)="copyPrivateKey()">
+                <ion-button expand="block" size="default" class="secondary-button" (click)="copyPrivateKey()">
                   <ion-icon name="copy-outline" slot="start" [size]="'large'"></ion-icon>
                   COPY TO CLIPBOARD
                 </ion-button>
               </div>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-margin-top">
+          <ion-row class="ion-margin-bottom">
+            <ion-col size="12">
+              <div class="secret-recovery-warning">
+                <h2>Do not share your Private Key</h2>
+                <br />
+                <p class="warning-text">
+                  If someone has your Private Key they will have full control of your wallet. Keep it secure and
+                  never share it with anyone.
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-margin-bottom">
             <ion-col size="12">
               <div class="secret-recovery-secondary">
+                <h2>
+                  Important Security Tips
+                </h2>
+                <br />
                 <p class="secondary-text">
-                  Your Private Key is used to <strong>sign transactions</strong> and prove ownership of your wallet. Never share it with anyone.
+                  Private Keys are typically long strings of characters that are difficult to remember. It is
+                  crucial to store your Private Key securely, as losing it may result in permanent loss of access to
+                  your wallet
+                  and its funds.
+                </p>
+                <br />
+                <p class="secondary-text">
+                  Consider using a reputable password manager or writing it down and storing it in a safe place.
+                  Avoid sharing your Private Key with anyone or storing it in easily accessible locations.
                 </p>
               </div>
             </ion-col>

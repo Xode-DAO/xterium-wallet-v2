@@ -17,6 +17,7 @@ import {
   IonModal,
   IonTitle,
   IonToolbar,
+  IonToggle,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -27,6 +28,8 @@ import { Balance } from 'src/models/balance.model';
 import { TokensComponent } from "src/app/xterium/shared/tokens/tokens.component"
 import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.component";
 import { SendComponent } from "src/app/xterium/shared/send/send.component"
+
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 @Component({
   selector: 'app-balances',
@@ -48,6 +51,7 @@ import { SendComponent } from "src/app/xterium/shared/send/send.component"
     IonModal,
     IonTitle,
     IonToolbar,
+    IonToggle,
     TokensComponent,
     ReceiveComponent,
     SendComponent
@@ -60,7 +64,8 @@ export class BalancesPage implements OnInit {
   @ViewChild('manageTokensModal', { read: IonModal }) manageTokensModal!: IonModal;
 
   constructor(
-    private router: Router
+    private router: Router,
+    private settingsService: SettingsService
   ) {
     addIcons({
       qrCode,
@@ -73,6 +78,7 @@ export class BalancesPage implements OnInit {
   totalAmount: number = 0;
 
   selectedBalance: Balance = new Balance();
+  isZeroBalancesHidden: boolean = true;
 
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;
@@ -122,6 +128,25 @@ export class BalancesPage implements OnInit {
     this.balancesSendModal.dismiss();
   }
 
-  ngOnInit() { }
+  async initSettings(): Promise<void> {
+    const settings = await this.settingsService.get();
+    if (settings) {
+      this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
+    };
+  }
+
+  async hideZeroBalances(event: any): Promise<void> {
+    const isHidden = event.detail.checked;
+    const settings = await this.settingsService.get();
+
+    if (settings) {
+      settings.user_preferences.hide_zero_balances = isHidden;
+      this.settingsService.set(settings);
+    }
+  }
+
+  ngOnInit() {
+    this.initSettings();
+  }
 
 }
