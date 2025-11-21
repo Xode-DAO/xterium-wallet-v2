@@ -38,6 +38,19 @@ ion-toolbar.wallet-toolbar {
       color: rgb(225, 225, 225);
     }
   }
+
+  .notif-btn {
+    position: relative;
+  }
+
+  .notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 50%;
+  }
 }
 
 ion-tabs {
@@ -96,6 +109,81 @@ ion-modal.create-wallet-modal {
       margin-left: -10px;
 
       color: #7d7d7d;
+    }
+  }
+}
+
+.settings-list{
+  border: none;
+
+  ion-list {
+    background: transparent;
+  }
+
+  ion-item {
+    --background: #333333;
+
+    border-radius: 25px;
+    transition: background 0.2s;
+  }
+
+  h2 {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0px;
+    padding: 8px 0px 2px 0px;
+  }
+
+  p {
+    color: #bdbdbd;
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+  }
+}
+
+
+.notifications-list {
+  border: 15px;
+
+  ion-list {
+    background: transparent;
+  }
+
+  ion-item {
+    --background: #333333;
+
+    border-radius: 25px;
+    transition: background 0.2s;
+  }
+
+  ion-label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0px;
+    padding: 8px 0px 2px 0px;
+  }
+
+  p {
+    color: white;
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+  }
+
+  .read-notification {
+    h2,
+    p {
+      color: #858585 !important;
     }
   }
 }

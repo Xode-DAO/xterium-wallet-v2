@@ -21,6 +21,8 @@ import {
   IonIcon,
   IonLabel,
   IonModal,
+  IonBadge,
+  IonAlert,
   ToastController,
   ActionSheetController,
 } from '@ionic/angular/standalone';
@@ -29,6 +31,7 @@ import { addIcons } from 'ionicons';
 import {
   addCircle,
   settingsOutline,
+  notificationsOutline,
   close,
   briefcase,
   swapHorizontal,
@@ -48,11 +51,13 @@ import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from
 import { NetworkMetadata } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
+import { LocalNotification } from 'src/models/local-notification.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
+import { LocalNotificationsService } from '../api/local-notifications/local-notifications.service';
 
 @Component({
   selector: 'app-xterium',
@@ -79,6 +84,8 @@ import { AuthService } from 'src/app/api/auth/auth.service';
     IonIcon,
     IonLabel,
     IonModal,
+    IonBadge,
+    IonAlert,
     WalletsComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
@@ -94,6 +101,7 @@ export class XteriumPage implements OnInit {
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
   @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
   @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
+  @ViewChild('notificationsModal', { read: IonModal }) notificationsModal!: IonModal;
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
 
   constructor(
@@ -104,9 +112,11 @@ export class XteriumPage implements OnInit {
     private authService: AuthService,
     private toastController: ToastController,
     private actionSheetController: ActionSheetController,
+    private localNotificationsService: LocalNotificationsService,
   ) {
     addIcons({
       addCircle,
+      notificationsOutline,
       settingsOutline,
       close,
       briefcase,
@@ -126,6 +136,11 @@ export class XteriumPage implements OnInit {
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
+
+  notifications: LocalNotification[] = [];
+  unreadCount: number = 0;
+  selectedNotification: LocalNotification | null = null;
+  isAlertOpen: boolean = false;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -271,6 +286,33 @@ export class XteriumPage implements OnInit {
     this.importFromBackupModal.dismiss();
   }
 
+  async getNotifications(): Promise<void> {
+    this.notifications = await this.localNotificationsService.getAllNotifications();
+  }
+
+  async openNotificationsModal() {
+    await this.getNotifications()
+    
+    this.notifications = await this.localNotificationsService.openNotifications();
+    this.unreadCount = this.notifications.filter(n => !n.is_open).length;
+   
+    this.notificationsModal.present();
+  }
+
+  async openNotification(notification: LocalNotification) {
+    this.selectedNotification = notification;
+    this.isAlertOpen = true;
+
+    if (notification.id !== undefined) {
+      await this.localNotificationsService.markAsReadById(notification.id);
+
+      this.unreadCount = await this.localNotificationsService.getUnreadCount();
+
+    }
+
+    await this.getNotifications()
+  }
+
   openSettingsModal() {
     this.settingsModal.present();
   }
@@ -281,5 +323,13 @@ export class XteriumPage implements OnInit {
     setTimeout(() => {
       this.getCurrentWallet();
     }, 500);
+
+    this.localNotificationsService.localNotificationObservable.subscribe(async (notification) => {
+      if (notification) {
+        this.unreadCount = await this.localNotificationsService.getUnreadCount();
+      }
+      await this.getNotifications()
+    });
+
   }
 }
