@@ -72,7 +72,7 @@
         </div>
         <ion-list>
           <ion-item class="primary-input-item item" lines="none">
-            <ion-input type="text" inputmode="numeric" [value]="formattedAmountValue" (ionFocus)="onAmountFocus($event)"
+            <ion-input type="text" inputmode="decimal" [value]="formattedAmountValue" (ionFocus)="onAmountFocus($event)"
               (ionInput)="onAmountInput($event)" (ionBlur)="onAmountBlur()" (keydown)="onAmountKeyDown($event)"
               class="input" placeholder="0">
               <ion-label slot="start" class="image">

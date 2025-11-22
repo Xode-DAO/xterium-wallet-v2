@@ -23,6 +23,7 @@ import {
   IonModal,
   IonBadge,
   IonAlert,
+  IonText,
   ToastController,
   ActionSheetController,
 } from '@ionic/angular/standalone';
@@ -86,6 +87,7 @@ import { LocalNotificationsService } from '../api/local-notifications/local-noti
     IonModal,
     IonBadge,
     IonAlert,
+    IonText,
     WalletsComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
