@@ -7,7 +7,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:chrome-ext": "ng build --configuration production && rm -rf chrome-ext && mkdir chrome-ext && cp -r www/* chrome-ext/ && cp -r src/injected-web3/* chrome-ext/ && copyfiles src/injected-web3/manifest.json chrome-ext/",
+    "build:chrome-ext": "ng build --configuration production && rm -rf chrome-ext && mkdir chrome-ext && cp -r www/* chrome-ext/ && cp -r src/injected-web3/* chrome-ext/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
