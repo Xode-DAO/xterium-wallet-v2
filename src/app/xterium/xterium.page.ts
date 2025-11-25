@@ -22,8 +22,6 @@ import {
   IonLabel,
   IonModal,
   IonBadge,
-  IonAlert,
-  IonText,
   ToastController,
   ActionSheetController,
 } from '@ionic/angular/standalone';
@@ -48,17 +46,18 @@ import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wal
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
 import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
+import { NotificationsComponent } from './shared/notifications/notifications.component';
 
 import { NetworkMetadata } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
-import { LocalNotification } from 'src/models/local-notification.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { LocalNotificationsService } from '../api/local-notifications/local-notifications.service';
+import { LocalNotification } from 'src/models/local-notification.model';
 
 @Component({
   selector: 'app-xterium',
@@ -86,13 +85,12 @@ import { LocalNotificationsService } from '../api/local-notifications/local-noti
     IonLabel,
     IonModal,
     IonBadge,
-    IonAlert,
-    IonText,
     WalletsComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
     ImportPrivateKeyComponent,
     ImportFromBackupComponent,
+    NotificationsComponent,
   ]
 })
 export class XteriumPage implements OnInit {
@@ -139,10 +137,8 @@ export class XteriumPage implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  notifications: LocalNotification[] = [];
   unreadCount: number = 0;
-  selectedNotification: LocalNotification | null = null;
-  isAlertOpen: boolean = false;
+  notifications: LocalNotification[] = [];
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -288,31 +284,15 @@ export class XteriumPage implements OnInit {
     this.importFromBackupModal.dismiss();
   }
 
-  async getNotifications(): Promise<void> {
-    this.notifications = await this.localNotificationsService.getAllNotifications();
-  }
-
   async openNotificationsModal() {
-    await this.getNotifications()
+    const notifications = await this.localNotificationsService.openNotifications();
+    this.unreadCount = notifications.filter(n => !n.is_open).length;
     
-    this.notifications = await this.localNotificationsService.openNotifications();
-    this.unreadCount = this.notifications.filter(n => !n.is_open).length;
-   
     this.notificationsModal.present();
   }
 
-  async openNotification(notification: LocalNotification) {
-    this.selectedNotification = notification;
-    this.isAlertOpen = true;
-
-    if (notification.id !== undefined) {
-      await this.localNotificationsService.markAsReadById(notification.id);
-
-      this.unreadCount = await this.localNotificationsService.getUnreadCount();
-
-    }
-
-    await this.getNotifications()
+  async fetchNotifications() {
+    this.notifications = await this.localNotificationsService.getAllNotifications();
   }
 
   openSettingsModal() {
@@ -330,7 +310,7 @@ export class XteriumPage implements OnInit {
       if (notification) {
         this.unreadCount = await this.localNotificationsService.getUnreadCount();
       }
-      await this.getNotifications()
+      await this.fetchNotifications();
     });
 
   }

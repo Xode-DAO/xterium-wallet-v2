@@ -1,0 +1,43 @@
+.notifications-list {
+  border: none;
+
+  ion-list {
+    background: transparent;
+  }
+
+  ion-item {
+    --background: #333333;
+
+    border-radius: 25px;
+    transition: background 0.2s;
+  }
+
+  ion-label {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+  }
+
+  h2 {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0px;
+    padding: 8px 0px 2px 0px;
+  }
+
+  p {
+    color: white;
+    font-size: 14px;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+  }
+
+  .read-notification {
+    h2,
+    p {
+      color: #858585 !important;
+    }
+  }
+}
