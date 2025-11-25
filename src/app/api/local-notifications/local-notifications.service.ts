@@ -99,8 +99,6 @@ export class LocalNotificationsService {
         key: this.NOTIFICATION_STORAGE_KEY,
         value: JSON.stringify(notifications)
       });
-
-      this.localNotificationSubject.next(notification);
     }
   }
 

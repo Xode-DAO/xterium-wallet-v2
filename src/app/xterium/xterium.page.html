@@ -260,50 +260,10 @@
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
-       <ion-content class="ion-padding">
-          <div class="notifications-list">
-
-            @if (notifications.length === 0) {
-            <ion-grid>
-              <ion-row>
-                <ion-col class="ion-text-center ion-padding">
-                  <ion-text color="medium" style="font-size: 15px;">No transactions found.</ion-text>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-            }
-
-            @if (notifications.length > 0) { 
-            <ion-grid>
-              <ion-row>
-                <ion-col size="12">
-                  <ion-list>
-                    @for (notification of notifications; track notification?? $index) {
-                      <ion-col size="12">
-                        <ion-item button detail="false" lines="none" (click)="openNotification(notification)">
-                          <ion-label [class.read-notification]="notification.is_read">
-                            <h2>{{ notification.title }}</h2>
-                            <p>{{ notification.body }}</p>
-                            <p>{{ notification.timestamp | date:'medium' }}</p>
-                          </ion-label>
-                        </ion-item>
-                      </ion-col>
-                      <ion-alert
-                        [isOpen]="isAlertOpen" 
-                        [header]="selectedNotification?.title" 
-                        [subHeader]="selectedNotification?.timestamp | date:'medium'"
-                        [message]="selectedNotification?.body"
-                        [buttons]="['OK']"
-                        (didDismiss)="isAlertOpen = false">
-                      </ion-alert>
-                    }
-                  </ion-list>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-            }
-            
-          </div>
+      <ion-content>
+        <div class="ion-padding-horizontal">
+          <app-notifications (onOpenNotification)="openNotificationsModal()"></app-notifications>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
