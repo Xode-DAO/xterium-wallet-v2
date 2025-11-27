@@ -139,7 +139,7 @@ export class SignTransactionPage implements OnInit {
 
   encodedCallDataHex: string = "";
 
-  extrinsic: string = "Transfer Keep Alive";
+  extrinsic: string = "";
   estimatedFee: number = 0;
   isLoadingFee: boolean = true;
 
@@ -197,6 +197,10 @@ export class SignTransactionPage implements OnInit {
         if (!service) return;
 
         this.pjsApi = await service.connect();
+        const extrinsic = this.pjsApi.registry.createType('Extrinsic', this.encodedCallDataHex);
+
+        this.extrinsic = `${extrinsic.method.section}(${extrinsic.method.method})`;
+
         const estimatedFee = await service.estimatedFees(this.pjsApi, this.encodedCallDataHex, this.currentWalletPublicAddress, null);
 
         this.estimatedFee = estimatedFee;
