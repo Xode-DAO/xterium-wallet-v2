@@ -227,6 +227,24 @@ export class TokenDetailsPage implements OnInit {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
   }
 
+  formatPrice(value: number): string {
+    if (Number.isInteger(value)) {
+      return value.toString();
+    }
+  
+    const decimals = value.toFixed(7);
+    const [intPart, decPart] = decimals.split(".");
+
+    const zeroCount = (decPart.match(/^0+/) || [""])[0].length;
+
+    if (zeroCount >= 4) {
+      const rest = decPart.slice(zeroCount);
+      return `${intPart}.0{${zeroCount}}${rest}`;
+    }
+
+    return parseFloat(value.toFixed(4)).toString();
+  }
+  
   // Price history is currently not available
   //
   // generateDummyPriceHistory(symbol: string) {

@@ -158,6 +158,7 @@ export class TokensComponent implements OnInit {
       })
     }
 
+    console.log("Fetched prices:", prices);
     this.prices = prices;
     this.computeBalancesAmount();
   }
@@ -212,6 +213,24 @@ export class TokensComponent implements OnInit {
 
   formatBalanceWithSuffix(amount: number, decimals: number): string {
     return this.balancesService.formatBalanceWithSuffix(amount, decimals);
+  }
+
+  formatPrice(value: number): string {
+    if (Number.isInteger(value)) {
+      return value.toString();
+    }
+  
+    const decimals = value.toFixed(7);
+    const [intPart, decPart] = decimals.split(".");
+
+    const zeroCount = (decPart.match(/^0+/) || [""])[0].length;
+
+    if (zeroCount >= 4) {
+      const rest = decPart.slice(zeroCount);
+      return `${intPart}.0{${zeroCount}}${rest}`;
+    }
+
+    return parseFloat(value.toFixed(4)).toString();
   }
 
   openToken(balance: Balance): void {
