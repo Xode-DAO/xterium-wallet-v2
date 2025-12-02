@@ -158,7 +158,6 @@ export class TokensComponent implements OnInit {
       })
     }
 
-    console.log("Fetched prices:", prices);
     this.prices = prices;
     this.computeBalancesAmount();
   }
