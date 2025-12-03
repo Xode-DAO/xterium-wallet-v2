@@ -13,23 +13,23 @@ export class DeepLinkService {
   ) { }
 
   initDeepLinks() {
-    App.addListener('appUrlOpen', (event: any) => {
+    App.addListener('appUrlOpen', (event) => {
       this.ngZone.run(() => {
-        const url = event.url;
 
+        const url = event.url || '';
+        
         let slug = '';
-
-        if (url.includes('xterium://app')) {
-          slug = url.split('xterium://app').pop() || '';
-        } else if (url.includes('.app')) {
-          slug = url.split('.app').pop() || '';
+        
+        if (url.startsWith('xterium://app')) {
+          slug = url.replace('xterium://app', '');
         }
 
-        if (slug) {
-          const cleanedPath = slug.replace(/^\/+/, '');
+        const cleanedPath = slug.replace(/^\/+/, '');
+
+        if (cleanedPath) {
           this.router.navigateByUrl(cleanedPath);
         }
-      })
-    })
+      });
+    });
   }
 }

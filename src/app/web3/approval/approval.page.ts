@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
+import { App } from '@capacitor/app';
+
 import {
   IonContent,
   IonFooter,
@@ -66,6 +70,8 @@ export class ApprovalPage implements OnInit {
 
   origin: string = "";
 
+  callBackUrl: string = "http://192.168.1.46:4200";
+
   getChains(): void {
     const allChains = this.chainsService.getChainsByNetwork(Network.All);
     const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
@@ -122,60 +128,80 @@ export class ApprovalPage implements OnInit {
       isChecked = event.detail.checked;
     } else {
       const currentlySelected = this.selectedAccounts.some(
-        acc => acc.public_key === wallet.public_key
+        acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain
       );
 
       isChecked = !currentlySelected;
     }
 
     if (isChecked) {
-      if (!this.selectedAccounts.some(acc => acc.public_key === wallet.public_key)) {
+      if (!this.selectedAccounts.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain)) {
         this.selectedAccounts.push(wallet);
       }
     } else {
       this.selectedAccounts = this.selectedAccounts.filter(
-        acc => acc.public_key !== wallet.public_key
+        acc => acc.public_key !== wallet.public_key && acc.chain === wallet.chain
       );
     }
   }
 
   isWalletSelected(wallet: Wallet): boolean {
-    return this.selectedAccounts.some(acc => acc.public_key === wallet.public_key);
+    return this.selectedAccounts.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain);
   }
 
   async connect() {
+    const encodedWallets = (
+      await Promise.all(
+        this.selectedAccounts.map(async (wallet) => {
+          const rawWallet = this.wallets.find(d => d.id === wallet.id);
+          if (!rawWallet) return null;
+  
+          const publicKeyU8a = new Uint8Array(
+            rawWallet.public_key.split(",").map((byte) => Number(byte.trim()))
+          );
+
+          const ss58Format = Number(rawWallet.chain?.address_prefix ?? 42);
+
+          return {
+            address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, ss58Format),
+            name: wallet.name,
+          }
+        })
+      )
+    )
+  
     if (this.environmentService.isChromeExtension()) {
-      if (this.selectedAccounts.length > 0) {
-        const encodedWallets = await Promise.all(
-          this.selectedAccounts.map(async (wallet) => {
-            const rawWallet = this.wallets.find(d => d.id === wallet.id);
-            if (!rawWallet) return null;
-
-            const publicKeyU8a = new Uint8Array(
-              rawWallet.public_key.split(",").map((byte) => Number(byte.trim()))
-            );
-
-            return {
-              address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, 42),
-              name: wallet.name,
-            };
-          })
-        );
-
-        console.log("Selected accounts to connect:", encodedWallets);
-
-        chrome.runtime.sendMessage({
-          type: "xterium-approval-response",
-          payload: {
-            origin: this.origin,
-            selected_accounts: encodedWallets,
-            approved: true,
-          },
-        });
+      chrome.runtime.sendMessage({
+        type: "xterium-approval-response",
+        payload: {
+          origin: this.origin,
+          selected_accounts: encodedWallets,
+          approved: true,
+        },
+      });
+    }
+  
+    const callbackUrl = encodeURIComponent(this.callBackUrl || "");
+    const deeplink = `xterium://app/web3/approval` +
+      `?origin=${encodeURIComponent(this.origin)}` +
+      `&selected_accounts=${encodeURIComponent(JSON.stringify(encodedWallets))}` +
+      `&approved=true` +
+      (this.callBackUrl ? `&callback=${callbackUrl}` : "");
+  
+    if (Capacitor.isNativePlatform()) {
+      if (this.callBackUrl) {
+        const finalUrl = `${this.callBackUrl}?wallets=${encodeURIComponent(JSON.stringify(encodedWallets))}`;
+        window.location.href = finalUrl;
+        App.exitApp();
+        return;
       }
+  
+      await Browser.open({ url: deeplink });
+
+      return;
     }
   }
-
+  
   reject() {
     if (this.environmentService.isChromeExtension()) {
       chrome.runtime.sendMessage({
