@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
+import { App } from '@capacitor/app';
+
 import {
   IonContent,
   IonFooter,
@@ -203,6 +205,8 @@ export class ApprovalPage implements OnInit {
         },
       });
     }
+
+    App.exitApp();
   }
 
   ngOnInit() {
