@@ -6,6 +6,12 @@
       align-items: center;
       margin: 10px 5px 0px 5px;
 
+      ion-toggle {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       h3 {
         color: white;
         font-size: 17px;
