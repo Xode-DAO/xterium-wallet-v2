@@ -15,11 +15,11 @@
               Set Up Your Password
               } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type ===
               'biometric')) {
-              Biometric Authentication
+              Biometric
               } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
               Enter Pin
               } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
-              Biometric Authentication
+              Biometric
               } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
               Enter PIN
               } @else {
@@ -33,7 +33,7 @@
               Please set up a password to secure your wallet.
               } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type ===
               'biometric')) {
-              To unlock your wallet, please authenticate using your biometric data or enter your PIN.
+              To unlock your wallet, please authenticate using your biometric data or face recognition.
               } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
               Please enter your PIN to unlock your wallet.
               } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {

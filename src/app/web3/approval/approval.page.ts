@@ -24,6 +24,7 @@ import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
+import { DeepLinkService } from 'src/app/api/deep-link/deep-link.service';
 
 @Component({
   selector: 'app-approval',
@@ -54,6 +55,7 @@ export class ApprovalPage implements OnInit {
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     public environmentService: EnvironmentService,
+    private deepLinkService: DeepLinkService,
   ) { }
 
   chains: Chain[] = [];
@@ -65,6 +67,8 @@ export class ApprovalPage implements OnInit {
   selectedAccounts: Wallet[] = [];
 
   origin: string = "";
+
+  callBackUrl: string = "";
 
   getChains(): void {
     const allChains = this.chainsService.getChainsByNetwork(Network.All);
@@ -122,60 +126,72 @@ export class ApprovalPage implements OnInit {
       isChecked = event.detail.checked;
     } else {
       const currentlySelected = this.selectedAccounts.some(
-        acc => acc.public_key === wallet.public_key
+        acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain
       );
 
       isChecked = !currentlySelected;
     }
 
     if (isChecked) {
-      if (!this.selectedAccounts.some(acc => acc.public_key === wallet.public_key)) {
+      if (!this.selectedAccounts.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain)) {
         this.selectedAccounts.push(wallet);
       }
     } else {
       this.selectedAccounts = this.selectedAccounts.filter(
-        acc => acc.public_key !== wallet.public_key
+        acc => acc.public_key !== wallet.public_key && acc.chain === wallet.chain
       );
     }
   }
 
   isWalletSelected(wallet: Wallet): boolean {
-    return this.selectedAccounts.some(acc => acc.public_key === wallet.public_key);
+    return this.selectedAccounts.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain);
   }
 
   async connect() {
+    const encodedWallets = (
+      await Promise.all(
+        this.selectedAccounts.map(async (wallet) => {
+          const rawWallet = this.wallets.find(d => d.id === wallet.id);
+          if (!rawWallet) return null;
+  
+          const publicKeyU8a = new Uint8Array(
+            rawWallet.public_key.split(",").map((byte) => Number(byte.trim()))
+          );
+
+          const ss58Format = Number(rawWallet.chain?.address_prefix ?? 42);
+
+          return {
+            address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, ss58Format),
+            name: wallet.name,
+          }
+        })
+      )
+    )
+  
     if (this.environmentService.isChromeExtension()) {
-      if (this.selectedAccounts.length > 0) {
-        const encodedWallets = await Promise.all(
-          this.selectedAccounts.map(async (wallet) => {
-            const rawWallet = this.wallets.find(d => d.id === wallet.id);
-            if (!rawWallet) return null;
-
-            const publicKeyU8a = new Uint8Array(
-              rawWallet.public_key.split(",").map((byte) => Number(byte.trim()))
-            );
-
-            return {
-              address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, 42),
-              name: wallet.name,
-            };
-          })
-        );
-
-        console.log("Selected accounts to connect:", encodedWallets);
-
-        chrome.runtime.sendMessage({
-          type: "xterium-approval-response",
-          payload: {
-            origin: this.origin,
-            selected_accounts: encodedWallets,
-            approved: true,
-          },
-        });
-      }
+      chrome.runtime.sendMessage({
+        type: "xterium-approval-response",
+        payload: {
+          origin: this.origin,
+          selected_accounts: encodedWallets,
+          approved: true,
+        },
+      });
     }
-  }
+  
+    const callbackEncoded = this.callBackUrl
+      ? encodeURIComponent(this.callBackUrl)
+      : "";
+      
+      const deeplink =
+        `xterium://app/web3/approval?` +
+        `selected_accounts=${encodeURIComponent(JSON.stringify(encodedWallets))}` +
+        `&approved=true` +
+        (this.callBackUrl ? `&callback=${callbackEncoded}` : "");
 
+      this.deepLinkService.sendDeeplink(deeplink, this.callBackUrl, encodedWallets);
+  }
+  
   reject() {
     if (this.environmentService.isChromeExtension()) {
       chrome.runtime.sendMessage({
@@ -196,6 +212,10 @@ export class ApprovalPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['origin']) {
         this.origin = params['origin'];
+      }
+      
+      if (params['callback']) {
+        this.callBackUrl = decodeURIComponent(params['callback']);
       }
     });
   }

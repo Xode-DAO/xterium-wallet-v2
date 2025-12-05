@@ -20,7 +20,7 @@
               </ion-item>
             </ion-list>
             <div class="ion-text-center token-price">
-              <h1>$ {{ balance.price.toFixed(balance.token.decimals) }} </h1>
+              <h1>$ {{ formatPrice(balance.price) }} </h1>
             </div>
           </div>
         </ion-col>
@@ -116,10 +116,18 @@
             </ion-item>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Chain/Network</p>
+                <p>Network</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ getChainName(balance.token.chain_id) }}</h2>
+              </div>
+            </ion-item>
+            <ion-item detail="false" lines="none">
+              <ion-label slot="start">
+                <p>Chain</p>
+              </ion-label>
+              <div slot="end" class="ion-text-right">
+                <h2>{{ getChainName(currentWallet.chain.id) }}</h2>
               </div>
             </ion-item>
             <ion-item detail="false" lines="none">

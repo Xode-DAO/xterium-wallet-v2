@@ -35,7 +35,7 @@
               $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
             </h2>
             <p>
-              $ {{ balance.price.toFixed(7) }}
+              $ {{ formatPrice(balance.price) }}
             </p>
           </div>
         </ion-item>

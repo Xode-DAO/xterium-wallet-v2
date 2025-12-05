@@ -68,7 +68,7 @@ export class ChainsService {
     {
       id: 4,
       network: Network.Polkadot,
-      name: "Xode - Polkadot",
+      name: "XODE - Polkadot",
       description: "Experience smooth and fast transactions with Xode.",
       chain_id: 3417,
       unit: "XON",
