@@ -5,22 +5,28 @@
         <img src="./../../assets/icon/xterium-logo.png" height="40" />
         <div class="wallet-text">
           <span class="wallet-title">XTERIUM</span>
-          <span class="wallet-details">{{currentWallet.name | slice:0:20}}
-            ({{currentWalletPublicAddress === '' ? "Loading..." :
-            truncateAddress(currentWalletPublicAddress)}})</span>
+          <div class="wallet-details-container">
+            <span class="wallet-name">
+              {{currentWallet.name}}
+            </span>
+            <span class="wallet-details">
+              ({{currentWalletPublicAddress === '' ? "Loading..." :
+              truncateAddress(currentWalletPublicAddress)}})
+            </span>
+          </div>
         </div>
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-        <ion-button fill="clear" (click)="openNotificationsModal()" class="notif-btn">
-          <ion-icon name="notifications-outline"></ion-icon>
+      <ion-button fill="clear" (click)="openNotificationsModal()" class="notif-btn">
+        <ion-icon name="notifications-outline"></ion-icon>
 
-          @if (unreadCount > 0) {
-            <ion-badge color="danger" class="notif-badge">
-              {{ unreadCount }}
-            </ion-badge>
-          }
-        </ion-button>
+        @if (unreadCount > 0) {
+        <ion-badge color="danger" class="notif-badge">
+          {{ unreadCount }}
+        </ion-badge>
+        }
+      </ion-button>
       <ion-button fill="clear" (click)="openSettingsModal()">
         <ion-icon name="settings-outline" size=""></ion-icon>
       </ion-button>
@@ -279,21 +285,23 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="settings-list">
-          <ion-grid>
-            <ion-row>
-              <ion-col size="12">
-                <ion-list>
-                  <ion-item button detail="false" lines="none" (click)="confirmLogout()">
-                    <ion-icon slot="start" name="log-out-outline"></ion-icon>
-                    <ion-label>
-                      <span>Logout</span>
-                    </ion-label>
-                  </ion-item>
-                </ion-list>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
+        <div class="ion-padding-horizontal">
+          <div class="settings-list">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-list>
+                    <ion-item button detail="false" lines="none" (click)="confirmLogout()">
+                      <ion-icon slot="start" name="log-out-outline"></ion-icon>
+                      <ion-label>
+                        <span>Logout</span>
+                      </ion-label>
+                    </ion-item>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
         </div>
       </ion-content>
     </ng-template>

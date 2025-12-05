@@ -48,7 +48,7 @@
         padding: 0px 0px 8px 0px;
       }
     }
-    
+
     .token-price h1 {
       font-weight: 600;
       font-size: 35px;
@@ -85,8 +85,42 @@
       --background: #333333;
 
       border-radius: 25px;
-      margin-bottom: 10px;
       transition: background 0.2s;
+      margin-bottom: 10px;
+
+      ion-label {
+        max-width: 60%;
+        min-width: 0;
+
+        h2 {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        p {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      div[slot="end"] {
+        max-width: 35%;
+        min-width: 0;
+
+        h2 {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        p {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
     }
 
     h2 {
@@ -131,6 +165,23 @@
       margin-bottom: 10px;
       transition: background 0.2s;
       padding: 0;
+
+      div[slot="end"] {
+        max-width: 100%;
+        min-width: 0;
+
+        h2 {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        p {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
     }
 
     h2 {

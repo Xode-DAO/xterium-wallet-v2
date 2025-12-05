@@ -331,6 +331,8 @@ export class SendComponent implements OnInit {
 
     if (!service) return;
 
+    this.pjsApi = await service.connect();
+
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
     const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
 

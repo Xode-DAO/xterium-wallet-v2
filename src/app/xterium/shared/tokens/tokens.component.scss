@@ -7,9 +7,42 @@
 
   ion-item {
     --background: #333333;
-
     border-radius: 25px;
     transition: background 0.2s;
+
+    ion-label {
+      max-width: 60%;
+      min-width: 0;
+
+      h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    div[slot="end"] {
+      max-width: 35%;
+      min-width: 0;
+
+      h2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
 
   h2 {
