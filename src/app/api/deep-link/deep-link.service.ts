@@ -2,6 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { App } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root',
@@ -15,21 +16,35 @@ export class DeepLinkService {
   initDeepLinks() {
     App.addListener('appUrlOpen', (event) => {
       this.ngZone.run(() => {
-
         const url = event.url || '';
-        
-        let slug = '';
-        
-        if (url.startsWith('xterium://app')) {
-          slug = url.replace('xterium://app', '');
+        if (!url.startsWith('xterium://app')) return;
+  
+        let path = url.replace('xterium://app', '');
+  
+        if (!path.startsWith('/')) {
+          path = '/' + path;
         }
 
-        const cleanedPath = slug.replace(/^\/+/, '');
-
-        if (cleanedPath) {
-          this.router.navigateByUrl(cleanedPath);
-        }
+        this.router.navigateByUrl(path);
       });
     });
+  }
+
+  sendDeeplink(deeplink: string, callbackUrl?: string, encodedWallets?: any[]) {
+    if (Capacitor.isNativePlatform()) {
+      if (callbackUrl) {
+        const finalUrl =
+          `${callbackUrl}?wallets=${encodeURIComponent(JSON.stringify(encodedWallets))}`;
+
+        window.location.href = finalUrl;
+        App.exitApp();
+        return;
+      }
+
+      window.location.href = deeplink;
+      return;
+    }
+
+    window.location.href = deeplink;
   }
 }

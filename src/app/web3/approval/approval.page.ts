@@ -3,10 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { Capacitor } from '@capacitor/core';
-import { Browser } from '@capacitor/browser';
-import { App } from '@capacitor/app';
-
 import {
   IonContent,
   IonFooter,
@@ -28,6 +24,7 @@ import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
+import { DeepLinkService } from 'src/app/api/deep-link/deep-link.service';
 
 @Component({
   selector: 'app-approval',
@@ -58,6 +55,7 @@ export class ApprovalPage implements OnInit {
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     public environmentService: EnvironmentService,
+    private deepLinkService: DeepLinkService,
   ) { }
 
   chains: Chain[] = [];
@@ -70,7 +68,7 @@ export class ApprovalPage implements OnInit {
 
   origin: string = "";
 
-  callBackUrl: string = "http://192.168.1.46:4200";
+  callBackUrl: string = "";
 
   getChains(): void {
     const allChains = this.chainsService.getChainsByNetwork(Network.All);
@@ -181,25 +179,17 @@ export class ApprovalPage implements OnInit {
       });
     }
   
-    const callbackUrl = encodeURIComponent(this.callBackUrl || "");
-    const deeplink = `xterium://app/web3/approval` +
-      `?origin=${encodeURIComponent(this.origin)}` +
-      `&selected_accounts=${encodeURIComponent(JSON.stringify(encodedWallets))}` +
-      `&approved=true` +
-      (this.callBackUrl ? `&callback=${callbackUrl}` : "");
-  
-    if (Capacitor.isNativePlatform()) {
-      if (this.callBackUrl) {
-        const finalUrl = `${this.callBackUrl}?wallets=${encodeURIComponent(JSON.stringify(encodedWallets))}`;
-        window.location.href = finalUrl;
-        App.exitApp();
-        return;
-      }
-  
-      await Browser.open({ url: deeplink });
+    const callbackEncoded = this.callBackUrl
+      ? encodeURIComponent(this.callBackUrl)
+      : "";
+      
+      const deeplink =
+        `xterium://app/web3/approval?` +
+        `selected_accounts=${encodeURIComponent(JSON.stringify(encodedWallets))}` +
+        `&approved=true` +
+        (this.callBackUrl ? `&callback=${callbackEncoded}` : "");
 
-      return;
-    }
+      this.deepLinkService.sendDeeplink(deeplink, this.callBackUrl, encodedWallets);
   }
   
   reject() {
@@ -222,6 +212,10 @@ export class ApprovalPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (params['origin']) {
         this.origin = params['origin'];
+      }
+      
+      if (params['callback']) {
+        this.callBackUrl = decodeURIComponent(params['callback']);
       }
     });
   }
