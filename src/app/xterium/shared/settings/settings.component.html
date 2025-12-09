@@ -1,0 +1,42 @@
+<div class="settings-list">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <ion-list>
+          <ion-item button lines="none" class="custom-buttons" (click)="openCurrencyModal()">
+            <ion-icon slot="start" name="logo-usd"></ion-icon>
+            <h2>Currency</h2>
+            <div slot="end" class="selected-currency">
+              @if (selectedCurrency) {
+                <h2>{{ selectedCurrency.code }}</h2>
+              }
+            </div>
+          </ion-item>
+          <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <h2>Logout</h2>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-modal #currencyModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false"
+    [keepContentsMounted]="true">
+    <ng-template>
+      <ion-toolbar class="main-modal-toolbar">
+        <ion-title>Currency</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="currencyModal.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="ion-padding-horizontal">
+          <app-currency (onSelectedCurrency)="selectCurrency($event)"></app-currency>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</div>

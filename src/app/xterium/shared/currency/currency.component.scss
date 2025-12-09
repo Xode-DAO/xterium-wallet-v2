@@ -1,0 +1,33 @@
+
+  .currency-list {
+    border: none;
+  
+    ion-list {
+      background: transparent;
+    }
+  
+    ion-item {
+      --background: #333333;
+  
+      border-radius: 25px;
+      transition: background 0.2s;
+    }
+  
+    ion-label p {
+      color: #ffffff !important;
+    }
+
+  }
+
+  .currency-symbol {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #333333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    font-weight: bold;
+    border: 2px solid #4c4a4b;
+  }

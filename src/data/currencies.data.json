@@ -1,0 +1,4 @@
+[
+  { "code": "USD", "symbol": "$",   "name": "United States Dollar" },
+  { "code": "PHP", "symbol": "₱",   "name": "Philippine Peso" }
+]

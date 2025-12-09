@@ -72,7 +72,9 @@ export class AppComponent {
     if (!settings) {
       const newSettings: Settings = {
         user_preferences: {
-          hide_zero_balances: true
+          hide_zero_balances: true,
+          currency_code: "",
+          currency_symbol: ""
         }
       };
 

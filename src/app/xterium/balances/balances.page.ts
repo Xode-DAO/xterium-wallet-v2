@@ -80,6 +80,8 @@ export class BalancesPage implements OnInit {
   selectedBalance: Balance = new Balance();
   isZeroBalancesHidden: boolean = true;
 
+  symbols: string = ''; 
+
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;
 
@@ -132,6 +134,7 @@ export class BalancesPage implements OnInit {
     const settings = await this.settingsService.get();
     if (settings) {
       this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
+      this.symbols = settings.user_preferences.currency_symbol || '';
     };
   }
 
@@ -147,6 +150,12 @@ export class BalancesPage implements OnInit {
 
   ngOnInit() {
     this.initSettings();
+
+    this.settingsService.currentSettingsObservable.subscribe(settings => {
+      if (settings) {
+        this.initSettings();
+      }
+    });
   }
 
 }

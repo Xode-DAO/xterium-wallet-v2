@@ -274,7 +274,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #settingsModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+  <ion-modal #settingsModal class="settings-list" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>Settings</ion-title>
@@ -286,22 +286,7 @@
       </ion-toolbar>
       <ion-content>
         <div class="ion-padding-horizontal">
-          <div class="settings-list">
-            <ion-grid>
-              <ion-row>
-                <ion-col size="12">
-                  <ion-list>
-                    <ion-item button detail="false" lines="none" (click)="confirmLogout()">
-                      <ion-icon slot="start" name="log-out-outline"></ion-icon>
-                      <ion-label>
-                        <span>Logout</span>
-                      </ion-label>
-                    </ion-item>
-                  </ion-list>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </div>
+          <app-settings></app-settings>
         </div>
       </ion-content>
     </ng-template>

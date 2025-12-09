@@ -22,8 +22,6 @@ import {
   IonLabel,
   IonModal,
   IonBadge,
-  ToastController,
-  ActionSheetController,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -38,7 +36,8 @@ import {
   timer,
   compass,
   chevronDownOutline,
-  logOutOutline
+  logOutOutline,
+  logoUsd
 } from 'ionicons/icons';
 
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
@@ -47,6 +46,7 @@ import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed
 import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 import { NotificationsComponent } from './shared/notifications/notifications.component';
+import { SettingsComponent } from './shared/settings/settings.component';
 
 import { NetworkMetadata } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
@@ -91,6 +91,7 @@ import { LocalNotification } from 'src/models/local-notification.model';
     ImportPrivateKeyComponent,
     ImportFromBackupComponent,
     NotificationsComponent,
+    SettingsComponent,
   ]
 })
 export class XteriumPage implements OnInit {
@@ -104,14 +105,13 @@ export class XteriumPage implements OnInit {
   @ViewChild('notificationsModal', { read: IonModal }) notificationsModal!: IonModal;
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
 
+
   constructor(
     private router: Router,
     private utilsService: UtilsService,
     private networkMetadataService: NetworkMetadataService,
     private walletsService: WalletsService,
     private authService: AuthService,
-    private toastController: ToastController,
-    private actionSheetController: ActionSheetController,
     private localNotificationsService: LocalNotificationsService,
   ) {
     addIcons({
@@ -125,7 +125,8 @@ export class XteriumPage implements OnInit {
       timer,
       compass,
       chevronDownOutline,
-      logOutOutline
+      logOutOutline,
+      logoUsd
     });
 
     this.initAuthentication();
@@ -183,39 +184,6 @@ export class XteriumPage implements OnInit {
       localStorage.clear();
       await this.router.navigate(['/onboarding'], { replaceUrl: true });
     }
-  }
-
-  async confirmLogout() {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Are you sure you want to logout?',
-      subHeader: 'You will need to login again.',
-      buttons: [
-        {
-          text: 'Logout',
-          role: 'destructive',
-          handler: async () => {
-            await this.authService.logout();
-
-            actionSheet.dismiss();
-
-            const toast = await this.toastController.create({
-              message: 'Logged out successfully!',
-              color: 'success',
-              duration: 1500,
-              position: 'top'
-            });
-
-            await toast.present();
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        }
-      ]
-    });
-
-    await actionSheet.present();
   }
 
   openMyWalletsModal() {
