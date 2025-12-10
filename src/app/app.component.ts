@@ -73,8 +73,10 @@ export class AppComponent {
       const newSettings: Settings = {
         user_preferences: {
           hide_zero_balances: true,
-          currency_code: "",
-          currency_symbol: ""
+          currency: {
+            code: "USD",
+            symbol: "$"
+          }
         }
       };
 

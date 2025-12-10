@@ -36,8 +36,6 @@ import {
   timer,
   compass,
   chevronDownOutline,
-  logOutOutline,
-  logoUsd
 } from 'ionicons/icons';
 
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
@@ -125,8 +123,6 @@ export class XteriumPage implements OnInit {
       timer,
       compass,
       chevronDownOutline,
-      logOutOutline,
-      logoUsd
     });
 
     this.initAuthentication();

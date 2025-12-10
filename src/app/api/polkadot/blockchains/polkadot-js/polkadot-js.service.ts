@@ -28,5 +28,6 @@ export abstract class PolkadotJsService {
   abstract transfer(api: ApiPromise, balance: Balance, destPublicKey: string, value: number): Promise<string>;
 
   abstract estimatedFees(api: ApiPromise, encodedCallDataHex: string, publicKey: string, token: Token | null): Promise<number>;
+  abstract signTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Promise<string>;
   abstract signAndSubmitTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult>;
 }

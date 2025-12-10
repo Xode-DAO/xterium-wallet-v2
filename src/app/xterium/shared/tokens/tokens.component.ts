@@ -145,8 +145,8 @@ export class TokensComponent implements OnInit {
 
   async getPrices(): Promise<void> {
     const currencies = await this.settingsService.get();
-    const currencyCode = currencies?.user_preferences?.currency_code || "";
-    const currencySymbol = currencies?.user_preferences?.currency_symbol || "";
+    const currencyCode = currencies?.user_preferences.currency.code || "";
+    const currencySymbol = currencies?.user_preferences.currency.symbol || "";
 
     let prices: Price[] = [];
 

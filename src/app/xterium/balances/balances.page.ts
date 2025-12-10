@@ -134,7 +134,7 @@ export class BalancesPage implements OnInit {
     const settings = await this.settingsService.get();
     if (settings) {
       this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
-      this.symbols = settings.user_preferences.currency_symbol || '';
+      this.symbols = settings.user_preferences.currency.symbol;
     };
   }
 

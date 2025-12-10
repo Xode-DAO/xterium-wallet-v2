@@ -124,6 +124,23 @@
   </div>
 </ion-footer>
 
+<ion-modal #walletCheckingModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+  <ng-template>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>No Wallet Detected</ion-title>
+    </ion-toolbar>
+    <ion-content>
+      <div class="ion-padding-horizontal">
+        <p>You need to create or import a wallet before you can proceed.</p>
+        <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button" 
+          (click)="navigateToOnboarding(walletCheckingModal)">
+          Go to Onboarding
+        </ion-button>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
 <ion-modal #confirmSignTransactionModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
   <ng-template>
     <ion-toolbar class="main-modal-toolbar">

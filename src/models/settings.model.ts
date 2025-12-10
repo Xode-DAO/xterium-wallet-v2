@@ -1,7 +1,11 @@
+export class Currency {
+  code: string = "";
+  symbol: string = "";
+}
+
 export class SettingsUserPreferences {
   hide_zero_balances: boolean = true;
-  currency_code: string = "";
-  currency_symbol: string = "";
+  currency: Currency = new Currency();
 }
 
 export class Settings {
