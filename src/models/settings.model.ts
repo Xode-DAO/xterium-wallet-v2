@@ -1,7 +1,4 @@
-export class Currency {
-  code: string = "";
-  symbol: string = "";
-}
+import { Currency } from "./currency.model";
 
 export class SettingsUserPreferences {
   hide_zero_balances: boolean = true;

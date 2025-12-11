@@ -13,9 +13,6 @@ import {
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { DeepLinkService } from 'src/app/api/deep-link/deep-link.service';
-import { SettingsService } from './api/settings/settings.service';
-
-import { Settings } from 'src/models/settings.model';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +31,6 @@ export class AppComponent {
     private platform: Platform,
     private environmentService: EnvironmentService,
     private deepLinkService: DeepLinkService,
-    private settingsService: SettingsService,
   ) {
     this.initApp();
   }
@@ -47,7 +43,6 @@ export class AppComponent {
 
       await this.initStatusBar();
       await this.initNotifications();
-      await this.initSettings();
 
       this.initDeepLinks();
     });
@@ -65,23 +60,6 @@ export class AppComponent {
 
   async initNotifications(): Promise<void> {
     await LocalNotifications.requestPermissions();
-  }
-
-  async initSettings(): Promise<void> {
-    const settings = await this.settingsService.get();
-    if (!settings) {
-      const newSettings: Settings = {
-        user_preferences: {
-          hide_zero_balances: true,
-          currency: {
-            code: "USD",
-            symbol: "$"
-          }
-        }
-      };
-
-      await this.settingsService.set(newSettings);
-    };
   }
 
   initDeepLinks(): void {

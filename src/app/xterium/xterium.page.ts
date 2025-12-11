@@ -56,6 +56,8 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { LocalNotificationsService } from '../api/local-notifications/local-notifications.service';
 import { LocalNotification } from 'src/models/local-notification.model';
+import { SettingsService } from '../api/settings/settings.service';
+import { Settings } from 'src/models/settings.model';
 
 @Component({
   selector: 'app-xterium',
@@ -111,6 +113,7 @@ export class XteriumPage implements OnInit {
     private walletsService: WalletsService,
     private authService: AuthService,
     private localNotificationsService: LocalNotificationsService,
+    private settingsService: SettingsService,
   ) {
     addIcons({
       addCircle,
@@ -263,7 +266,25 @@ export class XteriumPage implements OnInit {
     this.settingsModal.present();
   }
 
+  async initSettings(): Promise<void> {
+    const settings = await this.settingsService.get();
+    if (!settings) {
+      const newSettings: Settings = {
+        user_preferences: {
+          hide_zero_balances: true,
+          currency: {
+            code: "USD",
+            symbol: "$"
+          }
+        }
+      };
+
+      await this.settingsService.set(newSettings);
+    };
+  }
+
   ngOnInit() {
+    this.initSettings();
     this.selectedNetworkMetadata = this.networkMetadataService.getAllNetworkMetadatas()[0];
 
     setTimeout(() => {
