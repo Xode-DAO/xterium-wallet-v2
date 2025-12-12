@@ -77,6 +77,8 @@ export class TokensComponent implements OnInit {
   observableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
 
+  symbols: string = '';
+
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
       publicKey.split(',').map(byte => Number(byte.trim()))
@@ -142,9 +144,13 @@ export class TokensComponent implements OnInit {
   }
 
   async getPrices(): Promise<void> {
+    const currencies = await this.settingsService.get();
+    const currencyCode = currencies?.user_preferences.currency.code || "";
+    const currencySymbol = currencies?.user_preferences.currency.symbol || "";
+
     let prices: Price[] = [];
 
-    let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency("USD");
+    let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency(currencyCode);
     if (pricePerCurrency.data.length > 0) {
       pricePerCurrency.data.map(item => {
         const token = this.tokens.find(token => token.symbol.toLowerCase() === item.symbol.toLowerCase());
@@ -158,6 +164,7 @@ export class TokensComponent implements OnInit {
       })
     }
 
+    this.symbols = currencySymbol
     this.prices = prices;
     this.computeBalancesAmount();
   }

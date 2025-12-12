@@ -336,8 +336,13 @@ export class SendComponent implements OnInit {
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
     const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
 
-    const existentialDeposit = await service.getExistentialDepositOfNativeToken(this.pjsApi);
-    const estimatedFee = await service.estimatedFees(this.pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
+    let existentialDeposit = 0;
+    let estimatedFee = 0;
+
+    if (this.balance.token.type === 'native') {
+      existentialDeposit = await service.getExistentialDepositOfNativeToken(this.pjsApi);
+      estimatedFee = await service.estimatedFees(this.pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
+    }
 
     const balanceAmountRequired = parseAmount + existentialDeposit + estimatedFee;
 

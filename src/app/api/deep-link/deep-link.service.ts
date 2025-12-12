@@ -37,7 +37,6 @@ export class DeepLinkService {
           `${callbackUrl}?wallets=${encodeURIComponent(JSON.stringify(encodedWallets))}`;
 
         window.location.href = finalUrl;
-        App.exitApp();
         return;
       }
 

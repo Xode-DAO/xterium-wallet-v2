@@ -99,7 +99,6 @@ export class SelectNetworkPage implements OnInit {
   }
 
   async getStarted() {
-    console.log('Selected Network:', this.selectedNetworkMetadata);
     if (this.selectedNetworkMetadata) {
       const selectedChain = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
 

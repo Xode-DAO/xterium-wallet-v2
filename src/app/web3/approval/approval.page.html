@@ -18,15 +18,12 @@
       <ion-row>
         <ion-col size="12">
           <div class="wallet-container">
-            @if (wallets.length > 0) {
-            @for (chain of chainsByName["All Chains"]; track chain) {
-            @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
+            @if (walletsByChain[selectedChainName] && walletsByChain[selectedChainName].length > 0) {
             <div class="chain-label">
-              <img [src]="'./../../../../assets/images/chains/' + chain.image" height="25" />
-              {{ chain.name }}
+              <img [src]="'./../../../../assets/images/chains/' + getChainImage(selectedChainName)" height="25" />
+              {{ selectedChainName }}
             </div>
-            }
-            @for (wallet of walletsByChain[chain.name]; track wallet) {
+            @for (wallet of walletsByChain[selectedChainName]; track wallet) {
             <ion-list>
               <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(wallet, $event)">
                 <ion-checkbox slot="start" class="wallet-checkbox" [checked]="isWalletSelected(wallet)"
@@ -37,7 +34,6 @@
                 </ion-label>
               </ion-item>
             </ion-list>
-            }
             }
             }
             @else {

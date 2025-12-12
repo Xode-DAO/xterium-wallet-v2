@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiPromise } from '@polkadot/api';
 import { ISubmittableResult } from '@polkadot/types/types';
+import { App } from '@capacitor/app';
 
 import {
   IonContent,
@@ -100,6 +101,7 @@ import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.
 })
 export class SignTransactionPage implements OnInit {
   @ViewChild('confirmSignTransactionModal', { read: IonModal }) confirmSignTransactionModal!: IonModal;
+  @ViewChild('noWalletModal', { read: IonModal }) noWalletModal!: IonModal;
 
   constructor(
     private route: ActivatedRoute,
@@ -137,6 +139,9 @@ export class SignTransactionPage implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
+  wallets: Wallet[] = [];
+  walletsPublicAddresse: string[] = [];
+
   encodedCallDataHex: string = "";
 
   extrinsic: string = "";
@@ -144,6 +149,10 @@ export class SignTransactionPage implements OnInit {
   isLoadingFee: boolean = true;
 
   isProcessing: boolean = false;
+
+  callbackUrl: string = "";
+  walletAddress: string = "";
+  
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -159,6 +168,26 @@ export class SignTransactionPage implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
+    }
+  }
+
+  async fetchWallets(): Promise<void> {
+    this.wallets = await this.walletsService.getAllWallets();
+    this.walletsPublicAddresse = await Promise.all(
+      this.wallets.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
+    );
+  }
+  
+  async setWallet(address: string): Promise<void> {
+    const decodedAddress = decodeURIComponent(address);
+  
+    await this.fetchWallets();
+  
+    const index = this.walletsPublicAddresse.indexOf(decodedAddress);
+  
+    if (index >= 0) {
+      this.currentWallet = this.wallets[index];
+      this.currentWalletPublicAddress = this.walletsPublicAddresse[index];
     }
   }
 
@@ -187,6 +216,14 @@ export class SignTransactionPage implements OnInit {
       if (params['encodedCallDataHex']) {
         this.encodedCallDataHex = params['encodedCallDataHex'];
 
+        if (params['walletAddress']) {
+          await this.setWallet(params['walletAddress']);
+        }
+
+        if (params['callbackUrl']) {
+          this.callbackUrl = decodeURIComponent(params['callbackUrl']);
+        }
+
         let service: PolkadotJsService | null = null;
 
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
@@ -209,7 +246,12 @@ export class SignTransactionPage implements OnInit {
     });
   }
 
-  signTransactions() {
+  navigateToOnboarding(modal: IonModal) {
+    modal.dismiss();
+    this.router.navigate(['/onboarding']);
+  }
+
+  async signTransactions() {
     this.confirmSignTransactionModal.present();
   }
 
@@ -232,6 +274,21 @@ export class SignTransactionPage implements OnInit {
       public_key: this.currentWallet.public_key,
       private_key: decryptedPrivateKey
     };
+
+    if (this.callbackUrl) {
+      const signedHex = await service.signTransaction(
+        this.pjsApi,
+        this.encodedCallDataHex,
+        walletSigner
+      );
+  
+      this.confirmSignTransactionModal.dismiss();
+  
+      const url = `${this.callbackUrl}?status=success&signedTx=${encodeURIComponent(signedHex)}`;
+
+      window.location.href = url;
+      return;
+    }
 
     service.signAndSubmitTransaction(this.pjsApi, this.encodedCallDataHex, walletSigner).subscribe({
       next: async (event) => {
@@ -288,5 +345,7 @@ export class SignTransactionPage implements OnInit {
     this.initSecurity();
 
     this.initTransaction();
+
+    // this.fetchWallets();
   }
 }

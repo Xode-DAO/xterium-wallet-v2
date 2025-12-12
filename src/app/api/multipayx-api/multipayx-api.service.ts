@@ -7,6 +7,7 @@ import { Price } from 'src/models/multipayx-api.model';
 import { Payments } from 'src/models/transaction-history.model';
 import { search } from 'ionicons/icons';
 import { BankDetails } from 'src/models/pay.model';
+import currencies from 'src/data/currencies.data.json';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class MultipayxApiService {
     secret_key: "44A6C686C46E4FBB11621E969931E",
     receive_address: "14mBB3gpUGA4SVYV8bxGf1c1LBjxwK54vdZKNUu9LAnXozCW",
   };
-  private readonly currencyUrl = 'https://open.er-api.com/v6/latest/USD'
+  private readonly currencyUrl = 'https://open.er-api.com/v6/latest/'
 
   constructor(
     private http: HttpClient
@@ -169,5 +170,9 @@ export class MultipayxApiService {
       console.error('Error fetching currency conversion:', error);
       throw error;
     }
+  }
+
+  getAllCurrencies() {
+    return currencies;
   }
 }
