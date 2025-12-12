@@ -28,7 +28,7 @@ import {
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from '../currency/currency.component';
-import { LanguageComponent } from '../language/language.component';
+// import { LanguageComponent } from '../language/language.component';
 
 import { Currency } from 'src/models/currency.model';
 
@@ -56,13 +56,13 @@ import { Settings } from 'src/models/settings.model';
     IonIcon,
     IonModal,
     CurrencyComponent,
-    LanguageComponent,
+    // LanguageComponent,
   ]
 })
 export class SettingsComponent  implements OnInit {
   @ViewChild('currencyModal', { read: IonModal }) currencyModal!: IonModal;
   @ViewChild('languageModal', { read: IonModal }) languageModal!: IonModal;
-  
+
 
   constructor(
     private authService: AuthService,
@@ -70,7 +70,7 @@ export class SettingsComponent  implements OnInit {
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
 
-  ) { 
+  ) {
     addIcons({
       close,
       logOutOutline,
@@ -92,16 +92,16 @@ export class SettingsComponent  implements OnInit {
             role: 'destructive',
             handler: async () => {
               await this.authService.logout();
-  
+
               actionSheet.dismiss();
-  
+
               const toast = await this.toastController.create({
                 message: 'Logged out successfully!',
                 color: 'success',
                 duration: 1500,
                 position: 'top'
               });
-  
+
               await toast.present();
             }
           },
@@ -111,7 +111,7 @@ export class SettingsComponent  implements OnInit {
           }
         ]
       });
-  
+
       await actionSheet.present();
     }
 
@@ -122,17 +122,17 @@ export class SettingsComponent  implements OnInit {
   async openLanguageModal() {
     this.languageModal.present();
   }
-  
+
   async selectCurrency(currency: Currency) {
     const currencies = await this.settingsService.get();
-  
+
     if (currencies) {
       currencies.user_preferences.currency.code = currency.code;
       currencies.user_preferences.currency.symbol = currency.symbol;
 
       await this.settingsService.set(currencies);
     }
-    
+
     this.selectedCurrency = currency;
     this.currencyModal.dismiss();
   }
