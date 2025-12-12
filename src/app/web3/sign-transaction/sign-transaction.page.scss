@@ -75,3 +75,40 @@ ion-footer {
     height: 80px;
   }
 }
+
+div.content {
+  ion-grid {
+    max-width: 500px;
+    width: 100%;
+
+    ion-col {
+      padding: 3px;
+
+      ion-list {
+        background: transparent !important;
+      }
+
+      .no-wallet-content {
+        text-align: center;
+        padding: 25px;
+        background: rgba(var(--ion-color-danger-rgb), 0.1);
+        border-radius: 25px;
+        border: 3px solid rgba(var(--ion-color-danger-rgb), 0.2);
+
+        h2 {
+          color: var(--ion-color-danger);
+          margin: 0 0 5px 0;
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        .wallet-text {
+          color: var(--ion-color-danger);
+          margin: 0;
+          font-size: 15px;
+          margin-bottom: 15px;
+        }
+      }
+    }
+  }
+}

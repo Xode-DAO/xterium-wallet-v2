@@ -16,6 +16,7 @@ import {
   IonLabel,
   IonButton,
   IonCheckbox,
+  ToastController
 } from '@ionic/angular/standalone';
 
 import { Network } from 'src/models/network.model';
@@ -58,6 +59,7 @@ export class ApprovalPage implements OnInit {
     private walletsService: WalletsService,
     public environmentService: EnvironmentService,
     private deepLinkService: DeepLinkService,
+    private toastController: ToastController,
   ) { }
 
   chains: Chain[] = [];
@@ -71,6 +73,8 @@ export class ApprovalPage implements OnInit {
   origin: string = "";
 
   callBackUrl: string = "";
+  chainId: number = 0;
+  selectedChainName: string = "";
 
   getChains(): void {
     const allChains = this.chainsService.getChainsByNetwork(Network.All);
@@ -84,28 +88,49 @@ export class ApprovalPage implements OnInit {
     this.chainsByName["All Chains"] = this.chains;
   }
 
-  async getWallets(): Promise<void> {
+  async getWallet(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
-    this.loadWalletsByChain();
+  
+    if (this.chainId) {
+      await this.loadWalletsByChainId(this.chainId);
+    }
   }
 
-  async loadWalletsByChain(): Promise<void> {
-    this.walletsByChain = {};
-
-    for (const chain of this.chains) {
-      const filtered = this.wallets.filter(
-        w => w.chain.id === chain.id
-      );
-
-      const mapped = await Promise.all(
-        filtered.map(async wallet => ({
-          ...wallet,
-          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, chain)
-        }))
-      );
-
-      this.walletsByChain[chain.name] = mapped;
+  getChainByChainId(chainId: number) {
+    const selectedChain = this.chainsService.getChainByChainId(chainId);
+      
+    if (!selectedChain) {
+      return;
     }
+
+    this.chainId = selectedChain.chain_id;
+    this.loadWalletsByChainId(this.chainId);
+      
+  }
+  
+  getChainImage(name: string) {
+    const chain = this.chains.find(c => c.name === name);
+    return chain?.image ?? 'default.png';
+  }
+  
+  async loadWalletsByChainId(chainId: number): Promise<void> {
+    this.walletsByChain = {};
+  
+    const selectedChain = this.chains.find(c => c.chain_id === chainId);
+    if (!selectedChain) return;
+  
+    this.selectedChainName = selectedChain.name;
+  
+    const filtered = this.wallets.filter(w => w.chain.id === selectedChain.id);
+  
+    const mapped = await Promise.all(
+      filtered.map(async wallet => ({
+        ...wallet,
+        public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, selectedChain)
+      }))
+    );
+  
+    this.walletsByChain[selectedChain.name] = mapped;
   }
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
@@ -182,7 +207,7 @@ export class ApprovalPage implements OnInit {
     }
   
     const callbackEncoded = this.callBackUrl
-      ? encodeURIComponent(this.callBackUrl)
+      ? encodeURIComponent(this.callBackUrl) 
       : "";
       
       const deeplink =
@@ -209,10 +234,17 @@ export class ApprovalPage implements OnInit {
     App.exitApp();
   }
 
-  ngOnInit() {
-    this.getChains();
-    this.getWallets();
+  async showToast(message: string, color: string = "primary") {
+    const toast = await this.toastController.create({
+      message,
+      duration: 20000,
+      position: "bottom",
+      color,
+    });
+    await toast.present();
+  }
 
+  ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['origin']) {
         this.origin = params['origin'];
@@ -221,6 +253,14 @@ export class ApprovalPage implements OnInit {
       if (params['callback']) {
         this.callBackUrl = decodeURIComponent(params['callback']);
       }
+
+      if (params['chainId']) {
+        this.chainId = Number(params['chainId']);
+        this.getChainByChainId(this.chainId);
+      }
     });
+
+    this.getChains();
+    this.getWallet();
   }
 }
