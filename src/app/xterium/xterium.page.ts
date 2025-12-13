@@ -254,7 +254,7 @@ export class XteriumPage implements OnInit {
   async openNotificationsModal() {
     const notifications = await this.localNotificationsService.openNotifications();
     this.unreadCount = notifications.filter(n => !n.is_open).length;
-    
+
     this.notificationsModal.present();
   }
 
@@ -268,19 +268,17 @@ export class XteriumPage implements OnInit {
 
   async initSettings(): Promise<void> {
     const settings = await this.settingsService.get();
-    if (!settings) {
-      const newSettings: Settings = {
-        user_preferences: {
-          hide_zero_balances: true,
-          currency: {
-            code: "USD",
-            symbol: "$"
-          }
+    const newSettings: Settings = {
+      user_preferences: {
+        hide_zero_balances: settings?.user_preferences.hide_zero_balances ?? true,
+        currency: settings?.user_preferences.currency || {
+          code: "USD",
+          symbol: "$"
         }
-      };
-
-      await this.settingsService.set(newSettings);
+      }
     };
+
+    await this.settingsService.set(newSettings);
   }
 
   ngOnInit() {

@@ -145,8 +145,8 @@ export class TokensComponent implements OnInit {
 
   async getPrices(): Promise<void> {
     const currencies = await this.settingsService.get();
-    const currencyCode = currencies?.user_preferences.currency.code || "";
-    const currencySymbol = currencies?.user_preferences.currency.symbol || "";
+    const currencyCode = currencies?.user_preferences.currency.code || "USD";
+    const currencySymbol = currencies?.user_preferences.currency.symbol || "$";
 
     let prices: Price[] = [];
 
@@ -225,7 +225,7 @@ export class TokensComponent implements OnInit {
     if (Number.isInteger(value)) {
       return value.toString();
     }
-  
+
     const decimals = value.toFixed(7);
     const [intPart, decPart] = decimals.split(".");
 
