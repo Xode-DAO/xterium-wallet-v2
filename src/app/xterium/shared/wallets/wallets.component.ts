@@ -147,6 +147,19 @@ export class WalletsComponent implements OnInit {
     if (currentWallet) {
       this.currentWallet = currentWallet;
       this.currentWalletPublicAddress = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, this.currentWallet.chain)
+
+      const matchedChain = this.chains.find(
+        chain => chain.id === this.currentWallet.chain.id
+      );
+    
+      if (matchedChain) {
+        this.selectedChain = matchedChain;
+    
+        this.loadChainByName();
+        await this.loadWalletsByChain();
+    
+        this.onFilteredChain.emit(matchedChain);
+      }
     }
   }
 
