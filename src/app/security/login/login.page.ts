@@ -24,6 +24,8 @@ import { BiometricService } from 'src/app/api/biometric/biometric.service';
 
 import { Auth } from 'src/models/auth.model';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -42,7 +44,8 @@ import { Auth } from 'src/models/auth.model';
     PasswordLoginComponent,
     PinSetupComponent,
     PinLoginComponent,
-    BiometricComponent
+    BiometricComponent,
+    TranslatePipe,
   ]
 })
 export class LoginPage implements OnInit {

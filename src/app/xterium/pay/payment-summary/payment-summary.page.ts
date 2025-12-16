@@ -17,6 +17,8 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-payment-summary',
   templateUrl: './payment-summary.page.html',
@@ -35,6 +37,7 @@ import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
     IonCard,
     CommonModule,
     FormsModule,
+    TranslatePipe,
   ],
 })
 export class PaymentSummaryPage implements OnInit {

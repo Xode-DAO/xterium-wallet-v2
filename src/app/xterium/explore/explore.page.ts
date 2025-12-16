@@ -15,6 +15,8 @@ import {
   IonCol,
 } from '@ionic/angular/standalone';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-explore',
   templateUrl: './explore.page.html',
@@ -33,6 +35,7 @@ import {
     IonCardTitle,
     IonCardSubtitle,
     IonCardContent,
+    TranslatePipe,
   ],
 })
 export class ExplorePage implements OnInit {

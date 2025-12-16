@@ -31,6 +31,8 @@ import { SendComponent } from "src/app/xterium/shared/send/send.component"
 
 import { SettingsService } from 'src/app/api/settings/settings.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-balances',
   templateUrl: './balances.page.html',
@@ -54,7 +56,8 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
     IonToggle,
     TokensComponent,
     ReceiveComponent,
-    SendComponent
+    SendComponent,
+    TranslatePipe,
   ]
 })
 export class BalancesPage implements OnInit {
@@ -65,7 +68,7 @@ export class BalancesPage implements OnInit {
 
   constructor(
     private router: Router,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
   ) {
     addIcons({
       qrCode,
@@ -135,6 +138,7 @@ export class BalancesPage implements OnInit {
     if (settings) {
       this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
       this.symbols = settings.user_preferences.currency.symbol;
+      
     };
   }
 
@@ -150,7 +154,6 @@ export class BalancesPage implements OnInit {
 
   ngOnInit() {
     this.initSettings();
-
     this.settingsService.currentSettingsObservable.subscribe(settings => {
       if (settings) {
         this.initSettings();

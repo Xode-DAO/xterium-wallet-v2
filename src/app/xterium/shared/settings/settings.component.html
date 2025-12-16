@@ -5,20 +5,25 @@
         <ion-list>
           <ion-item button lines="none" class="custom-buttons" (click)="openCurrencyModal()">
             <ion-icon slot="start" name="logo-usd"></ion-icon>
-            <h2>Currency</h2>
+            <h2>{{ 'Currency' | translate }}</h2>
             <div slot="end" class="selected-currency">
               @if (selectedCurrency) {
-                <h2>{{ selectedCurrency.code }}</h2>
+                <h2 style="color: #b9b8b8; font-weight: normal;">{{ selectedCurrency.code }}</h2>
               }
             </div>
           </ion-item>
-          <!-- <ion-item button lines="none" class="custom-buttons" (click)="openLanguageModal()">
+          <ion-item button lines="none" class="custom-buttons" (click)="openLanguageModal()">
             <ion-icon slot="start" name="language-outline"></ion-icon>
-            <h2>Language</h2>
-          </ion-item> -->
+            <h2>{{ 'Language' | translate }}</h2>
+            <div slot="end">
+              @if (selectedLanguage) {
+                <h2 style="color: #b9b8b8; font-weight: normal;">{{ selectedLanguage.name }}</h2>
+              }
+            </div>
+          </ion-item>
           <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
-            <h2>Logout</h2>
+            <h2>{{ 'Logout' | translate }}</h2>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -29,7 +34,7 @@
     [keepContentsMounted]="true">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Currency</ion-title>
+        <ion-title>{{ 'Currency' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="currencyModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
@@ -48,7 +53,7 @@
     [keepContentsMounted]="true">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Language</ion-title>
+        <ion-title>{{ 'Language' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="languageModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
@@ -57,7 +62,7 @@
       </ion-toolbar>
       <ion-content>
         <div class="ion-padding-horizontal">
-          <!-- <app-language></app-language> -->
+          <app-language (onSelectedLanguage)="selectLanguage($event)"></app-language>
         </div>
       </ion-content>
     </ng-template>

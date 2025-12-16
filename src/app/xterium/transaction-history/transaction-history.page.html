@@ -2,13 +2,13 @@
   <div class="segments">
     <ion-segment value="default" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="default" content-id="payments">
-        <ion-label>Payments</ion-label>
+        <ion-label>{{ 'Payments' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="transfers" content-id="transfers">
-        <ion-label>Transfers</ion-label>
+        <ion-label>{{ 'Transfers' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="transactions" content-id="transactions">
-        <ion-label>Transactions</ion-label>
+        <ion-label>{{ 'Transactions' | translate }}</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -42,7 +42,7 @@
           <ion-row class="ion-justify-content-center ion-align-items-center">
             <ion-col size="12" class="ion-text-center">
               <ion-spinner name="lines"></ion-spinner>
-              <h3 class="global-loader-text">Loading transactions, please wait...</h3>
+              <h3 class="global-loader-text">{{ 'Loading transactions, please wait...' | translate }}</h3>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -52,7 +52,7 @@
         <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center ion-padding">
-              <ion-text color="medium" style="font-size: 15px;">No transactions found.</ion-text>
+              <ion-text color="medium" style="font-size: 15px;">{{ 'No transactions found.' | translate }}</ion-text>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -93,14 +93,14 @@
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="person" size="small" slot="start"></ion-icon>
-                    <ion-label>Account No.:</ion-label>
+                    <ion-label>{{ 'Account No.:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value">
                       {{ formatAccountNumber(payment.account_identifier) }}
                     </ion-text>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="information-circle" size="small" slot="start"></ion-icon>
-                    <ion-label>Ref:</ion-label>
+                    <ion-label>{{ 'Ref:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value">
                       {{ payment.tx_hash | slice:0:10 }}...{{ payment.tx_hash | slice:-4 }}
                     </ion-text>
@@ -148,7 +148,7 @@
           <ion-row class="ion-justify-content-center ion-align-items-center">
             <ion-col size="12" class="ion-text-center">
               <ion-spinner name="lines"></ion-spinner>
-              <h3 class="global-loader-text">Loading transactions, please wait...</h3>
+              <h3 class="global-loader-text">{{ 'Loading transactions, please wait...' | translate }}</h3>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -158,7 +158,7 @@
         <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center ion-padding">
-              <ion-text color="medium" style="font-size: 15px;">No transactions found.</ion-text>
+              <ion-text color="medium" style="font-size: 15px;">{{ 'No transactions found.' | translate }}</ion-text>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -182,21 +182,21 @@
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>From:</ion-label>
+                    <ion-label>{{ 'From:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value">
                       {{ transaction.from | slice:0:10 }} ... {{ transaction.from | slice:-4 }}
                     </ion-text>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="arrow-down-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>To:</ion-label>
+                    <ion-label>{{ 'To:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value">
                       {{ transaction.to | slice:0:10 }} ... {{ transaction.to | slice:-4 }}
                     </ion-text>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Amount:</ion-label>
+                    <ion-label>{{ 'Amount:' | translate }}</ion-label>
                     <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
                       <span>{{ transaction.token_decimals !== null ? transaction.token_decimals !== 0 ?
                         formatBalance(+transaction.amount, transaction.token_decimals) : transaction.amount :
@@ -206,19 +206,19 @@
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Block No.:</ion-label>
+                    <ion-label>{{ 'Block No.:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value"> {{ transaction.block_number }} </ion-text>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Action:</ion-label>
+                    <ion-label>{{ 'Action:' | translate }}</ion-label>
                     <ion-chip color="secondary" slot="end" class="chip-text">
                       <ion-label> {{ transaction.action }} </ion-label>
                     </ion-chip>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Fee:</ion-label>
+                    <ion-label>{{ 'Fee:' | translate }}</ion-label>
                     <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
                       <span>{{ formatBalance(+transaction.fee, currentWallet.chain.decimal).toFixed(5) }}</span>
                       <span> {{ currentWallet.chain.unit }} </span>
@@ -226,7 +226,7 @@
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Time Stamp:</ion-label>
+                    <ion-label>{{ 'Time Stamp:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value">
                       {{ (transaction.timestamp) | date:'medium' }}
                     </ion-text>
@@ -239,14 +239,14 @@
             @if (isLoadingMoreTransfers) {
             <ion-col size="12" class="ion-text-center">
               <ion-spinner name="lines"></ion-spinner>
-              <p style="font-size: 15px;">Loading transactions, please wait...</p>
+              <p style="font-size: 15px;">{{ 'Loading transactions, please wait...' | translate }}</p>
             </ion-col>
             } @else {
             <ion-col size="12" class="ion-text-center">
               <div class="primary-button-wrapper">
                 <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
                   (click)="loadMoreData()">
-                  Load more
+                  {{ 'Load more' | translate }}
                 </ion-button>
               </div>
             </ion-col>
@@ -278,7 +278,7 @@
           <ion-row class="ion-justify-content-center ion-align-items-center">
             <ion-col size="12" class="ion-text-center">
               <ion-spinner name="lines"></ion-spinner>
-              <h3 class="global-loader-text">Loading transactions, please wait...</h3>
+              <h3 class="global-loader-text">{{ 'Loading transactions, please wait...' | translate }}</h3>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -288,7 +288,7 @@
         <ion-grid>
           <ion-row>
             <ion-col class="ion-text-center ion-padding">
-              <ion-text color="medium" style="font-size: 15px;">No transactions found.</ion-text>
+              <ion-text color="medium" style="font-size: 15px;">{{ 'No transactions found.' | translate }}</ion-text>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -314,26 +314,26 @@
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="cube-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Block No.:</ion-label>
+                    <ion-label>{{ 'Block No.:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value"> {{ transaction.block_number }} </ion-text>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="swap-horizontal-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Call Module:</ion-label>
+                    <ion-label>{{ 'Call Module:' | translate }}</ion-label>
                     <ion-chip color="secondary" slot="end" class="chip-text">
                       <ion-label> {{ transaction.call_module }} </ion-label>
                     </ion-chip>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="construct-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Function:</ion-label>
+                    <ion-label>{{ 'Function:' | translate }}</ion-label>
                     <ion-chip color="tertiary" slot="end" class="chip-text">
                       <ion-label> {{ transaction.call_module_function }} </ion-label>
                     </ion-chip>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="cash-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Fee:</ion-label>
+                    <ion-label>{{ 'Fee:' | translate }}</ion-label>
                     <div slot="end" class="label-value" style="display: flex; align-items: center; gap: 4px;">
                       <span>{{ formatBalance(+transaction.fee, currentWallet.chain.decimal).toFixed(5) }}</span>
                       <span> {{ currentWallet.chain.unit }} </span>
@@ -341,7 +341,7 @@
                   </ion-item>
                   <ion-item lines="none">
                     <ion-icon name="time-outline" size="small" slot="start"></ion-icon>
-                    <ion-label>Time Stamp:</ion-label>
+                    <ion-label>{{ 'Time Stamp:' | translate }}</ion-label>
                     <ion-text slot="end" class="label-value">
                       {{ (transaction.timestamp) | date:'medium' }}
                     </ion-text>
@@ -354,14 +354,14 @@
             @if (isLoadingMoreExtrinsics) {
             <ion-col size="12" class="ion-text-center">
               <ion-spinner name="lines"></ion-spinner>
-              <p style="font-size: 15px;">Loading transactions, please wait...</p>
+              <p style="font-size: 15px;">{{ 'Loading transactions, please wait...' | translate }}</p>
             </ion-col>
             } @else {
             <ion-col size="12" class="ion-text-center">
               <div class="primary-button-wrapper">
                 <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
                   (click)="loadMoreData()">
-                  Load more
+                  {{ 'Load more' | translate }}
                 </ion-button>
               </div>
             </ion-col>

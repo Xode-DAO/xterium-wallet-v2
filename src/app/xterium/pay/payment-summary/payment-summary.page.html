@@ -8,10 +8,10 @@
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
             <h1 style="font-weight: bold;">
-              Payment Summary
+              {{ 'Payment Summary' | translate }}
             </h1>
             <span style="font-size: 15px;">
-              Review and confirm the payment details before completing your transaction.
+              {{ 'Review and confirm the payment details before completing your transaction.' | translate }}
             </span>
           </div>
         </ion-col>
@@ -19,7 +19,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="token-details-container">
-            <h2 style="margin-left: 5px; margin-bottom: 5px;">Send from Account:</h2>
+            <h2 style="margin-left: 5px; margin-bottom: 5px;">{{ 'Send from Account:' | translate }}</h2>
             <ion-card class="token-details-card">
               <ion-list>
                 <ion-item lines="none">
@@ -29,13 +29,13 @@
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Token Amount:</ion-label>
+                  <ion-label>{{ 'Token Amount:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ formattedAmount }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Fee:</ion-label>
+                  <ion-label>{{ 'Fee:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     PHP 20
                   </ion-text>
@@ -48,7 +48,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="token-details-container">
-            <h2 style="margin-left: 5px; margin-bottom: 5px;">Send to Account:</h2>
+            <h2 style="margin-left: 5px; margin-bottom: 5px;">{{ 'Send to Account:' | translate }}</h2>
             <ion-card class="token-details-card">
               <ion-list>
                 <ion-item lines="none">
@@ -58,7 +58,7 @@
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Amount: </ion-label>
+                  <ion-label>{{ 'Amount:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ formattedAmount }}
                   </ion-text>
@@ -72,14 +72,14 @@
         <ion-col size="6">
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" (click)="pay()">
-              Pay
+              {{ 'Pay' | translate }}
             </ion-button>
           </div>
         </ion-col>
         <ion-col size="6">
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="danger-button" (click)="cancelPayment()">
-              Cancel
+              {{ 'Cancel' | translate }}
             </ion-button>
           </div>
         </ion-col>
@@ -87,7 +87,7 @@
       <ion-row class="ion-margin-top">
         <ion-col>
           <div class="powered-by">
-            <span>Powered by:</span>
+            <span>{{ 'Powered by:' | translate }}</span>
             <img src="../../../../assets/images/multipayx/multipayx.png" alt="MultipayX Logo" />
           </div>
         </ion-col>

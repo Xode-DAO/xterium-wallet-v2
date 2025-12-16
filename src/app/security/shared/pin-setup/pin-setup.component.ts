@@ -23,6 +23,8 @@ import { AuthService } from 'src/app/api/auth/auth.service';
 
 import { PasswordSetup } from 'src/models/auth.model';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-pin-setup',
   templateUrl: './pin-setup.component.html',
@@ -39,6 +41,7 @@ import { PasswordSetup } from 'src/models/auth.model';
     IonIcon,
     IonLabel,
     IonInputOtp,
+    TranslatePipe,
   ],
 })
 export class PinSetupComponent implements OnInit {
