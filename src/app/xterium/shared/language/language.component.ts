@@ -9,6 +9,7 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  IonAvatar
 } from '@ionic/angular/standalone';
 
 import { LanguageTranslation } from 'src/models/language-translation.model';
@@ -28,6 +29,7 @@ import { LanguageTranslationService } from 'src/app/api/language-translation/lan
     IonList,
     IonItem,
     IonLabel,
+    IonAvatar,
   ]
 })
 export class LanguageComponent  implements OnInit {

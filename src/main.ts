@@ -19,7 +19,7 @@ bootstrapApplication(AppComponent, {
     { provide: LocationStrategy, useClass: HashLocationStrategy },
 
     provideTranslateService({
-      defaultLanguage: 'en',
+      fallbackLang: 'en',
       loader: provideTranslateHttpLoader({
         prefix: 'assets/i18n/',
         suffix: '.json',

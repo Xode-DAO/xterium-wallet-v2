@@ -51,6 +51,8 @@ import { Router } from '@angular/router';
 import { CapacitorBarcodeScanner, CapacitorBarcodeScannerTypeHint } from '@capacitor/barcode-scanner';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-send',
   templateUrl: './send.component.html',
@@ -75,7 +77,8 @@ import { EnvironmentService } from 'src/app/api/environment/environment.service'
     IonContent,
     IonTitle,
     IonToolbar,
-    ChainsComponent
+    ChainsComponent,
+    TranslatePipe,
   ]
 })
 export class SendComponent implements OnInit {
