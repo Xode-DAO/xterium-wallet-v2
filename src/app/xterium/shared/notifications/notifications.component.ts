@@ -17,6 +17,8 @@ import { LocalNotification } from 'src/models/local-notification.model';
 
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.component.html',
@@ -32,6 +34,7 @@ import { LocalNotificationsService } from 'src/app/api/local-notifications/local
     IonLabel,
     IonAlert,
     IonText,
+    TranslatePipe,
   ]
 })
 export class NotificationsComponent  implements OnInit {

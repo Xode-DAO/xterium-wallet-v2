@@ -9,9 +9,9 @@
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
             <h1 style="font-weight: bold">
-              Sign Transaction
+              {{ 'Sign Transaction' | translate }}
             </h1>
-            <span style="font-size: 15px;">Please review before confirming your transaction</span>
+            <span style="font-size: 15px;">{{ 'Please review before confirming your transaction' | translate }}</span>
           </div>
         </ion-col>
       </ion-row>
@@ -33,7 +33,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="wallet-details ion-margin-top">
-            <h2 style="margin-left: 5px; margin-bottom: 5px;">Send from Account:</h2>
+            <h2 style="margin-left: 5px; margin-bottom: 5px;">{{ 'Send from Account:' | translate }}</h2>
             <ion-list>
               <ion-item detail="false" lines="none">
                 <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
@@ -55,29 +55,29 @@
               <ion-list>
                 <ion-item lines="none">
                   <ion-label>
-                    <strong>Transaction Status:</strong>
+                    <strong>{{ 'Transaction Status:' | translate }}</strong>
                   </ion-label>
                   <ion-chip color="secondary" slot="end">
-                    <ion-label>Queued</ion-label>
+                    <ion-label>{{ 'Queued' | translate }}</ion-label>
                   </ion-chip>
                 </ion-item>
                 <ion-item lines="none">
                   <ion-icon name="arrow-up-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Source:</ion-label>
+                  <ion-label>{{ 'Source:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ truncateAddress(currentWalletPublicAddress) }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
                   <ion-icon name="globe-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>Chain:</ion-label>
+                  <ion-label>{{ 'Create Wallet' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ currentWallet.chain.name }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
                   <ion-icon name="flame" size="small" slot="start"></ion-icon>
-                  <ion-label>Estimated Fee:</ion-label>
+                  <ion-label>{{ 'Estimated Fee:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     @if (isLoadingFee) {
                     <div class="fee-loading">
@@ -107,7 +107,7 @@
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="signTransactions()"
               [disabled]="isLoadingFee">
-              Sign
+              {{ 'Sign' | translate }}
             </ion-button>
           </div>
         </ion-col>
@@ -115,7 +115,7 @@
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom danger-button"
               (click)="cancelTransaction()">
-              Cancel
+              {{ 'Cancel' | translate }}
             </ion-button>
           </div>
         </ion-col>
@@ -158,7 +158,7 @@
 <ion-modal #confirmSignTransactionModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
   <ng-template>
     <ion-toolbar class="main-modal-toolbar">
-      <ion-title>Confirm Transaction</ion-title>
+      <ion-title>{{ 'Confirm Transaction' | translate }}</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="confirmSignTransactionModal.dismiss()">
           <ion-icon name="close" style="color: white;"></ion-icon>
@@ -171,9 +171,9 @@
           <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
         </div>
         <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
-          <h1 style="font-weight: bold">Sign</h1>
+          <h1 style="font-weight: bold">{{ 'Sign' | translate }}</h1>
           <span style="font-size: 15px;">
-            To confirm this transaction, please authenticate using the method you have set up for your wallet.
+            {{ 'To confirm this transaction, please authenticate using the method you have set up for your wallet.' | translate }}
           </span>
         </div>
         <div class="ion-padding-horizontal">
@@ -189,8 +189,7 @@
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
           <div class="biometric-unavailable">
             <p class="unavailable-text">
-              You've previously set up biometric authentication, but it's currently unavailable on this device.
-              Please set up your biometric authentication again to continue.
+              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device. Please set up your biometric authentication again to continue.' | translate }}
             </p>
           </div>
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {

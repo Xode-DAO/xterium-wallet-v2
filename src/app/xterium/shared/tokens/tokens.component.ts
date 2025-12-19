@@ -32,6 +32,8 @@ import { BalancesService } from 'src/app/api/balances/balances.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-tokens',
   templateUrl: './tokens.component.html',
@@ -44,6 +46,7 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
     IonLabel,
     IonAvatar,
     IonSpinner,
+    TranslatePipe,
   ]
 })
 export class TokensComponent implements OnInit {
@@ -63,6 +66,7 @@ export class TokensComponent implements OnInit {
     private balancesService: BalancesService,
     private multipayxApiService: MultipayxApiService,
     private settingsService: SettingsService,
+    private translate: TranslateService,
   ) { }
 
   pjsApi!: ApiPromise;
@@ -78,6 +82,8 @@ export class TokensComponent implements OnInit {
   balancesSubscription: Subscription = new Subscription();
 
   symbols: string = '';
+
+  languageCode: string = '';
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -147,6 +153,7 @@ export class TokensComponent implements OnInit {
     const currencies = await this.settingsService.get();
     const currencyCode = currencies?.user_preferences.currency.code || "USD";
     const currencySymbol = currencies?.user_preferences.currency.symbol || "$";
+    
 
     let prices: Price[] = [];
 
@@ -211,6 +218,7 @@ export class TokensComponent implements OnInit {
     this.onTotalAmount.emit(0);
 
     await this.getTokens();
+    await this.getLanguageCode();
   }
 
   formatBalance(amount: number, decimals: number): number {
@@ -243,6 +251,15 @@ export class TokensComponent implements OnInit {
     this.onOpenToken.emit(balance);
   }
 
+  async getLanguageCode(): Promise<void> {
+    const settings = await this.settingsService.get();
+    if (settings) {
+      this.languageCode = settings.user_preferences.language.code || 'en';
+
+      this.translate.use(this.languageCode);
+    };
+  }
+
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
       this.fetchData();
@@ -261,7 +278,7 @@ export class TokensComponent implements OnInit {
           balanceToken.token.image = tokenImage.image;
         }
       }
-    });
+    }); 
   }
 
   ngOnChanges(changes: SimpleChanges) {

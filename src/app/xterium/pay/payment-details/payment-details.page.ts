@@ -28,6 +28,8 @@ import { USDTTokenDetails, PayDetails } from 'src/models/pay.model';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-payment-details',
   templateUrl: './payment-details.page.html',
@@ -49,6 +51,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonCard,
     IonLabel,
     IonText,
+    TranslatePipe,
   ]
 })
 export class PaymentDetailsPage implements OnInit {

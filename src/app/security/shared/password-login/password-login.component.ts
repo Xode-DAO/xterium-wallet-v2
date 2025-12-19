@@ -22,6 +22,8 @@ import { AuthService } from 'src/app/api/auth/auth.service';
 
 import { Auth, PasswordLogin } from 'src/models/auth.model';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-password-login',
   templateUrl: './password-login.component.html',
@@ -36,6 +38,7 @@ import { Auth, PasswordLogin } from 'src/models/auth.model';
     IonButton,
     IonInput,
     IonIcon,
+    TranslatePipe,
   ],
   styleUrls: ['./password-login.component.scss'],
 })

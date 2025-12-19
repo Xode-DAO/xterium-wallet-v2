@@ -16,6 +16,8 @@ import { BiometricService } from 'src/app/api/biometric/biometric.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-biometric',
   templateUrl: './biometric.component.html',
@@ -25,6 +27,7 @@ import { AuthService } from 'src/app/api/auth/auth.service';
     IonCol,
     IonButton,
     IonIcon,
+    TranslatePipe,
   ],
   styleUrls: ['./biometric.component.scss'],
 })

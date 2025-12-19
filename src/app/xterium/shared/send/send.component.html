@@ -15,11 +15,11 @@
       <ion-col size="12">
         <ion-list>
           <ion-item class="primary-textarea-item ion-margin-bottom" lines="none">
-            <ion-label position="stacked">Recipient's Wallet Address:</ion-label>
+            <ion-label position="stacked">{{ 'Recipient\'s Wallet Address:' | translate }}</ion-label>
             <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
           </ion-item>
           <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
-            <ion-label style="font-size: 15px;">Destination</ion-label>
+            <ion-label style="font-size: 15px;">{{ 'Destination' | translate }}</ion-label>
             <ion-label slot="end">{{ selectedChain.name || 'Select Chain' }}</ion-label>
             <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
               <img [src]="'./../../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />
@@ -28,7 +28,7 @@
             <ion-modal #selectChainModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
               <ng-template>
                 <ion-toolbar class="main-modal-toolbar">
-                  <ion-title>Destination Chain</ion-title>
+                  <ion-title>{{ 'Destination Chain' | translate }}</ion-title>
                   <ion-buttons slot="end">
                     <ion-button (click)="selectChainModal.dismiss()">
                       <ion-icon name="close" style="color: white;"></ion-icon>
@@ -52,7 +52,7 @@
           <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
             (click)="pasteFromClipboard()">
             <ion-icon name="clipboard-outline" slot="start" [size]="'small'"></ion-icon>
-            PASTE
+            {{ 'PASTE' | translate }}
           </ion-button>
         </div>
       </ion-col>
@@ -60,7 +60,7 @@
         <div class="primary-button-wrapper ion-text-left">
           <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button" (click)="scan()">
             <ion-icon name="scan-outline" slot="start" [size]="'small'"></ion-icon>
-            SCAN
+            {{ 'SCAN' | translate }}
           </ion-button>
         </div>
       </ion-col>
@@ -68,7 +68,7 @@
     <ion-row>
       <ion-col size="12" class="enter-amount">
         <div class="ion-text-left label">
-          <ion-label>Amount:</ion-label>
+          <ion-label>{{ 'Amount:' | translate }}</ion-label>
         </div>
         <ion-list>
           <ion-item class="primary-input-item item" lines="none">
@@ -86,7 +86,7 @@
         </ion-list>
         <div class="ion-text-right available-balance">
           <span>
-            Balance:
+            {{ 'Balance:' | translate }}
             <b>{{ formatBalanceWithSuffix(balance.quantity, balance.token.decimals) }}</b>
             {{ balance.token.symbol }}
           </span>
@@ -104,7 +104,7 @@
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="send()"
             [disabled]="isProcessing">
-            SEND
+            {{ 'SEND' | translate }}
           </ion-button>
         </div>
       </ion-col>

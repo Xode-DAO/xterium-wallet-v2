@@ -54,6 +54,8 @@ import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.ser
 import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.component";
 import { SendComponent } from "src/app/xterium/shared/send/send.component"
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-token-details',
   templateUrl: './token-details.page.html',
@@ -79,7 +81,8 @@ import { SendComponent } from "src/app/xterium/shared/send/send.component"
     IonToolbar,
     ReceiveComponent,
     SendComponent,
-    NgApexchartsModule
+    NgApexchartsModule,
+    TranslatePipe,
   ]
 })
 export class TokenDetailsPage implements OnInit {

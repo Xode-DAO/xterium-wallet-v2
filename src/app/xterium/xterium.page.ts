@@ -59,6 +59,8 @@ import { LocalNotification } from 'src/models/local-notification.model';
 import { SettingsService } from '../api/settings/settings.service';
 import { Settings } from 'src/models/settings.model';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-xterium',
   templateUrl: './xterium.page.html',
@@ -92,6 +94,7 @@ import { Settings } from 'src/models/settings.model';
     ImportFromBackupComponent,
     NotificationsComponent,
     SettingsComponent,
+    TranslatePipe,
   ]
 })
 export class XteriumPage implements OnInit {
@@ -274,6 +277,11 @@ export class XteriumPage implements OnInit {
         currency: settings?.user_preferences.currency || {
           code: "USD",
           symbol: "$"
+        },
+        language: settings?.user_preferences.language || {
+          code: "en",
+          name: "English",
+          nativeName: "English"
         }
       }
     };

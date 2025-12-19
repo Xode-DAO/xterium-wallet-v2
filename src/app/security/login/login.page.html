@@ -10,38 +10,38 @@
           <div class="ion-text-center" style="margin-top: -75px">
             <h1 style="font-weight: bold">
               @if (isChromeExtension && currentAuth) {
-              Login
+              {{ 'Login' | translate }}
               } @else if (isChromeExtension && !currentAuth) {
-              Set Up Your Password
+              {{ 'Set Up Your Password' | translate }}
               } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type ===
               'biometric')) {
-              Biometric
+              {{ 'Biometric' | translate }}
               } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
-              Enter Pin
+              {{ 'Enter Pin' | translate }}
               } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
-              Biometric
+              {{ 'Biometric' | translate }}
               } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
-              Enter PIN
+              {{ 'Enter PIN' | translate }}
               } @else {
-              Set Up Your PIN
+              {{ 'Set Up Your PIN' | translate }}
               }
             </h1>
             <span style="font-size: 15px;">
               @if (isChromeExtension && currentAuth) {
-              Please enter your password to unlock your wallet.
+              {{ 'Please enter your password to unlock your wallet.' | translate }}
               } @else if (isChromeExtension && !currentAuth) {
-              Please set up a password to secure your wallet.
+              {{ 'Please set up a password to secure your wallet.' | translate }}
               } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type ===
               'biometric')) {
-              To unlock your wallet, please authenticate using your biometric data or face recognition.
+              {{ 'To unlock your wallet, please authenticate using your biometric data or face recognition.' | translate }}
               } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
-              Please enter your PIN to unlock your wallet.
+              {{ 'Please enter your PIN to unlock your wallet.' | translate }}
               } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
-              Semething went wrong. Your biometric authentication is unavailable. .
+              {{ 'Semething went wrong. Your biometric authentication is unavailable.' | translate }}
               } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
-              Please enter your PIN to unlock your wallet.
+              {{ 'Please enter your PIN to unlock your wallet.' | translate }}
               } @else {
-              Please set up a PIN to secure your wallet.
+              {{ 'Please set up a PIN to secure your wallet.' | translate }}
               }
             </span>
           </div>
@@ -59,8 +59,7 @@
     } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
     <div class="biometric-unavailable">
       <p class="unavailable-text">
-        You've previously set up biometric authentication, but it's currently unavailable on this device.
-        Please set up your biometric authentication again to continue.
+        {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device. Please set up your biometric authentication again to continue.' | translate }}
       </p>
     </div>
     } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {

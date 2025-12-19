@@ -7,6 +7,9 @@ import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
@@ -14,5 +17,13 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(),
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+
+    provideTranslateService({
+      fallbackLang: 'en',
+      loader: provideTranslateHttpLoader({
+        prefix: 'assets/i18n/',
+        suffix: '.json',
+      }),
+    }),
   ],
 });

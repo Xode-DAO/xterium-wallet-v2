@@ -1,4 +1,3 @@
-
   .currency-list {
     border: none;
   
@@ -13,10 +12,13 @@
       transition: background 0.2s;
     }
   
-    ion-label p {
+    ion-label h2 {
       color: #ffffff !important;
     }
 
+    p {
+      color: #b9b8b8 !important;
+    }
   }
 
   .currency-symbol {
@@ -28,6 +30,7 @@
     align-items: center;
     justify-content: center;
     margin-right: 16px;
-    font-weight: bold;
+    font-weight: normal;
+    color: #b9b8b8;
     border: 2px solid #4c4a4b;
   }

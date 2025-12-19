@@ -44,7 +44,7 @@
           <ion-button fill="clear" expand="block" id="token-details-receive">
             <div class="button-content">
               <ion-icon name="qr-code"></ion-icon>
-              <span class="label">Receive</span>
+              <span class="label">{{ 'Receive' | translate }}</span>
             </div>
           </ion-button>
         </ion-col>
@@ -52,7 +52,7 @@
           <ion-button fill="clear" expand="block" id="token-details-send">
             <div class="button-content">
               <ion-icon name="send"></ion-icon>
-              <span class="label">Send</span>
+              <span class="label">{{ 'Send' | translate }}</span>
             </div>
           </ion-button>
         </ion-col>
@@ -60,7 +60,7 @@
           <ion-button fill="clear" expand="block" (click)="goToSwap()">
             <div class="button-content">
               <ion-icon name="swap-horizontal"></ion-icon>
-              <span class="label">Swap</span>
+              <span class="label">{{ 'Swap' | translate }}</span>
             </div>
           </ion-button>
         </ion-col>
@@ -69,7 +69,7 @@
         <ion-col size="12">
           <div class="token-balance">
             <div class="token-balance-header">
-              <h3>Your Balance</h3>
+              <h3>{{ 'Your Balance' | translate }}</h3>
             </div>
             <ion-item detail="false" lines="none">
               <ion-avatar slot="start">
@@ -95,12 +95,12 @@
       <ion-row class="token-details">
         <ion-col size="12">
           <div class="token-details-header">
-            <h3>Token Details</h3>
+            <h3>{{ 'Token Details' | translate }}</h3>
           </div>
           <ion-list>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Name</p>
+                <p>{{ 'Name' | translate }}</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ balance.token.name }}</h2>
@@ -108,7 +108,7 @@
             </ion-item>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Symbol</p>
+                <p>{{ 'Symbol' | translate }}</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ balance.token.symbol }}</h2>
@@ -116,7 +116,7 @@
             </ion-item>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Network</p>
+                <p>{{ 'Network' | translate }}</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ getChainName(balance.token.chain_id) }}</h2>
@@ -124,7 +124,7 @@
             </ion-item>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Chain</p>
+                <p>{{ 'Chain' | translate }}</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ getChainName(currentWallet.chain.id) }}</h2>
@@ -132,7 +132,7 @@
             </ion-item>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Decimal</p>
+                <p>{{ 'Decimal' | translate }}</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ balance.token.decimals }}</h2>
@@ -140,7 +140,7 @@
             </ion-item>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Total Supply</p>
+                <p>{{ 'Total Supply' | translate }}</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ formatBalanceWithSuffix(+balance.token.total_supply, balance.token.decimals) }}</h2>
@@ -148,7 +148,7 @@
             </ion-item>
             <ion-item detail="false" lines="none">
               <ion-label slot="start">
-                <p>Reference Id</p>
+                <p>{{ 'Reference Id' | translate }}</p>
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>{{ balance.token.reference_id }}</h2>
@@ -164,7 +164,7 @@
     [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Receive</ion-title>
+        <ion-title>{{ 'Receive' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="tokenDetailsReceive.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
@@ -183,7 +183,7 @@
     [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Send</ion-title>
+        <ion-title>{{ 'Send' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="tokenDetailsSend.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>

@@ -1,0 +1,21 @@
+<div class="language-list">
+  <ion-grid>
+    <ion-row>
+      @for (language of languages; track language) {
+      <ion-col size="12">
+        <ion-list>
+          <ion-item button detail="false" lines="none" (click)="selectLanguage(language)">
+              <ion-avatar class="language-icon">
+                <img [src]="language.icon" alt="{{ language.icon }}" />
+              </ion-avatar>
+            <ion-label>
+              <h2 style="font-weight: 600;">{{ language.name }}</h2>
+              <p>{{ language.nativeName }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+</div>
