@@ -4,9 +4,9 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom xterium-header">
-            <h1>Payment Details</h1>
+            <h1>{{ 'Payment Details' | translate }}</h1>
             <span>
-              Review the payment details below before proceeding with your transaction.
+             {{ 'Review the payment details below before proceeding with your transaction.' | translate }}
             </span>
           </div>
         </ion-col>
@@ -35,7 +35,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="wallet-details">
-            <h2 style="margin-left: 5px; margin-bottom: 5px;">Current Wallet:</h2>
+            <h2 style="margin-left: 5px; margin-bottom: 5px;">{{ 'Current Wallet:' | translate }}</h2>
             <ion-list>
               <ion-item detail="false" lines="none">
                 <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
@@ -53,23 +53,23 @@
       <ion-row>
         <ion-col size="12">
           <div class="token-details-container">
-            <h2 style="margin-left: 5px; margin-bottom: 5px;">Token Details:</h2>
+            <h2 style="margin-left: 5px; margin-bottom: 5px;">{{ 'Token Details:' | translate }}</h2>
             <ion-card class="token-details-card">
               <ion-list>
                 <ion-item lines="none">
-                  <ion-label>Token:</ion-label>
+                  <ion-label>{{ 'Token:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ dummyUsdtTokenBalance.token_symbol }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Amount:</ion-label>
+                  <ion-label>{{ 'Amount:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ dummyUsdtTokenBalance.amount }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Price:</ion-label>
+                  <ion-label>{{ 'Price:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ dummyUsdtTokenBalance.price }}
                   </ion-text>
@@ -82,35 +82,35 @@
       <ion-row>
         <ion-col size="12">
           <div class="token-details-container">
-            <h2 style="margin-left: 5px; margin-bottom: 5px;">Account Details:</h2>
+            <h2 style="margin-left: 5px; margin-bottom: 5px;">{{ 'Account Details:' | translate }}</h2>
             <ion-card class="token-details-card">
               <ion-list>
                 <ion-item lines="none">
-                  <ion-label>Recipient:</ion-label>
+                  <ion-label>{{ 'Recipient:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ payDetails.recipient_name }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Account No.:</ion-label>
+                  <ion-label>{{ 'Account No.:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ payDetails.account_number }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Bank Swift.:</ion-label>
+                  <ion-label>{{ 'Bank Swift.:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ payDetails.bank_swift }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Bank Name.:</ion-label>
+                  <ion-label>{{ 'Bank Name.:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ payDetails.bank_name }}
                   </ion-text>
                 </ion-item>
                 <ion-item lines="none">
-                  <ion-label>Bank Code.:</ion-label>
+                  <ion-label>{{ 'Bank Code.:' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ payDetails.bank_code }}
                   </ion-text>
@@ -124,7 +124,7 @@
         <ion-col size="12">
           <div class="primary-button-wrapper">
             <ion-button expand="block" class="ion-margin-bottom" (click)="send()">
-              SEND
+              {{ 'SEND' | translate }}
             </ion-button>
           </div>
         </ion-col>
@@ -133,7 +133,7 @@
       <ion-row class="ion-margin-top">
         <ion-col>
           <div class="powered-by">
-            <span>Powered by:</span>
+            <span>{{ 'Powered by:' | translate }}</span>
             <img src="../../../../assets/images/multipayx/multipayx.png" alt="MultipayX Logo" />
           </div>
         </ion-col>

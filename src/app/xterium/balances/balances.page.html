@@ -9,7 +9,7 @@
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom xterium-header">
             <h1>{{ symbols }} {{ totalAmount | number: '1.2-2' }}</h1>
-            <span>Total Balance</span>
+            <span>{{ 'Total Balance' | translate }}</span>
           </div>
         </ion-col>
       </ion-row>
@@ -18,7 +18,8 @@
           <ion-button fill="clear" class="icon-button" expand="block" (click)="openBalancesReceiveModal()">
             <div class="button-content">
               <ion-icon name="qr-code"></ion-icon>
-              <span class="label">Receive</span>
+              <span class="label">{{ 'Receive' | translate }}</span>
+              
             </div>
           </ion-button>
         </ion-col>
@@ -26,7 +27,7 @@
           <ion-button fill="clear" class="icon-button" expand="block" (click)="openBalancesSelectTokenModal()">
             <div class="button-content">
               <ion-icon name="send"></ion-icon>
-              <span class="label">Send</span>
+              <span class="label">{{ 'Send' | translate }}</span>
             </div>
           </ion-button>
         </ion-col>
@@ -34,7 +35,7 @@
           <ion-button fill="clear" class="icon-button" expand="block" (click)="goToSwap()">
             <div class="button-content">
               <ion-icon name="swap-horizontal"></ion-icon>
-              <span class="label">Swap</span>
+              <span class="label">{{ 'Swap' | translate }}</span>
             </div>
           </ion-button>
         </ion-col>
@@ -44,8 +45,8 @@
       <ion-row>
         <ion-col size="12">
           <div class="token-list-header">
-            <h3 style="font-size: 16px; margin-right: 10px;">Tokens</h3>
-            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden" (ionChange)="hideZeroBalances($event)">Hide Zero Balances</ion-toggle>
+            <h3 style="font-size: 16px; margin-right: 10px;">{{ 'Tokens' | translate }}</h3>
+            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden" (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle>
             <!-- <a (click)="openManageTokensModal()">Manage</a> -->
           </div>
         </ion-col>
@@ -58,7 +59,7 @@
   <ion-modal #balancesReceiveModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Receive</ion-title>
+        <ion-title>{{ 'Receive' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="balancesReceiveModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
@@ -77,7 +78,7 @@
     [keepContentsMounted]="true">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Select Token</ion-title>
+        <ion-title>{{ 'Select Token' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="balancesSelectTokenModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
@@ -95,7 +96,8 @@
   <ion-modal #balancesSendModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Send</ion-title>
+        <ion-title>{{ 'Send' | translate }}</ion-title>
+        
         <ion-buttons slot="end">
           <ion-button (click)="balancesSendModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
@@ -113,7 +115,7 @@
   <ion-modal #manageTokensModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Manage Tokens</ion-title>
+        <ion-title>{{ 'Manage Tokens' | translate }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="manageTokensModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>

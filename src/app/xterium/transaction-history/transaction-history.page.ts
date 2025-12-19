@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -48,6 +48,9 @@ import { ChainsService } from 'src/app/api/chains/chains.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 import { ScannerService } from 'src/app/api/scanner/scanner.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
+
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-transaction-history',
@@ -75,6 +78,7 @@ import { BalancesService } from 'src/app/api/balances/balances.service';
     IonChip,
     IonSpinner,
     IonButton,
+    TranslatePipe,
   ],
 })
 export class TransactionHistoryPage implements OnInit {
@@ -85,7 +89,9 @@ export class TransactionHistoryPage implements OnInit {
     private chainsService: ChainsService,
     private multipayxApiService: MultipayxApiService,
     private scannerService: ScannerService,
-    private balancesService: BalancesService
+    private balancesService: BalancesService,
+    private settingsService: SettingsService,
+    private translate: TranslateService,
   ) {
     addIcons({
       searchOutline,
@@ -259,6 +265,7 @@ export class TransactionHistoryPage implements OnInit {
     await this.fetchPayments();
     await this.fetchTransfers();
     await this.fetchExtrinsics();
+    await this.getLanguageCode();
   }
 
   async loadMoreData(): Promise<void> {
@@ -280,6 +287,15 @@ export class TransactionHistoryPage implements OnInit {
   async segmentChanged(event: any) {
     const segment = event.detail.value;
     this.currentSegment = segment;
+  }
+
+  async getLanguageCode(): Promise<void> {
+    const settings = await this.settingsService.get();
+    if (settings) {
+      const languageCode = settings.user_preferences.language.code || 'en';
+
+      this.translate.use(languageCode);
+    };
   }
 
   ngOnInit() {

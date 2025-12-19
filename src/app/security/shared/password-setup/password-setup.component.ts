@@ -22,6 +22,8 @@ import { AuthService } from 'src/app/api/auth/auth.service';
 
 import { PasswordSetup } from 'src/models/auth.model';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-password-setup',
   templateUrl: './password-setup.component.html',
@@ -36,6 +38,7 @@ import { PasswordSetup } from 'src/models/auth.model';
     IonButton,
     IonInput,
     IonIcon,
+    TranslatePipe,
   ],
   styleUrls: ['./password-setup.component.scss'],
 })

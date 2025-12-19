@@ -27,7 +27,10 @@ import BANK_SWIFT_TO_NAME_MAP_JSON from 'src/data/banks.data.json'
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 
 import { PayDetails } from 'src/models/pay.model';
+
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
+
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pay',
@@ -47,6 +50,7 @@ import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.ser
     IonCardTitle,
     IonCardSubtitle,
     IonButton,
+    TranslatePipe,
   ]
 })
 export class PayPage implements OnInit {

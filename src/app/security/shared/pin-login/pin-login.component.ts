@@ -22,6 +22,8 @@ import { AuthService } from 'src/app/api/auth/auth.service';
 
 import { Auth, PasswordLogin } from 'src/models/auth.model';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-pin-login',
   templateUrl: './pin-login.component.html',
@@ -37,6 +39,7 @@ import { Auth, PasswordLogin } from 'src/models/auth.model';
     IonButton,
     IonIcon,
     IonInputOtp,
+    TranslatePipe,
   ],
 })
 export class PinLoginComponent implements OnInit {

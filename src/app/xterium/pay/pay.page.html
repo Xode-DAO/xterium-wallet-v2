@@ -4,8 +4,8 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom xterium-header">
-            <h1>Pay</h1>
-            <span>Choose how you would like to pay for your transaction.</span>
+            <h1>{{ 'Pay' | translate }}</h1>
+            <span>{{ 'Choose how you would like to pay for your transaction.' | translate }}</span>
           </div>
         </ion-col>
       </ion-row>
@@ -17,23 +17,22 @@
               <img src="./../../../assets/images/backgrounds/pay-scan.png" />
             </div>
             <ion-card-header>
-              <ion-card-title>Scan or Upload QR</ion-card-title>
+              <ion-card-title>{{ 'Scan or Upload QR' | translate }}</ion-card-title>
               <ion-card-subtitle>
-                Pay by scanning or uploading a QR code.
+                {{ 'Pay by scanning or uploading a QR code.' | translate }}
               </ion-card-subtitle>
             </ion-card-header>
             <ion-card-content>
               <div class="ion-margin-bottom">
-                Scan a QR code using your device's camera or upload a QR code image to process payments quickly and
-                securely.
+                {{ 'Scan a QR code using your device\'s camera or upload a QR code image to process payments quickly and securely.' | translate }}
               </div>
               <br />
               <div class="primary-button-wrapper">
                 <ion-button expand="block" class="ion-margin-bottom" (click)="scan()">
-                  Scan
+                  {{ 'Scan' | translate }}
                 </ion-button>
                 <ion-button expand="block" class="ion-margin-bottom" (click)="upload()">
-                  Upload
+                  {{ 'Upload' | translate }}
                 </ion-button>
               </div>
             </ion-card-content>
@@ -44,7 +43,7 @@
       <ion-row class="ion-margin-top">
         <ion-col>
           <div class="powered-by">
-            <span>Powered by:</span>
+            <span>{{ 'Powered by:' | translate }}</span>
             <img src="../../../../assets/images/multipayx/multipayx.png" alt="MultipayX Logo" />
           </div>
         </ion-col>

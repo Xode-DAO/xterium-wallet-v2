@@ -28,13 +28,15 @@ import {
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from '../currency/currency.component';
-// import { LanguageComponent } from '../language/language.component';
+import { LanguageComponent } from '../language/language.component';
 
 import { Currency } from 'src/models/currency.model';
 
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
-import { Settings } from 'src/models/settings.model';
+import { LanguageTranslation } from 'src/models/language-translation.model';
+
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-settings',
@@ -56,7 +58,8 @@ import { Settings } from 'src/models/settings.model';
     IonIcon,
     IonModal,
     CurrencyComponent,
-    // LanguageComponent,
+    LanguageComponent,
+    TranslatePipe,
   ]
 })
 export class SettingsComponent  implements OnInit {
@@ -80,6 +83,7 @@ export class SettingsComponent  implements OnInit {
   }
 
   selectedCurrency: Currency = new Currency();
+  selectedLanguage: LanguageTranslation = new LanguageTranslation();
   code: string = '';
 
   async confirmLogout() {
@@ -137,10 +141,26 @@ export class SettingsComponent  implements OnInit {
     this.currencyModal.dismiss();
   }
 
+  async selectLanguage(language: LanguageTranslation) {
+    const languages = await this.settingsService.get();
+
+    if (languages) {
+      languages.user_preferences.language.code = language.code;
+      languages.user_preferences.language.name = language.name;
+      languages.user_preferences.language.nativeName = language.nativeName;
+
+      await this.settingsService.set(languages);
+    }
+
+    this.selectedLanguage = language;
+    this.languageModal.dismiss();
+  }
+
   async ngOnInit() {
     const settings = await this.settingsService.get();
       if (settings) {
         this.selectedCurrency = settings.user_preferences.currency;
+        this.selectedLanguage = settings.user_preferences.language;
       }
    }
 }

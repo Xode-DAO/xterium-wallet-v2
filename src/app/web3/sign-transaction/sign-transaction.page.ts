@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiPromise } from '@polkadot/api';
 import { ISubmittableResult } from '@polkadot/types/types';
-import { App } from '@capacitor/app';
 
 import {
   IonContent,
@@ -65,6 +64,8 @@ import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.c
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
 import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-sign-transaction',
   templateUrl: './sign-transaction.page.html',
@@ -96,7 +97,8 @@ import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.
     PasswordLoginComponent,
     PinSetupComponent,
     PinLoginComponent,
-    BiometricComponent
+    BiometricComponent,
+    TranslatePipe,
   ],
 })
 export class SignTransactionPage implements OnInit {

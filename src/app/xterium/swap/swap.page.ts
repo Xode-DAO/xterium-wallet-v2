@@ -25,6 +25,8 @@ import {
 import { Balance } from 'src/models/balance.model';
 // import { TokensComponent } from "src/app/xterium/shared/tokens/tokens.component"
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-swap',
   templateUrl: './swap.page.html',
@@ -41,7 +43,8 @@ import { Balance } from 'src/models/balance.model';
     IonCardHeader,
     IonCardTitle,
     IonCardSubtitle,
-    IonCardContent
+    IonCardContent,
+    TranslatePipe,
   ]
 })
 export class SwapPage implements OnInit {
