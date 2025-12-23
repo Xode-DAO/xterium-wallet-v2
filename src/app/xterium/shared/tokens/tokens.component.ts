@@ -182,7 +182,6 @@ export class TokensComponent implements OnInit {
     const currencyCode = currencies?.user_preferences.currency.code || "USD";
     const currencySymbol = currencies?.user_preferences.currency.symbol || "$";
 
-
     let prices: Price[] = [];
 
     let pricePerCurrency = await this.multipayxApiService.getPricePerCurrency(currencyCode);
