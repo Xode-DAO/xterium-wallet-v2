@@ -131,7 +131,10 @@ export class SignTransactionPage implements OnInit {
     });
   }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   isChromeExtension = false;
 
@@ -144,17 +147,15 @@ export class SignTransactionPage implements OnInit {
   wallets: Wallet[] = [];
   walletsPublicAddresse: string[] = [];
 
-  encodedCallDataHex: string = "";
-
   extrinsic: string = "";
   estimatedFee: number = 0;
   isLoadingFee: boolean = true;
 
   isProcessing: boolean = false;
 
-  callbackUrl: string = "";
-  walletAddress: string = "";
-  
+  paramsEncodedCallDataHex: string = "";
+  paramsCallbackUrl: string = "";
+  paramsWalletAddress: string = "";
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -179,14 +180,14 @@ export class SignTransactionPage implements OnInit {
       this.wallets.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
     );
   }
-  
+
   async setWallet(address: string): Promise<void> {
     const decodedAddress = decodeURIComponent(address);
-  
+
     await this.fetchWallets();
-  
+
     const index = this.walletsPublicAddresse.indexOf(decodedAddress);
-  
+
     if (index >= 0) {
       this.currentWallet = this.wallets[index];
       this.currentWalletPublicAddress = this.walletsPublicAddresse[index];
@@ -216,15 +217,7 @@ export class SignTransactionPage implements OnInit {
 
     this.route.queryParams.subscribe(async params => {
       if (params['encodedCallDataHex']) {
-        this.encodedCallDataHex = params['encodedCallDataHex'];
-
-        if (params['walletAddress']) {
-          await this.setWallet(params['walletAddress']);
-        }
-
-        if (params['callbackUrl']) {
-          this.callbackUrl = decodeURIComponent(params['callbackUrl']);
-        }
+        this.paramsEncodedCallDataHex = params['encodedCallDataHex'];
 
         let service: PolkadotJsService | null = null;
 
@@ -235,15 +228,29 @@ export class SignTransactionPage implements OnInit {
 
         if (!service) return;
 
-        this.pjsApi = await service.connect();
-        const extrinsic = this.pjsApi.registry.createType('Extrinsic', this.encodedCallDataHex);
+        let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+        if (!pjsApi) {
+          pjsApi = await service.connect();
+        }
+
+        this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+
+        const extrinsic = pjsApi.registry.createType('Extrinsic', this.paramsEncodedCallDataHex);
 
         this.extrinsic = `${extrinsic.method.section}(${extrinsic.method.method})`;
 
-        const estimatedFee = await service.estimatedFees(this.pjsApi, this.encodedCallDataHex, this.currentWalletPublicAddress, null);
-
+        const estimatedFee = await service.estimatedFees(pjsApi, this.paramsEncodedCallDataHex, this.currentWalletPublicAddress, null);
         this.estimatedFee = estimatedFee;
         this.isLoadingFee = false;
+      }
+
+      if (params['walletAddress']) {
+        this.paramsWalletAddress = params['walletAddress'];
+        await this.setWallet(this.paramsWalletAddress);
+      }
+
+      if (params['callbackUrl']) {
+        this.paramsCallbackUrl = decodeURIComponent(params['callbackUrl']);
       }
     });
   }
@@ -277,22 +284,28 @@ export class SignTransactionPage implements OnInit {
       private_key: decryptedPrivateKey
     };
 
-    if (this.callbackUrl) {
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
+
+    if (this.paramsCallbackUrl) {
       const signedHex = await service.signTransaction(
-        this.pjsApi,
-        this.encodedCallDataHex,
+        pjsApi,
+        this.paramsEncodedCallDataHex,
         walletSigner
       );
-  
+
       this.confirmSignTransactionModal.dismiss();
-  
-      const url = `${this.callbackUrl}?status=success&signedTx=${encodeURIComponent(signedHex)}`;
+
+      const url = `${this.paramsCallbackUrl}?status=success&signedTx=${encodeURIComponent(signedHex)}`;
 
       window.location.href = url;
       return;
     }
 
-    service.signAndSubmitTransaction(this.pjsApi, this.encodedCallDataHex, walletSigner).subscribe({
+    service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
       next: async (event) => {
         this.confirmSignTransactionModal.dismiss();
 

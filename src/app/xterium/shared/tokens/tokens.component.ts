@@ -11,6 +11,8 @@ import {
   IonLabel,
   IonAvatar,
   IonSpinner,
+  IonToast,
+  ToastController,
 } from '@ionic/angular/standalone';
 
 import { Token } from 'src/models/token.model';
@@ -46,6 +48,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
     IonLabel,
     IonAvatar,
     IonSpinner,
+    IonToast,
     TranslatePipe,
   ]
 })
@@ -67,9 +70,13 @@ export class TokensComponent implements OnInit {
     private multipayxApiService: MultipayxApiService,
     private settingsService: SettingsService,
     private translate: TranslateService,
+    private toastController: ToastController,
   ) { }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   tokens: Token[] = [];
   balances: Balance[] = [];
@@ -112,8 +119,13 @@ export class TokensComponent implements OnInit {
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
-    this.tokens = await service.getTokens(this.pjsApi);
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
+
+    this.tokens = await service.getTokens(pjsApi);
 
     setTimeout(async () => {
       await this.getAndWatchBalances(service);
@@ -121,12 +133,24 @@ export class TokensComponent implements OnInit {
   }
 
   async getAndWatchBalances(service: PolkadotJsService): Promise<void> {
+    if (!this.pjsApi) {
+      const toast = await this.toastController.create({
+        message: 'Unable to connect to the blockchain network. Please try again later.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
     this.balances = await service.getBalances(this.pjsApi, this.tokens, this.currentWalletPublicAddress);
     await this.getBalanceTokenImages();
 
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
-        this.balancesSubscription = service.watchBalances(this.pjsApi, this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
+        this.balancesSubscription = service.watchBalances(this.pjsApi!, this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
           this.balances = balances;
           this.computeBalancesAmount();
         });
@@ -153,7 +177,7 @@ export class TokensComponent implements OnInit {
     const currencies = await this.settingsService.get();
     const currencyCode = currencies?.user_preferences.currency.code || "USD";
     const currencySymbol = currencies?.user_preferences.currency.symbol || "$";
-    
+
 
     let prices: Price[] = [];
 
@@ -278,7 +302,7 @@ export class TokensComponent implements OnInit {
           balanceToken.token.image = tokenImage.image;
         }
       }
-    }); 
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {

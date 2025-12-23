@@ -111,7 +111,10 @@ export class SendComponent implements OnInit {
     });
   }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
@@ -184,11 +187,16 @@ export class SendComponent implements OnInit {
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
+
     this.balancesObservableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
-          this.pjsApi,
+          pjsApi,
           this.balance.token,
           this.currentWalletPublicAddress
         ).subscribe(balance => {
@@ -334,17 +342,22 @@ export class SendComponent implements OnInit {
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+    }
+
+    this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
-    const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
+    const transactionHex = await service.transfer(pjsApi, this.balance, this.recipientAddress, parseAmount);
 
     let existentialDeposit = 0;
     let estimatedFee = 0;
 
     if (this.balance.token.type === 'native') {
-      existentialDeposit = await service.getExistentialDepositOfNativeToken(this.pjsApi);
-      estimatedFee = await service.estimatedFees(this.pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
+      existentialDeposit = await service.getExistentialDepositOfNativeToken(pjsApi);
+      estimatedFee = await service.estimatedFees(pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
     }
 
     const balanceAmountRequired = parseAmount + existentialDeposit + estimatedFee;

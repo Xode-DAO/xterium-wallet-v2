@@ -30,6 +30,8 @@ import {
   IonModal,
   IonTitle,
   IonToolbar,
+  IonToast,
+  ToastController,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -79,6 +81,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonModal,
     IonTitle,
     IonToolbar,
+    IonToast,
     ReceiveComponent,
     SendComponent,
     NgApexchartsModule,
@@ -102,6 +105,7 @@ export class TokenDetailsPage implements OnInit {
     private walletsService: WalletsService,
     private balancesService: BalancesService,
     private multipayxApiService: MultipayxApiService,
+    private toastController: ToastController,
   ) {
     addIcons({
       arrowBackOutline,
@@ -111,7 +115,10 @@ export class TokenDetailsPage implements OnInit {
     });
   }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   balance: Balance = new Balance();
 
@@ -211,11 +218,16 @@ export class TokenDetailsPage implements OnInit {
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
+
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
-          this.pjsApi,
+          pjsApi,
           this.balance.token,
           this.currentWalletPublicAddress
         ).subscribe(balance => {
@@ -234,7 +246,7 @@ export class TokenDetailsPage implements OnInit {
     if (Number.isInteger(value)) {
       return value.toString();
     }
-  
+
     const decimals = value.toFixed(7);
     const [intPart, decPart] = decimals.split(".");
 
@@ -247,7 +259,7 @@ export class TokenDetailsPage implements OnInit {
 
     return parseFloat(value.toFixed(4)).toString();
   }
-  
+
   // Price history is currently not available
   //
   // generateDummyPriceHistory(symbol: string) {
