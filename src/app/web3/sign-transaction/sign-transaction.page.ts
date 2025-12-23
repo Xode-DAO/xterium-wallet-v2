@@ -231,9 +231,12 @@ export class SignTransactionPage implements OnInit {
         let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
         if (!pjsApi) {
           pjsApi = await service.connect();
+          this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
         }
 
-        this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+        if (!pjsApi.isConnected) {
+          await pjsApi.connect()
+        };
 
         const extrinsic = pjsApi.registry.createType('Extrinsic', this.paramsEncodedCallDataHex);
 
@@ -289,6 +292,10 @@ export class SignTransactionPage implements OnInit {
       pjsApi = await service.connect();
       this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
     }
+
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
 
     if (this.paramsCallbackUrl) {
       const signedHex = await service.signTransaction(

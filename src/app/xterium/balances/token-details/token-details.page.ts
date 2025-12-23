@@ -224,6 +224,10 @@ export class TokenDetailsPage implements OnInit {
       this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
     }
 
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
+
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(

@@ -125,6 +125,10 @@ export class TokensComponent implements OnInit {
       this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
     }
 
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
+
     this.tokens = await service.getTokens(pjsApi);
 
     setTimeout(async () => {

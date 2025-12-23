@@ -193,6 +193,10 @@ export class SendComponent implements OnInit {
       this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
     }
 
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
+
     this.balancesObservableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
@@ -345,9 +349,12 @@ export class SendComponent implements OnInit {
     let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
     if (!pjsApi) {
       pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
     }
 
-    this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
 
     const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
     const transactionHex = await service.transfer(pjsApi, this.balance, this.recipientAddress, parseAmount);
