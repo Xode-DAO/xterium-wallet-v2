@@ -152,7 +152,8 @@
                     <div class="ion-padding-horizontal">
                       <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                         <h1 style="font-weight: bold;">{{ 'Recovery Phrase' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Write down this mnemonic phrase and store it securely. It will be required to restore your wallet.' | translate }}</span>
+                        <span style="font-size: 15px;">{{ 'Write down this mnemonic phrase and store it securely. It
+                          will be required to restore your wallet.' | translate }}</span>
                       </div>
 
                       <app-new-wallet [selectedNetworkMetadata]="selectedNetworkMetadata"
@@ -177,7 +178,8 @@
                     <div class="ion-padding-horizontal">
                       <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                         <h1 style="font-weight: bold;">{{ 'Import Seed Phrase' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your 12-word recovery phrase.' | translate }}</span>
+                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your 12-word recovery
+                          phrase.' | translate }}</span>
                       </div>
 
                       <app-import-seed-phrase [selectedNetworkMetadata]="selectedNetworkMetadata"
@@ -202,7 +204,8 @@
                     <div class="ion-padding-horizontal">
                       <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                         <h1 style="font-weight: bold;">{{ 'Import Private Key' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your private key.' | translate }}</span>
+                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your private key.' |
+                          translate }}</span>
                       </div>
 
                       <app-import-private-key [selectedNetworkMetadata]="selectedNetworkMetadata"
@@ -227,7 +230,8 @@
                     <div class="ion-padding-horizontal">
                       <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                         <h1 style="font-weight: bold;">{{ 'Import From Backup' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Restore a wallet from your backup files.' | translate }} </span>
+                        <span style="font-size: 15px;">{{ 'Restore a wallet from your backup files.' | translate }}
+                        </span>
                       </div>
 
                       <app-import-from-backup [selectedNetworkMetadata]="selectedNetworkMetadata"
@@ -264,14 +268,13 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
-          <app-notifications (onOpenNotification)="openNotificationsModal()"></app-notifications>
-        </div>
+        <app-notifications (onOpenNotification)="openNotificationsModal()"></app-notifications>
       </ion-content>
     </ng-template>
   </ion-modal>
 
-  <ion-modal #settingsModal class="settings-list" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+  <ion-modal #settingsModal class="settings-list" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>{{ 'Settings' | translate }}</ion-title>
@@ -282,9 +285,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
-          <app-settings></app-settings>
-        </div>
+        <app-settings></app-settings>
       </ion-content>
     </ng-template>
   </ion-modal>

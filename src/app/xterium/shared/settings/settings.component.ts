@@ -27,8 +27,8 @@ import {
   languageOutline
 } from 'ionicons/icons';
 
-import { CurrencyComponent } from '../currency/currency.component';
-import { LanguageComponent } from '../language/language.component';
+import { CurrencyComponent } from './currency/currency.component';
+import { LanguageComponent } from './language/language.component';
 
 import { Currency } from 'src/models/currency.model';
 

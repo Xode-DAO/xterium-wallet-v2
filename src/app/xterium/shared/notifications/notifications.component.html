@@ -9,7 +9,7 @@
     </ion-grid>
   }
 
-  @if (notifications.length > 0) { 
+  @if (notifications.length > 0) {
     <ion-grid>
       <ion-row>
         @for (notification of notifications; track notification) {
@@ -25,8 +25,8 @@
             </ion-list>
           </ion-col>
           <ion-alert
-            [isOpen]="isAlertOpen" 
-            [header]="selectedNotification?.title" 
+            [isOpen]="isAlertOpen"
+            [header]="selectedNotification?.title"
             [subHeader]="selectedNotification?.timestamp | date:'medium'"
             [message]="selectedNotification?.body"
             [buttons]="['OK']"
@@ -36,5 +36,5 @@
       </ion-row>
     </ion-grid>
   }
-  
+
 </div>

@@ -1,5 +1,6 @@
 .notifications-list {
   border: none;
+  padding: 5px 8px;
 
   ion-list {
     background: transparent;
@@ -13,10 +14,10 @@
   }
 
   ion-label {
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   h2 {
@@ -35,6 +36,7 @@
   }
 
   .read-notification {
+
     h2,
     p {
       color: #858585 !important;
