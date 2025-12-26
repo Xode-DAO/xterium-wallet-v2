@@ -282,7 +282,8 @@ export class XteriumPage implements OnInit {
           code: "en",
           name: "English",
           nativeName: "English"
-        }
+        },
+        enable_testnets: settings?.user_preferences.enable_testnets ?? false,
       }
     };
 
