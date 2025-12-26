@@ -89,7 +89,7 @@ export class WalletsComponent implements OnInit {
   currentWalletPublicAddress: string = '';
 
   getChains(): void {
-    const allChains = this.chainsService.getChainsByNetwork(Network.All);
+    const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
     const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
 
     this.chains = [...allChains, ...liveChains];
@@ -151,13 +151,13 @@ export class WalletsComponent implements OnInit {
       const matchedChain = this.chains.find(
         chain => chain.id === this.currentWallet.chain.id
       );
-    
+
       if (matchedChain) {
         this.selectedChain = matchedChain;
-    
+
         this.loadChainByName();
         await this.loadWalletsByChain();
-    
+
         this.onFilteredChain.emit(matchedChain);
       }
     }

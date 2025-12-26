@@ -77,7 +77,7 @@ export class ApprovalPage implements OnInit {
   selectedChainName: string = "";
 
   getChains(): void {
-    const allChains = this.chainsService.getChainsByNetwork(Network.All);
+    const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
     const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
 
     this.chains = [...allChains, ...liveChains];
@@ -90,7 +90,7 @@ export class ApprovalPage implements OnInit {
 
   async getWallet(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
-  
+
     if (this.chainId) {
       await this.loadWalletsByChainId(this.chainId);
     }
@@ -98,38 +98,38 @@ export class ApprovalPage implements OnInit {
 
   getChainByChainId(chainId: number) {
     const selectedChain = this.chainsService.getChainByChainId(chainId);
-      
+
     if (!selectedChain) {
       return;
     }
 
     this.chainId = selectedChain.chain_id;
     this.loadWalletsByChainId(this.chainId);
-      
+
   }
-  
+
   getChainImage(name: string) {
     const chain = this.chains.find(c => c.name === name);
     return chain?.image ?? 'default.png';
   }
-  
+
   async loadWalletsByChainId(chainId: number): Promise<void> {
     this.walletsByChain = {};
-  
+
     const selectedChain = this.chains.find(c => c.chain_id === chainId);
     if (!selectedChain) return;
-  
+
     this.selectedChainName = selectedChain.name;
-  
+
     const filtered = this.wallets.filter(w => w.chain.id === selectedChain.id);
-  
+
     const mapped = await Promise.all(
       filtered.map(async wallet => ({
         ...wallet,
         public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, selectedChain)
       }))
     );
-  
+
     this.walletsByChain[selectedChain.name] = mapped;
   }
 
@@ -180,7 +180,7 @@ export class ApprovalPage implements OnInit {
         this.selectedAccounts.map(async (wallet) => {
           const rawWallet = this.wallets.find(d => d.id === wallet.id);
           if (!rawWallet) return null;
-  
+
           const publicKeyU8a = new Uint8Array(
             rawWallet.public_key.split(",").map((byte) => Number(byte.trim()))
           );
@@ -194,7 +194,7 @@ export class ApprovalPage implements OnInit {
         })
       )
     )
-  
+
     if (this.environmentService.isChromeExtension()) {
       chrome.runtime.sendMessage({
         type: "xterium-approval-response",
@@ -205,11 +205,11 @@ export class ApprovalPage implements OnInit {
         },
       });
     }
-  
+
     const callbackEncoded = this.callBackUrl
-      ? encodeURIComponent(this.callBackUrl) 
+      ? encodeURIComponent(this.callBackUrl)
       : "";
-      
+
       const deeplink =
         `xterium://app/web3/approval?` +
         `selected_accounts=${encodeURIComponent(JSON.stringify(encodedWallets))}` +
@@ -218,7 +218,7 @@ export class ApprovalPage implements OnInit {
 
       this.deepLinkService.sendDeeplink(deeplink, this.callBackUrl, encodedWallets);
   }
-  
+
   reject() {
     if (this.environmentService.isChromeExtension()) {
       chrome.runtime.sendMessage({
@@ -249,7 +249,7 @@ export class ApprovalPage implements OnInit {
       if (params['origin']) {
         this.origin = params['origin'];
       }
-      
+
       if (params['callback']) {
         this.callBackUrl = decodeURIComponent(params['callback']);
       }

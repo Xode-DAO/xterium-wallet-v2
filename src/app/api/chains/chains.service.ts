@@ -9,18 +9,18 @@ import { Chain, ScannerType } from "src/models/chain.model"
 export class ChainsService {
 
   private readonly chains: Chain[] = [
-    {
-      id: 0,
-      network: Network.All,
-      name: "All Chains",
-      description: "Includes every supported blockchain network for selection.",
-      chain_id: 0,
-      unit: "DOT",
-      decimal: 10,
-      address_prefix: 0,
-      image: "all-networks.png",
-      scanner: undefined
-    },
+    // {
+    //   id: 0,
+    //   network: Network.All,
+    //   name: "All Chains",
+    //   description: "Includes every supported chains.",
+    //   chain_id: 0,
+    //   unit: "DOT",
+    //   decimal: 10,
+    //   address_prefix: 0,
+    //   image: "all-chains.png",
+    //   scanner: undefined
+    // },
     {
       id: 1,
       network: Network.Substrate,
@@ -97,42 +97,26 @@ export class ChainsService {
         extrinsics_url: "https://hydration.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
-    {
-      id: 6,
-      network: Network.Paseo,
-      name: "Paseo",
-      description: "Connect to the Paseo mainnet and its ecosystem.",
-      chain_id: 0,
-      unit: "DOT",
-      decimal: 10,
-      address_prefix: 0,
-      image: "paseo.png",
-      scanner: {
-        type: ScannerType.Subscan,
-        transfers_url: "https://paseo.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://paseo.api.subscan.io/api/v2/scan/extrinsics"
-      }
-    },
+    // {
+    //   id: 6,
+    //   network: Network.Paseo,
+    //   name: "AssetHub - Paseo",
+    //   description: "Manage your assets easily on the Paseo AssetHub parachain.",
+    //   chain_id: 1000,
+    //   unit: "PAS",
+    //   decimal: 10,
+    //   address_prefix: 0,
+    //   image: "assethub.png",
+    //   scanner: {
+    //     type: ScannerType.Subscan,
+    //     transfers_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/transfers",
+    //     extrinsics_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/extrinsics"
+    //   }
+    // },
     {
       id: 7,
       network: Network.Paseo,
-      name: "AssetHub - Paseo",
-      description: "Manage your assets easily on the Paseo AssetHub parachain.",
-      chain_id: 1000,
-      unit: "PAS",
-      decimal: 10,
-      address_prefix: 0,
-      image: "assethub.png",
-      scanner: {
-        type: ScannerType.Subscan,
-        transfers_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/extrinsics"
-      }
-    },
-    {
-      id: 8,
-      network: Network.Paseo,
-      name: "Xode - Paseo",
+      name: "XODE - Paseo",
       description: "Experience smooth and fast transactions with Xode.",
       chain_id: 4607,
       unit: "XON",
@@ -145,20 +129,36 @@ export class ChainsService {
         extrinsics_url: "https://subsquid-v2.xode.net/graphql"
       }
     },
+    // {
+    //   id: 8,
+    //   network: Network.Paseo,
+    //   name: "Hydration - Paseo",
+    //   description: "Test decentralized trading and liquidity features on Hydration’s Paseo test network.",
+    //   chain_id: 2034,
+    //   unit: "HDX",
+    //   decimal: 12,
+    //   address_prefix: 0,
+    //   image: "hydration-paseo.png",
+    //   scanner: {
+    //     type: ScannerType.Subscan,
+    //     transfers_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/transfers",
+    //     extrinsics_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/extrinsics"
+    //   }
+    // },
     {
       id: 9,
-      network: Network.Paseo,
-      name: "Hydration - Paseo",
-      description: "Test decentralized trading and liquidity features on Hydration’s Paseo test network.",
+      network: Network.Rococo,
+      name: "Polaris",
+      description: "Test decentralized trading and liquidity features on Polaris Rococo network.",
       chain_id: 2034,
       unit: "HDX",
       decimal: 12,
       address_prefix: 0,
-      image: "hydration-paseo.png",
+      image: "polaris.png",
       scanner: {
         type: ScannerType.Subscan,
-        transfers_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/extrinsics"
+        transfers_url: "https://polaris-rococo.api.subscan.io/api/v2/scan/transfers",
+        extrinsics_url: "https://polaris-rococo.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
     {

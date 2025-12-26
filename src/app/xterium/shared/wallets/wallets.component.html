@@ -24,10 +24,7 @@
                 </ion-buttons>
               </ion-toolbar>
               <ion-content>
-                <div class="ion-padding-horizontal">
-                  <app-chains [isAllChainIncluded]="true"
-                    (onSelectedChain)="onSelectedChain($event)"></app-chains>
-                </div>
+                <app-chains (onSelectedChain)="onSelectedChain($event)"></app-chains>
               </ion-content>
             </ng-template>
           </ion-modal>
@@ -38,11 +35,11 @@
 
   <ion-grid class="wallet-grid">
     @for (chain of chainsByName[selectedChain.name]; track chain) {
-    @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
+    <!-- @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
     <div class="chain-label">
       {{ chain.name }}
     </div>
-    }
+    } -->
     <ion-row>
       @for (wallet of walletsByChain[chain.name]; track wallet) {
       <ion-col size="6">

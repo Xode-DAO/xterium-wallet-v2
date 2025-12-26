@@ -1,8 +1,9 @@
 export enum Network {
-  All = 'All',
+  AllNetworks = 'All Networks',
   Substrate = 'Substrate',
   Polkadot = 'Polkadot',
   Paseo = 'Paseo',
+  Rococo = 'Rococo',
   Solana = 'Solana',
   SolanaTestnet = 'Solana Testnet',
   SolanaDevnet = 'Solana Devnet',

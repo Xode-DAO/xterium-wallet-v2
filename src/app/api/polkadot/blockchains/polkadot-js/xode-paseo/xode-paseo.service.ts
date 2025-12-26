@@ -8,6 +8,7 @@ import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
 import { hexToString, hexToU8a, } from '@polkadot/util';
 import { ISubmittableResult } from '@polkadot/types/types';
 
+import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 
 import { Token } from 'src/models/token.model';
@@ -17,16 +18,18 @@ import { WalletSigner } from 'src/models/wallet.model';
 @Injectable({
   providedIn: 'root',
 })
-export class PolarisService {
-  
+export class XodePaseoService extends PolkadotJsService {
+
   constructor(
     private settingsService: SettingsService,
-  ) {}
+  ) {
+    super();
+  }
 
   async connect(): Promise<ApiPromise> {
     await cryptoWaitReady();
 
-    const wsProvider = new WsProvider("wss://devnet02.xode.net");
+    const wsProvider = new WsProvider("wss://paseo01.xode.net");
     const api = await ApiPromise.create({ provider: wsProvider });
 
     return api;
@@ -360,22 +363,22 @@ export class PolarisService {
   async signTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Promise<string> {
     const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
     const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
-  
+
     const keyring = new Keyring({ type: 'sr25519' });
     const pair = keyring.addFromPair({
       publicKey,
       secretKey,
     });
-  
+
     const txBytes = hexToU8a(encodedCallDataHex);
     const call = api.createType('Extrinsic', txBytes);
     const tx = api.tx(call);
-  
+
     const signedTx = await tx.signAsync(pair, { nonce: -1 });
-  
+
     return signedTx.toHex();
   }
-  
+
   signAndSubmitTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult> {
     return new Observable<ISubmittableResult>(subscriber => {
       const subscriptions: any[] = [];

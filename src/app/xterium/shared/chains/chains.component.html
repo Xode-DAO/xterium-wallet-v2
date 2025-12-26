@@ -1,7 +1,44 @@
 <div class="chains-list">
   <ion-grid>
     <ion-row>
-      @for (chain of chains; track chain;) {
+      <ion-col size="12">
+        <ion-item class="primary-select-button-item" (click)="openSelectNetworkMetadataModal()">
+          @if (selectedNetworkMetadata) {
+          <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
+            <img [src]="'./../assets/images/networks/' + selectedNetworkMetadata.image" alt="Chain Logo" />
+          </ion-avatar>
+          }
+          <ion-label>{{ selectedNetworkMetadata.network || 'Select Network' }}</ion-label>
+          <ion-button size="small" fill="clear">
+            <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
+          </ion-button>
+
+          <ion-modal #selectNetworkMetadataModal class="select-network-metadata-modal" [initialBreakpoint]="0.98"
+            [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+            <ng-template>
+              <ion-toolbar class="main-modal-toolbar">
+                <ion-title>Select Network</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button (click)="selectNetworkMetadataModal.dismiss()">
+                    <ion-icon name="close" style="color: white;"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-toolbar>
+              <app-networks (onSelectedNetworkMetadata)="onSelectedNetworkMetadata($event)"></app-networks>
+            </ng-template>
+          </ion-modal>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    @for (networkMetadata of networkMetadatasByNetwork[selectedNetworkMetadata.network]; track networkMetadata) {
+    @if (chainsByNetwork[networkMetadata.network] && chainsByNetwork[networkMetadata.network].length > 0) {
+    <div class="network-metadata-label">
+      {{ networkMetadata.network }}
+    </div>
+    }
+    <ion-row>
+      @for (chain of chainsByNetwork[networkMetadata.network]; track chain) {
       <ion-col size="12">
         <ion-list>
           <ion-item button detail="false" lines="none" (click)="selectChain(chain)">
@@ -17,5 +54,6 @@
       </ion-col>
       }
     </ion-row>
+    }
   </ion-grid>
 </div>

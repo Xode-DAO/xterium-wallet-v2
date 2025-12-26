@@ -5,10 +5,8 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonAvatar
+  IonCard,
+  IonCardContent
 } from '@ionic/angular/standalone';
 
 import { NetworkMetadata } from 'src/models/network.model';
@@ -24,10 +22,8 @@ import { NetworkMetadataService } from 'src/app/api/network-metadata/network-met
     IonGrid,
     IonRow,
     IonCol,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonAvatar
+    IonCardContent,
+    IonCard,
   ]
 })
 export class NetworksComponent implements OnInit {
