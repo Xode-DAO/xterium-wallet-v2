@@ -15,6 +15,7 @@ import {
   IonItem,
   IonIcon,
   IonModal,
+  IonToggle,
   ToastController,
   ActionSheetController
 } from '@ionic/angular/standalone';
@@ -24,7 +25,9 @@ import {
   close,
   logOutOutline,
   logoUsd,
-  languageOutline
+  languageOutline,
+  fingerPrintOutline,
+  codeOutline
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -57,6 +60,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonItem,
     IonIcon,
     IonModal,
+    IonToggle,
     CurrencyComponent,
     LanguageComponent,
     TranslatePipe,
@@ -78,13 +82,19 @@ export class SettingsComponent  implements OnInit {
       close,
       logOutOutline,
       logoUsd,
-      languageOutline
+      languageOutline,
+      fingerPrintOutline,
+      codeOutline
     });
   }
 
   selectedCurrency: Currency = new Currency();
   selectedLanguage: LanguageTranslation = new LanguageTranslation();
   code: string = '';
+
+  useBiometric: boolean = false;
+
+  isTestnetEnable: boolean = false;
 
   async confirmLogout() {
       const actionSheet = await this.actionSheetController.create({
@@ -156,11 +166,32 @@ export class SettingsComponent  implements OnInit {
     this.languageModal.dismiss();
   }
 
+  // async enableBiometric(event: any): Promise<void> {
+  //   const enableBiometric = event.detail.checked;
+  //   const settings = await this.settingsService.get();
+
+  //   if (settings) {
+  //     settings.user_preferences = enableBiometric;
+  //     this.settingsService.set(settings);
+  //   }
+  // }
+
+  async enableTestnet(event: any): Promise<void> {
+    const enableTestnet = event.detail.checked;
+    const enable = await this.settingsService.get();
+
+    if (enable) {
+      enable.user_preferences.enable_testnets = enableTestnet;
+      this.settingsService.set(enable);
+    }
+  }
+
   async ngOnInit() {
     const settings = await this.settingsService.get();
       if (settings) {
         this.selectedCurrency = settings.user_preferences.currency;
         this.selectedLanguage = settings.user_preferences.language;
+        this.isTestnetEnable = settings.user_preferences.enable_testnets;
       }
    }
 }
