@@ -191,6 +191,7 @@ export class SettingsComponent  implements OnInit {
       if (settings) {
         this.selectedCurrency = settings.user_preferences.currency;
         this.selectedLanguage = settings.user_preferences.language;
+        this.isTestnetEnable = settings.user_preferences.enable_testnets;
       }
    }
 }
