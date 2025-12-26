@@ -86,6 +86,8 @@ export class ImportSeedPhraseComponent implements OnInit {
     });
   }
 
+  derivationPath: string = '';
+
   isChromeExtension = false;
 
   walletName: string = '';
@@ -105,9 +107,15 @@ export class ImportSeedPhraseComponent implements OnInit {
     const { type, value } = await Clipboard.read();
 
     if (type === 'text/plain') {
-      if (value.split(' ').length !== 12) {
+      const parts = value.split('//');
+      const mnemonicPhrase = parts[0].trim();
+      const derivationPath = parts.length > 1 ? '//' + parts.slice(1).join('//') : '';
+      
+      const words = mnemonicPhrase.split(' ').filter(word => word.length > 0);
+      
+      if (words.length !== 12) {
         const toast = await this.toastController.create({
-          message: 'Invalid mnemonic phrase length!',
+          message: 'Invalid mnemonic phrase length! Expected 12 words.',
           color: 'danger',
           duration: 1500,
           position: 'top',
@@ -115,7 +123,18 @@ export class ImportSeedPhraseComponent implements OnInit {
 
         await toast.present();
       } else {
-        this.walletMnemonicPhrase = value.split(' ')
+        this.walletMnemonicPhrase = words;
+        this.derivationPath = derivationPath;
+        
+        if (derivationPath) {
+          const toast = await this.toastController.create({
+            message: `Derivation path detected: ${derivationPath}`,
+            color: 'primary',
+            duration: 2000,
+            position: 'top',
+          });
+          await toast.present();
+        }
       }
     }
   }
@@ -140,6 +159,7 @@ export class ImportSeedPhraseComponent implements OnInit {
     this.isProcessing = true;
 
     if (this.selectedNetworkMetadata.network === Network.Polkadot) {
+      
       let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
       if (!isMnemonicPhraseValid) {
         this.confirmImportWalletModal.dismiss();
@@ -156,8 +176,14 @@ export class ImportSeedPhraseComponent implements OnInit {
         return;
       }
 
-      const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
-      const keypair = await this.utilsService.createKeypairFromSeed(seed);
+      let keypair;
+      
+      if (!this.derivationPath) {
+        const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
+        keypair = await this.utilsService.createKeypairFromSeed(seed);
+      } else {
+        keypair = await this.utilsService.deriveKeypair(this.walletMnemonicPhrase.join(' '), this.derivationPath);
+      }
 
       let newId = uuidv4();
 
