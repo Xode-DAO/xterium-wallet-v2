@@ -22,6 +22,7 @@ import {
   IonLabel,
   IonModal,
   IonBadge,
+  IonAvatar
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -38,6 +39,7 @@ import {
   chevronDownOutline,
 } from 'ionicons/icons';
 
+import { NetworksComponent } from './shared/networks/networks.component';
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
@@ -49,15 +51,15 @@ import { SettingsComponent } from './shared/settings/settings.component';
 import { NetworkMetadata } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
+import { LocalNotification } from 'src/models/local-notification.model';
+import { Settings } from 'src/models/settings.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { LocalNotificationsService } from '../api/local-notifications/local-notifications.service';
-import { LocalNotification } from 'src/models/local-notification.model';
 import { SettingsService } from '../api/settings/settings.service';
-import { Settings } from 'src/models/settings.model';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -87,6 +89,8 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonLabel,
     IonModal,
     IonBadge,
+    IonAvatar,
+    NetworksComponent,
     WalletsComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
@@ -100,14 +104,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class XteriumPage implements OnInit {
   @ViewChild('myWalletsModal', { read: IonModal }) myWalletsModal!: IonModal;
   @ViewChild('createWalletModal', { read: IonModal }) createWalletModal!: IonModal;
-  @ViewChild('selectNetworkModal', { read: IonModal }) selectNetworkModal!: IonModal;
+  @ViewChild('selectNetworkMetadataModal', { read: IonModal }) selectNetworkMetadataModal!: IonModal;
   @ViewChild('createNewAccountModal', { read: IonModal }) createNewAccountModal!: IonModal;
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
   @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
   @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
   @ViewChild('notificationsModal', { read: IonModal }) notificationsModal!: IonModal;
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
-
 
   constructor(
     private router: Router,
@@ -201,13 +204,13 @@ export class XteriumPage implements OnInit {
     this.createWalletModal.present();
   }
 
-  openSelectNetworkModal() {
-    this.selectNetworkModal.present();
+  openSelectNetworkMetadataModal() {
+    this.selectNetworkMetadataModal.present();
   }
 
   onSelectedNetworkMetadata(networkMetadata: NetworkMetadata) {
     this.selectedNetworkMetadata = networkMetadata;
-    this.selectNetworkModal.dismiss();
+    this.selectNetworkMetadataModal.dismiss();
   }
 
   openCreateNewAccountModal() {
@@ -283,7 +286,7 @@ export class XteriumPage implements OnInit {
           name: "English",
           nativeName: "English"
         },
-        enable_testnets: settings?.user_preferences.enable_testnets ?? false,
+        developer_mode: settings?.user_preferences.developer_mode ?? false,
       }
     };
 
@@ -292,7 +295,7 @@ export class XteriumPage implements OnInit {
 
   ngOnInit() {
     this.initSettings();
-    this.selectedNetworkMetadata = this.networkMetadataService.getAllNetworkMetadatas()[0];
+    this.selectedNetworkMetadata = this.networkMetadataService.getAllNetworkMetadatas()[1];
 
     setTimeout(() => {
       this.getCurrentWallet();

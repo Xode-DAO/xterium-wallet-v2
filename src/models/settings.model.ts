@@ -5,7 +5,7 @@ export class SettingsUserPreferences {
   hide_zero_balances: boolean = true;
   currency: Currency = new Currency();
   language: LanguageTranslation = new LanguageTranslation();
-  enable_testnets: boolean = false;
+  developer_mode: boolean = false;
 }
 
 export class Settings {

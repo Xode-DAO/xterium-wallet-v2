@@ -24,17 +24,42 @@
                   </ion-button>
                 </ion-buttons>
               </ion-toolbar>
-              <app-networks (onSelectedNetworkMetadata)="onSelectedNetworkMetadata($event)"></app-networks>
+              <app-networks [showAllNetworks]="true"
+                (onSelectedNetworkMetadata)="onSelectedNetworkMetadata($event)"></app-networks>
             </ng-template>
           </ion-modal>
         </ion-item>
       </ion-col>
     </ion-row>
+  </ion-grid>
 
+  <ion-grid class="chains-grid">
     @for (networkMetadata of networkMetadatasByNetwork[selectedNetworkMetadata.network]; track networkMetadata) {
     @if (chainsByNetwork[networkMetadata.network] && chainsByNetwork[networkMetadata.network].length > 0) {
     <div class="network-metadata-label">
-      {{ networkMetadata.network }}
+      @if (networkMetadata.network === 'Polkadot') {
+      <ion-chip [color]="'primary'">
+        <img [src]="'/assets/images/networks/' + networkMetadata.image" alt="{{ networkMetadata.network }}"
+          height="20" />
+        &nbsp; {{ networkMetadata.network }}
+      </ion-chip>
+      }
+
+      @if (networkMetadata.network === 'Paseo') {
+      <ion-chip [color]="'secondary'">
+        <img [src]="'/assets/images/networks/' + networkMetadata.image" alt="{{ networkMetadata.network }}"
+          height="20" />
+        &nbsp; {{ networkMetadata.network }}
+      </ion-chip>
+      }
+
+      @if (networkMetadata.network === 'Rococo') {
+      <ion-chip [color]="'warning'">
+        <img [src]="'/assets/images/networks/' + networkMetadata.image" alt="{{ networkMetadata.network }}"
+          height="20" />
+        &nbsp; {{ networkMetadata.network }}
+      </ion-chip>
+      }
     </div>
     }
     <ion-row>

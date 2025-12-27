@@ -6,7 +6,11 @@ import {
   IonRow,
   IonCol,
   IonCard,
-  IonCardContent
+  IonCardContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonAvatar
 } from '@ionic/angular/standalone';
 
 import { NetworkMetadata } from 'src/models/network.model';
@@ -24,9 +28,14 @@ import { NetworkMetadataService } from 'src/app/api/network-metadata/network-met
     IonCol,
     IonCardContent,
     IonCard,
+    IonAvatar,
+    IonLabel,
+    IonItem,
+    IonList,
   ]
 })
 export class NetworksComponent implements OnInit {
+  @Input() showAllNetworks: boolean = true;
   @Output() onSelectedNetworkMetadata = new EventEmitter<NetworkMetadata>();
 
   constructor(

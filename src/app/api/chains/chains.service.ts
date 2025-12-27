@@ -9,18 +9,18 @@ import { Chain, ScannerType } from "src/models/chain.model"
 export class ChainsService {
 
   private readonly chains: Chain[] = [
-    // {
-    //   id: 0,
-    //   network: Network.All,
-    //   name: "All Chains",
-    //   description: "Includes every supported chains.",
-    //   chain_id: 0,
-    //   unit: "DOT",
-    //   decimal: 10,
-    //   address_prefix: 0,
-    //   image: "all-chains.png",
-    //   scanner: undefined
-    // },
+    {
+      id: 0,
+      network: Network.AllNetworks,
+      name: "All Chains",
+      description: "Includes every supported chains.",
+      chain_id: 0,
+      unit: "DOT",
+      decimal: 10,
+      address_prefix: 0,
+      image: "all-chains.png",
+      scanner: undefined
+    },
     {
       id: 1,
       network: Network.Substrate,
@@ -37,17 +37,13 @@ export class ChainsService {
       id: 2,
       network: Network.UnknownNetwork,
       name: "Polkadot",
-      description: "Connect to the Polkadot mainnet and its ecosystem.",
+      description: "The heart of Web3, connecting multiple specialized blockchains into a unified network.",
       chain_id: 0,
       unit: "DOT",
       decimal: 10,
       address_prefix: 0,
       image: "polkadot.png",
-      scanner: {
-        type: ScannerType.Subscan,
-        transfers_url: "https://polkadot.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://assethub-polkadot.api.subscan.io/api/v2/scan/extrinsics"
-      }
+      scanner: undefined
     },
     {
       id: 3,
@@ -68,7 +64,7 @@ export class ChainsService {
     {
       id: 4,
       network: Network.Polkadot,
-      name: "XODE - Polkadot",
+      name: "Xode - Polkadot",
       description: "Experience smooth and fast transactions with Xode.",
       chain_id: 3417,
       unit: "XON",
@@ -107,27 +103,19 @@ export class ChainsService {
     //   decimal: 10,
     //   address_prefix: 0,
     //   image: "assethub.png",
-    //   scanner: {
-    //     type: ScannerType.Subscan,
-    //     transfers_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/transfers",
-    //     extrinsics_url: "https://assethub-paseo.api.subscan.io/api/v2/scan/extrinsics"
-    //   }
+    //   scanner: undefined
     // },
     {
       id: 7,
       network: Network.Paseo,
-      name: "XODE - Paseo",
-      description: "Experience smooth and fast transactions with Xode.",
-      chain_id: 4607,
+      name: "Xode - Paseo",
+      description: "Test and experience Xode on the Paseo test network.",
+      chain_id: 5102,
       unit: "XON",
       decimal: 12,
       address_prefix: null,
       image: "xode.png",
-      scanner: {
-        type: ScannerType.Subsquid,
-        transfers_url: "https://subsquid-v2.xode.net/graphql",
-        extrinsics_url: "https://subsquid-v2.xode.net/graphql"
-      }
+      scanner: undefined
     },
     // {
     //   id: 8,
@@ -139,64 +127,56 @@ export class ChainsService {
     //   decimal: 12,
     //   address_prefix: 0,
     //   image: "hydration-paseo.png",
-    //   scanner: {
-    //     type: ScannerType.Subscan,
-    //     transfers_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/transfers",
-    //     extrinsics_url: "https://hydration-paseo.api.subscan.io/api/v2/scan/extrinsics"
-    //   }
+    //   scanner: undefined
     // },
     {
       id: 9,
       network: Network.Rococo,
       name: "Polaris",
-      description: "Test decentralized trading and liquidity features on Polaris Rococo network.",
-      chain_id: 2034,
-      unit: "HDX",
+      description: "Xode's devnet parachain on Rococo for testing purposes.",
+      chain_id: 2000,
+      unit: "POL",
       decimal: 12,
       address_prefix: 0,
       image: "polaris.png",
-      scanner: {
-        type: ScannerType.Subscan,
-        transfers_url: "https://polaris-rococo.api.subscan.io/api/v2/scan/transfers",
-        extrinsics_url: "https://polaris-rococo.api.subscan.io/api/v2/scan/extrinsics"
-      }
-    },
-    {
-      id: 10,
-      network: Network.Solana,
-      name: "Solana",
-      description: "Make low-cost transactions on the high-performance Solana blockchain.",
-      chain_id: 0,
-      unit: "SOL",
-      decimal: 9,
-      address_prefix: null,
-      image: "solana.png",
       scanner: undefined
     },
-    {
-      id: 11,
-      network: Network.SolanaTestnet,
-      name: "Solana - Testnet",
-      description: "Make low-cost transactions on the high-performance Solana blockchain.",
-      chain_id: 0,
-      unit: "SOL",
-      decimal: 9,
-      address_prefix: null,
-      image: "solana.png",
-      scanner: undefined
-    },
-    {
-      id: 12,
-      network: Network.SolanaDevnet,
-      name: "Solana - Devnet",
-      description: "Make low-cost transactions on the high-performance Solana blockchain.",
-      chain_id: 0,
-      unit: "SOL",
-      decimal: 9,
-      address_prefix: null,
-      image: "solana.png",
-      scanner: undefined
-    },
+    // {
+    //   id: 10,
+    //   network: Network.Solana,
+    //   name: "Solana",
+    //   description: "Make low-cost transactions on the high-performance Solana blockchain.",
+    //   chain_id: 0,
+    //   unit: "SOL",
+    //   decimal: 9,
+    //   address_prefix: null,
+    //   image: "solana.png",
+    //   scanner: undefined
+    // },
+    // {
+    //   id: 11,
+    //   network: Network.SolanaTestnet,
+    //   name: "Solana - Testnet",
+    //   description: "Make low-cost transactions on the high-performance Solana blockchain.",
+    //   chain_id: 0,
+    //   unit: "SOL",
+    //   decimal: 9,
+    //   address_prefix: null,
+    //   image: "solana.png",
+    //   scanner: undefined
+    // },
+    // {
+    //   id: 12,
+    //   network: Network.SolanaDevnet,
+    //   name: "Solana - Devnet",
+    //   description: "Make low-cost transactions on the high-performance Solana blockchain.",
+    //   chain_id: 0,
+    //   unit: "SOL",
+    //   decimal: 9,
+    //   address_prefix: null,
+    //   image: "solana.png",
+    //   scanner: undefined
+    // },
   ];
 
   constructor() { }

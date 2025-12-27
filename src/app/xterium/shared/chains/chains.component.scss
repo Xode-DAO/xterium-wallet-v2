@@ -3,10 +3,15 @@
   padding: 5px 8px;
 
   .network-metadata-label {
-    margin: 10px 10px 5px 10px;
+    margin: 10px 0px 0px 0px;
     font-size: 16px;
     font-weight: 600;
     color: #c7c7c7;
+  }
+
+  ion-grid.chains-grid {
+    margin-top: -10px;
+    margin-bottom: 5px;
   }
 
   ion-list {
@@ -16,7 +21,7 @@
   ion-item {
     --background: #333333;
 
-    border-radius: 25px;
+    border-radius: 1.5rem;
     transition: background 0.2s;
 
   }

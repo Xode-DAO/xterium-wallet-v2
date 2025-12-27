@@ -8,12 +8,12 @@ import { ApiPromise } from '@polkadot/api';
 import { Subscription } from 'rxjs';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
-import {
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexTitleSubtitle,
-  ApexXAxis
-} from "ng-apexcharts";
+// import {
+//   ApexAxisChartSeries,
+//   ApexChart,
+//   ApexTitleSubtitle,
+//   ApexXAxis
+// } from "ng-apexcharts";
 
 import {
   IonContent,
@@ -48,6 +48,8 @@ import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/po
 import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
 import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
+import { XodePaseoService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-paseo/xode-paseo.service';
+import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/polaris/polaris.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -101,6 +103,8 @@ export class TokenDetailsPage implements OnInit {
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private hydrationPolkadotService: HydrationPolkadotService,
+    private xodePaseoService: XodePaseoService,
+    private polarisService: PolarisService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     private balancesService: BalancesService,
@@ -215,6 +219,8 @@ export class TokenDetailsPage implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5102) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;
 

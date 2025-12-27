@@ -35,11 +35,14 @@
 
   <ion-grid class="wallet-grid">
     @for (chain of chainsByName[selectedChain.name]; track chain) {
-    <!-- @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
+    @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
     <div class="chain-label">
-      {{ chain.name }}
+      <ion-chip [color]="'dark'">
+        <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
+        &nbsp; {{ chain.name }}
+      </ion-chip>
     </div>
-    } -->
+    }
     <ion-row>
       @for (wallet of walletsByChain[chain.name]; track wallet) {
       <ion-col size="6">
@@ -48,7 +51,7 @@
             detail="false" lines="none" (click)="setCurrentWallet(wallet)">
             <ion-label>
               <div class="wallet-header">
-                <img [src]="'./../../../../assets/images/chains/' + chain.image" height="25" />
+                <ion-icon name="wallet" slot="icon-only" style="color: #0bbab5; font-size: 27px;"></ion-icon>
                 <ion-button fill="clear" size="small" class="menu-button"
                   (click)="openWalletDetailsModal(wallet); $event.stopPropagation()">
                   <ion-icon name="create-outline" slot="icon-only"></ion-icon>

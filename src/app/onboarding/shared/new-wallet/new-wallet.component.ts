@@ -129,7 +129,9 @@ export class NewWalletComponent implements OnInit {
   async onSignWallet(password: string) {
     this.isProcessing = true;
 
-    if (this.selectedNetworkMetadata.network === Network.Polkadot) {
+    if (this.selectedNetworkMetadata.network === Network.Polkadot ||
+      this.selectedNetworkMetadata.network === Network.Paseo ||
+      this.selectedNetworkMetadata.network === Network.Rococo) {
       let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
       if (!isMnemonicPhraseValid) {
         this.confirmSaveWalletModal.dismiss();

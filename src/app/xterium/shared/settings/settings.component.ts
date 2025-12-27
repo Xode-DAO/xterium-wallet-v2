@@ -176,12 +176,12 @@ export class SettingsComponent  implements OnInit {
   //   }
   // }
 
-  async enableTestnet(event: any): Promise<void> {
-    const enableTestnet = event.detail.checked;
+  async developerMode(event: any): Promise<void> {
+    const developerMode = event.detail.checked;
     const enable = await this.settingsService.get();
 
     if (enable) {
-      enable.user_preferences.enable_testnets = enableTestnet;
+      enable.user_preferences.developer_mode = developerMode;
       this.settingsService.set(enable);
     }
   }
@@ -191,7 +191,7 @@ export class SettingsComponent  implements OnInit {
       if (settings) {
         this.selectedCurrency = settings.user_preferences.currency;
         this.selectedLanguage = settings.user_preferences.language;
-        this.isTestnetEnable = settings.user_preferences.enable_testnets;
+        this.isTestnetEnable = settings.user_preferences.developer_mode;
       }
    }
 }

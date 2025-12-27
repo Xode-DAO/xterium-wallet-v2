@@ -14,7 +14,8 @@ import {
   IonButtons,
   IonButton,
   IonAvatar,
-  IonIcon
+  IonIcon,
+  IonChip
 } from '@ionic/angular/standalone';
 
 import { Network, NetworkMetadata } from 'src/models/network.model';
@@ -44,6 +45,7 @@ import { NetworksComponent } from 'src/app/xterium/shared/networks/networks.comp
     IonButton,
     IonAvatar,
     IonIcon,
+    IonChip,
     NetworksComponent
   ]
 })
@@ -86,7 +88,17 @@ export class ChainsComponent implements OnInit {
   }
 
   getChains(): void {
-    this.chains = this.chainsService.getAllChains();
+    const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
+    const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+    const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
+    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
+
+    this.chains = [
+      ...allChains,
+      ...polkadotChains,
+      ...paseoChains,
+      ...rococoChains
+    ];
     this.loadChainsByNetwork();
   }
 

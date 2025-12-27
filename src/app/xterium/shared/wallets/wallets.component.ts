@@ -16,10 +16,11 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
+  IonChip
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { ellipsisVerticalOutline, createOutline } from 'ionicons/icons';
+import { ellipsisVerticalOutline, createOutline, wallet } from 'ionicons/icons';
 
 import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
 import { WalletDetailsComponent } from 'src/app/xterium/shared/wallets/wallet-details/wallet-details.component';
@@ -52,6 +53,7 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonButtons,
     IonButton,
     IonIcon,
+    IonChip,
     ChainsComponent,
     WalletDetailsComponent
   ]
@@ -72,7 +74,8 @@ export class WalletsComponent implements OnInit {
   ) {
     addIcons({
       ellipsisVerticalOutline,
-      createOutline
+      createOutline,
+      wallet
     });
   }
 
@@ -90,9 +93,16 @@ export class WalletsComponent implements OnInit {
 
   getChains(): void {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
-    const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+    const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+    const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
+    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
 
-    this.chains = [...allChains, ...liveChains];
+    this.chains = [
+      ...allChains,
+      ...polkadotChains,
+      ...paseoChains,
+      ...rococoChains
+    ];
     this.selectedChain = this.chains[0];
 
     this.loadChainByName();
@@ -153,7 +163,7 @@ export class WalletsComponent implements OnInit {
       );
 
       if (matchedChain) {
-        this.selectedChain = matchedChain;
+        // this.selectedChain = matchedChain;
 
         this.loadChainByName();
         await this.loadWalletsByChain();
