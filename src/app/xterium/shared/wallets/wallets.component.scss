@@ -68,3 +68,8 @@
     padding: 0px 0px 8px 0px;
   }
 }
+
+ion-modal.select-network-metadata-modal,
+ion-modal.select-chain-modal {
+  --height: auto;
+}

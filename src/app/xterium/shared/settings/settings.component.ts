@@ -34,12 +34,14 @@ import { CurrencyComponent } from './currency/currency.component';
 import { LanguageComponent } from './language/language.component';
 
 import { Currency } from 'src/models/currency.model';
+import { LanguageTranslation } from 'src/models/language-translation.model';
 
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
-import { LanguageTranslation } from 'src/models/language-translation.model';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { Network } from 'src/models/network.model';
 
 @Component({
   selector: 'app-settings',
@@ -66,14 +68,14 @@ import { TranslatePipe } from '@ngx-translate/core';
     TranslatePipe,
   ]
 })
-export class SettingsComponent  implements OnInit {
+export class SettingsComponent implements OnInit {
   @ViewChild('currencyModal', { read: IonModal }) currencyModal!: IonModal;
   @ViewChild('languageModal', { read: IonModal }) languageModal!: IonModal;
-
 
   constructor(
     private authService: AuthService,
     private settingsService: SettingsService,
+    private walletsService: WalletsService,
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
 
@@ -97,37 +99,37 @@ export class SettingsComponent  implements OnInit {
   isTestnetEnable: boolean = false;
 
   async confirmLogout() {
-      const actionSheet = await this.actionSheetController.create({
-        header: 'Are you sure you want to logout?',
-        subHeader: 'You will need to login again.',
-        buttons: [
-          {
-            text: 'Logout',
-            role: 'destructive',
-            handler: async () => {
-              await this.authService.logout();
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Are you sure you want to logout?',
+      subHeader: 'You will need to login again.',
+      buttons: [
+        {
+          text: 'Logout',
+          role: 'destructive',
+          handler: async () => {
+            await this.authService.logout();
 
-              actionSheet.dismiss();
+            actionSheet.dismiss();
 
-              const toast = await this.toastController.create({
-                message: 'Logged out successfully!',
-                color: 'success',
-                duration: 1500,
-                position: 'top'
-              });
+            const toast = await this.toastController.create({
+              message: 'Logged out successfully!',
+              color: 'success',
+              duration: 1500,
+              position: 'top'
+            });
 
-              await toast.present();
-            }
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel'
+            await toast.present();
           }
-        ]
-      });
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
 
-      await actionSheet.present();
-    }
+    await actionSheet.present();
+  }
 
   async openCurrencyModal() {
     this.currencyModal.present();
@@ -178,20 +180,36 @@ export class SettingsComponent  implements OnInit {
 
   async developerMode(event: any): Promise<void> {
     const developerMode = event.detail.checked;
-    const enable = await this.settingsService.get();
+    const settings = await this.settingsService.get();
 
-    if (enable) {
-      enable.user_preferences.developer_mode = developerMode;
-      this.settingsService.set(enable);
+    if (settings) {
+      settings.user_preferences.developer_mode = developerMode;
+
+      if (!developerMode) {
+        const wallets = await this.walletsService.getAllWallets();
+        if (wallets.length > 0) {
+          const currentWallet = await this.walletsService.getCurrentWallet();
+          if (currentWallet) {
+            if (currentWallet.chain.network !== Network.Polkadot) {
+              const firstWallet = wallets[0];
+              if (firstWallet) {
+                await this.walletsService.setCurrentWallet(firstWallet.id);
+              }
+            }
+          }
+        }
+      }
+
+      this.settingsService.set(settings);
     }
   }
 
   async ngOnInit() {
     const settings = await this.settingsService.get();
-      if (settings) {
-        this.selectedCurrency = settings.user_preferences.currency;
-        this.selectedLanguage = settings.user_preferences.language;
-        this.isTestnetEnable = settings.user_preferences.developer_mode;
-      }
-   }
+    if (settings) {
+      this.selectedCurrency = settings.user_preferences.currency;
+      this.selectedLanguage = settings.user_preferences.language;
+      this.isTestnetEnable = settings.user_preferences.developer_mode;
+    }
+  }
 }

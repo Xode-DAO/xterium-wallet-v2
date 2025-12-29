@@ -109,7 +109,7 @@
                                   </ion-button>
                                 </ion-buttons>
                               </ion-toolbar>
-                              <app-networks [showAllNetworks]="false"
+                              <app-networks
                                 (onSelectedNetworkMetadata)="onSelectedNetworkMetadata($event)"></app-networks>
                             </ng-template>
                           </ion-modal>
@@ -247,8 +247,8 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-wallets [newlyAddedWallet]="newlyAddedWallet"
-          (onSetCurrentWallet)="onSetCurrentWallet($event)"></app-wallets>
+        <app-wallets [newlyAddedWallet]="newlyAddedWallet" (onSetCurrentWallet)="onSetCurrentWallet($event)"
+          (onFilteredNetworkMetadata)="onFilteredNetworkMetadata($event)"></app-wallets>
       </ion-content>
     </ng-template>
   </ion-modal>

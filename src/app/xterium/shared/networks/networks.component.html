@@ -2,7 +2,6 @@
   <ion-grid>
     <ion-row>
       @for (networkMetadata of networkMetadatas; track networkMetadata; let idx = $index) {
-      @if (!showAllNetworks && idx > 0) {
       <ion-col size="12">
         <ion-list>
           <ion-item button detail="false" lines="none" (click)="selectNetworkMetadata(networkMetadata)">
@@ -16,21 +15,6 @@
           </ion-item>
         </ion-list>
       </ion-col>
-      }
-
-      @if (showAllNetworks) {
-      <ion-col size="6" class="tile-col">
-        <ion-card button class="network-tile" (click)="selectNetworkMetadata(networkMetadata)">
-          <ion-card-content class="tile-content">
-            <div class="tile-image">
-              <img [src]="'/assets/images/networks/' + networkMetadata.image" alt="{{ networkMetadata.network }}" />
-            </div>
-            <h3 class="tile-title">{{ networkMetadata.network }}</h3>
-            <p class="tile-description">{{ networkMetadata.description }}</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      }
       }
     </ion-row>
   </ion-grid>

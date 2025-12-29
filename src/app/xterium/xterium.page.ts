@@ -200,6 +200,10 @@ export class XteriumPage implements OnInit {
     this.myWalletsModal.dismiss();
   }
 
+  onFilteredNetworkMetadata(networkMetadata: NetworkMetadata) {
+    this.selectedNetworkMetadata = networkMetadata;
+  }
+
   openCreateWalletModal() {
     this.createWalletModal.present();
   }
@@ -291,11 +295,12 @@ export class XteriumPage implements OnInit {
     };
 
     await this.settingsService.set(newSettings);
+
+    this.selectedNetworkMetadata = (await this.networkMetadataService.getAllNetworkMetadatas())[1];
   }
 
   ngOnInit() {
     this.initSettings();
-    this.selectedNetworkMetadata = this.networkMetadataService.getAllNetworkMetadatas()[1];
 
     setTimeout(() => {
       this.getCurrentWallet();
@@ -308,5 +313,9 @@ export class XteriumPage implements OnInit {
       await this.fetchNotifications();
     });
 
+    this.settingsService.currentSettingsObservable.subscribe(async settings => {
+      console.log('Settings updated in XteriumPage:', settings);
+      await this.getCurrentWallet();
+    });
   }
 }

@@ -5,8 +5,6 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonCard,
-  IonCardContent,
   IonList,
   IonItem,
   IonLabel,
@@ -26,8 +24,6 @@ import { NetworkMetadataService } from 'src/app/api/network-metadata/network-met
     IonGrid,
     IonRow,
     IonCol,
-    IonCardContent,
-    IonCard,
     IonAvatar,
     IonLabel,
     IonItem,
@@ -35,7 +31,6 @@ import { NetworkMetadataService } from 'src/app/api/network-metadata/network-met
   ]
 })
 export class NetworksComponent implements OnInit {
-  @Input() showAllNetworks: boolean = true;
   @Output() onSelectedNetworkMetadata = new EventEmitter<NetworkMetadata>();
 
   constructor(
@@ -44,8 +39,8 @@ export class NetworksComponent implements OnInit {
 
   networkMetadatas: NetworkMetadata[] = [];
 
-  getNetworks(): void {
-    this.networkMetadatas = this.networkMetadataService.getAllNetworkMetadatas();
+  async getNetworks(): Promise<void> {
+    this.networkMetadatas = await this.networkMetadataService.getAllNetworkMetadatas();
   }
 
   selectNetworkMetadata(networkMetadata: NetworkMetadata) {
