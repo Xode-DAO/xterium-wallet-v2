@@ -238,7 +238,7 @@ export class TokensComponent implements OnInit {
 
         this.onTotalAmount.emit(totalAmount);
       }
-    }, 1500);
+    }, 500);
   }
 
   async fetchData(): Promise<void> {
