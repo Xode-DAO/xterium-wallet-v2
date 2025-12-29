@@ -16,6 +16,7 @@ import {
   IonIcon,
   IonModal,
   IonToggle,
+  AlertController,
   ToastController,
   ActionSheetController
 } from '@ionic/angular/standalone';
@@ -76,6 +77,7 @@ export class SettingsComponent  implements OnInit {
     private settingsService: SettingsService,
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
+    private alertController: AlertController
 
   ) {
     addIcons({
@@ -175,15 +177,38 @@ export class SettingsComponent  implements OnInit {
   //     this.settingsService.set(settings);
   //   }
   // }
-
-  async developerMode(event: any): Promise<void> {
-    const developerMode = event.detail.checked;
-    const enable = await this.settingsService.get();
-
-    if (enable) {
-      enable.user_preferences.developer_mode = developerMode;
-      this.settingsService.set(enable);
+  
+  async developerMode(event: any) {
+    const enable = event.detail.checked;
+    const settings = await this.settingsService.get();
+    if (!settings) return;
+  
+    if (!enable) {
+      settings.user_preferences.developer_mode = false;
+      await this.settingsService.set(settings);
+      this.isTestnetEnable = false;
+      return;
     }
+  
+    event.target.checked = false;
+    this.isTestnetEnable = false;
+  
+    const alert = await this.alertController.create({
+      header: 'Enable Developer Mode',
+      message: 'Developer Mode provides access to advanced features, including the Rococo and Paseo networks.',
+      buttons: [
+        {
+          text: 'Enable',
+          handler: async () => {
+            settings.user_preferences.developer_mode = true;
+            await this.settingsService.set(settings);
+            this.isTestnetEnable = true;
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
   }
 
   async ngOnInit() {
