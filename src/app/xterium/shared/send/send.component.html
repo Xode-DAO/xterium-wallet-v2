@@ -14,11 +14,11 @@
     <ion-row>
       <ion-col size="12">
         <ion-list>
-          <ion-item class="primary-textarea-item ion-margin-bottom" lines="none">
+          <ion-item class="primary-textarea-item" lines="none">
             <ion-label position="stacked">{{ 'Recipient\'s Wallet Address:' | translate }}</ion-label>
             <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
           </ion-item>
-          <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
+          <!-- <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
             <ion-label style="font-size: 15px;">{{ 'Destination' | translate }}</ion-label>
             <ion-label slot="end">{{ selectedChain.name || 'Select Chain' }}</ion-label>
             <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
@@ -42,7 +42,7 @@
                 </ion-content>
               </ng-template>
             </ion-modal>
-          </ion-item>
+          </ion-item> -->
         </ion-list>
       </ion-col>
     </ion-row>
