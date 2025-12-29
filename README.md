@@ -39,7 +39,7 @@ Available on:
 
 ## 📚 Learn More
 
-- 🌐 Visit [Xterium Website](https://xterium.rocksontech.com/)
+- 🌐 Visit [Xterium Website](https://xterium.app/)
 - 📘 Documentation (Coming Soon)
 
 ---
