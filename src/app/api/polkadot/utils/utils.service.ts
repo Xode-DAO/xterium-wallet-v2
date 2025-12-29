@@ -8,7 +8,7 @@ import {
   sr25519PairFromSeed,
 } from "@polkadot/util-crypto"
 import { u8aToHex, hexToU8a } from '@polkadot/util';
-import { encodeAddress, decodeAddress } from '@polkadot/keyring';
+import { encodeAddress, decodeAddress, Keyring } from '@polkadot/keyring';
 import { u8aEq } from '@polkadot/util';
 
 @Injectable({
@@ -48,6 +48,22 @@ export class UtilsService {
     return {
       publicKey: keypair.publicKey,
       secretKey: keypair.secretKey
+    };
+  }
+
+  async deriveKeypair(mnemonic: string, derivationPath: string): Promise<{ publicKey: Uint8Array; secretKey: Uint8Array }> {
+    await this.ensureReady();
+    
+    const keyring = new Keyring({ type: 'sr25519' });
+    
+    const uri = `${mnemonic}${derivationPath}`;
+    const derivedPair = keyring.addFromUri(uri);
+    
+    const { secretKey } = sr25519PairFromSeed(derivedPair.derive('').publicKey);
+    
+    return {
+      publicKey: derivedPair.publicKey,
+      secretKey: secretKey
     };
   }
 

@@ -15,7 +15,17 @@ export class TokensService {
     private http: HttpClient
   ) { }
 
-  private assetPath = 'assets/images/tokens/';
+  private readonly assetPath: Record<string, string> = {
+    XON: 'assets/images/tokens/xon.png',
+    AZK: 'assets/images/tokens/azk.png',
+    DOT: 'assets/images/tokens/dot.png',
+    GEM: 'assets/images/tokens/gem.gif',
+    GXON: 'assets/images/tokens/gxon.png',
+    HDX: 'assets/images/tokens/hdx.png',
+    MPC: 'assets/images/tokens/mpc.png',
+    USDT: 'assets/images/tokens/usdt.png',
+    DEFAULT: 'assets/images/tokens/default.png',
+  }
 
   private tokenImageSubject = new BehaviorSubject<Token | null>(null);
   public tokenImageObservable = this.tokenImageSubject.asObservable();
@@ -33,25 +43,21 @@ export class TokensService {
   }
 
   async getTokenIcon(symbol: string): Promise<string> {
-    const pngPath = `${this.assetPath}${symbol.toLowerCase()}.png`;
-    if (await this.imageExists(pngPath)) return pngPath;
+    symbol = symbol.toUpperCase();
 
-    const jpgPath = `${this.assetPath}${symbol.toLowerCase()}.jpg`;
-    if (await this.imageExists(jpgPath)) return jpgPath;
+    if (this.assetPath[symbol]) {
+      if (await this.imageExists(this.assetPath[symbol])) {
+        return this.assetPath[symbol];
+      }
+    }
 
-    const jpegPath = `${this.assetPath}${symbol.toLowerCase()}.jpeg`;
-    if (await this.imageExists(jpegPath)) return jpegPath;
-
-    const gifPath = `${this.assetPath}${symbol.toLowerCase()}.gif`;
-    if (await this.imageExists(gifPath)) return gifPath;
-
-    return `${this.assetPath}default.png`;
+    return this.assetPath['DEFAULT'];
   }
 
   async attachIcon(token: Token): Promise<void> {
     let tokenImage: Token = {
       ...token,
-      image: "./../../../" + await this.getTokenIcon(token.symbol)
+      image: await this.getTokenIcon(token.symbol)
     };
 
     this.tokenImageSubject.next(tokenImage);
