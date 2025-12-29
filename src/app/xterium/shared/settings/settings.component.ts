@@ -16,6 +16,7 @@ import {
   IonIcon,
   IonModal,
   IonToggle,
+  AlertController,
   ToastController,
   ActionSheetController
 } from '@ionic/angular/standalone';
@@ -78,6 +79,7 @@ export class SettingsComponent implements OnInit {
     private walletsService: WalletsService,
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
+    private alertController: AlertController
 
   ) {
     addIcons({
@@ -96,7 +98,7 @@ export class SettingsComponent implements OnInit {
 
   useBiometric: boolean = false;
 
-  isTestnetEnable: boolean = false;
+  isDeveloperModeEnabled: boolean = false;
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -179,13 +181,27 @@ export class SettingsComponent implements OnInit {
   // }
 
   async developerMode(event: any): Promise<void> {
-    const developerMode = event.detail.checked;
     const settings = await this.settingsService.get();
-
     if (settings) {
-      settings.user_preferences.developer_mode = developerMode;
+      const alert = await this.alertController.create({
+        header: 'Enable Developer Mode',
+        message: 'Developer Mode provides access to advanced features, including the Rococo and Paseo networks.',
+        buttons: [
+          {
+            text: 'Enable',
+            handler: async () => {
+              settings.user_preferences.developer_mode = true;
 
-      if (!developerMode) {
+              await this.settingsService.set(settings);
+              this.isDeveloperModeEnabled = true;
+            }
+          }
+        ]
+      });
+
+      await alert.present();
+
+      if (!this.isDeveloperModeEnabled) {
         const wallets = await this.walletsService.getAllWallets();
         if (wallets.length > 0) {
           const currentWallet = await this.walletsService.getCurrentWallet();
@@ -200,7 +216,8 @@ export class SettingsComponent implements OnInit {
         }
       }
 
-      this.settingsService.set(settings);
+      event.target.checked = false;
+      this.isDeveloperModeEnabled = false;
     }
   }
 
@@ -209,7 +226,7 @@ export class SettingsComponent implements OnInit {
     if (settings) {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
-      this.isTestnetEnable = settings.user_preferences.developer_mode;
+      this.isDeveloperModeEnabled = settings.user_preferences.developer_mode;
     }
   }
 }
