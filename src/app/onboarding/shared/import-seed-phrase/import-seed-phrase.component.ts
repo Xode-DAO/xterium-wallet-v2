@@ -86,12 +86,11 @@ export class ImportSeedPhraseComponent implements OnInit {
     });
   }
 
-  derivationPath: string = '';
-
   isChromeExtension = false;
 
   walletName: string = '';
   walletMnemonicPhrase: string[] = new Array(12).fill('');
+  derivationPath: string | null = null;
 
   isProcessing: boolean = false;
 
@@ -110,9 +109,9 @@ export class ImportSeedPhraseComponent implements OnInit {
       const parts = value.split('//');
       const mnemonicPhrase = parts[0].trim();
       const derivationPath = parts.length > 1 ? '//' + parts.slice(1).join('//') : '';
-      
+
       const words = mnemonicPhrase.split(' ').filter(word => word.length > 0);
-      
+
       if (words.length !== 12) {
         const toast = await this.toastController.create({
           message: 'Invalid mnemonic phrase length! Expected 12 words.',
@@ -125,7 +124,7 @@ export class ImportSeedPhraseComponent implements OnInit {
       } else {
         this.walletMnemonicPhrase = words;
         this.derivationPath = derivationPath;
-        
+
         if (derivationPath) {
           const toast = await this.toastController.create({
             message: `Derivation path detected: ${derivationPath}`,
@@ -158,8 +157,9 @@ export class ImportSeedPhraseComponent implements OnInit {
   async onSignWallet(password: string) {
     this.isProcessing = true;
 
-    if (this.selectedNetworkMetadata.network === Network.Polkadot) {
-      
+    if (this.selectedNetworkMetadata.network === Network.Polkadot ||
+      this.selectedNetworkMetadata.network === Network.Paseo ||
+      this.selectedNetworkMetadata.network === Network.Rococo) {
       let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
       if (!isMnemonicPhraseValid) {
         this.confirmImportWalletModal.dismiss();
@@ -177,7 +177,7 @@ export class ImportSeedPhraseComponent implements OnInit {
       }
 
       let keypair;
-      
+
       if (!this.derivationPath) {
         const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(this.walletMnemonicPhrase.join(' '));
         keypair = await this.utilsService.createKeypairFromSeed(seed);
@@ -227,7 +227,8 @@ export class ImportSeedPhraseComponent implements OnInit {
         chain: chains[0],
         mnemonic_phrase: encryptedMnemonicPhrase,
         public_key: keypair.publicKey.toString(),
-        private_key: encryptedPrivateKey
+        private_key: encryptedPrivateKey,
+        derivation_path: this.derivationPath
       };
 
       await this.walletsService.create(wallet);
@@ -241,7 +242,8 @@ export class ImportSeedPhraseComponent implements OnInit {
           chain: chains[i],
           mnemonic_phrase: encryptedMnemonicPhrase,
           public_key: keypair.publicKey.toString(),
-          private_key: encryptedPrivateKey
+          private_key: encryptedPrivateKey,
+          derivation_path: this.derivationPath
         };
 
         await this.walletsService.create(wallet);

@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-import { BehaviorSubject, of, firstValueFrom } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 import { Token } from 'src/models/token.model';
 
@@ -10,10 +7,6 @@ import { Token } from 'src/models/token.model';
   providedIn: 'root'
 })
 export class TokensService {
-
-  constructor(
-    private http: HttpClient
-  ) { }
 
   private readonly assetPath: Record<string, string> = {
     XON: 'assets/images/tokens/xon.png',
@@ -30,25 +23,11 @@ export class TokensService {
   private tokenImageSubject = new BehaviorSubject<Token | null>(null);
   public tokenImageObservable = this.tokenImageSubject.asObservable();
 
-  async imageExists(path: string): Promise<boolean> {
-    const baseUrl = `${window.location.protocol}//${window.location.host}/`;
-    const url = baseUrl + path;
-
-    return firstValueFrom(
-      this.http.get(url, { responseType: 'arraybuffer', observe: 'response' }).pipe(
-        map(() => true),
-        catchError(() => of(false))
-      )
-    );
-  }
-
   async getTokenIcon(symbol: string): Promise<string> {
     symbol = symbol.toUpperCase();
 
     if (this.assetPath[symbol]) {
-      if (await this.imageExists(this.assetPath[symbol])) {
-        return this.assetPath[symbol];
-      }
+      return this.assetPath[symbol];
     }
 
     return this.assetPath['DEFAULT'];

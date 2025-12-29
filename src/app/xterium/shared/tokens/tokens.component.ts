@@ -163,6 +163,8 @@ export class TokensComponent implements OnInit {
         this.balancesSubscription = service.watchBalances(this.pjsApi!, this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
           this.balances = balances;
           this.computeBalancesAmount();
+
+           await this.getBalanceTokenImages();
         });
       }
     }, 5000);

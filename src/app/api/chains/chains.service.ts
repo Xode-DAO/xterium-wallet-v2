@@ -113,7 +113,7 @@ export class ChainsService {
       chain_id: 5102,
       unit: "XON",
       decimal: 12,
-      address_prefix: null,
+      address_prefix: 280,
       image: "xode.png",
       scanner: undefined
     },
@@ -137,7 +137,7 @@ export class ChainsService {
       chain_id: 2000,
       unit: "POL",
       decimal: 12,
-      address_prefix: 0,
+      address_prefix: 280,
       image: "polaris.png",
       scanner: undefined
     },

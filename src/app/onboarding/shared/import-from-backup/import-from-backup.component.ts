@@ -137,7 +137,9 @@ export class ImportFromBackupComponent implements OnInit {
   async onSignWallet(password: string) {
     this.isProcessing = true;
 
-    if (this.selectedNetworkMetadata.network === Network.Polkadot) {
+    if (this.selectedNetworkMetadata.network === Network.Polkadot ||
+      this.selectedNetworkMetadata.network === Network.Paseo ||
+      this.selectedNetworkMetadata.network === Network.Rococo) {
       const decryptedPrivateKey = await this.encryptionService.decrypt(this.wallet.private_key!, password);
       const privateKeyHex = this.utilsService.encodePrivateKeyToHex(
         new Uint8Array(decryptedPrivateKey.split(',').map(Number) ?? [])
@@ -159,11 +161,7 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
-      let mnemonicPhrase = "-";
-      let publicKey = this.wallet.public_key;
-      let privateKey = decryptedPrivateKey;
-
-      if (this.wallet.mnemonic_phrase !== "" && this.wallet.mnemonic_phrase !== "-") {
+      if (this.wallet.mnemonic_phrase && this.wallet.mnemonic_phrase !== "") {
         const decryptedMnemonicPhrase = await this.encryptionService.decrypt(this.wallet.mnemonic_phrase, password);
 
         let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(decryptedMnemonicPhrase);
@@ -181,13 +179,6 @@ export class ImportFromBackupComponent implements OnInit {
           await toast.present();
           return;
         }
-
-        const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(decryptedMnemonicPhrase);
-        const keypair = await this.utilsService.createKeypairFromSeed(seed);
-
-        mnemonicPhrase = decryptedMnemonicPhrase;
-        publicKey = keypair.publicKey.toString();
-        privateKey = keypair.secretKey.toString();
       }
 
       let newId = uuidv4();
@@ -223,16 +214,14 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
-      const encryptedMnemonicPhrase = mnemonicPhrase !== "-" ? await this.encryptionService.encrypt(mnemonicPhrase, password) : "-";
-      const encryptedPrivateKey = await this.encryptionService.encrypt(privateKey, password);
-
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
         chain: chains[0],
-        mnemonic_phrase: encryptedMnemonicPhrase,
-        public_key: publicKey,
-        private_key: encryptedPrivateKey
+        mnemonic_phrase: this.wallet.mnemonic_phrase,
+        public_key: this.wallet.public_key,
+        private_key: this.wallet.private_key,
+        derivation_path: this.wallet.derivation_path
       };
 
       await this.walletsService.create(wallet);
@@ -244,9 +233,10 @@ export class ImportFromBackupComponent implements OnInit {
           id: newId,
           name: this.walletName,
           chain: chains[i],
-          mnemonic_phrase: encryptedMnemonicPhrase,
-          public_key: publicKey,
-          private_key: encryptedPrivateKey
+          mnemonic_phrase: this.wallet.mnemonic_phrase,
+          public_key: this.wallet.public_key,
+          private_key: this.wallet.private_key,
+          derivation_path: this.wallet.derivation_path
         };
 
         await this.walletsService.create(wallet);

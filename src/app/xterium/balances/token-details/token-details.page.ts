@@ -207,7 +207,7 @@ export class TokenDetailsPage implements OnInit {
     this.multipayxApiService.getPricePerCurrency("USD").then(async pricePerCurrency => {
       if (pricePerCurrency.data.length > 0) {
         let price = pricePerCurrency.data.filter(item => item.symbol.toLowerCase() === this.balance.token.symbol.toLowerCase())
-        if (price) {
+        if (price && price.length > 0) {
           this.balance.price = price[0].price;
         }
       }

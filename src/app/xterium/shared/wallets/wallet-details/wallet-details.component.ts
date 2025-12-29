@@ -235,7 +235,7 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   copyMnemonicPhrase() {
-    this.copyClipboard(this.secretMnemonicPhrase.join(' '), 'Mnemonic phrase copied to clipboard!');
+    this.copyClipboard(this.secretMnemonicPhrase.join(' ') + (this.wallet.derivation_path ?? ''), 'Mnemonic phrase copied to clipboard!');
   }
 
   copyPrivateKey() {
