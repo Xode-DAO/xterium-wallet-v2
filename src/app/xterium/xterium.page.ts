@@ -143,7 +143,7 @@ export class XteriumPage implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  unreadCount: number = 0;
+  unopenNotifications: number = 0;
   notifications: LocalNotification[] = [];
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
@@ -262,8 +262,8 @@ export class XteriumPage implements OnInit {
   }
 
   async openNotificationsModal() {
-    const notifications = await this.localNotificationsService.openNotifications();
-    this.unreadCount = notifications.filter(n => !n.is_open).length;
+    await this.localNotificationsService.openNotifications();
+    this.unopenNotifications = 0;
 
     this.notificationsModal.present();
   }
@@ -306,10 +306,10 @@ export class XteriumPage implements OnInit {
       this.getCurrentWallet();
     }, 500);
 
+    this.fetchNotifications();
+
     this.localNotificationsService.localNotificationObservable.subscribe(async (notification) => {
-      if (notification) {
-        this.unreadCount = await this.localNotificationsService.getUnreadCount();
-      }
+      this.unopenNotifications = await this.localNotificationsService.getUnopenNotifications();
       await this.fetchNotifications();
     });
 

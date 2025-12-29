@@ -49,7 +49,7 @@ export class NotificationsComponent implements OnInit {
 
   isAlertOpen: boolean = false;
 
-  async getNotifications(): Promise<void> {
+  async fetchNotifications(): Promise<void> {
     this.notifications = await this.localNotificationsService.getAllNotifications();
   }
 
@@ -64,7 +64,10 @@ export class NotificationsComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    await this.getNotifications()
+  ngOnInit() {
+    this.fetchNotifications();
+    this.localNotificationsService.localNotificationObservable.subscribe(async (notification) => {
+      await this.fetchNotifications();
+    });
   }
 }

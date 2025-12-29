@@ -21,9 +21,9 @@
       <ion-button fill="clear" (click)="openNotificationsModal()" class="notif-btn">
         <ion-icon name="notifications-outline"></ion-icon>
 
-        @if (unreadCount > 0) {
+        @if (unopenNotifications > 0) {
         <ion-badge color="danger" class="notif-badge">
-          {{ unreadCount }}
+          {{ unopenNotifications }}
         </ion-badge>
         }
       </ion-button>

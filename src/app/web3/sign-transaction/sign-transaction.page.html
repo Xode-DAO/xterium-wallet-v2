@@ -70,7 +70,7 @@
                 </ion-item>
                 <ion-item lines="none">
                   <ion-icon name="globe-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>{{ 'Create Wallet' | translate }}</ion-label>
+                  <ion-label>{{ 'Network' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ currentWallet.chain.name }}
                   </ion-text>
@@ -142,7 +142,7 @@
                 <p class="wallet-text">
                   Click the Onboarding button below to get started with setting up your wallet.
                 </p>
-                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button" 
+                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
                   (click)="navigateToOnboarding(noWalletModal)">
                   Onboarding
                 </ion-button>

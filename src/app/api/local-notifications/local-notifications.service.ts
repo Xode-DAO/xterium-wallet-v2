@@ -41,23 +41,25 @@ export class LocalNotificationsService {
       is_read: false,
     })
   }
-
- async saveNotification(notification: LocalNotification): Promise<void> {
-    const existing = await this.getAllNotifications();
+  async saveNotification(notification: LocalNotification): Promise<void> {
+    const existingNotifications = await this.getAllNotifications();
 
     notification.is_read = false;
     notification.is_open = false;
     notification.timestamp = new Date().toISOString();
 
-    if (existing.length > 23) {
-      existing.splice(0, existing.length - 23);
+    if (existingNotifications.length >= 25) {
+      existingNotifications.pop();
     }
 
-    existing.push(notification);
+    existingNotifications.push(notification);
+    existingNotifications.sort((a, b) => {
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+    });
 
     await Preferences.set({
       key: this.NOTIFICATION_STORAGE_KEY,
-      value: JSON.stringify(existing)
+      value: JSON.stringify(existingNotifications)
     });
 
     this.localNotificationSubject.next(notification);
@@ -75,9 +77,7 @@ export class LocalNotificationsService {
   async openNotifications(): Promise<LocalNotification[]> {
     const notifications = await this.getAllNotifications();
     notifications.forEach(n => {
-      if (!n.is_open) {
-        n.is_open = true;
-      }
+      n.is_open = true;
     });
 
     await Preferences.set({
@@ -102,9 +102,9 @@ export class LocalNotificationsService {
     }
   }
 
-  async getUnreadCount(): Promise<number> {
+  async getUnopenNotifications(): Promise<number> {
     const notifications = await this.getAllNotifications();
-    return notifications.filter(n => !n.is_read).length;
+    return notifications.filter(n => !n.is_open).length;
   }
 
   async markAllAsRead(): Promise<void> {
