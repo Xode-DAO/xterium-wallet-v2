@@ -85,14 +85,13 @@ export class TokensComponent implements OnInit {
   tokens: Token[] = [];
   balances: Balance[] = [];
   prices: Price[] = [];
+  currencySymbol: string = '';
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   observableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
-
-  symbols: string = '';
 
   languageCode: string = '';
 
@@ -164,12 +163,13 @@ export class TokensComponent implements OnInit {
           this.balances = balances;
           this.computeBalancesAmount();
 
-           await this.getBalanceTokenImages();
+          await this.getBalanceTokenImages();
         });
       }
     }, 5000);
 
     await this.getPrices();
+    await this.getLanguageCode();
   }
 
   async getBalanceTokenImages(): Promise<void> {
@@ -189,6 +189,7 @@ export class TokensComponent implements OnInit {
     const currencies = await this.settingsService.get();
     const currencyCode = currencies?.user_preferences.currency.code || "USD";
     const currencySymbol = currencies?.user_preferences.currency.symbol || "$";
+    this.currencySymbol = currencySymbol;
 
     let prices: Price[] = [];
 
@@ -206,7 +207,6 @@ export class TokensComponent implements OnInit {
       })
     }
 
-    this.symbols = currencySymbol
     this.prices = prices;
     this.computeBalancesAmount();
   }
@@ -253,7 +253,6 @@ export class TokensComponent implements OnInit {
     this.onTotalAmount.emit(0);
 
     await this.getTokens();
-    await this.getLanguageCode();
   }
 
   formatBalance(amount: number, decimals: number): number {
@@ -290,19 +289,19 @@ export class TokensComponent implements OnInit {
     const settings = await this.settingsService.get();
     if (settings) {
       this.languageCode = settings.user_preferences.language.code || 'en';
-
       this.translate.use(this.languageCode);
     };
   }
 
   ngOnInit() {
-    this.walletsService.currentWalletObservable.subscribe(wallet => {
-      this.fetchData();
+    this.walletsService.currentWalletObservable.subscribe(async wallet => {
+      await this.fetchData();
     });
 
     this.settingsService.currentSettingsObservable.subscribe(settings => {
       if (settings) {
-        this.fetchData();
+        this.getPrices();
+        this.getLanguageCode();
       }
     });
 

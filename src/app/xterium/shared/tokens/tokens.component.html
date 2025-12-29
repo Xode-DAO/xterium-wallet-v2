@@ -32,10 +32,10 @@
           </ion-label>
           <div slot="end" class="ion-text-right">
             <h2>
-              {{ symbols }} {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
+              {{ currencySymbol }} {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
             </h2>
             <p>
-              {{ symbols }} {{ formatPrice(balance.price) }}
+              {{ currencySymbol }} {{ formatPrice(balance.price) }}
             </p>
           </div>
         </ion-item>

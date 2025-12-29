@@ -314,7 +314,6 @@ export class XteriumPage implements OnInit {
     });
 
     this.settingsService.currentSettingsObservable.subscribe(async settings => {
-      console.log('Settings updated in XteriumPage:', settings);
       await this.getCurrentWallet();
     });
   }
