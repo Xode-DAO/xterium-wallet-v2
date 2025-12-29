@@ -98,7 +98,7 @@ export class SettingsComponent implements OnInit {
 
   useBiometric: boolean = false;
 
-  isDeveloperModeEnabled: boolean = false;
+  isTestnetEnabled: boolean = false;
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -183,25 +183,24 @@ export class SettingsComponent implements OnInit {
   async developerMode(event: any): Promise<void> {
     const settings = await this.settingsService.get();
     if (settings) {
-      const alert = await this.alertController.create({
-        header: 'Enable Developer Mode',
-        message: 'Developer Mode provides access to advanced features, including the Rococo and Paseo networks.',
-        buttons: [
-          {
-            text: 'Enable',
-            handler: async () => {
-              settings.user_preferences.developer_mode = true;
+      settings.user_preferences.testnet_enabled = event.target.checked;
+      await this.settingsService.set(settings);
 
-              await this.settingsService.set(settings);
-              this.isDeveloperModeEnabled = true;
-            }
-          }
-        ]
-      });
+      if (event.detail.checked) {
+        const alert = await this.alertController.create({
+          header: 'Enable Testnet',
+          message: 'By enabling testnet, you can access test networks like Rococo and Paseo. Please note that test networks may be unstable and are intended for development and testing purposes only.',
+          buttons: [
+            {
+              text: 'Ok',
+              role: 'confirm'
+            },
+          ],
+        });
 
-      await alert.present();
-
-      if (!this.isDeveloperModeEnabled) {
+        await alert.present();
+        this.isTestnetEnabled = true;
+      } else {
         const wallets = await this.walletsService.getAllWallets();
         if (wallets.length > 0) {
           const currentWallet = await this.walletsService.getCurrentWallet();
@@ -214,10 +213,8 @@ export class SettingsComponent implements OnInit {
             }
           }
         }
+        this.isTestnetEnabled = false;
       }
-
-      event.target.checked = false;
-      this.isDeveloperModeEnabled = false;
     }
   }
 
@@ -226,7 +223,7 @@ export class SettingsComponent implements OnInit {
     if (settings) {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
-      this.isDeveloperModeEnabled = settings.user_preferences.developer_mode;
+      this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
     }
   }
 }

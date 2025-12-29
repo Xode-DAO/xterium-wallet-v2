@@ -290,7 +290,7 @@ export class XteriumPage implements OnInit {
           name: "English",
           nativeName: "English"
         },
-        developer_mode: settings?.user_preferences.developer_mode ?? false,
+        testnet_enabled: settings?.user_preferences.testnet_enabled ?? false,
       }
     };
 
@@ -314,7 +314,9 @@ export class XteriumPage implements OnInit {
     });
 
     this.settingsService.currentSettingsObservable.subscribe(async settings => {
-      await this.getCurrentWallet();
+      setTimeout(() => {
+        this.getCurrentWallet();
+      }, 500);
     });
   }
 }

@@ -35,7 +35,7 @@ export class NetworkMetadataService {
 
     const settings = await this.settingsService.get();
     if (settings) {
-      const developerMode = settings.user_preferences.developer_mode;
+      const developerMode = settings.user_preferences.testnet_enabled;
       if (developerMode) {
         return [...this.networkMetadatas];
       }
