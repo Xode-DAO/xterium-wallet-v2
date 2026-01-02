@@ -148,6 +148,8 @@ export class BalancesPage implements OnInit {
     if (settings) {
       settings.user_preferences.hide_zero_balances = isHidden;
       this.settingsService.set(settings);
+
+      this.refreshCounter++;
     }
   }
 
