@@ -4,16 +4,16 @@
       <ion-col size="12">
         <ion-list>
           <ion-item class="primary-input-item ion-margin-bottom" lines="none">
-            <ion-label>Name:</ion-label>
+            <ion-label position="stacked">{{ 'Name:' | translate }}</ion-label>
             <ion-input type="text" placeholder="e.g. My Wallet Name" [(ngModel)]="wallet.name"
               (ngModelChange)="updateWalletOnModelChange()"></ion-input>
           </ion-item>
           <ion-item class="primary-textarea-item ion-margin-bottom" lines="none">
-            <ion-label position="stacked">Public Address:</ion-label>
+            <ion-label position="stacked">{{ 'Public Address:' | translate }}</ion-label>
             <ion-textarea rows="3" placeholder="" readonly="true" [(ngModel)]="walletPublicKey"></ion-textarea>
           </ion-item>
           <ion-item class="primary-input-item ion-margin-bottom" lines="none">
-            <ion-label>Chain:</ion-label>
+            <ion-label position="stacked">{{ 'Chain:' | translate }}</ion-label>
             <ion-input type="text" placeholder="" [(ngModel)]="currentWallet.chain.name" readonly="true"
               (ngModelChange)="updateWalletOnModelChange()"></ion-input>
           </ion-item>
@@ -25,12 +25,12 @@
         <ion-list>
           <ion-item button lines="none" class="ion-margin-bottom" (click)="showRecoverySecrets('mnemonicPhrase')">
             <ion-label>
-              <h2>Show Recovery Phrase</h2>
+              <h2>{{ 'Show Recovery Phrase' | translate }}</h2>
             </ion-label>
           </ion-item>
           <ion-item button lines="none" (click)="showRecoverySecrets('privateKey')">
             <ion-label>
-              <h2>Show Private Key</h2>
+              <h2>{{ 'Show Private Key' | translate }}</h2>
             </ion-label>
           </ion-item>
         </ion-list>
@@ -40,14 +40,14 @@
       <ion-col size="12">
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="secondary-button" (click)="copyPublicKey()">
-            COPY ADDRESS
+            {{ 'COPY ADDRESS' | translate }}
           </ion-button>
         </div>
       </ion-col>
       <ion-col size="6">
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="success-button" (click)="exportWallet()">
-            EXPORT WALLET
+             {{ 'EXPORT WALLET' | translate }}
           </ion-button>
         </div>
       </ion-col>
@@ -55,7 +55,7 @@
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="danger-button" (click)="deleteWallet()"
             [disabled]="this.currentWallet.id === wallet.id">
-            DELETE WALLET
+             {{ 'DELETE WALLET' | translate }}
           </ion-button>
         </div>
       </ion-col>
@@ -69,7 +69,7 @@
   [expandToScroll]="false">
   <ng-template>
     <ion-toolbar class="main-modal-toolbar">
-      <ion-title>Confirm</ion-title>
+      <ion-title>{{ 'Confirm' | translate }}</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="confirmShowRecoverySecretsModal.dismiss()">
           <ion-icon name="close" style="color: white;"></ion-icon>
@@ -82,9 +82,9 @@
           <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
         </div>
         <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
-          <h1 style="font-weight: bold">Sign</h1>
+          <h1 style="font-weight: bold">{{ 'Sign' | translate }}</h1>
           <span style="font-size: 15px;">
-            To show your wallet's recovery secrets, please authenticate using your chosen method below.
+            {{ 'To show your wallet\'s recovery secrets, please authenticate using your chosen method below.' | translate }}
           </span>
         </div>
         <div class="ion-padding-horizontal">
@@ -100,8 +100,7 @@
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
           <div class="biometric-unavailable">
             <p class="unavailable-text">
-              You've previously set up biometric authentication, but it's currently unavailable on this device.
-              Please set up your biometric authentication again to continue.
+              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device. Please set up your biometric authentication again to continue.' | translate }}
             </p>
           </div>
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
@@ -118,7 +117,7 @@
 <ion-modal #secretMnemonicRecoveryModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
   <ng-template>
     <ion-toolbar class="main-modal-toolbar">
-      <ion-title>Show Recovery Phrase</ion-title>
+      <ion-title>{{ 'Show Recovery Phrase' | translate }}</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="secretMnemonicRecoveryModal.dismiss()">
           <ion-icon name="close" style="color: white;"></ion-icon>
@@ -132,11 +131,10 @@
             <ion-col size="12">
               <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                 <h1 style="font-weight: bold;">
-                  Your Recovery Phrase
+                  {{ 'Your Recovery Phrase' | translate }}
                 </h1>
                 <span style="font-size: 15px;">
-                  Below are the words that make up your wallet's Recovery Phrase. Keep it secure and never share it with
-                  anyone.
+                  {{ 'Below are the words that make up your wallet\'s Recovery Phrase. Keep it secure and never share it with anyone.' | translate }} 
                 </span>
               </div>
             </ion-col>
@@ -158,7 +156,7 @@
               <div class="primary-button-wrapper">
                 <ion-button expand="block" size="default" class="secondary-button" (click)="copyMnemonicPhrase()">
                   <ion-icon name="copy-outline" slot="start" [size]="'small'"></ion-icon>
-                  COPY TO CLIPBOARD
+                  {{ 'COPY TO CLIPBOARD' | translate }}
                 </ion-button>
               </div>
             </ion-col>
@@ -166,11 +164,10 @@
           <ion-row class="ion-margin-bottom">
             <ion-col size="12">
               <div class="secret-recovery-warning">
-                <h2>Do not share your Recovery Phrase</h2>
+                <h2>{{ 'Do not share your Recovery Phrase' | translate }}</h2>
                 <br />
                 <p class="warning-text">
-                  If someone has your Recovery Phrase they will have full control of your wallet. Keep it secure and
-                  never share it with anyone.
+                  {{ 'If someone has your Recovery Phrase they will have full control of your wallet. Keep it secure and never share it with anyone.' | translate }}
                 </p>
               </div>
             </ion-col>
@@ -179,19 +176,15 @@
             <ion-col size="12">
               <div class="secret-recovery-secondary">
                 <h2>
-                  Important Security Tips
+                  {{ 'Important Security Tips' | translate }}
                 </h2>
                 <br />
                 <p class="secondary-text">
-                  Recovery Phrases are typically a series of 12, 18, or 24 words that are difficult to remember. It is
-                  crucial to store your Recovery Phrase securely, as losing it may result in permanent loss of access to
-                  your wallet
-                  and its funds.
+                  {{ 'Recovery Phrases are typically a series of 12, 18, or 24 words that are difficult to remember. It is crucial to store your Recovery Phrase securely, as losing it may result in permanent loss of access to your wallet and its funds.' | translate }}
                 </p>
                 <br />
                 <p class="secondary-text">
-                  Consider using a reputable password manager or writing it down and storing it in a safe place.
-                  Avoid sharing your Recovery Phrase with anyone or storing it in easily accessible locations.
+                  {{ 'Consider using a reputable password manager or writing it down and storing it in a safe place. Avoid sharing your Recovery Phrase with anyone or storing it in easily accessible locations.' | translate }}
                 </p>
               </div>
             </ion-col>
@@ -207,7 +200,7 @@
 <ion-modal #secretPrivateKeyRecoveryModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
   <ng-template>
     <ion-toolbar class="main-modal-toolbar">
-      <ion-title>Show Private Key</ion-title>
+      <ion-title>{{ 'Show Private Key' | translate }}</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="secretPrivateKeyRecoveryModal.dismiss()">
           <ion-icon name="close" style="color: white;"></ion-icon>
@@ -221,10 +214,10 @@
             <ion-col size="12">
               <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                 <h1 style="font-weight: bold;">
-                  Your Private Key
+                  {{ 'Your Private Key' | translate }}
                 </h1>
                 <span style="font-size: 15px;">
-                  Below is your wallet's Private Key. Keep it secure and never share it with anyone.
+                  {{ 'Below is your wallet\'s Private Key. Keep it secure and never share it with anyone.' | translate }}
                 </span>
               </div>
             </ion-col>
@@ -233,7 +226,7 @@
             <ion-col size="12">
               <ion-list>
                 <ion-item class="primary-textarea-item" lines="none">
-                  <ion-label position="stacked">Private Key:</ion-label>
+                  <ion-label position="stacked">{{ 'Private Key:' | translate }}</ion-label>
                   <ion-textarea [(ngModel)]="secretPrivateKey" rows="6" readonly="true"></ion-textarea>
                 </ion-item>
               </ion-list>
@@ -244,7 +237,7 @@
               <div class="primary-button-wrapper">
                 <ion-button expand="block" size="default" class="secondary-button" (click)="copyPrivateKey()">
                   <ion-icon name="copy-outline" slot="start" [size]="'large'"></ion-icon>
-                  COPY TO CLIPBOARD
+                  {{ 'COPY TO CLIPBOARD' | translate }}
                 </ion-button>
               </div>
             </ion-col>
@@ -252,11 +245,10 @@
           <ion-row class="ion-margin-bottom">
             <ion-col size="12">
               <div class="secret-recovery-warning">
-                <h2>Do not share your Private Key</h2>
+                <h2>{{ 'Do not share your Private Key' | translate }}</h2>
                 <br />
                 <p class="warning-text">
-                  If someone has your Private Key they will have full control of your wallet. Keep it secure and
-                  never share it with anyone.
+                  {{ 'If someone has your Private Key they will have full control of your wallet. Keep it secure and never share it with anyone.' | translate }}
                 </p>
               </div>
             </ion-col>
@@ -265,19 +257,15 @@
             <ion-col size="12">
               <div class="secret-recovery-secondary">
                 <h2>
-                  Important Security Tips
+                  {{ 'Important Security Tips' | translate }}
                 </h2>
                 <br />
                 <p class="secondary-text">
-                  Private Keys are typically long strings of characters that are difficult to remember. It is
-                  crucial to store your Private Key securely, as losing it may result in permanent loss of access to
-                  your wallet
-                  and its funds.
+                  {{ 'Private Keys are typically long strings of characters that are difficult to remember. It is crucial to store your Private Key securely, as losing it may result in permanent loss of access to your wallet and its funds.' | translate }}
                 </p>
                 <br />
                 <p class="secondary-text">
-                  Consider using a reputable password manager or writing it down and storing it in a safe place.
-                  Avoid sharing your Private Key with anyone or storing it in easily accessible locations.
+                  {{ 'Consider using a reputable password manager or writing it down and storing it in a safe place. Avoid sharing your Private Key with anyone or storing it in easily accessible locations.' | translate }}
                 </p>
               </div>
             </ion-col>

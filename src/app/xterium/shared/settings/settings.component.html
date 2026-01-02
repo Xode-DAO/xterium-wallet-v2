@@ -23,7 +23,7 @@
           </ion-item>
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="code-outline"></ion-icon>
-            <h2>Enable Testnet</h2>
+            <h2>{{ 'Enable Testnet' | translate }}</h2>
             <ion-toggle slot="end" [checked]="isTestnetEnabled" (ionChange)="developerMode($event)">
             </ion-toggle>
           </ion-item>

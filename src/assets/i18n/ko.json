@@ -161,5 +161,7 @@
   "Enter PIN:": "PIN 입력:",
   "Confirm your PIN:": "PIN 확인:",
   "Biometric authentication is not available on this device": "이 기기에서는 생체 인증을 사용할 수 없습니다",
-  "Sign in with Biometrics": "생체 인증으로 로그인"
+  "Sign in with Biometrics": "생체 인증으로 로그인",
+  "Enable Testnet": "테스트넷 활성화",
+  "Select Network": "네트워크 선택"
 }

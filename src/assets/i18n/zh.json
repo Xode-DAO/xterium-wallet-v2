@@ -161,5 +161,7 @@
   "Enter PIN:": "输入 PIN 码：",
   "Confirm your PIN:": "确认您的 PIN 码：",
   "Biometric authentication is not available on this device": "此设备上无法使用生物识别认证",
-  "Sign in with Biometrics": "使用生物识别登录"
+  "Sign in with Biometrics": "使用生物识别登录",
+  "Enable Testnet": "启用测试网",
+  "Select Network": "选择网络"
 }

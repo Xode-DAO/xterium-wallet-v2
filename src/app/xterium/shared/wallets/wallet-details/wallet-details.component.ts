@@ -57,6 +57,8 @@ import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.c
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
 import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-wallet-details',
   templateUrl: './wallet-details.component.html',
@@ -84,7 +86,8 @@ import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.
     PasswordLoginComponent,
     PinSetupComponent,
     PinLoginComponent,
-    BiometricComponent
+    BiometricComponent,
+    TranslatePipe
   ]
 })
 export class WalletDetailsComponent implements OnInit {

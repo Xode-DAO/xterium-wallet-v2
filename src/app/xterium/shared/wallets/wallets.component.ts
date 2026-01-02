@@ -35,6 +35,8 @@ import { NetworkMetadataService } from 'src/app/api/network-metadata/network-met
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-wallets',
   templateUrl: './wallets.component.html',
@@ -58,7 +60,8 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
     IonChip,
     NetworksComponent,
     ChainsComponent,
-    WalletDetailsComponent
+    WalletDetailsComponent,
+    TranslatePipe
   ]
 })
 export class WalletsComponent implements OnInit {

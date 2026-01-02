@@ -94,7 +94,7 @@
   "Show Recovery Phrase": "リカバリーフレーズを表示",
   "Show Private Key": "秘密鍵を表示",
   "COPY ADDRESS": "アドレスをコピー",
-  "EXPORT WALLET": "ウォレットをエクスポート",
+  "EXPORT WALLET": "ウォレット書き出し",
   "DELETE WALLET": "ウォレットを削除",
   "Confirm": "確認",
   "To show your wallet's recovery secrets, please authenticate using your chosen method below.": "ウォレットの復元シークレットを表示するには、以下の選択した方法で認証してください。",
@@ -161,5 +161,7 @@
   "Enter PIN:": "PINを入力してください:",
   "Confirm your PIN:": "PINを確認してください:",
   "Biometric authentication is not available on this device": "このデバイスでは生体認証は利用できません",
-  "Sign in with Biometrics": "生体認証でサインイン"
+  "Sign in with Biometrics": "生体認証でサインイン",
+  "Enable Testnet": "テストネットを有効にする",
+  "Select Network": "ネットワークの選択"
 }
