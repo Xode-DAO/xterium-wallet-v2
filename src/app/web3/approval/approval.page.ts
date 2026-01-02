@@ -79,8 +79,9 @@ export class ApprovalPage implements OnInit {
   getChains(): void {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
     const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
 
-    this.chains = [...allChains, ...liveChains];
+    this.chains = [...allChains, ...liveChains, ...rococoChains];
     this.loadChainByName();
   }
 
