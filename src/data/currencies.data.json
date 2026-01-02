@@ -1,4 +1,5 @@
 [
   { "code": "USD", "symbol": "$",   "name": "United States Dollar" },
-  { "code": "PHP", "symbol": "₱",   "name": "Philippine Peso" }
+  { "code": "PHP", "symbol": "₱",   "name": "Philippine Peso" },
+  { "code": "KRW", "symbol": "₩",   "name": "South Korean Won" }
 ]
