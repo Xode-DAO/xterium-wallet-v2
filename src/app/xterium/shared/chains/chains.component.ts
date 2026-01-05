@@ -8,13 +8,15 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonAvatar
+  IonAvatar,
+  IonChip,
 } from '@ionic/angular/standalone';
 
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 
 import { ChainsService } from 'src/app/api/chains/chains.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 @Component({
   selector: 'app-chains',
@@ -28,7 +30,8 @@ import { ChainsService } from 'src/app/api/chains/chains.service';
     IonList,
     IonItem,
     IonLabel,
-    IonAvatar
+    IonAvatar,
+    IonChip,
   ]
 })
 export class ChainsComponent implements OnInit {
@@ -36,22 +39,35 @@ export class ChainsComponent implements OnInit {
 
   constructor(
     private chainsService: ChainsService,
+    private settingsService: SettingsService
   ) { }
 
   chains: Chain[] = [];
 
-  getChains(): void {
+  async getChains(): Promise<void> {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
     const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
-    const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
-    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
 
     this.chains = [
       ...allChains,
       ...polkadotChains,
-      ...paseoChains,
-      ...rococoChains,
     ];
+
+    const settings = await this.settingsService.get();
+    if (settings) {
+      const developerMode = settings.user_preferences.testnet_enabled;
+      if (developerMode) {
+        const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
+        const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
+
+        this.chains = [
+          ...allChains,
+          ...polkadotChains,
+          ...paseoChains,
+          ...rococoChains,
+        ];
+      }
+    }
   }
 
   selectChain(chain: Chain) {

@@ -15,8 +15,7 @@
             <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
           </ion-button>
 
-          <ion-modal #selectChainModal class="select-chain-modal" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-            [expandToScroll]="false">
+          <ion-modal #selectChainModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
             <ng-template>
               <ion-toolbar class="main-modal-toolbar">
                 <ion-title>{{ 'Select Chain' | translate }}</ion-title>
@@ -26,7 +25,9 @@
                   </ion-button>
                 </ion-buttons>
               </ion-toolbar>
-              <app-chains (onSelectedChain)="onSelectedChain($event)"></app-chains>
+              <ion-content>
+                <app-chains (onSelectedChain)="onSelectedChain($event)"></app-chains>
+              </ion-content>
             </ng-template>
           </ion-modal>
         </ion-item>
@@ -36,15 +37,15 @@
 
   <ion-grid class="wallet-grid">
     @for (chain of chainsByName[selectedChain.name]; track chain) {
-    @if (selectedChain.name === "All Chains") {
     @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
     <div class="chain-label">
+      @if (selectedChain.name === "All Chains") {
       <ion-chip [color]="'dark'">
         <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
         &nbsp; {{ chain.name }}
       </ion-chip>
+      }
     </div>
-    }
     }
     <ion-row>
       @for (wallet of walletsByChain[chain.name]; track wallet) {

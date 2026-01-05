@@ -22,6 +22,7 @@ import {
   IonLabel,
   IonModal,
   IonBadge,
+  IonAvatar
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -38,6 +39,7 @@ import {
   chevronDownOutline,
 } from 'ionicons/icons';
 
+import { ChainsComponent } from "./shared/chains/chains.component";
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
@@ -63,7 +65,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './xterium.page.html',
   styleUrls: ['./xterium.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonAvatar,
     CommonModule,
     FormsModule,
     IonContent,
@@ -90,13 +92,12 @@ import { TranslatePipe } from '@ngx-translate/core';
     ImportFromBackupComponent,
     NotificationsComponent,
     SettingsComponent,
-    TranslatePipe,
-  ]
+    TranslatePipe, ChainsComponent]
 })
 export class XteriumPage implements OnInit {
   @ViewChild('myWalletsModal', { read: IonModal }) myWalletsModal!: IonModal;
   @ViewChild('createWalletModal', { read: IonModal }) createWalletModal!: IonModal;
-  @ViewChild('selectNetworkMetadataModal', { read: IonModal }) selectNetworkMetadataModal!: IonModal;
+  @ViewChild('selectChainModal', { read: IonModal }) selectChainModal!: IonModal;
   @ViewChild('createNewAccountModal', { read: IonModal }) createNewAccountModal!: IonModal;
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
   @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
@@ -126,6 +127,8 @@ export class XteriumPage implements OnInit {
 
     this.initAuthentication();
   }
+
+  selectedChain: Chain = new Chain();
 
   newlyAddedWallet: Wallet = new Wallet();
 
@@ -189,8 +192,21 @@ export class XteriumPage implements OnInit {
     this.myWalletsModal.dismiss();
   }
 
+  onFilteredChain(chain: Chain) {
+    this.selectedChain = chain;
+  }
+
   openCreateWalletModal() {
     this.createWalletModal.present();
+  }
+
+  openSelectChainModal() {
+    this.selectChainModal.present();
+  }
+
+  onSelectedChain(chain: Chain) {
+    this.selectedChain = chain;
+    this.selectChainModal.dismiss();
   }
 
   openCreateNewAccountModal() {

@@ -87,13 +87,8 @@ export class SelectChainPage implements OnInit {
 
   getChains(): void {
     const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
-    const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
-    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
-
     this.chains = [
-      ...polkadotChains,
-      ...paseoChains,
-      ...rococoChains,
+      ...polkadotChains
     ];
   }
 

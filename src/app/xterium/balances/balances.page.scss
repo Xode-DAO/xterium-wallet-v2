@@ -1,4 +1,9 @@
 .balances-content {
+  .tokens-list {
+    border: none;
+    padding: 0px 8px;
+  }
+
   ion-col {
     .token-list-header {
       display: flex;

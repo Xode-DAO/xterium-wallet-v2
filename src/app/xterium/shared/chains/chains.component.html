@@ -11,6 +11,15 @@
             <ion-label>
               <h2>{{ chain.name }}</h2>
               <p>{{ chain.description }}</p>
+              @if (chain.network.toString().toLocaleLowerCase() !== 'all networks' && chain.network !== 'Polkadot') {
+              <div style="margin-top: -5px;">
+                <ion-chip [color]="'warning'">
+                  <img [src]="'/assets/images/networks/' + chain.network.toString().toLocaleLowerCase() + '.png'"
+                    alt="{{ chain.network }}" height="17" />
+                  &nbsp; {{ chain.network }}
+                </ion-chip>
+              </div>
+              }
             </ion-label>
           </ion-item>
         </ion-list>

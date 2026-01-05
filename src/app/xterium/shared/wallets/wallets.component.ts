@@ -32,6 +32,7 @@ import { Wallet } from 'src/models/wallet.model'
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -75,6 +76,7 @@ export class WalletsComponent implements OnInit {
     private utilsService: UtilsService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
+    private settingsService: SettingsService
   ) {
     addIcons({
       ellipsisVerticalOutline,
@@ -97,20 +99,29 @@ export class WalletsComponent implements OnInit {
   async getChains(): Promise<void> {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
     const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
-    const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
-    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
-    // const filteredChains = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
 
     this.chains = [
       ...allChains,
       ...polkadotChains,
-      ...paseoChains,
-      ...rococoChains,
-      // ...filteredChains
     ];
-    this.selectedChain = this.chains[0];
 
-    await this.loadChainByName();
+    const settings = await this.settingsService.get();
+    if (settings) {
+      const developerMode = settings.user_preferences.testnet_enabled;
+      if (developerMode) {
+        const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
+        const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
+
+        this.chains = [
+          ...allChains,
+          ...polkadotChains,
+          ...paseoChains,
+          ...rococoChains,
+        ];
+      }
+    }
+
+    this.selectedChain = this.chains[0];
   }
 
   async loadChainByName(): Promise<void> {

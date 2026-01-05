@@ -46,12 +46,16 @@
         <ion-col size="12">
           <div class="token-list-header">
             <h3 style="font-size: 16px; margin-right: 10px;">{{ 'Tokens' | translate }}</h3>
-            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden" (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle>
+            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden"
+              (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle>
             <!-- <a (click)="openManageTokensModal()">Manage</a> -->
           </div>
         </ion-col>
       </ion-row>
     </ion-grid>
+  </div>
+
+  <div class="tokens-list">
     <app-tokens [refreshCounter]="refreshCounter" (onTotalAmount)="onTotalAmount($event)"
       (onOpenToken)="goToTokenDetails($event)"></app-tokens>
   </div>
@@ -86,9 +90,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
-          <app-tokens [refreshCounter]="refreshCounter" (onOpenToken)="openBalancesSendModal($event)"></app-tokens>
-        </div>
+        <app-tokens [refreshCounter]="refreshCounter" (onOpenToken)="openBalancesSendModal($event)"></app-tokens>
       </ion-content>
     </ng-template>
   </ion-modal>
