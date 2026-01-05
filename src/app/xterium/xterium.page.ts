@@ -47,6 +47,7 @@ import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from
 import { NotificationsComponent } from './shared/notifications/notifications.component';
 import { SettingsComponent } from './shared/settings/settings.component';
 
+import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 import { LocalNotification } from 'src/models/local-notification.model';
@@ -55,6 +56,7 @@ import { Settings } from 'src/models/settings.model';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
+import { ChainsService } from '../api/chains/chains.service';
 import { LocalNotificationsService } from '../api/local-notifications/local-notifications.service';
 import { SettingsService } from '../api/settings/settings.service';
 
@@ -109,6 +111,7 @@ export class XteriumPage implements OnInit {
     private utilsService: UtilsService,
     private walletsService: WalletsService,
     private authService: AuthService,
+    private chainsService: ChainsService,
     private localNotificationsService: LocalNotificationsService,
     private settingsService: SettingsService,
   ) {
@@ -128,6 +131,7 @@ export class XteriumPage implements OnInit {
     this.initAuthentication();
   }
 
+  chains: Chain[] = [];
   selectedChain: Chain = new Chain();
 
   newlyAddedWallet: Wallet = new Wallet();
@@ -183,6 +187,10 @@ export class XteriumPage implements OnInit {
     }
   }
 
+  async getChains(): Promise<void> {
+    this.chains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+  }
+
   openMyWalletsModal() {
     this.myWalletsModal.present();
   }
@@ -193,7 +201,12 @@ export class XteriumPage implements OnInit {
   }
 
   onFilteredChain(chain: Chain) {
-    this.selectedChain = chain;
+    if (chain.name === 'All Chains') {
+      this.selectedChain = this.chains[0];
+    } else {
+      this.getChains();
+      this.selectedChain = chain;
+    }
   }
 
   openCreateWalletModal() {

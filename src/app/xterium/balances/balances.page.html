@@ -55,7 +55,7 @@
     </ion-grid>
   </div>
 
-  <div class="tokens-list">
+  <div class="ion-padding-horizontal">
     <app-tokens [refreshCounter]="refreshCounter" (onTotalAmount)="onTotalAmount($event)"
       (onOpenToken)="goToTokenDetails($event)"></app-tokens>
   </div>
@@ -71,7 +71,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-receive></app-receive>
         </div>
       </ion-content>
@@ -90,7 +90,9 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-tokens [refreshCounter]="refreshCounter" (onOpenToken)="openBalancesSendModal($event)"></app-tokens>
+        <div class="modal-content-container">
+          <app-tokens [refreshCounter]="refreshCounter" (onOpenToken)="openBalancesSendModal($event)"></app-tokens>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -107,7 +109,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-send [balance]="selectedBalance" (onClickSend)="onClickSend($event)"></app-send>
         </div>
       </ion-content>
@@ -125,7 +127,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-text-center ion-padding">
+        <div class="modal-content-container">
 
         </div>
       </ion-content>

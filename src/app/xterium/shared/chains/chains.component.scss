@@ -1,17 +1,11 @@
 .chains-list {
   border: none;
-  padding: 0px 8px;
 
   .network-metadata-label {
     margin: 10px 0px 0px 0px;
     font-size: 16px;
     font-weight: 600;
     color: #c7c7c7;
-  }
-
-  ion-grid.chains-grid {
-    margin-top: -10px;
-    margin-bottom: 5px;
   }
 
   ion-list {

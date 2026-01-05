@@ -47,7 +47,7 @@
       <ion-col size="6">
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="success-button" (click)="exportWallet()">
-             {{ 'EXPORT WALLET' | translate }}
+            {{ 'EXPORT WALLET' | translate }}
           </ion-button>
         </div>
       </ion-col>
@@ -55,7 +55,7 @@
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="danger-button" (click)="deleteWallet()"
             [disabled]="this.currentWallet.id === wallet.id">
-             {{ 'DELETE WALLET' | translate }}
+            {{ 'DELETE WALLET' | translate }}
           </ion-button>
         </div>
       </ion-col>
@@ -84,7 +84,8 @@
         <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
           <h1 style="font-weight: bold">{{ 'Sign' | translate }}</h1>
           <span style="font-size: 15px;">
-            {{ 'To show your wallet\'s recovery secrets, please authenticate using your chosen method below.' | translate }}
+            {{ 'To show your wallet\'s recovery secrets, please authenticate using your chosen method below.' |
+            translate }}
           </span>
         </div>
         <div class="ion-padding-horizontal">
@@ -100,7 +101,8 @@
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
           <div class="biometric-unavailable">
             <p class="unavailable-text">
-              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device. Please set up your biometric authentication again to continue.' | translate }}
+              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device.
+              Please set up your biometric authentication again to continue.' | translate }}
             </p>
           </div>
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
@@ -125,7 +127,7 @@
       </ion-buttons>
     </ion-toolbar>
     <ion-content>
-      <div class="ion-padding-horizontal secrets">
+      <div class="modal-content-container secrets">
         <ion-grid>
           <ion-row>
             <ion-col size="12">
@@ -134,7 +136,8 @@
                   {{ 'Your Recovery Phrase' | translate }}
                 </h1>
                 <span style="font-size: 15px;">
-                  {{ 'Below are the words that make up your wallet\'s Recovery Phrase. Keep it secure and never share it with anyone.' | translate }}
+                  {{ 'Below are the words that make up your wallet\'s Recovery Phrase. Keep it secure and never share it
+                  with anyone.' | translate }}
                 </span>
               </div>
             </ion-col>
@@ -167,7 +170,8 @@
                 <h2>{{ 'Do not share your Recovery Phrase' | translate }}</h2>
                 <br />
                 <p class="warning-text">
-                  {{ 'If someone has your Recovery Phrase they will have full control of your wallet. Keep it secure and never share it with anyone.' | translate }}
+                  {{ 'If someone has your Recovery Phrase they will have full control of your wallet. Keep it secure and
+                  never share it with anyone.' | translate }}
                 </p>
               </div>
             </ion-col>
@@ -180,11 +184,15 @@
                 </h2>
                 <br />
                 <p class="secondary-text">
-                  {{ 'Recovery Phrases are typically a series of 12, 18, or 24 words that are difficult to remember. It is crucial to store your Recovery Phrase securely, as losing it may result in permanent loss of access to your wallet and its funds.' | translate }}
+                  {{ 'Recovery Phrases are typically a series of 12, 18, or 24 words that are difficult to remember. It
+                  is crucial to store your Recovery Phrase securely, as losing it may result in permanent loss of access
+                  to your wallet and its funds.' | translate }}
                 </p>
                 <br />
                 <p class="secondary-text">
-                  {{ 'Consider using a reputable password manager or writing it down and storing it in a safe place. Avoid sharing your Recovery Phrase with anyone or storing it in easily accessible locations.' | translate }}
+                  {{ 'Consider using a reputable password manager or writing it down and storing it in a safe place.
+                  Avoid sharing your Recovery Phrase with anyone or storing it in easily accessible locations.' |
+                  translate }}
                 </p>
               </div>
             </ion-col>
@@ -208,7 +216,7 @@
       </ion-buttons>
     </ion-toolbar>
     <ion-content>
-      <div class="ion-padding-horizontal secrets">
+      <div class="modal-content-container secrets">
         <ion-grid>
           <ion-row>
             <ion-col size="12">
@@ -217,7 +225,8 @@
                   {{ 'Your Private Key' | translate }}
                 </h1>
                 <span style="font-size: 15px;">
-                  {{ 'Below is your wallet\'s Private Key. Keep it secure and never share it with anyone.' | translate }}
+                  {{ 'Below is your wallet\'s Private Key. Keep it secure and never share it with anyone.' | translate
+                  }}
                 </span>
               </div>
             </ion-col>
@@ -248,7 +257,8 @@
                 <h2>{{ 'Do not share your Private Key' | translate }}</h2>
                 <br />
                 <p class="warning-text">
-                  {{ 'If someone has your Private Key they will have full control of your wallet. Keep it secure and never share it with anyone.' | translate }}
+                  {{ 'If someone has your Private Key they will have full control of your wallet. Keep it secure and
+                  never share it with anyone.' | translate }}
                 </p>
               </div>
             </ion-col>
@@ -261,11 +271,15 @@
                 </h2>
                 <br />
                 <p class="secondary-text">
-                  {{ 'Private Keys are typically long strings of characters that are difficult to remember. It is crucial to store your Private Key securely, as losing it may result in permanent loss of access to your wallet and its funds.' | translate }}
+                  {{ 'Private Keys are typically long strings of characters that are difficult to remember. It is
+                  crucial to store your Private Key securely, as losing it may result in permanent loss of access to
+                  your wallet and its funds.' | translate }}
                 </p>
                 <br />
                 <p class="secondary-text">
-                  {{ 'Consider using a reputable password manager or writing it down and storing it in a safe place. Avoid sharing your Private Key with anyone or storing it in easily accessible locations.' | translate }}
+                  {{ 'Consider using a reputable password manager or writing it down and storing it in a safe place.
+                  Avoid sharing your Private Key with anyone or storing it in easily accessible locations.' | translate
+                  }}
                 </p>
               </div>
             </ion-col>

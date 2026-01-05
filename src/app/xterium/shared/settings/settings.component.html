@@ -57,7 +57,9 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-currency (onSelectedCurrency)="selectCurrency($event)"></app-currency>
+        <div class="modal-content-container">
+          <app-currency (onSelectedCurrency)="selectCurrency($event)"></app-currency>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -74,7 +76,9 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-language (onSelectedLanguage)="selectLanguage($event)"></app-language>
+        <div class="modal-content-container">
+          <app-language (onSelectedLanguage)="selectLanguage($event)"></app-language>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>

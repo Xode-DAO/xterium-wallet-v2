@@ -36,8 +36,8 @@
                   </ion-buttons>
                 </ion-toolbar>
                 <ion-content>
-                  <div class="ion-padding-horizontal">
-                    <app-chains (onSelectedChain)="onSelectedChain($event)"></app-chains>
+                  <div class="modal-content-container">
+                    <app-chains [isAllChainIncluded]="false" (onSelectedChain)="onSelectedChain($event)"></app-chains>
                   </div>
                 </ion-content>
               </ng-template>

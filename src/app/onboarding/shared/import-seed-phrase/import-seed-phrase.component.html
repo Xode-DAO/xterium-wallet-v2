@@ -15,7 +15,8 @@
       <ion-col size="6">
         <ion-list>
           <ion-item class="primary-input-item">
-            <ion-input type="text" [(ngModel)]="walletMnemonicPhrase[index]" (ionInput)="trimInput(index)" autocomplete="off"></ion-input>
+            <ion-input type="text" [(ngModel)]="walletMnemonicPhrase[index]" (ionInput)="trimInput(index)"
+              autocomplete="off"></ion-input>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -52,7 +53,9 @@
       </ion-buttons>
     </ion-toolbar>
     <ion-content>
-      <app-sign-wallet (onSignWallet)="onSignWallet($event)"></app-sign-wallet>
+      <div class="modal-content-container">
+        <app-sign-wallet (onSignWallet)="onSignWallet($event)"></app-sign-wallet>
+      </div>
     </ion-content>
   </ng-template>
 </ion-modal>

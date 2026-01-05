@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -35,6 +35,7 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
   ]
 })
 export class ChainsComponent implements OnInit {
+  @Input() isAllChainIncluded: boolean = false;
   @Output() onSelectedChain = new EventEmitter<Chain>();
 
   constructor(
@@ -45,29 +46,28 @@ export class ChainsComponent implements OnInit {
   chains: Chain[] = [];
 
   async getChains(): Promise<void> {
-    const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
-    const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
-
-    this.chains = [
-      ...allChains,
-      ...polkadotChains,
+    const [allChains, polkadotChains, paseoChains, rococoChains] = [
+      this.chainsService.getChainsByNetwork(Network.AllNetworks),
+      this.chainsService.getChainsByNetwork(Network.Polkadot),
+      this.chainsService.getChainsByNetwork(Network.Paseo),
+      this.chainsService.getChainsByNetwork(Network.Rococo),
     ];
 
-    const settings = await this.settingsService.get();
-    if (settings) {
-      const developerMode = settings.user_preferences.testnet_enabled;
-      if (developerMode) {
-        const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
-        const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
+    let chains: Chain[] = this.isAllChainIncluded
+      ? [...allChains, ...polkadotChains]
+      : [...polkadotChains];
 
-        this.chains = [
-          ...allChains,
-          ...polkadotChains,
-          ...paseoChains,
-          ...rococoChains,
-        ];
-      }
+    const settings = await this.settingsService.get();
+    const developerMode = settings?.user_preferences?.testnet_enabled;
+
+    if (developerMode) {
+      const testnetChains = [...paseoChains, ...rococoChains];
+      chains = this.isAllChainIncluded
+        ? [...allChains, ...polkadotChains, ...testnetChains]
+        : [...polkadotChains, ...testnetChains];
     }
+
+    this.chains = chains;
   }
 
   selectChain(chain: Chain) {
