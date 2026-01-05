@@ -160,12 +160,12 @@ export class ApprovalPage implements OnInit {
     }
 
     if (isChecked) {
-      if (!this.selectedWallets.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain)) {
+      if (!this.selectedWallets.some(acc => acc.id === wallet.id)) {
         this.selectedWallets.push(wallet);
       }
     } else {
       this.selectedWallets = this.selectedWallets.filter(
-        acc => acc.public_key !== wallet.public_key && acc.chain === wallet.chain
+        acc => acc.id !== wallet.id
       );
     }
   }
