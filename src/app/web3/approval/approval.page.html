@@ -18,12 +18,13 @@
       <ion-row>
         <ion-col size="12">
           <div class="wallet-container">
-            @if (walletsByChain[selectedChainName] && walletsByChain[selectedChainName].length > 0) {
+            @for (chain of chains; track chain) {
+            @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
             <div class="chain-label">
-              <img [src]="'./../../../../assets/images/chains/' + getChainImage(selectedChainName)" height="25" />
-              {{ selectedChainName }}
+              <img [src]="'./../../../../assets/images/chains/' + chain.image" height="25" />
+              {{ chain.name }}
             </div>
-            @for (wallet of walletsByChain[selectedChainName]; track wallet) {
+            @for (wallet of walletsByChain[chain.name]; track wallet) {
             <ion-list>
               <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(wallet, $event)">
                 <ion-checkbox slot="start" class="wallet-checkbox" [checked]="isWalletSelected(wallet)"
@@ -41,11 +42,12 @@
               <p>No wallets available to connect.</p>
             </div>
             }
+            }
           </div>
 
-          @if (selectedAccounts.length > 0) {
+          @if (selectedWallets.length > 0) {
           <div class="ion-text-center ion-padding">
-            <p>{{ selectedAccounts.length }} account(s) selected</p>
+            <p>{{ selectedWallets.length }} account(s) selected</p>
           </div>
           }
         </ion-col>
@@ -61,7 +63,7 @@
         <ion-col size="6">
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="connect()"
-              [disabled]="selectedAccounts.length === 0">
+              [disabled]="selectedWallets.length === 0">
               Connect
             </ion-button>
           </div>
@@ -69,7 +71,7 @@
         <ion-col size="6">
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom danger-button" (click)="reject()">
-              @if (selectedAccounts.length === 0) {
+              @if (selectedWallets.length === 0) {
               Close
               }
               @else {
@@ -82,3 +84,5 @@
     </ion-grid>
   </div>
 </ion-footer>
+
+<ion-toast [duration]="5000"></ion-toast>

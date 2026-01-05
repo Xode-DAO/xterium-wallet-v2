@@ -26,6 +26,8 @@ import {
   IonModal,
   IonTitle,
   IonToolbar,
+  IonToast,
+  ToastController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -95,6 +97,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonModal,
     IonTitle,
     IonToolbar,
+    IonToast,
     PasswordSetupComponent,
     PasswordLoginComponent,
     PinSetupComponent,
@@ -124,6 +127,7 @@ export class SignTransactionPage implements OnInit {
     private encryptionService: EncryptionService,
     private balancesService: BalancesService,
     private localNotificationsService: LocalNotificationsService,
+    private toastController: ToastController,
   ) {
     addIcons({
       cube,
@@ -148,18 +152,15 @@ export class SignTransactionPage implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  wallets: Wallet[] = [];
-  walletsPublicAddresse: string[] = [];
-
   extrinsic: string = "";
   estimatedFee: number = 0;
   isLoadingFee: boolean = true;
 
   isProcessing: boolean = false;
 
-  paramsEncodedCallDataHex: string = "";
-  paramsCallbackUrl: string = "";
-  paramsWalletAddress: string = "";
+  paramsEncodedCallDataHex: string | null = null;
+  paramsWalletAddress: string | null = null;
+  paramsCallbackUrl: string | null = null;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -178,23 +179,18 @@ export class SignTransactionPage implements OnInit {
     }
   }
 
-  async fetchWallets(): Promise<void> {
-    this.wallets = await this.walletsService.getAllWallets();
-    this.walletsPublicAddresse = await Promise.all(
-      this.wallets.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
-    );
-  }
-
-  async setWallet(address: string): Promise<void> {
+  async replaceCurrentWallet(address: string): Promise<void> {
     const decodedAddress = decodeURIComponent(address);
 
-    await this.fetchWallets();
+    const wallets = await this.walletsService.getAllWallets();
+    const walletsPublicAddresse = await Promise.all(
+      wallets.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
+    );
 
-    const index = this.walletsPublicAddresse.indexOf(decodedAddress);
-
+    const index = walletsPublicAddresse.indexOf(decodedAddress);
     if (index >= 0) {
-      this.currentWallet = this.wallets[index];
-      this.currentWalletPublicAddress = this.walletsPublicAddresse[index];
+      this.currentWallet = wallets[index];
+      this.currentWalletPublicAddress = walletsPublicAddresse[index];
     }
   }
 
@@ -244,18 +240,18 @@ export class SignTransactionPage implements OnInit {
           await pjsApi.connect()
         };
 
-        const extrinsic = pjsApi.registry.createType('Extrinsic', this.paramsEncodedCallDataHex);
+        const extrinsic = pjsApi.registry.createType('Extrinsic', params['encodedCallDataHex']);
 
         this.extrinsic = `${extrinsic.method.section}(${extrinsic.method.method})`;
 
-        const estimatedFee = await service.estimatedFees(pjsApi, this.paramsEncodedCallDataHex, this.currentWalletPublicAddress, null);
+        const estimatedFee = await service.estimatedFees(pjsApi, params['encodedCallDataHex'], this.currentWalletPublicAddress, null);
         this.estimatedFee = estimatedFee;
         this.isLoadingFee = false;
       }
 
       if (params['walletAddress']) {
         this.paramsWalletAddress = params['walletAddress'];
-        await this.setWallet(this.paramsWalletAddress);
+        await this.replaceCurrentWallet(params['walletAddress']);
       }
 
       if (params['callbackUrl']) {
@@ -305,32 +301,41 @@ export class SignTransactionPage implements OnInit {
       await pjsApi.connect()
     };
 
-    if (this.paramsCallbackUrl) {
-      const signedHex = await service.signTransaction(
-        pjsApi,
-        this.paramsEncodedCallDataHex,
-        walletSigner
-      );
+    if (this.paramsEncodedCallDataHex && this.paramsEncodedCallDataHex !== null) {
+      if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
+        const signedHex = await service.signTransaction(
+          pjsApi,
+          this.paramsEncodedCallDataHex,
+          walletSigner
+        );
 
-      this.confirmSignTransactionModal.dismiss();
-
-      const url = `${this.paramsCallbackUrl}?status=success&signedTx=${encodeURIComponent(signedHex)}`;
-
-      window.location.href = url;
-      return;
-    }
-
-    service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
-      next: async (event) => {
         this.confirmSignTransactionModal.dismiss();
-
         this.router.navigate(['/xterium/balances']);
-        this.handleTransactionEvent(event);
-      },
-      error: async (err) => {
-        this.isProcessing = false;
+
+        const url = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
+        window.location.href = url;
+      } else {
+        service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
+          next: async (event) => {
+            this.confirmSignTransactionModal.dismiss();
+            this.router.navigate(['/xterium/balances']);
+
+            this.handleTransactionEvent(event);
+          },
+          error: async (err) => {
+            this.isProcessing = false;
+          }
+        });
       }
-    });
+    } else {
+      const toast = await this.toastController.create({
+        message: 'No encoded call data found.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+      await toast.present();
+    }
   }
 
   async handleTransactionEvent(event: ISubmittableResult) {
@@ -375,7 +380,5 @@ export class SignTransactionPage implements OnInit {
     this.initSecurity();
 
     this.initTransaction();
-
-    // this.fetchWallets();
   }
 }

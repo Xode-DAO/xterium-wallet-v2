@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { App } from '@capacitor/app';
@@ -16,6 +16,7 @@ import {
   IonLabel,
   IonButton,
   IonCheckbox,
+  IonToast,
   ToastController
 } from '@ionic/angular/standalone';
 
@@ -27,7 +28,7 @@ import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
-import { DeepLinkService } from 'src/app/api/deep-link/deep-link.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 @Component({
   selector: 'app-approval',
@@ -48,90 +49,88 @@ import { DeepLinkService } from 'src/app/api/deep-link/deep-link.service';
     IonLabel,
     IonButton,
     IonCheckbox,
+    IonToast
   ]
 })
 export class ApprovalPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private utilsService: UtilsService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
-    public environmentService: EnvironmentService,
-    private deepLinkService: DeepLinkService,
-    private toastController: ToastController,
+    private environmentService: EnvironmentService,
+    private settingsService: SettingsService,
+    private toastController: ToastController
   ) { }
 
   chains: Chain[] = [];
-  wallets: Wallet[] = [];
-
   chainsByName: Record<string, Chain[]> = {};
+  selectedChain: Chain = new Chain();
+
+  wallets: Wallet[] = [];
   walletsByChain: Record<string, Wallet[]> = {};
+  selectedWallets: Wallet[] = [];
 
-  selectedAccounts: Wallet[] = [];
+  paramsOrigin: string | null = null;
+  paramsChainId: number | null = null;
+  paramsCallbackUrl: string | null = null;
 
-  origin: string = "";
+  async getChains(): Promise<void> {
+    const [polkadotChains, paseoChains, rococoChains] = [
+      this.chainsService.getChainsByNetwork(Network.Polkadot),
+      this.chainsService.getChainsByNetwork(Network.Paseo),
+      this.chainsService.getChainsByNetwork(Network.Rococo),
+    ];
 
-  callBackUrl: string = "";
-  chainId: number = 0;
-  selectedChainName: string = "";
+    let chains: Chain[] = [...polkadotChains];
 
-  getChains(): void {
-    const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
-    const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
-    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
+    const settings = await this.settingsService.get();
+    const isTestnetEnabled = settings?.user_preferences?.testnet_enabled;
 
-    this.chains = [...allChains, ...liveChains, ...rococoChains];
-    this.loadChainByName();
+    if (isTestnetEnabled) {
+      chains = [
+        ...polkadotChains,
+        ...paseoChains,
+        ...rococoChains
+      ];
+    }
+
+    if (this.paramsChainId && this.paramsChainId !== null) {
+      const chainById = chains.find(c => c.chain_id === this.paramsChainId);
+      if (chainById) {
+        this.chains = [chainById];
+      }
+    } else {
+      this.chains = chains;
+    }
+
+    await this.getWallets();
   }
 
-  loadChainByName(): void {
-    this.chainsByName["All Chains"] = this.chains;
-  }
-
-  async getWallet(): Promise<void> {
+  async getWallets(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
-
-    if (this.chainId) {
-      await this.loadWalletsByChainId(this.chainId);
-    }
+    await this.loadWalletsByChain();
   }
 
-  getChainByChainId(chainId: number) {
-    const selectedChain = this.chainsService.getChainByChainId(chainId);
-
-    if (!selectedChain) {
-      return;
-    }
-
-    this.chainId = selectedChain.chain_id;
-    this.loadWalletsByChainId(this.chainId);
-
-  }
-
-  getChainImage(name: string) {
-    const chain = this.chains.find(c => c.name === name);
-    return chain?.image ?? 'default.png';
-  }
-
-  async loadWalletsByChainId(chainId: number): Promise<void> {
+  async loadWalletsByChain(): Promise<void> {
     this.walletsByChain = {};
 
-    const selectedChain = this.chains.find(c => c.chain_id === chainId);
-    if (!selectedChain) return;
+    for (const chain of this.chains) {
+      const filtered = this.wallets.filter(
+        w => w.chain.id === chain.id
+      );
 
-    this.selectedChainName = selectedChain.name;
+      const mapped = await Promise.all(
+        filtered.map(async wallet => ({
+          ...wallet,
+          public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, chain)
+        }))
+      );
 
-    const filtered = this.wallets.filter(w => w.chain.id === selectedChain.id);
-
-    const mapped = await Promise.all(
-      filtered.map(async wallet => ({
-        ...wallet,
-        public_key: await this.encodePublicAddressByChainFormat(wallet.public_key, selectedChain)
-      }))
-    );
-
-    this.walletsByChain[selectedChain.name] = mapped;
+      this.walletsByChain[chain.name] = mapped;
+    }
   }
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
@@ -153,7 +152,7 @@ export class ApprovalPage implements OnInit {
     if (event && event.detail && typeof event.detail.checked !== 'undefined') {
       isChecked = event.detail.checked;
     } else {
-      const currentlySelected = this.selectedAccounts.some(
+      const currentlySelected = this.selectedWallets.some(
         acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain
       );
 
@@ -161,24 +160,42 @@ export class ApprovalPage implements OnInit {
     }
 
     if (isChecked) {
-      if (!this.selectedAccounts.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain)) {
-        this.selectedAccounts.push(wallet);
+      if (!this.selectedWallets.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain)) {
+        this.selectedWallets.push(wallet);
       }
     } else {
-      this.selectedAccounts = this.selectedAccounts.filter(
+      this.selectedWallets = this.selectedWallets.filter(
         acc => acc.public_key !== wallet.public_key && acc.chain === wallet.chain
       );
     }
   }
 
   isWalletSelected(wallet: Wallet): boolean {
-    return this.selectedAccounts.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain);
+    return this.selectedWallets.some(acc => acc.public_key === wallet.public_key && acc.chain === wallet.chain);
+  }
+
+  async initConnection(): Promise<void> {
+    this.route.queryParams.subscribe(params => {
+      if (params['origin']) {
+        this.paramsOrigin = params['origin'];
+      }
+
+      if (params['chainId']) {
+        this.paramsChainId = Number(params['chainId']);
+      }
+
+      if (params['callbackUrl']) {
+        this.paramsCallbackUrl = decodeURIComponent(params['callbackUrl']);
+      }
+    });
+
+    await this.getChains();
   }
 
   async connect() {
     const encodedWallets = (
       await Promise.all(
-        this.selectedAccounts.map(async (wallet) => {
+        this.selectedWallets.map(async (wallet) => {
           const rawWallet = this.wallets.find(d => d.id === wallet.id);
           if (!rawWallet) return null;
 
@@ -200,24 +217,27 @@ export class ApprovalPage implements OnInit {
       chrome.runtime.sendMessage({
         type: "xterium-approval-response",
         payload: {
-          origin: this.origin,
+          origin: this.paramsOrigin,
           selected_accounts: encodedWallets,
           approved: true,
         },
       });
+    } else {
+      if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
+        this.router.navigate(['/xterium/balances']);
+
+        const finalUrl = `${this.paramsCallbackUrl}?selectedAccounts=${encodeURIComponent(JSON.stringify(encodedWallets))}`;
+        window.location.href = finalUrl;
+      } else {
+        const toast = await this.toastController.create({
+          message: 'No callback URL provided.',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
+        await toast.present();
+      }
     }
-
-    const callbackEncoded = this.callBackUrl
-      ? encodeURIComponent(this.callBackUrl)
-      : "";
-
-      const deeplink =
-        `xterium://app/web3/approval?` +
-        `selected_accounts=${encodeURIComponent(JSON.stringify(encodedWallets))}` +
-        `&approved=true` +
-        (this.callBackUrl ? `&callback=${callbackEncoded}` : "");
-
-      this.deepLinkService.sendDeeplink(deeplink, this.callBackUrl, encodedWallets);
   }
 
   reject() {
@@ -225,43 +245,18 @@ export class ApprovalPage implements OnInit {
       chrome.runtime.sendMessage({
         type: "xterium-approval-response",
         payload: {
-          origin: this.origin,
+          origin: this.paramsOrigin,
           selected_accounts: [],
           approved: false,
         },
       });
+    } else {
+      this.router.navigate(['/xterium/balances']);
+      App.exitApp();
     }
-
-    App.exitApp();
-  }
-
-  async showToast(message: string, color: string = "primary") {
-    const toast = await this.toastController.create({
-      message,
-      duration: 20000,
-      position: "bottom",
-      color,
-    });
-    await toast.present();
   }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      if (params['origin']) {
-        this.origin = params['origin'];
-      }
-
-      if (params['callback']) {
-        this.callBackUrl = decodeURIComponent(params['callback']);
-      }
-
-      if (params['chainId']) {
-        this.chainId = Number(params['chainId']);
-        this.getChainByChainId(this.chainId);
-      }
-    });
-
-    this.getChains();
-    this.getWallet();
+    this.initConnection();
   }
 }

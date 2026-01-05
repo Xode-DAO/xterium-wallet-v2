@@ -58,13 +58,21 @@ export class ChainsComponent implements OnInit {
       : [...polkadotChains];
 
     const settings = await this.settingsService.get();
-    const developerMode = settings?.user_preferences?.testnet_enabled;
+    const isTestnetEnabled = settings?.user_preferences?.testnet_enabled;
 
-    if (developerMode) {
-      const testnetChains = [...paseoChains, ...rococoChains];
+    if (isTestnetEnabled) {
       chains = this.isAllChainIncluded
-        ? [...allChains, ...polkadotChains, ...testnetChains]
-        : [...polkadotChains, ...testnetChains];
+        ? [
+          ...allChains,
+          ...polkadotChains,
+          ...paseoChains,
+          ...rococoChains
+        ]
+        : [
+          ...polkadotChains,
+          ...paseoChains,
+          ...rococoChains
+        ];
     }
 
     this.chains = chains;
