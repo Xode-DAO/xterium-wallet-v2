@@ -72,3 +72,36 @@ ion-modal.select-network-metadata-modal,
 ion-modal.select-chain-modal {
   --height: auto;
 }
+
+.wallet-cta {
+  border-radius: 1.5rem;
+  --background: #333333;
+  color: #fff;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  width: 100%; 
+  max-width: 400px; 
+  margin: 0 auto; 
+
+  .wallet-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .wallet-subtitle {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+
+  .wallet-btn {
+    --background: #fff;
+    --color: #000;
+    --border-radius: 10px;
+    font-weight: 600;
+    --background: #333333;
+  }
+}
+
+ 

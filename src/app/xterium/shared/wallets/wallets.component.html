@@ -75,7 +75,36 @@
       </ion-col>
       }
     </ion-row>
+    @if (chainsWithAddButton.includes(chain)) {
+    <div class="chain-label">
+      @if (selectedChain.id === 0) {
+      <ion-chip [color]="'dark'" style="margin-bottom: 8px;">
+        <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
+        &nbsp; {{ chain.name }}
+        {{ chain.network.toString() !== 'All Networks' && chain.network.toString() !== 'Polkadot' ?
+        '(' + chain.network + ')' : '' }}
+      </ion-chip>
+      } 
+      <ion-card class="wallet-cta" button (click)="createWalletForChain(chain)">
+        <ion-grid class="wallet-cta-grid">
+          <ion-row class="ion-align-items-center ion-justify-content-between">
+            <ion-col size="8">
+              <div class="wallet-cta-text">
+                <h2 class="wallet-title">3 Wallets Found</h2>
+                <p class="wallet-subtitle">Would you like to add one?</p>
+              </div>
+            </ion-col>
+            <ion-col size="4" class="ion-text-end">
+              <ion-button expand="block" fill="solid" color="light" class="wallet-btn">
+                Add Wallet
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
+    </div>
     }
+  }
   </ion-grid>
 </div>
 

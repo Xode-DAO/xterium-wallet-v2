@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   IonContent,
   IonGrid,
@@ -16,7 +18,8 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-  IonChip
+  IonChip,
+  IonCard,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -57,6 +60,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonButton,
     IonIcon,
     IonChip,
+    IonCard,
     ChainsComponent,
     WalletDetailsComponent,
     TranslatePipe
@@ -95,6 +99,8 @@ export class WalletsComponent implements OnInit {
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
+
+  chainsWithAddButton: Chain[] = [];
 
   async getChains(): Promise<void> {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
@@ -159,6 +165,48 @@ export class WalletsComponent implements OnInit {
 
       this.walletsByChain[chain.id] = mapped;
     }
+
+    await this.getChainsAvailableForWallet();
+  }
+
+  async getChainsAvailableForWallet(): Promise<void> {
+    if (!this.currentWallet || !this.currentWallet.public_key) return;
+
+    const polkadotChains = this.chains.filter(chain => chain.network === Network.Polkadot);
+
+    this.chainsWithAddButton = [];
+
+    for (const chain of polkadotChains) {
+      const encodedCurrentWallet = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain);
+
+      const walletsInChain = this.walletsByChain[chain.id] || [];
+
+      const walletExists = walletsInChain.some(
+        w => w.public_key === encodedCurrentWallet
+      );
+
+      if (!walletExists) {
+        this.chainsWithAddButton.push(chain);
+      }
+    }
+  }
+
+  async createWalletForChain(chain: Chain): Promise<void> {
+    if (!this.currentWallet) return;
+
+    let newId = uuidv4();
+    const newWallet: Wallet = new Wallet();
+    newWallet.id = newId;
+    newWallet.public_key = this.currentWallet.public_key;
+    newWallet.private_key = this.currentWallet.private_key;
+    newWallet.mnemonic_phrase = this.currentWallet.mnemonic_phrase;
+    newWallet.name = "My wallet";
+    newWallet.chain = chain;
+
+    await this.walletsService.create(newWallet);
+
+    await this.getWallets();
+    await this.getCurrentWallet();
   }
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
