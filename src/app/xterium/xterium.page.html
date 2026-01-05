@@ -91,7 +91,12 @@
                             <img [src]="'./../../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />
                           </ion-avatar>
                           }
-                          <ion-label>{{ selectedChain.name || 'Select Chain' }}</ion-label>
+                          <ion-label>
+                            {{ selectedChain.name || 'Select Chain' }}
+                            {{ selectedChain.network.toString() !== 'All Networks' &&
+                            selectedChain.network.toString() !== 'Polkadot' ?
+                            '(' + selectedChain.network + ')' : '' }}
+                          </ion-label>
                           <ion-button size="small" fill="clear">
                             <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
                           </ion-button>

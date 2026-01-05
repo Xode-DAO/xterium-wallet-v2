@@ -10,6 +10,8 @@
           }
           <ion-label style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">
             {{ selectedChain.name || 'Select Chain' }}
+            {{ selectedChain.network.toString() !== 'All Networks' && selectedChain.network.toString() !== 'Polkadot' ?
+            '(' + selectedChain.network + ')' : '' }}
           </ion-label>
           <ion-button size="small" fill="clear">
             <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
@@ -38,19 +40,21 @@
   </ion-grid>
 
   <ion-grid class="wallet-grid">
-    @for (chain of chainsByName[selectedChain.name]; track chain) {
-    @if (walletsByChain[chain.name] && walletsByChain[chain.name].length > 0) {
+    @for (chain of chainsById[selectedChain.id]; track chain) {
+    @if (walletsByChain[chain.id] && walletsByChain[chain.id].length > 0) {
     <div class="chain-label">
-      @if (selectedChain.name === "All Chains") {
+      @if (selectedChain.id === 0) {
       <ion-chip [color]="'dark'">
         <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
         &nbsp; {{ chain.name }}
+        {{ chain.network.toString() !== 'All Networks' && chain.network.toString() !== 'Polkadot' ?
+        '(' + chain.network + ')' : '' }}
       </ion-chip>
       }
     </div>
     }
     <ion-row>
-      @for (wallet of walletsByChain[chain.name]; track wallet) {
+      @for (wallet of walletsByChain[chain.id]; track wallet) {
       <ion-col size="6">
         <ion-list>
           <ion-item class="wallet-item" [ngClass]="{ 'selected-wallet': wallet.id === currentWallet.id }" button

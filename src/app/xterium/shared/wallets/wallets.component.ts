@@ -86,11 +86,11 @@ export class WalletsComponent implements OnInit {
   }
 
   chains: Chain[] = [];
-  chainsByName: Record<string, Chain[]> = {};
+  chainsById: Record<number, Chain[]> = {};
   selectedChain: Chain = new Chain();
 
   wallets: Wallet[] = [];
-  walletsByChain: Record<string, Wallet[]> = {};
+  walletsByChain: Record<number, Wallet[]> = {};
   selectedWallet: Wallet = new Wallet();
 
   currentWallet: Wallet = new Wallet();
@@ -125,13 +125,13 @@ export class WalletsComponent implements OnInit {
   }
 
   async loadChainByName(): Promise<void> {
-    this.chainsByName = {};
+    this.chainsById = {};
 
-    if (this.selectedChain.name === "All Chains") {
-      this.chainsByName["All Chains"] = this.chains;
+    if (this.selectedChain.id === 0) {
+      this.chainsById[0] = this.chains;
     } else {
-      const mapped = this.chains.filter(chain => chain.name.toLowerCase() === this.selectedChain.name.toLowerCase());
-      this.chainsByName[this.selectedChain.name] = mapped;
+      const mapped = this.chains.filter(chain => chain.id === this.selectedChain.id);
+      this.chainsById[this.selectedChain.id] = mapped;
     }
 
     await this.getWallets();
@@ -157,7 +157,7 @@ export class WalletsComponent implements OnInit {
         }))
       );
 
-      this.walletsByChain[chain.name] = mapped;
+      this.walletsByChain[chain.id] = mapped;
     }
   }
 

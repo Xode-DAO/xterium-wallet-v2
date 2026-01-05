@@ -48,7 +48,7 @@ export class ChainsService {
     {
       id: 3,
       network: Network.Polkadot,
-      name: "AssetHub - Polkadot",
+      name: "Polkadot Assethub",
       description: "Manage your assets easily on the AssetHub parachain.",
       chain_id: 1000,
       unit: "DOT",
@@ -64,7 +64,7 @@ export class ChainsService {
     {
       id: 4,
       network: Network.Polkadot,
-      name: "Xode - Polkadot",
+      name: "Xode",
       description: "Experience smooth and fast transactions with Xode.",
       chain_id: 3417,
       unit: "XON",
@@ -108,7 +108,7 @@ export class ChainsService {
     {
       id: 7,
       network: Network.Paseo,
-      name: "Xode - Paseo",
+      name: "Xode",
       description: "Test and experience Xode on the Paseo test network.",
       chain_id: 5102,
       unit: "XON",

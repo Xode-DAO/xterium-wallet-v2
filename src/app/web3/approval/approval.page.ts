@@ -66,11 +66,10 @@ export class ApprovalPage implements OnInit {
   ) { }
 
   chains: Chain[] = [];
-  chainsByName: Record<string, Chain[]> = {};
   selectedChain: Chain = new Chain();
 
   wallets: Wallet[] = [];
-  walletsByChain: Record<string, Wallet[]> = {};
+  walletsByChain: Record<number, Wallet[]> = {};
   selectedWallets: Wallet[] = [];
 
   paramsOrigin: string | null = null;
@@ -129,7 +128,7 @@ export class ApprovalPage implements OnInit {
         }))
       );
 
-      this.walletsByChain[chain.name] = mapped;
+      this.walletsByChain[chain.id] = mapped;
     }
   }
 

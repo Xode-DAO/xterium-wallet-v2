@@ -53,7 +53,7 @@ export class XodePolkadotService extends PolkadotJsService {
     const nativeToken: Token = {
       id: uuidv4(),
       reference_id: 0,
-      chain_id: 2,
+      chain_id: 4,
       name: xodeChainName,
       symbol: xodeTokenSymbol?.toString() ?? "",
       decimals: xodeTokenDecimals !== undefined ? Number(xodeTokenDecimals) : 0,
@@ -75,7 +75,7 @@ export class XodePolkadotService extends PolkadotJsService {
       const assetToken: Token = {
         id: uuidv4(),
         reference_id: assetId?.toString().replace(/,/g, "") || "",
-        chain_id: 2,
+        chain_id: 4,
         name: hexToString(metadata.name),
         symbol: hexToString(metadata.symbol),
         decimals: Number(metadata.decimals),
@@ -366,22 +366,22 @@ export class XodePolkadotService extends PolkadotJsService {
   async signTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Promise<string> {
     const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
     const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
-  
+
     const keyring = new Keyring({ type: 'sr25519' });
     const pair = keyring.addFromPair({
       publicKey,
       secretKey,
     });
-  
+
     const txBytes = hexToU8a(encodedCallDataHex);
     const call = api.createType('Extrinsic', txBytes);
     const tx = api.tx(call);
-  
+
     const signedTx = await tx.signAsync(pair, { nonce: -1 });
-  
+
     return signedTx.toHex();
   }
-  
+
   signAndSubmitTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult> {
     return new Observable<ISubmittableResult>(subscriber => {
       const subscriptions: any[] = [];

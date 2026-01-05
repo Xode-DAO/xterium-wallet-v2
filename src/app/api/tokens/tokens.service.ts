@@ -10,6 +10,7 @@ export class TokensService {
 
   private readonly assetPath: Record<string, string> = {
     XON: 'assets/images/tokens/xon.png',
+    XON_POLARIS: 'assets/images/tokens/xon-polaris.png',
     AZK: 'assets/images/tokens/azk.png',
     DOT: 'assets/images/tokens/dot.png',
     GEM: 'assets/images/tokens/gem.gif',
@@ -34,9 +35,14 @@ export class TokensService {
   }
 
   async attachIcon(token: Token): Promise<void> {
+    let symbol = token.symbol;
+    if (token.chain_id === 9) {
+      symbol = 'XON_POLARIS';
+    }
+
     let tokenImage: Token = {
       ...token,
-      image: await this.getTokenIcon(token.symbol)
+      image: await this.getTokenIcon(symbol)
     };
 
     this.tokenImageSubject.next(tokenImage);

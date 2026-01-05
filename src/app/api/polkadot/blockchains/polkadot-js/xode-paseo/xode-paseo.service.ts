@@ -50,7 +50,7 @@ export class XodePaseoService extends PolkadotJsService {
     const nativeToken: Token = {
       id: uuidv4(),
       reference_id: 0,
-      chain_id: 2,
+      chain_id: 7,
       name: xodeChainName,
       symbol: xodeTokenSymbol?.toString() ?? "",
       decimals: xodeTokenDecimals !== undefined ? Number(xodeTokenDecimals) : 0,
@@ -72,7 +72,7 @@ export class XodePaseoService extends PolkadotJsService {
       const assetToken: Token = {
         id: uuidv4(),
         reference_id: assetId?.toString().replace(/,/g, "") || "",
-        chain_id: 2,
+        chain_id: 7,
         name: hexToString(metadata.name),
         symbol: hexToString(metadata.symbol),
         decimals: Number(metadata.decimals),
