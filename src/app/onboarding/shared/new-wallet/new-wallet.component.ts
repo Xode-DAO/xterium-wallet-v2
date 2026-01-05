@@ -170,28 +170,13 @@ export class NewWalletComponent implements OnInit {
         return;
       }
 
-      const chains = this.chainsService.getChainsByNetwork(this.selectedChain.network);
-      if (chains.length === 0) {
-        this.isProcessing = false;
-
-        const toast = await this.toastController.create({
-          message: 'No chains available. Please try again later.',
-          color: 'danger',
-          duration: 1500,
-          position: 'top',
-        });
-
-        await toast.present();
-        return;
-      }
-
       const encryptedMnemonicPhrase = await this.encryptionService.encrypt(this.walletMnemonicPhrase.join(' '), password);
       const encryptedPrivateKey = await this.encryptionService.encrypt(keypair.secretKey.toString(), password);
 
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
-        chain: chains[0],
+        chain: this.selectedChain,
         mnemonic_phrase: encryptedMnemonicPhrase,
         public_key: keypair.publicKey.toString(),
         private_key: encryptedPrivateKey,
@@ -199,26 +184,9 @@ export class NewWalletComponent implements OnInit {
 
       await this.walletsService.create(wallet);
 
-      for (let i = 1; i < chains.length; i++) {
-        newId = uuidv4();
-
-        const wallet: Wallet = {
-          id: newId,
-          name: this.walletName,
-          chain: chains[i],
-          mnemonic_phrase: encryptedMnemonicPhrase,
-          public_key: keypair.publicKey.toString(),
-          private_key: encryptedPrivateKey,
-        };
-
-        await this.walletsService.create(wallet);
-
-        if (i === 1) {
-          const wallets = await this.walletsService.getAllWallets();
-          if (wallets.length === 2) {
-            await this.walletsService.setCurrentWallet(newId);
-          }
-        }
+      const wallets = await this.walletsService.getAllWallets();
+      if (wallets.length === 1) {
+        await this.walletsService.setCurrentWallet(newId);
       }
 
       if (this.isChromeExtension) {
