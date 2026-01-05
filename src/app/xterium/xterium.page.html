@@ -85,7 +85,7 @@
                   <ion-row>
                     <ion-col size="12">
                       <ion-list>
-                        <ion-item class="primary-select-button-item ion-margin-bottom"
+                        <!-- <ion-item class="primary-select-button-item ion-margin-bottom"
                           (click)="openSelectNetworkMetadataModal()">
                           @if (selectedNetworkMetadata) {
                           <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
@@ -113,7 +113,7 @@
                                 (onSelectedNetworkMetadata)="onSelectedNetworkMetadata($event)"></app-networks>
                             </ng-template>
                           </ion-modal>
-                        </ion-item>
+                        </ion-item> -->
                         <ion-item button detail="false" lines="none" class="create-wallet-new-account-item"
                           (click)="openCreateNewAccountModal()">
                           {{ 'New Account' | translate }}
@@ -152,8 +152,7 @@
                           will be required to restore your wallet.' | translate }}</span>
                       </div>
 
-                      <app-new-wallet [selectedNetworkMetadata]="selectedNetworkMetadata"
-                        (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
+                      <app-new-wallet (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
                     </div>
                   </ion-content>
                 </ng-template>
@@ -178,34 +177,8 @@
                           phrase.' | translate }}</span>
                       </div>
 
-                      <app-import-seed-phrase [selectedNetworkMetadata]="selectedNetworkMetadata"
+                      <app-import-seed-phrase
                         (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
-                    </div>
-                  </ion-content>
-                </ng-template>
-              </ion-modal>
-
-              <ion-modal #importPrivateKeyModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-                [expandToScroll]="false">
-                <ng-template>
-                  <ion-toolbar class="main-modal-toolbar">
-                    <ion-title>{{ 'Import' | translate }}</ion-title>
-                    <ion-buttons slot="end">
-                      <ion-button (click)="importPrivateKeyModal.dismiss()">
-                        <ion-icon name="close" style="color: white;"></ion-icon>
-                      </ion-button>
-                    </ion-buttons>
-                  </ion-toolbar>
-                  <ion-content>
-                    <div class="ion-padding-horizontal">
-                      <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
-                        <h1 style="font-weight: bold;">{{ 'Import Private Key' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your private key.' |
-                          translate }}</span>
-                      </div>
-
-                      <app-import-private-key [selectedNetworkMetadata]="selectedNetworkMetadata"
-                        (onImportedWallet)="onImportWalletPrivateKey($event)"></app-import-private-key>
                     </div>
                   </ion-content>
                 </ng-template>
@@ -230,7 +203,7 @@
                         </span>
                       </div>
 
-                      <app-import-from-backup [selectedNetworkMetadata]="selectedNetworkMetadata"
+                      <app-import-from-backup
                         (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
                     </div>
                   </ion-content>
@@ -247,8 +220,8 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-wallets [newlyAddedWallet]="newlyAddedWallet" (onSetCurrentWallet)="onSetCurrentWallet($event)"
-          (onFilteredNetworkMetadata)="onFilteredNetworkMetadata($event)"></app-wallets>
+        <app-wallets [newlyAddedWallet]="newlyAddedWallet"
+          (onSetCurrentWallet)="onSetCurrentWallet($event)"></app-wallets>
       </ion-content>
     </ng-template>
   </ion-modal>

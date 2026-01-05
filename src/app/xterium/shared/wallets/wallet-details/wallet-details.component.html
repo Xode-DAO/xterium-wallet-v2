@@ -4,7 +4,7 @@
       <ion-col size="12">
         <ion-list>
           <ion-item class="primary-input-item ion-margin-bottom" lines="none">
-            <ion-label position="stacked">{{ 'Name:' | translate }}</ion-label>
+            <ion-label>{{ 'Name:' | translate }}</ion-label>
             <ion-input type="text" placeholder="e.g. My Wallet Name" [(ngModel)]="wallet.name"
               (ngModelChange)="updateWalletOnModelChange()"></ion-input>
           </ion-item>
@@ -13,7 +13,7 @@
             <ion-textarea rows="3" placeholder="" readonly="true" [(ngModel)]="walletPublicKey"></ion-textarea>
           </ion-item>
           <ion-item class="primary-input-item ion-margin-bottom" lines="none">
-            <ion-label position="stacked">{{ 'Chain:' | translate }}</ion-label>
+            <ion-label>{{ 'Chain:' | translate }}</ion-label>
             <ion-input type="text" placeholder="" [(ngModel)]="currentWallet.chain.name" readonly="true"
               (ngModelChange)="updateWalletOnModelChange()"></ion-input>
           </ion-item>
@@ -134,7 +134,7 @@
                   {{ 'Your Recovery Phrase' | translate }}
                 </h1>
                 <span style="font-size: 15px;">
-                  {{ 'Below are the words that make up your wallet\'s Recovery Phrase. Keep it secure and never share it with anyone.' | translate }} 
+                  {{ 'Below are the words that make up your wallet\'s Recovery Phrase. Keep it secure and never share it with anyone.' | translate }}
                 </span>
               </div>
             </ion-col>

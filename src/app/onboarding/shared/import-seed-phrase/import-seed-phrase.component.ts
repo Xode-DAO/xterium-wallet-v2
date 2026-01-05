@@ -27,7 +27,8 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
 
-import { Network, NetworkMetadata } from 'src/models/network.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
@@ -67,7 +68,7 @@ import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 export class ImportSeedPhraseComponent implements OnInit {
   @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
 
-  @Input() selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
+  @Input() selectedChain: Chain = new Chain();
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(
@@ -157,9 +158,9 @@ export class ImportSeedPhraseComponent implements OnInit {
   async onSignWallet(password: string) {
     this.isProcessing = true;
 
-    if (this.selectedNetworkMetadata.network === Network.Polkadot ||
-      this.selectedNetworkMetadata.network === Network.Paseo ||
-      this.selectedNetworkMetadata.network === Network.Rococo) {
+    if (this.selectedChain.network === Network.Polkadot ||
+      this.selectedChain.network === Network.Paseo ||
+      this.selectedChain.network === Network.Rococo) {
       let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(this.walletMnemonicPhrase.join(' '));
       if (!isMnemonicPhraseValid) {
         this.confirmImportWalletModal.dismiss();
@@ -203,7 +204,7 @@ export class ImportSeedPhraseComponent implements OnInit {
         return;
       }
 
-      const chains = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
+      const chains = this.chainsService.getChainsByNetwork(this.selectedChain.network);
       if (chains.length === 0) {
         this.isProcessing = false;
 
@@ -296,7 +297,7 @@ export class ImportSeedPhraseComponent implements OnInit {
       this.isProcessing = false;
 
       const toast = await this.toastController.create({
-        message: this.selectedNetworkMetadata.network.toString() + ' network is not yet supported.',
+        message: this.selectedChain.network.toString() + ' network is not yet supported.',
         color: 'warning',
         duration: 1500,
         position: 'top',

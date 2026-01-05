@@ -22,7 +22,6 @@ import {
   IonLabel,
   IonModal,
   IonBadge,
-  IonAvatar
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -39,23 +38,19 @@ import {
   chevronDownOutline,
 } from 'ionicons/icons';
 
-import { NetworksComponent } from './shared/networks/networks.component';
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
-import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 import { NotificationsComponent } from './shared/notifications/notifications.component';
 import { SettingsComponent } from './shared/settings/settings.component';
 
-import { NetworkMetadata } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 import { LocalNotification } from 'src/models/local-notification.model';
 import { Settings } from 'src/models/settings.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
-import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { LocalNotificationsService } from '../api/local-notifications/local-notifications.service';
@@ -89,12 +84,9 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonLabel,
     IonModal,
     IonBadge,
-    IonAvatar,
-    NetworksComponent,
     WalletsComponent,
     NewWalletComponent,
     ImportSeedPhraseComponent,
-    ImportPrivateKeyComponent,
     ImportFromBackupComponent,
     NotificationsComponent,
     SettingsComponent,
@@ -107,7 +99,6 @@ export class XteriumPage implements OnInit {
   @ViewChild('selectNetworkMetadataModal', { read: IonModal }) selectNetworkMetadataModal!: IonModal;
   @ViewChild('createNewAccountModal', { read: IonModal }) createNewAccountModal!: IonModal;
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
-  @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
   @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
   @ViewChild('notificationsModal', { read: IonModal }) notificationsModal!: IonModal;
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
@@ -115,7 +106,6 @@ export class XteriumPage implements OnInit {
   constructor(
     private router: Router,
     private utilsService: UtilsService,
-    private networkMetadataService: NetworkMetadataService,
     private walletsService: WalletsService,
     private authService: AuthService,
     private localNotificationsService: LocalNotificationsService,
@@ -137,7 +127,6 @@ export class XteriumPage implements OnInit {
     this.initAuthentication();
   }
 
-  selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
   newlyAddedWallet: Wallet = new Wallet();
 
   currentWallet: Wallet = new Wallet();
@@ -200,21 +189,8 @@ export class XteriumPage implements OnInit {
     this.myWalletsModal.dismiss();
   }
 
-  onFilteredNetworkMetadata(networkMetadata: NetworkMetadata) {
-    this.selectedNetworkMetadata = networkMetadata;
-  }
-
   openCreateWalletModal() {
     this.createWalletModal.present();
-  }
-
-  openSelectNetworkMetadataModal() {
-    this.selectNetworkMetadataModal.present();
-  }
-
-  onSelectedNetworkMetadata(networkMetadata: NetworkMetadata) {
-    this.selectedNetworkMetadata = networkMetadata;
-    this.selectNetworkMetadataModal.dismiss();
   }
 
   openCreateNewAccountModal() {
@@ -237,17 +213,6 @@ export class XteriumPage implements OnInit {
 
     this.createNewAccountModal.dismiss();
     this.importSeedPhraseModal.dismiss();
-  }
-
-  openImportPrivateKeyModal() {
-    this.importPrivateKeyModal.present();
-  }
-
-  onImportWalletPrivateKey(wallet: Wallet) {
-    this.newlyAddedWallet = wallet;
-
-    this.createNewAccountModal.dismiss();
-    this.importPrivateKeyModal.dismiss();
   }
 
   openImportFromBackupModal() {
@@ -295,8 +260,6 @@ export class XteriumPage implements OnInit {
     };
 
     await this.settingsService.set(newSettings);
-
-    this.selectedNetworkMetadata = (await this.networkMetadataService.getAllNetworkMetadatas())[1];
   }
 
   ngOnInit() {

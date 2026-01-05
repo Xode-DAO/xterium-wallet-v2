@@ -22,16 +22,14 @@ import {
 import { addIcons } from 'ionicons';
 import { ellipsisVerticalOutline, createOutline, wallet } from 'ionicons/icons';
 
-import { NetworksComponent } from 'src/app/xterium/shared/networks/networks.component';
 import { ChainsComponent } from "src/app/xterium/shared/chains/chains.component";
 import { WalletDetailsComponent } from 'src/app/xterium/shared/wallets/wallet-details/wallet-details.component';
 
-import { Network, NetworkMetadata } from 'src/models/network.model';
+import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
-import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
@@ -58,7 +56,6 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonButton,
     IonIcon,
     IonChip,
-    NetworksComponent,
     ChainsComponent,
     WalletDetailsComponent,
     TranslatePipe
@@ -71,13 +68,11 @@ export class WalletsComponent implements OnInit {
 
   @Input() newlyAddedWallet: Wallet = new Wallet();
 
-  @Output() onFilteredNetworkMetadata = new EventEmitter<NetworkMetadata>();
   @Output() onFilteredChain = new EventEmitter<Chain>();
   @Output() onSetCurrentWallet = new EventEmitter<Wallet>();
 
   constructor(
     private utilsService: UtilsService,
-    private networkMetadataService: NetworkMetadataService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
   ) {
@@ -87,9 +82,6 @@ export class WalletsComponent implements OnInit {
       wallet
     });
   }
-
-  networkMetadatas: NetworkMetadata[] = [];
-  selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
 
   chains: Chain[] = [];
   chainsByName: Record<string, Chain[]> = {};
@@ -102,22 +94,19 @@ export class WalletsComponent implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  async getNetworkMetadatas(): Promise<void> {
-    const allNetworkMetadatas = await this.networkMetadataService.getAllNetworkMetadatas();
-
-    this.networkMetadatas = [...allNetworkMetadatas];
-    this.selectedNetworkMetadata = this.networkMetadatas[0];
-
-    await this.getChains();
-  }
-
   async getChains(): Promise<void> {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
-    const filteredChains = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
+    const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+    const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
+    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
+    // const filteredChains = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
 
     this.chains = [
       ...allChains,
-      ...filteredChains
+      ...polkadotChains,
+      ...paseoChains,
+      ...rococoChains,
+      // ...filteredChains
     ];
     this.selectedChain = this.chains[0];
 
@@ -179,48 +168,24 @@ export class WalletsComponent implements OnInit {
   }
 
   async setCurrentFilters() {
-    const matchedNetworkMetadata = this.networkMetadatas.find(
-      metadata => metadata.network.toString() === this.currentWallet.chain.network.toString()
+    await this.getChains();
+
+    const matchedChain = this.chains.find(
+      chain => chain.id === this.currentWallet.chain.id
     );
 
-    if (matchedNetworkMetadata) {
-      this.selectedNetworkMetadata = matchedNetworkMetadata;
-      await this.getChains();
+    if (matchedChain) {
+      this.selectedChain = matchedChain;
 
-      this.onFilteredNetworkMetadata.emit(matchedNetworkMetadata);
+      await this.loadChainByName();
+      await this.loadWalletsByChain();
 
-      const matchedChain = this.chains.find(
-        chain => chain.id === this.currentWallet.chain.id
-      );
-
-      if (matchedChain) {
-        this.selectedChain = matchedChain;
-
-        await this.loadChainByName();
-        await this.loadWalletsByChain();
-
-        this.onFilteredChain.emit(matchedChain);
-      }
+      this.onFilteredChain.emit(matchedChain);
     }
   }
 
   truncateAddress(address: string): string {
     return this.utilsService.truncateAddress(address);
-  }
-
-  openSelectNetworkMetadataModal() {
-    this.selectNetworkMetadataModal.present();
-  }
-
-  onSelectedNetworkMetadata(networkMetadata: NetworkMetadata) {
-    this.selectedNetworkMetadata = networkMetadata;
-
-    this.getChains();
-    this.getWallets();
-
-    this.selectNetworkMetadataModal.dismiss();
-
-    this.onFilteredNetworkMetadata.emit(networkMetadata);
   }
 
   openSelectChainModal() {
@@ -269,7 +234,8 @@ export class WalletsComponent implements OnInit {
   }
 
   async fetchData() {
-    await this.getNetworkMetadatas();
+    // await this.getNetworkMetadatas();
+    await this.getChains();
     await this.getCurrentWallet();
     await this.setCurrentFilters();
   }

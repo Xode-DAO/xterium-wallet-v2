@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -8,11 +8,10 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonChip,
   IonAvatar
 } from '@ionic/angular/standalone';
 
-import { Network, NetworkMetadata } from 'src/models/network.model';
+import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 
 import { ChainsService } from 'src/app/api/chains/chains.service';
@@ -29,13 +28,10 @@ import { ChainsService } from 'src/app/api/chains/chains.service';
     IonList,
     IonItem,
     IonLabel,
-    IonChip,
     IonAvatar
   ]
 })
 export class ChainsComponent implements OnInit {
-  @Input() selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
-
   @Output() onSelectedChain = new EventEmitter<Chain>();
 
   constructor(
@@ -46,11 +42,15 @@ export class ChainsComponent implements OnInit {
 
   getChains(): void {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
-    const filteredChains = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
+    const polkadotChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+    const paseoChains = this.chainsService.getChainsByNetwork(Network.Paseo);
+    const rococoChains = this.chainsService.getChainsByNetwork(Network.Rococo);
 
     this.chains = [
       ...allChains,
-      ...filteredChains
+      ...polkadotChains,
+      ...paseoChains,
+      ...rococoChains,
     ];
   }
 
