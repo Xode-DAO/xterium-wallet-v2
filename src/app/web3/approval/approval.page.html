@@ -45,6 +45,11 @@
               <p>No wallets available to connect.</p>
             </div>
             }
+            @if (wallets.length === 0) {
+            <div class="ion-text-center ion-padding">
+              <p>No wallets available to connect.</p>
+            </div>
+            }
           </div>
 
           @if (selectedWallets.length > 0) {
