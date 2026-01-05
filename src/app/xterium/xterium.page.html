@@ -109,7 +109,8 @@
                               </ion-toolbar>
                               <ion-content>
                                 <div class="modal-content-container">
-                                  <app-chains [isAllChainIncluded]="false" (onSelectedChain)="onSelectedChain($event)"></app-chains>
+                                  <app-chains [isAllChainIncluded]="false"
+                                    (onSelectedChain)="onSelectedChain($event)"></app-chains>
                                 </div>
                               </ion-content>
                             </ng-template>
@@ -153,7 +154,8 @@
                           will be required to restore your wallet.' | translate }}</span>
                       </div>
 
-                      <app-new-wallet (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
+                      <app-new-wallet [selectedChain]="selectedChain"
+                        (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
                     </div>
                   </ion-content>
                 </ng-template>
@@ -178,7 +180,7 @@
                           phrase.' | translate }}</span>
                       </div>
 
-                      <app-import-seed-phrase
+                      <app-import-seed-phrase [selectedChain]="selectedChain"
                         (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
                     </div>
                   </ion-content>
@@ -204,7 +206,7 @@
                         </span>
                       </div>
 
-                      <app-import-from-backup
+                      <app-import-from-backup [selectedChain]="selectedChain"
                         (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
                     </div>
                   </ion-content>
