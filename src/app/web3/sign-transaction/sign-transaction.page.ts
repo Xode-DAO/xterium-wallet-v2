@@ -26,6 +26,8 @@ import {
   IonModal,
   IonTitle,
   IonToolbar,
+  IonToast,
+  ToastController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -51,6 +53,8 @@ import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/po
 import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
 import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
+import { XodePaseoService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-paseo/xode-paseo.service';
+import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/polaris/polaris.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -93,6 +97,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonModal,
     IonTitle,
     IonToolbar,
+    IonToast,
     PasswordSetupComponent,
     PasswordLoginComponent,
     PinSetupComponent,
@@ -116,10 +121,13 @@ export class SignTransactionPage implements OnInit {
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private hydrationPolkadotService: HydrationPolkadotService,
+    private xodePaseoService: XodePaseoService,
+    private polarisService: PolarisService,
     private walletsService: WalletsService,
     private encryptionService: EncryptionService,
     private balancesService: BalancesService,
     private localNotificationsService: LocalNotificationsService,
+    private toastController: ToastController,
   ) {
     addIcons({
       cube,
@@ -131,7 +139,10 @@ export class SignTransactionPage implements OnInit {
     });
   }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   isChromeExtension = false;
 
@@ -141,20 +152,15 @@ export class SignTransactionPage implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  wallets: Wallet[] = [];
-  walletsPublicAddresse: string[] = [];
-
-  encodedCallDataHex: string = "";
-
   extrinsic: string = "";
   estimatedFee: number = 0;
   isLoadingFee: boolean = true;
 
   isProcessing: boolean = false;
 
-  callbackUrl: string = "";
-  walletAddress: string = "";
-  
+  paramsEncodedCallDataHex: string | null = null;
+  paramsWalletAddress: string | null = null;
+  paramsCallbackUrl: string | null = null;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -173,23 +179,18 @@ export class SignTransactionPage implements OnInit {
     }
   }
 
-  async fetchWallets(): Promise<void> {
-    this.wallets = await this.walletsService.getAllWallets();
-    this.walletsPublicAddresse = await Promise.all(
-      this.wallets.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
-    );
-  }
-  
-  async setWallet(address: string): Promise<void> {
+  async replaceCurrentWallet(address: string): Promise<void> {
     const decodedAddress = decodeURIComponent(address);
-  
-    await this.fetchWallets();
-  
-    const index = this.walletsPublicAddresse.indexOf(decodedAddress);
-  
+
+    const wallets = await this.walletsService.getAllWallets();
+    const walletsPublicAddresse = await Promise.all(
+      wallets.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
+    );
+
+    const index = walletsPublicAddresse.indexOf(decodedAddress);
     if (index >= 0) {
-      this.currentWallet = this.wallets[index];
-      this.currentWalletPublicAddress = this.walletsPublicAddresse[index];
+      this.currentWallet = wallets[index];
+      this.currentWalletPublicAddress = walletsPublicAddresse[index];
     }
   }
 
@@ -216,15 +217,7 @@ export class SignTransactionPage implements OnInit {
 
     this.route.queryParams.subscribe(async params => {
       if (params['encodedCallDataHex']) {
-        this.encodedCallDataHex = params['encodedCallDataHex'];
-
-        if (params['walletAddress']) {
-          await this.setWallet(params['walletAddress']);
-        }
-
-        if (params['callbackUrl']) {
-          this.callbackUrl = decodeURIComponent(params['callbackUrl']);
-        }
+        this.paramsEncodedCallDataHex = params['encodedCallDataHex'];
 
         let service: PolkadotJsService | null = null;
 
@@ -232,18 +225,37 @@ export class SignTransactionPage implements OnInit {
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+        if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
+        if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
         if (!service) return;
 
-        this.pjsApi = await service.connect();
-        const extrinsic = this.pjsApi.registry.createType('Extrinsic', this.encodedCallDataHex);
+        let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+        if (!pjsApi) {
+          pjsApi = await service.connect();
+          this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+        }
+
+        if (!pjsApi.isConnected) {
+          await pjsApi.connect()
+        };
+
+        const extrinsic = pjsApi.registry.createType('Extrinsic', params['encodedCallDataHex']);
 
         this.extrinsic = `${extrinsic.method.section}(${extrinsic.method.method})`;
 
-        const estimatedFee = await service.estimatedFees(this.pjsApi, this.encodedCallDataHex, this.currentWalletPublicAddress, null);
-
+        const estimatedFee = await service.estimatedFees(pjsApi, params['encodedCallDataHex'], this.currentWalletPublicAddress, null);
         this.estimatedFee = estimatedFee;
         this.isLoadingFee = false;
+      }
+
+      if (params['walletAddress']) {
+        this.paramsWalletAddress = params['walletAddress'];
+        await this.replaceCurrentWallet(params['walletAddress']);
+      }
+
+      if (params['callbackUrl']) {
+        this.paramsCallbackUrl = decodeURIComponent(params['callbackUrl']);
       }
     });
   }
@@ -266,6 +278,8 @@ export class SignTransactionPage implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;
 
@@ -277,32 +291,51 @@ export class SignTransactionPage implements OnInit {
       private_key: decryptedPrivateKey
     };
 
-    if (this.callbackUrl) {
-      const signedHex = await service.signTransaction(
-        this.pjsApi,
-        this.encodedCallDataHex,
-        walletSigner
-      );
-  
-      this.confirmSignTransactionModal.dismiss();
-  
-      const url = `${this.callbackUrl}?status=success&signedTx=${encodeURIComponent(signedHex)}`;
-
-      window.location.href = url;
-      return;
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
     }
 
-    service.signAndSubmitTransaction(this.pjsApi, this.encodedCallDataHex, walletSigner).subscribe({
-      next: async (event) => {
-        this.confirmSignTransactionModal.dismiss();
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
 
+    if (this.paramsEncodedCallDataHex && this.paramsEncodedCallDataHex !== null) {
+      if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
+        const signedHex = await service.signTransaction(
+          pjsApi,
+          this.paramsEncodedCallDataHex,
+          walletSigner
+        );
+
+        this.confirmSignTransactionModal.dismiss();
         this.router.navigate(['/xterium/balances']);
-        this.handleTransactionEvent(event);
-      },
-      error: async (err) => {
-        this.isProcessing = false;
+
+        const url = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
+        window.location.href = url;
+      } else {
+        service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
+          next: async (event) => {
+            this.confirmSignTransactionModal.dismiss();
+            this.router.navigate(['/xterium/balances']);
+
+            this.handleTransactionEvent(event);
+          },
+          error: async (err) => {
+            this.isProcessing = false;
+          }
+        });
       }
-    });
+    } else {
+      const toast = await this.toastController.create({
+        message: 'No encoded call data found.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+      await toast.present();
+    }
   }
 
   async handleTransactionEvent(event: ISubmittableResult) {
@@ -347,7 +380,5 @@ export class SignTransactionPage implements OnInit {
     this.initSecurity();
 
     this.initTransaction();
-
-    // this.fetchWallets();
   }
 }

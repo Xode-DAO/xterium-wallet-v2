@@ -70,7 +70,7 @@
                 </ion-item>
                 <ion-item lines="none">
                   <ion-icon name="globe-outline" size="small" slot="start"></ion-icon>
-                  <ion-label>{{ 'Create Wallet' | translate }}</ion-label>
+                  <ion-label>{{ 'Network' | translate }}</ion-label>
                   <ion-text slot="end" class="label-value">
                     {{ currentWallet.chain.name }}
                   </ion-text>
@@ -129,7 +129,7 @@
     <ion-toolbar class="main-modal-toolbar">
     </ion-toolbar>
     <ion-content>
-      <div class="ion-padding-horizontal content">
+      <div class="modal-content-container content">
         <ion-grid>
           <ion-row>
             <ion-col size="12">
@@ -137,17 +137,18 @@
                 <h2>No Wallet Found</h2>
                 <br />
                 <p class="wallet-text">
-                  You need to create or import a wallet to securely store your keys and authorize any blockchain transaction.
+                  You need to create or import a wallet to securely store your keys and authorize any blockchain
+                  transaction.
                 </p>
                 <p class="wallet-text">
                   Click the Onboarding button below to get started with setting up your wallet.
                 </p>
-                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button" 
+                <ion-button expand="block" size="default" class="ion-margin-bottom secondary-button"
                   (click)="navigateToOnboarding(noWalletModal)">
                   Onboarding
                 </ion-button>
-            </div>
-          </ion-col>
+              </div>
+            </ion-col>
           </ion-row>
         </ion-grid>
       </div>
@@ -166,14 +167,15 @@
       </ion-buttons>
     </ion-toolbar>
     <ion-content>
-      <div class="sign-transaction">
+      <div class="modal-content-container sign-transaction">
         <div class="ion-text-center ion-margin-bottom">
           <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
         </div>
         <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
           <h1 style="font-weight: bold">{{ 'Sign' | translate }}</h1>
           <span style="font-size: 15px;">
-            {{ 'To confirm this transaction, please authenticate using the method you have set up for your wallet.' | translate }}
+            {{ 'To confirm this transaction, please authenticate using the method you have set up for your wallet.' |
+            translate }}
           </span>
         </div>
         <div class="ion-padding-horizontal">
@@ -189,7 +191,8 @@
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
           <div class="biometric-unavailable">
             <p class="unavailable-text">
-              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device. Please set up your biometric authentication again to continue.' | translate }}
+              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device.
+              Please set up your biometric authentication again to continue.' | translate }}
             </p>
           </div>
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
@@ -202,3 +205,5 @@
     </ion-content>
   </ng-template>
 </ion-modal>
+
+<ion-toast [duration]="5000"></ion-toast>

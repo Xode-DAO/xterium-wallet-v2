@@ -1,0 +1,21 @@
+<div class="currency-list">
+  <ion-grid>
+    <ion-row>
+      @for (currency of currencies; track currency) {
+      <ion-col size="12">
+        <ion-list>
+          <ion-item button detail="false" lines="none" (click)="selectCurrency(currency)">
+            <div class="currency-symbol">
+              {{ currency.symbol }}
+            </div>
+            <ion-label>
+              <h2 style="font-weight: 600;">{{ currency.code }}</h2>
+              <p>{{ currency.name }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+</div>

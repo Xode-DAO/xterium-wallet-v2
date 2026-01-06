@@ -8,7 +8,7 @@
             <h2>{{ 'Currency' | translate }}</h2>
             <div slot="end" class="selected-currency">
               @if (selectedCurrency) {
-                <h2 style="color: #b9b8b8; font-weight: normal;">{{ selectedCurrency.code }}</h2>
+              <h2 style="color: #b9b8b8; font-weight: normal;">{{ selectedCurrency.code }}</h2>
               }
             </div>
           </ion-item>
@@ -17,10 +17,25 @@
             <h2>{{ 'Language' | translate }}</h2>
             <div slot="end">
               @if (selectedLanguage) {
-                <h2 style="color: #b9b8b8; font-weight: normal;">{{ selectedLanguage.name }}</h2>
+              <h2 style="color: #b9b8b8; font-weight: normal;">{{ selectedLanguage.name }}</h2>
               }
             </div>
           </ion-item>
+          <ion-item lines="none" class="custom-buttons">
+            <ion-icon slot="start" name="code-outline"></ion-icon>
+            <h2>{{ 'Enable Testnet' | translate }}</h2>
+            <ion-toggle slot="end" [checked]="isTestnetEnabled" (ionChange)="developerMode($event)">
+            </ion-toggle>
+          </ion-item>
+          <!-- <ion-item lines="none" class="custom-buttons">
+            <ion-icon slot="start" name="finger-print-outline"></ion-icon>
+            <h2>Biometric auth</h2>
+            <ion-toggle
+              slot="end"
+              [(ngModel)]="useBiometric"
+              (ionChange)="enableBiometric($event)">
+            </ion-toggle>
+          </ion-item> -->
           <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
             <h2>{{ 'Logout' | translate }}</h2>
@@ -42,7 +57,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-currency (onSelectedCurrency)="selectCurrency($event)"></app-currency>
         </div>
       </ion-content>
@@ -61,7 +76,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-language (onSelectedLanguage)="selectLanguage($event)"></app-language>
         </div>
       </ion-content>

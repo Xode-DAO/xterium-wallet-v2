@@ -171,7 +171,7 @@ ion-refresher {
     --background-activated: transparent;
     --background-focused: transparent;
     --color: white;
-    --border-radius: 50px;
+    --border-radius: 1.5rem;
     --padding-top: 20px;
     --padding-bottom: 20px;
     --padding-start: 20px;
@@ -208,7 +208,7 @@ ion-refresher {
         inset: 0; // shorthand for top, right, bottom, left = 0
         background: rgba(255, 255, 255, 0.1);
         pointer-events: none;
-        border-radius: 50px;
+        border-radius: 1.5rem;
       }
     }
   }
@@ -217,6 +217,10 @@ ion-refresher {
 ion-toolbar.main-modal-toolbar {
   --background: #1B1B1B;
   --padding-top: 10px;
+}
+
+.modal-content-container {
+  padding: 5px 16px;
 }
 
 .balance-action-buttons {
@@ -231,7 +235,7 @@ ion-toolbar.main-modal-toolbar {
     background-repeat: no-repeat;
     background-position: center;
     transition: background-size 0.2s ease;
-    border-radius: 25px;
+    border-radius: 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -273,7 +277,7 @@ ion-item.primary-select-button-item {
 }
 
 ion-item.primary-input-item {
-  border-radius: 50px;
+  border-radius: 1.5rem;
 
   ion-input {
     border: none;
@@ -281,7 +285,7 @@ ion-item.primary-input-item {
 }
 
 ion-item.primary-input-file {
-  border-radius: 25px;
+  border-radius: 1.5rem;
 
   ion-input {
     border: none;
@@ -289,7 +293,7 @@ ion-item.primary-input-file {
 }
 
 ion-item.primary-textarea-item {
-  border-radius: 25px;
+  border-radius: 1.5rem;
 
   ion-textarea {
     border: none;
@@ -297,7 +301,7 @@ ion-item.primary-textarea-item {
 }
 
 ion-item.primary-select-button-item {
-  border-radius: 25px;
+  border-radius: 1.5rem;
 
   ion-button {
     border: none;

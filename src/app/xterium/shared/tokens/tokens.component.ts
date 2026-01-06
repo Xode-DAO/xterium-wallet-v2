@@ -11,6 +11,8 @@ import {
   IonLabel,
   IonAvatar,
   IonSpinner,
+  IonToast,
+  ToastController,
 } from '@ionic/angular/standalone';
 
 import { Token } from 'src/models/token.model';
@@ -26,6 +28,8 @@ import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/po
 import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
 import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
+import { XodePaseoService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-paseo/xode-paseo.service';
+import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/polaris/polaris.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { TokensService } from 'src/app/api/tokens/tokens.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -46,6 +50,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
     IonLabel,
     IonAvatar,
     IonSpinner,
+    IonToast,
     TranslatePipe,
   ]
 })
@@ -61,27 +66,32 @@ export class TokensComponent implements OnInit {
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private hydrationPolkadotService: HydrationPolkadotService,
+    private xodePaseoService: XodePaseoService,
+    private polarisService: PolarisService,
     private walletsService: WalletsService,
     private tokensService: TokensService,
     private balancesService: BalancesService,
     private multipayxApiService: MultipayxApiService,
     private settingsService: SettingsService,
     private translate: TranslateService,
+    private toastController: ToastController,
   ) { }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   tokens: Token[] = [];
   balances: Balance[] = [];
   prices: Price[] = [];
+  currencySymbol: string = '';
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
   observableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
-
-  symbols: string = '';
 
   languageCode: string = '';
 
@@ -109,11 +119,22 @@ export class TokensComponent implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
-    this.tokens = await service.getTokens(this.pjsApi);
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
+
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
+
+    this.tokens = await service.getTokens(pjsApi);
 
     setTimeout(async () => {
       await this.getAndWatchBalances(service);
@@ -121,19 +142,34 @@ export class TokensComponent implements OnInit {
   }
 
   async getAndWatchBalances(service: PolkadotJsService): Promise<void> {
+    if (!this.pjsApi) {
+      const toast = await this.toastController.create({
+        message: 'Unable to connect to the blockchain network. Please try again later.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
     this.balances = await service.getBalances(this.pjsApi, this.tokens, this.currentWalletPublicAddress);
     await this.getBalanceTokenImages();
 
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
-        this.balancesSubscription = service.watchBalances(this.pjsApi, this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
+        this.balancesSubscription = service.watchBalances(this.pjsApi!, this.tokens, this.currentWalletPublicAddress).subscribe(async balances => {
           this.balances = balances;
           this.computeBalancesAmount();
+
+          await this.getBalanceTokenImages();
         });
       }
     }, 5000);
 
     await this.getPrices();
+    await this.getLanguageCode();
   }
 
   async getBalanceTokenImages(): Promise<void> {
@@ -153,7 +189,7 @@ export class TokensComponent implements OnInit {
     const currencies = await this.settingsService.get();
     const currencyCode = currencies?.user_preferences.currency.code || "USD";
     const currencySymbol = currencies?.user_preferences.currency.symbol || "$";
-    
+    this.currencySymbol = currencySymbol;
 
     let prices: Price[] = [];
 
@@ -171,7 +207,6 @@ export class TokensComponent implements OnInit {
       })
     }
 
-    this.symbols = currencySymbol
     this.prices = prices;
     this.computeBalancesAmount();
   }
@@ -203,7 +238,7 @@ export class TokensComponent implements OnInit {
 
         this.onTotalAmount.emit(totalAmount);
       }
-    }, 1500);
+    }, 500);
   }
 
   async fetchData(): Promise<void> {
@@ -218,7 +253,6 @@ export class TokensComponent implements OnInit {
     this.onTotalAmount.emit(0);
 
     await this.getTokens();
-    await this.getLanguageCode();
   }
 
   formatBalance(amount: number, decimals: number): number {
@@ -255,19 +289,19 @@ export class TokensComponent implements OnInit {
     const settings = await this.settingsService.get();
     if (settings) {
       this.languageCode = settings.user_preferences.language.code || 'en';
-
       this.translate.use(this.languageCode);
     };
   }
 
   ngOnInit() {
-    this.walletsService.currentWalletObservable.subscribe(wallet => {
-      this.fetchData();
+    this.walletsService.currentWalletObservable.subscribe(async wallet => {
+      await this.fetchData();
     });
 
     this.settingsService.currentSettingsObservable.subscribe(settings => {
       if (settings) {
-        this.fetchData();
+        this.getPrices();
+        this.getLanguageCode();
       }
     });
 
@@ -278,7 +312,7 @@ export class TokensComponent implements OnInit {
           balanceToken.token.image = tokenImage.image;
         }
       }
-    }); 
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {

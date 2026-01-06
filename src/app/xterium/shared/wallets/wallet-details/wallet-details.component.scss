@@ -1,6 +1,4 @@
 .wallet-details {
-  padding: 5px 8px;
-
   ion-list {
     background: transparent;
   }
@@ -16,7 +14,7 @@
         --background-focused: transparent;
 
         border: 3px solid #777777;
-        border-radius: 25px;
+        border-radius: 1.5rem;
         box-shadow: none !important;
       }
     }
@@ -53,7 +51,7 @@ div.secrets {
         text-align: center;
         padding: 25px;
         background: rgba(var(--ion-color-danger-rgb), 0.1);
-        border-radius: 25px;
+        border-radius: 1.5rem;
         border: 3px solid rgba(var(--ion-color-danger-rgb), 0.2);
 
         h2 {
@@ -74,7 +72,7 @@ div.secrets {
         text-align: center;
         padding: 25px;
         background: rgba(var(--ion-color-secondary-rgb), 0.1);
-        border-radius: 25px;
+        border-radius: 1.5rem;
         border: 3px solid rgba(var(--ion-color-secondary-rgb), 0.2);
 
         h2 {

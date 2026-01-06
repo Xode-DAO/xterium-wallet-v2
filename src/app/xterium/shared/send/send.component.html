@@ -14,11 +14,11 @@
     <ion-row>
       <ion-col size="12">
         <ion-list>
-          <ion-item class="primary-textarea-item ion-margin-bottom" lines="none">
+          <ion-item class="primary-textarea-item" lines="none">
             <ion-label position="stacked">{{ 'Recipient\'s Wallet Address:' | translate }}</ion-label>
             <ion-textarea rows="3" placeholder="" [(ngModel)]="recipientAddress"></ion-textarea>
           </ion-item>
-          <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
+          <!-- <ion-item class="primary-select-button-item" (click)="openSelectChainModal()">
             <ion-label style="font-size: 15px;">{{ 'Destination' | translate }}</ion-label>
             <ion-label slot="end">{{ selectedChain.name || 'Select Chain' }}</ion-label>
             <ion-avatar slot="end" style="padding: 2px; margin-right: 0;">
@@ -36,13 +36,13 @@
                   </ion-buttons>
                 </ion-toolbar>
                 <ion-content>
-                  <div class="ion-padding-horizontal">
-                    <app-chains (onSelectedChain)="onSelectedChain($event)"></app-chains>
+                  <div class="modal-content-container">
+                    <app-chains [isAllChainIncluded]="false" (onSelectedChain)="onSelectedChain($event)"></app-chains>
                   </div>
                 </ion-content>
               </ng-template>
             </ion-modal>
-          </ion-item>
+          </ion-item> -->
         </ion-list>
       </ion-col>
     </ion-row>
@@ -95,7 +95,6 @@
           <ion-button fill="solid" size="small" (click)="fillAmount(25)">25%</ion-button>
           <ion-button fill="solid" size="small" (click)="fillAmount(50)">50%</ion-button>
           <ion-button fill="solid" size="small" (click)="fillAmount(75)">75%</ion-button>
-          <ion-button fill="solid" size="small" (click)="fillAmount(100)">100%</ion-button>
         </div>
       </ion-col>
     </ion-row>

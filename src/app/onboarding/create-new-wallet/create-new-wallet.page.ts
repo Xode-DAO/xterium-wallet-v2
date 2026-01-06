@@ -13,10 +13,9 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { NetworkMetadata } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
-import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { OnboardingService } from "src/app/api/onboarding/onboarding.service"
 
 import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
@@ -44,7 +43,6 @@ export class CreateNewWalletPage implements OnInit {
   constructor(
     private router: Router,
     private onboardingService: OnboardingService,
-    private networkMetadataService: NetworkMetadataService,
   ) {
     addIcons({
       arrowBackOutline,
@@ -52,7 +50,7 @@ export class CreateNewWalletPage implements OnInit {
     });
   }
 
-  selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
+  selectedChain: Chain = new Chain();
 
   onCreatedWallet(wallet: Wallet) {
     this.router.navigate(['/xterium'], { replaceUrl: true });
@@ -62,10 +60,7 @@ export class CreateNewWalletPage implements OnInit {
     this.onboardingService.get().then(onboarding => {
       if (onboarding) {
         if (onboarding.step1_selected_chain) {
-          const networkMetadata = this.networkMetadataService.getNetworkMetadataByNetwork(onboarding.step1_selected_chain.network);
-          if (networkMetadata) {
-            this.selectedNetworkMetadata = networkMetadata;
-          }
+          this.selectedChain = onboarding.step1_selected_chain;
         }
       }
     });

@@ -15,6 +15,8 @@ import {
   IonItem,
   IonIcon,
   IonModal,
+  IonToggle,
+  AlertController,
   ToastController,
   ActionSheetController
 } from '@ionic/angular/standalone';
@@ -24,19 +26,23 @@ import {
   close,
   logOutOutline,
   logoUsd,
-  languageOutline
+  languageOutline,
+  fingerPrintOutline,
+  codeOutline
 } from 'ionicons/icons';
 
-import { CurrencyComponent } from '../currency/currency.component';
-import { LanguageComponent } from '../language/language.component';
+import { CurrencyComponent } from './currency/currency.component';
+import { LanguageComponent } from './language/language.component';
 
 import { Currency } from 'src/models/currency.model';
+import { LanguageTranslation } from 'src/models/language-translation.model';
 
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
-import { LanguageTranslation } from 'src/models/language-translation.model';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { Network } from 'src/models/network.model';
 
 @Component({
   selector: 'app-settings',
@@ -57,28 +63,32 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonItem,
     IonIcon,
     IonModal,
+    IonToggle,
     CurrencyComponent,
     LanguageComponent,
     TranslatePipe,
   ]
 })
-export class SettingsComponent  implements OnInit {
+export class SettingsComponent implements OnInit {
   @ViewChild('currencyModal', { read: IonModal }) currencyModal!: IonModal;
   @ViewChild('languageModal', { read: IonModal }) languageModal!: IonModal;
-
 
   constructor(
     private authService: AuthService,
     private settingsService: SettingsService,
+    private walletsService: WalletsService,
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
+    private alertController: AlertController
 
   ) {
     addIcons({
       close,
       logOutOutline,
       logoUsd,
-      languageOutline
+      languageOutline,
+      fingerPrintOutline,
+      codeOutline
     });
   }
 
@@ -86,38 +96,42 @@ export class SettingsComponent  implements OnInit {
   selectedLanguage: LanguageTranslation = new LanguageTranslation();
   code: string = '';
 
+  useBiometric: boolean = false;
+
+  isTestnetEnabled: boolean = false;
+
   async confirmLogout() {
-      const actionSheet = await this.actionSheetController.create({
-        header: 'Are you sure you want to logout?',
-        subHeader: 'You will need to login again.',
-        buttons: [
-          {
-            text: 'Logout',
-            role: 'destructive',
-            handler: async () => {
-              await this.authService.logout();
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Are you sure you want to logout?',
+      subHeader: 'You will need to login again.',
+      buttons: [
+        {
+          text: 'Logout',
+          role: 'destructive',
+          handler: async () => {
+            await this.authService.logout();
 
-              actionSheet.dismiss();
+            actionSheet.dismiss();
 
-              const toast = await this.toastController.create({
-                message: 'Logged out successfully!',
-                color: 'success',
-                duration: 1500,
-                position: 'top'
-              });
+            const toast = await this.toastController.create({
+              message: 'Logged out successfully!',
+              color: 'success',
+              duration: 1500,
+              position: 'top'
+            });
 
-              await toast.present();
-            }
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel'
+            await toast.present();
           }
-        ]
-      });
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
 
-      await actionSheet.present();
-    }
+    await actionSheet.present();
+  }
 
   async openCurrencyModal() {
     this.currencyModal.present();
@@ -156,11 +170,60 @@ export class SettingsComponent  implements OnInit {
     this.languageModal.dismiss();
   }
 
+  // async enableBiometric(event: any): Promise<void> {
+  //   const enableBiometric = event.detail.checked;
+  //   const settings = await this.settingsService.get();
+
+  //   if (settings) {
+  //     settings.user_preferences = enableBiometric;
+  //     this.settingsService.set(settings);
+  //   }
+  // }
+
+  async developerMode(event: any): Promise<void> {
+    const settings = await this.settingsService.get();
+    if (settings) {
+      settings.user_preferences.testnet_enabled = event.target.checked;
+      await this.settingsService.set(settings);
+
+      if (event.detail.checked) {
+        const alert = await this.alertController.create({
+          header: 'Enable Testnet',
+          message: 'By enabling testnet, you can access test networks like Rococo and Paseo. Please note that test networks may be unstable and are intended for development and testing purposes only.',
+          buttons: [
+            {
+              text: 'Ok',
+              role: 'confirm'
+            },
+          ],
+        });
+
+        await alert.present();
+        this.isTestnetEnabled = true;
+      } else {
+        const wallets = await this.walletsService.getAllWallets();
+        if (wallets.length > 0) {
+          const currentWallet = await this.walletsService.getCurrentWallet();
+          if (currentWallet) {
+            if (currentWallet.chain.network !== Network.Polkadot) {
+              const firstWallet = wallets[0];
+              if (firstWallet) {
+                await this.walletsService.setCurrentWallet(firstWallet.id);
+              }
+            }
+          }
+        }
+        this.isTestnetEnabled = false;
+      }
+    }
+  }
+
   async ngOnInit() {
     const settings = await this.settingsService.get();
-      if (settings) {
-        this.selectedCurrency = settings.user_preferences.currency;
-        this.selectedLanguage = settings.user_preferences.language;
-      }
-   }
+    if (settings) {
+      this.selectedCurrency = settings.user_preferences.currency;
+      this.selectedLanguage = settings.user_preferences.language;
+      this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
+    }
+  }
 }

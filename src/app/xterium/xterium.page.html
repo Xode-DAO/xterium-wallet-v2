@@ -21,9 +21,9 @@
       <ion-button fill="clear" (click)="openNotificationsModal()" class="notif-btn">
         <ion-icon name="notifications-outline"></ion-icon>
 
-        @if (unreadCount > 0) {
+        @if (unopenNotifications > 0) {
         <ion-badge color="danger" class="notif-badge">
-          {{ unreadCount }}
+          {{ unopenNotifications }}
         </ion-badge>
         }
       </ion-button>
@@ -80,44 +80,44 @@
                 </ion-buttons>
               </ion-toolbar>
 
-              <div class="ion-padding-horizontal">
+              <div class="modal-content-container">
                 <ion-grid>
                   <ion-row>
                     <ion-col size="12">
                       <ion-list>
-                        <!-- <ion-item class="primary-select-button-item ion-margin-bottom"
-                          (click)="openSelectNetworkModal()">
-                          @if (selectedNetworkMetadata) {
+                        <ion-item class="primary-select-button-item ion-margin-bottom" (click)="openSelectChainModal()">
+                          @if (selectedChain) {
                           <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
-                            <img [src]="'./../../assets/images/networks/' + selectedNetworkMetadata.image"
-                              alt="Chain Logo" />
+                            <img [src]="'./../../assets/images/chains/' + selectedChain.image" alt="Chain Logo" />
                           </ion-avatar>
                           }
-                          <ion-label>{{ selectedNetworkMetadata.network || 'Select Network' }}</ion-label>
+                          <ion-label>
+                            {{ selectedChain.name || 'Select Chain' }}
+                          </ion-label>
                           <ion-button size="small" fill="clear">
                             <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
                           </ion-button>
 
-                          <ion-modal #selectNetworkModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-                            [expandToScroll]="false">
+                          <ion-modal #selectChainModal class="select-chain-modal" [initialBreakpoint]="0.98"
+                            [breakpoints]="[0, 0.98]" [expandToScroll]="false">
                             <ng-template>
                               <ion-toolbar class="main-modal-toolbar">
-                                <ion-title>Select Network</ion-title>
+                                <ion-title>{{ 'Select Network' | translate }}</ion-title>
                                 <ion-buttons slot="end">
-                                  <ion-button (click)="selectNetworkModal.dismiss()">
+                                  <ion-button (click)="selectChainModal.dismiss()">
                                     <ion-icon name="close" style="color: white;"></ion-icon>
                                   </ion-button>
                                 </ion-buttons>
                               </ion-toolbar>
                               <ion-content>
-                                <div class="ion-padding-horizontal">
-                                  <app-networks
-                                    (onSelectedNetworkMetadata)="onSelectedNetworkMetadata($event)"></app-networks>
+                                <div class="modal-content-container">
+                                  <app-chains [isAllChainIncluded]="false"
+                                    (onSelectedChain)="onSelectedChain($event)"></app-chains>
                                 </div>
                               </ion-content>
                             </ng-template>
                           </ion-modal>
-                        </ion-item> -->
+                        </ion-item>
                         <ion-item button detail="false" lines="none" class="create-wallet-new-account-item"
                           (click)="openCreateNewAccountModal()">
                           {{ 'New Account' | translate }}
@@ -149,13 +149,14 @@
                     </ion-buttons>
                   </ion-toolbar>
                   <ion-content>
-                    <div class="ion-padding-horizontal">
+                    <div class="modal-content-container">
                       <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                         <h1 style="font-weight: bold;">{{ 'Recovery Phrase' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Write down this mnemonic phrase and store it securely. It will be required to restore your wallet.' | translate }}</span>
+                        <span style="font-size: 15px;">{{ 'Write down this mnemonic phrase and store it securely. It
+                          will be required to restore your wallet.' | translate }}</span>
                       </div>
 
-                      <app-new-wallet [selectedNetworkMetadata]="selectedNetworkMetadata"
+                      <app-new-wallet [selectedChain]="selectedChain"
                         (onCreatedWallet)="onCreatedWallet($event)"></app-new-wallet>
                     </div>
                   </ion-content>
@@ -174,39 +175,15 @@
                     </ion-buttons>
                   </ion-toolbar>
                   <ion-content>
-                    <div class="ion-padding-horizontal">
+                    <div class="modal-content-container">
                       <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                         <h1 style="font-weight: bold;">{{ 'Import Seed Phrase' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your 12-word recovery phrase.' | translate }}</span>
+                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your 12-word recovery
+                          phrase.' | translate }}</span>
                       </div>
 
-                      <app-import-seed-phrase [selectedNetworkMetadata]="selectedNetworkMetadata"
+                      <app-import-seed-phrase [selectedChain]="selectedChain"
                         (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
-                    </div>
-                  </ion-content>
-                </ng-template>
-              </ion-modal>
-
-              <ion-modal #importPrivateKeyModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-                [expandToScroll]="false">
-                <ng-template>
-                  <ion-toolbar class="main-modal-toolbar">
-                    <ion-title>{{ 'Import' | translate }}</ion-title>
-                    <ion-buttons slot="end">
-                      <ion-button (click)="importPrivateKeyModal.dismiss()">
-                        <ion-icon name="close" style="color: white;"></ion-icon>
-                      </ion-button>
-                    </ion-buttons>
-                  </ion-toolbar>
-                  <ion-content>
-                    <div class="ion-padding-horizontal">
-                      <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
-                        <h1 style="font-weight: bold;">{{ 'Import Private Key' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Restore an existing wallet with your private key.' | translate }}</span>
-                      </div>
-
-                      <app-import-private-key [selectedNetworkMetadata]="selectedNetworkMetadata"
-                        (onImportedWallet)="onImportWalletPrivateKey($event)"></app-import-private-key>
                     </div>
                   </ion-content>
                 </ng-template>
@@ -224,13 +201,14 @@
                     </ion-buttons>
                   </ion-toolbar>
                   <ion-content>
-                    <div class="ion-padding-horizontal">
+                    <div class="modal-content-container">
                       <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
                         <h1 style="font-weight: bold;">{{ 'Import From Backup' | translate }}</h1>
-                        <span style="font-size: 15px;">{{ 'Restore a wallet from your backup files.' | translate }} </span>
+                        <span style="font-size: 15px;">{{ 'Restore a wallet from your backup files.' | translate }}
+                        </span>
                       </div>
 
-                      <app-import-from-backup [selectedNetworkMetadata]="selectedNetworkMetadata"
+                      <app-import-from-backup [selectedChain]="selectedChain"
                         (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
                     </div>
                   </ion-content>
@@ -247,8 +225,10 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <app-wallets [newlyAddedWallet]="newlyAddedWallet"
-          (onSetCurrentWallet)="onSetCurrentWallet($event)"></app-wallets>
+        <div class="modal-content-container">
+          <app-wallets [newlyAddedWallet]="newlyAddedWallet" (onSetCurrentWallet)="onSetCurrentWallet($event)"
+            (onFilteredChain)="onFilteredChain($event)"></app-wallets>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -264,14 +244,15 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-notifications (onOpenNotification)="openNotificationsModal()"></app-notifications>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
 
-  <ion-modal #settingsModal class="settings-list" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+  <ion-modal #settingsModal class="settings-list" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+    [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>{{ 'Settings' | translate }}</ion-title>
@@ -282,7 +263,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-settings></app-settings>
         </div>
       </ion-content>

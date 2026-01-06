@@ -35,17 +35,19 @@ import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 import { Network } from 'src/models/network.model';
 
-import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { BiometricService } from 'src/app/api/biometric/biometric.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
+import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
 import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot/polkadot.service';
 import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
 import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
+import { XodePaseoService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-paseo/xode-paseo.service';
+import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/polaris/polaris.service';
 
 import { Auth } from 'src/models/auth.model';
 
@@ -54,6 +56,8 @@ import { PasswordLoginComponent } from 'src/app/security/shared/password-login/p
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
 import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
+
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-wallet-details',
@@ -82,7 +86,8 @@ import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.
     PasswordLoginComponent,
     PinSetupComponent,
     PinLoginComponent,
-    BiometricComponent
+    BiometricComponent,
+    TranslatePipe
   ]
 })
 export class WalletDetailsComponent implements OnInit {
@@ -104,6 +109,8 @@ export class WalletDetailsComponent implements OnInit {
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private hydrationPolkadotService: HydrationPolkadotService,
+    private xodePaseoService: XodePaseoService,
+    private polarisService: PolarisService,
     private walletsService: WalletsService,
     private encryptionService: EncryptionService,
     private toastController: ToastController,
@@ -205,6 +212,8 @@ export class WalletDetailsComponent implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;
 
@@ -229,7 +238,7 @@ export class WalletDetailsComponent implements OnInit {
   }
 
   copyMnemonicPhrase() {
-    this.copyClipboard(this.secretMnemonicPhrase.join(' '), 'Mnemonic phrase copied to clipboard!');
+    this.copyClipboard(this.secretMnemonicPhrase.join(' ') + (this.wallet.derivation_path ?? ''), 'Mnemonic phrase copied to clipboard!');
   }
 
   copyPrivateKey() {

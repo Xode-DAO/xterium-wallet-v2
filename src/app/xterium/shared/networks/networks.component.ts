@@ -24,10 +24,10 @@ import { NetworkMetadataService } from 'src/app/api/network-metadata/network-met
     IonGrid,
     IonRow,
     IonCol,
-    IonList,
-    IonItem,
+    IonAvatar,
     IonLabel,
-    IonAvatar
+    IonItem,
+    IonList,
   ]
 })
 export class NetworksComponent implements OnInit {
@@ -39,8 +39,8 @@ export class NetworksComponent implements OnInit {
 
   networkMetadatas: NetworkMetadata[] = [];
 
-  getNetworks(): void {
-    this.networkMetadatas = this.networkMetadataService.getAllNetworkMetadatas();
+  async getNetworks(): Promise<void> {
+    this.networkMetadatas = await this.networkMetadataService.getAllNetworkMetadatas();
   }
 
   selectNetworkMetadata(networkMetadata: NetworkMetadata) {

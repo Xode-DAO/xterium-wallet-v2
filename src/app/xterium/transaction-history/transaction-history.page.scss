@@ -8,14 +8,14 @@
 
     ion-segment {
       --background: #333333;
-      border-radius: 25px;
+      border-radius: 1.5rem;
 
       ion-segment-button {
         --color: white;
         --indicator-color: #0bbab5;
         --padding-top: 10px;
         --padding-bottom: 10px;
-        --border-radius: 25px;
+        --border-radius: 1.5rem;
 
         font-size: 14px;
 
@@ -28,15 +28,15 @@
       }
 
       .ion-activatable {
-        --border-radius: 25px;
-        border-radius: 25px;
+        --border-radius: 1.5rem;
+        border-radius: 1.5rem;
       }
     }
   }
 
   .payments-segment-content {
     ion-row.date-as-of {
-      --border-radius: 25px;
+      --border-radius: 1.5rem;
       margin-top: 10px;
 
       ion-label {
@@ -48,7 +48,7 @@
 
         ion-item {
           --background: #333333;
-          --border-radius: 25px;
+          --border-radius: 1.5rem;
         }
       }
     }
@@ -61,7 +61,7 @@
 
     ion-card.transaction-card {
       margin: 12px 0px;
-      border-radius: 25px;
+      border-radius: 1.5rem;
       background: #2a2a2a;
 
       .transaction-note {
@@ -100,12 +100,12 @@
 
   .transfers-segment-content {
     ion-row.search-hash {
-      --border-radius: 25px;
+      --border-radius: 1.5rem;
       margin-top: 10px;
 
       ion-item {
         --background: #333333;
-        --border-radius: 25px;
+        --border-radius: 1.5rem;
       }
 
       ion-button {
@@ -122,7 +122,7 @@
 
     ion-card.transaction-card {
       margin: 12px 0px;
-      border-radius: 25px;
+      border-radius: 1.5rem;
       background: #2a2a2a;
 
       ion-item {
@@ -139,12 +139,12 @@
 
   .transactions-segment-content {
     ion-row.search-hash {
-      --border-radius: 25px;
+      --border-radius: 1.5rem;
       margin-top: 10px;
 
       ion-item {
         --background: #333333;
-        --border-radius: 25px;
+        --border-radius: 1.5rem;
       }
 
       ion-button {
@@ -161,7 +161,7 @@
 
     ion-card.transaction-card {
       margin: 12px 0px;
-      border-radius: 25px;
+      border-radius: 1.5rem;
       background: #2a2a2a;
 
       ion-item {

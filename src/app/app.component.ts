@@ -47,7 +47,7 @@ export class AppComponent {
       this.isChromeExtension = this.environmentService.isChromeExtension();
 
       this.initLanguage();
-      
+
       await this.initStatusBar();
       await this.initNotifications();
 

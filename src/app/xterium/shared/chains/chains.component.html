@@ -1,7 +1,7 @@
 <div class="chains-list">
   <ion-grid>
     <ion-row>
-      @for (chain of chains; track chain;) {
+      @for (chain of chains; track chain) {
       <ion-col size="12">
         <ion-list>
           <ion-item button detail="false" lines="none" (click)="selectChain(chain)">

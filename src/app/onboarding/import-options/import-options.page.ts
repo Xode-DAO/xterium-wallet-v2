@@ -19,15 +19,13 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, close } from 'ionicons/icons';
 
-import { NetworkMetadata } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model';
 
-import { NetworkMetadataService } from 'src/app/api/network-metadata/network-metadata.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 
 import { HeaderComponent } from "src/app/onboarding/shared/header/header.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
-import { ImportPrivateKeyComponent } from "src/app/onboarding/shared/import-private-key/import-private-key.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
 
 @Component({
@@ -51,19 +49,16 @@ import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from
     IonToolbar,
     HeaderComponent,
     ImportSeedPhraseComponent,
-    ImportPrivateKeyComponent,
     ImportFromBackupComponent
   ]
 })
 export class ImportOptionsPage implements OnInit {
   @ViewChild('importSeedPhraseModal', { read: IonModal }) importSeedPhraseModal!: IonModal;
-  @ViewChild('importPrivateKeyModal', { read: IonModal }) importPrivateKeyModal!: IonModal;
   @ViewChild('importFromBackupModal', { read: IonModal }) importFromBackupModal!: IonModal;
 
   constructor(
     private router: Router,
     private onboardingService: OnboardingService,
-    private networkMetadataService: NetworkMetadataService,
   ) {
     addIcons({
       arrowBackOutline,
@@ -71,7 +66,7 @@ export class ImportOptionsPage implements OnInit {
     });
   }
 
-  selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
+  selectedChain: Chain = new Chain();
 
   openImportSeedPhraseModal() {
     this.importSeedPhraseModal.present();
@@ -79,15 +74,6 @@ export class ImportOptionsPage implements OnInit {
 
   onImportWalletSeedPhrase(wallet: Wallet) {
     this.importSeedPhraseModal.dismiss();
-    this.router.navigate(['/xterium'], { replaceUrl: true });
-  }
-
-  openImportPrivateKeyModal() {
-    this.importPrivateKeyModal.present();
-  }
-
-  onImportWalletPrivateKey(wallet: Wallet) {
-    this.importPrivateKeyModal.dismiss();
     this.router.navigate(['/xterium'], { replaceUrl: true });
   }
 
@@ -104,10 +90,7 @@ export class ImportOptionsPage implements OnInit {
     this.onboardingService.get().then(onboarding => {
       if (onboarding) {
         if (onboarding.step1_selected_chain) {
-          const networkMetadata = this.networkMetadataService.getNetworkMetadataByNetwork(onboarding.step1_selected_chain.network);
-          if (networkMetadata) {
-            this.selectedNetworkMetadata = networkMetadata;
-          }
+          this.selectedChain = onboarding.step1_selected_chain;
         }
       }
     });

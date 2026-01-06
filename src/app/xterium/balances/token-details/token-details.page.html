@@ -172,7 +172,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-receive [token]="balance.token"></app-receive>
         </div>
       </ion-content>
@@ -191,10 +191,12 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-text-center ion-padding">
+        <div class="modal-content-container">
           <app-send [balance]="balance" (onClickSend)="onClickSend($event)"></app-send>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
+
+  <ion-toast [duration]="5000"></ion-toast>
 </ion-content>

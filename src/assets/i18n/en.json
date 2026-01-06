@@ -161,5 +161,10 @@
   "Enter PIN:": "Enter PIN:",
   "Confirm your PIN:": "Confirm your PIN:",
   "Biometric authentication is not available on this device": "Biometric authentication is not available on this device",
-  "Sign in with Biometrics": "Sign in with Biometrics"
+  "Sign in with Biometrics": "Sign in with Biometrics",
+  "Enable Testnet": "Enable Testnet",
+  "Select Network": "Select Network",
+  "related wallets found, click to add": "related wallets found, click to add",
+  "EXPORT": "EXPORT",
+  "DELETE": "DELETE"
 }

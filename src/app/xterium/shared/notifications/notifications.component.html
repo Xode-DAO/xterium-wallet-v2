@@ -1,40 +1,37 @@
 <div class="notifications-list">
   @if (notifications.length === 0) {
-    <ion-grid>
-      <ion-row>
-        <ion-col size="12" class="ion-text-center ion-padding">
-          <ion-text color="medium" style="font-size: 15px;">{{ 'No notifications found.' | translate }}</ion-text>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" class="ion-text-center ion-padding">
+        <ion-text color="medium" style="font-size: 15px;">{{ 'No notifications found.' | translate }}</ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   }
 
-  @if (notifications.length > 0) { 
-    <ion-grid>
-      <ion-row>
-        @for (notification of notifications; track notification) {
-          <ion-col size="12">
-            <ion-list>
-              <ion-item button detail="false" lines="none" (click)="openNotification(notification)">
-                <ion-label [class.read-notification]="notification.is_read">
-                  <h2>{{ notification.title }}</h2>
-                  <p>{{ notification.body }}</p>
-                  <p>{{ notification.timestamp | date:'medium' }}</p>
-                </ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-col>
-          <ion-alert
-            [isOpen]="isAlertOpen" 
-            [header]="selectedNotification?.title" 
-            [subHeader]="selectedNotification?.timestamp | date:'medium'"
-            [message]="selectedNotification?.body"
-            [buttons]="['OK']"
-            (didDismiss)="isAlertOpen = false">
-          </ion-alert>
-        }
-      </ion-row>
-    </ion-grid>
+  @if (notifications.length > 0) {
+  <ion-grid>
+    <ion-row>
+      @for (notification of notifications; track notification) {
+      <ion-col size="12">
+        <ion-list>
+          <ion-item button detail="false" lines="none" (click)="openNotification(notification)">
+            <ion-label [class.read-notification]="notification.is_read">
+              <h2>{{ notification.title }}</h2>
+              <p>{{ notification.body }}</p>
+              <p>{{ notification.timestamp | date:'medium' }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+
+  <ion-alert [isOpen]="isAlertOpen" [header]="selectedNotification?.title"
+    [subHeader]="selectedNotification?.timestamp | date:'medium'" [message]="selectedNotification?.body"
+    [buttons]="['OK']" (didDismiss)="isAlertOpen = false">
+  </ion-alert>
   }
-  
+
 </div>

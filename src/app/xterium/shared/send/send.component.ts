@@ -18,12 +18,12 @@ import {
   IonAvatar,
   IonInput,
   IonTextarea,
-  IonButtons,
+  // IonButtons,
   IonToast,
   IonModal,
-  IonContent,
-  IonTitle,
-  IonToolbar,
+  // IonContent,
+  // IonTitle,
+  // IonToolbar,
   ToastController,
   AlertController
 } from '@ionic/angular/standalone';
@@ -43,6 +43,8 @@ import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/po
 import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
 import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
+import { XodePaseoService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-paseo/xode-paseo.service';
+import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/polaris/polaris.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { MultipayxApiService } from 'src/app/api/multipayx-api/multipayx-api.service';
 
@@ -71,13 +73,13 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonAvatar,
     IonInput,
     IonTextarea,
-    IonButtons,
+    // IonButtons,
     IonToast,
-    IonModal,
-    IonContent,
-    IonTitle,
-    IonToolbar,
-    ChainsComponent,
+    // IonModal,
+    // IonContent,
+    // IonTitle,
+    // IonToolbar,
+    // ChainsComponent,
     TranslatePipe,
   ]
 })
@@ -96,6 +98,8 @@ export class SendComponent implements OnInit {
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private hydrationPolkadotService: HydrationPolkadotService,
+    private xodePaseoService: XodePaseoService,
+    private polarisService: PolarisService,
     private walletsService: WalletsService,
     private multipayxApiService: MultipayxApiService,
     private toastController: ToastController,
@@ -111,7 +115,10 @@ export class SendComponent implements OnInit {
     });
   }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
@@ -181,14 +188,25 @@ export class SendComponent implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
+
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
+
     this.balancesObservableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
-          this.pjsApi,
+          pjsApi,
           this.balance.token,
           this.currentWalletPublicAddress
         ).subscribe(balance => {
@@ -331,20 +349,32 @@ export class SendComponent implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
 
-    const parseAmount = this.balancesService.parseBalance(Number(this.formattedAmountValue), this.balance.token.decimals);
-    const transactionHex = await service.transfer(this.pjsApi, this.balance, this.recipientAddress, parseAmount);
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
+
+    const rawAmount = this.formattedAmountValue.replace(/,/g, '');
+    const parseAmount = this.balancesService.parseBalance(Number(rawAmount), this.balance.token.decimals);
+
+    const transactionHex = await service.transfer(pjsApi, this.balance, this.recipientAddress, parseAmount);
 
     let existentialDeposit = 0;
     let estimatedFee = 0;
 
     if (this.balance.token.type === 'native') {
-      existentialDeposit = await service.getExistentialDepositOfNativeToken(this.pjsApi);
-      estimatedFee = await service.estimatedFees(this.pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
+      existentialDeposit = await service.getExistentialDepositOfNativeToken(pjsApi);
+      estimatedFee = await service.estimatedFees(pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
     }
 
     const balanceAmountRequired = parseAmount + existentialDeposit + estimatedFee;

@@ -26,7 +26,8 @@ import {
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, clipboardOutline, close } from 'ionicons/icons';
 
-import { Network, NetworkMetadata } from 'src/models/network.model';
+import { Network } from 'src/models/network.model';
+import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
@@ -66,7 +67,7 @@ import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
 export class ImportFromBackupComponent implements OnInit {
   @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
 
-  @Input() selectedNetworkMetadata: NetworkMetadata = new NetworkMetadata();
+  @Input() selectedChain: Chain = new Chain();
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(
@@ -137,7 +138,9 @@ export class ImportFromBackupComponent implements OnInit {
   async onSignWallet(password: string) {
     this.isProcessing = true;
 
-    if (this.selectedNetworkMetadata.network === Network.Polkadot) {
+    if (this.selectedChain.network === Network.Polkadot ||
+      this.selectedChain.network === Network.Paseo ||
+      this.selectedChain.network === Network.Rococo) {
       const decryptedPrivateKey = await this.encryptionService.decrypt(this.wallet.private_key!, password);
       const privateKeyHex = this.utilsService.encodePrivateKeyToHex(
         new Uint8Array(decryptedPrivateKey.split(',').map(Number) ?? [])
@@ -159,11 +162,7 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
-      let mnemonicPhrase = "-";
-      let publicKey = this.wallet.public_key;
-      let privateKey = decryptedPrivateKey;
-
-      if (this.wallet.mnemonic_phrase !== "" && this.wallet.mnemonic_phrase !== "-") {
+      if (this.wallet.mnemonic_phrase && this.wallet.mnemonic_phrase !== "") {
         const decryptedMnemonicPhrase = await this.encryptionService.decrypt(this.wallet.mnemonic_phrase, password);
 
         let isMnemonicPhraseValid = await this.utilsService.validateMnemonic(decryptedMnemonicPhrase);
@@ -181,13 +180,6 @@ export class ImportFromBackupComponent implements OnInit {
           await toast.present();
           return;
         }
-
-        const seed: Uint8Array = await this.utilsService.generateMnemonicToMiniSecret(decryptedMnemonicPhrase);
-        const keypair = await this.utilsService.createKeypairFromSeed(seed);
-
-        mnemonicPhrase = decryptedMnemonicPhrase;
-        publicKey = keypair.publicKey.toString();
-        privateKey = keypair.secretKey.toString();
       }
 
       let newId = uuidv4();
@@ -208,55 +200,21 @@ export class ImportFromBackupComponent implements OnInit {
         return;
       }
 
-      const chains = this.chainsService.getChainsByNetwork(this.selectedNetworkMetadata.network);
-      if (chains.length === 0) {
-        this.isProcessing = false;
-
-        const toast = await this.toastController.create({
-          message: 'No chains available. Please try again later.',
-          color: 'danger',
-          duration: 1500,
-          position: 'top',
-        });
-
-        await toast.present();
-        return;
-      }
-
-      const encryptedMnemonicPhrase = mnemonicPhrase !== "-" ? await this.encryptionService.encrypt(mnemonicPhrase, password) : "-";
-      const encryptedPrivateKey = await this.encryptionService.encrypt(privateKey, password);
-
       const wallet: Wallet = {
         id: newId,
         name: this.walletName,
-        chain: chains[0],
-        mnemonic_phrase: encryptedMnemonicPhrase,
-        public_key: publicKey,
-        private_key: encryptedPrivateKey
+        chain: this.selectedChain,
+        mnemonic_phrase: this.wallet.mnemonic_phrase,
+        public_key: this.wallet.public_key,
+        private_key: this.wallet.private_key,
+        derivation_path: this.wallet.derivation_path
       };
 
       await this.walletsService.create(wallet);
 
-      for (let i = 1; i < chains.length; i++) {
-        newId = uuidv4();
-
-        const wallet: Wallet = {
-          id: newId,
-          name: this.walletName,
-          chain: chains[i],
-          mnemonic_phrase: encryptedMnemonicPhrase,
-          public_key: publicKey,
-          private_key: encryptedPrivateKey
-        };
-
-        await this.walletsService.create(wallet);
-
-        if (i === 1) {
-          const wallets = await this.walletsService.getAllWallets();
-          if (wallets.length === 2) {
-            await this.walletsService.setCurrentWallet(newId);
-          }
-        }
+      const wallets = await this.walletsService.getAllWallets();
+      if (wallets.length === 1) {
+        await this.walletsService.setCurrentWallet(newId);
       }
 
       if (this.isChromeExtension) {
@@ -299,7 +257,7 @@ export class ImportFromBackupComponent implements OnInit {
       this.isProcessing = false;
 
       const toast = await this.toastController.create({
-        message: this.selectedNetworkMetadata.network.toString() + ' network is not yet supported.',
+        message: this.selectedChain.network.toString() + ' network is not yet supported.',
         color: 'warning',
         duration: 1500,
         position: 'top',

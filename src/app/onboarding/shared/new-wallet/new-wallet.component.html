@@ -53,7 +53,9 @@
       </ion-buttons>
     </ion-toolbar>
     <ion-content>
-      <app-sign-wallet (onSignWallet)="onSignWallet($event)"></app-sign-wallet>
+      <div class="modal-content-container">
+        <app-sign-wallet (onSignWallet)="onSignWallet($event)"></app-sign-wallet>
+      </div>
     </ion-content>
   </ng-template>
 </ion-modal>

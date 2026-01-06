@@ -37,8 +37,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     TranslatePipe,
   ]
 })
-export class NotificationsComponent  implements OnInit {
-
+export class NotificationsComponent implements OnInit {
   @Output() onOpenNotification = new EventEmitter<LocalNotification>();
 
   constructor(
@@ -50,23 +49,25 @@ export class NotificationsComponent  implements OnInit {
 
   isAlertOpen: boolean = false;
 
-  async getNotifications(): Promise<void> {
+  async fetchNotifications(): Promise<void> {
     this.notifications = await this.localNotificationsService.getAllNotifications();
   }
 
   async openNotification(notification: LocalNotification) {
     this.selectedNotification = notification;
     this.isAlertOpen = true;
-  
+
     if (notification.id !== undefined) {
       await this.localNotificationsService.markAsReadById(notification.id);
-  
+
       this.notifications = await this.localNotificationsService.getAllNotifications();
     }
   }
 
-  async ngOnInit() {
-      await this.getNotifications()
+  ngOnInit() {
+    this.fetchNotifications();
+    this.localNotificationsService.localNotificationObservable.subscribe(async (notification) => {
+      await this.fetchNotifications();
+    });
   }
-
 }

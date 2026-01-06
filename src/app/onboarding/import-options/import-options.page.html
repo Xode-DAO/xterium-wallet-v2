@@ -26,10 +26,6 @@
               (click)="openImportSeedPhraseModal()">
               IMPORT SEED PHRASE
             </ion-button>
-            <!-- <ion-button expand="block" size="default" class="ion-margin-bottom" id="import-private-key"
-              (click)="openImportPrivateKeyModal()">
-              IMPORT PRIVATE KEY
-            </ion-button> -->
             <ion-button expand="block" size="default" id="import-from-backup" (click)="openImportFromBackupModal()">
               IMPORT FROM BACKUP
             </ion-button>
@@ -57,36 +53,12 @@
           </span>
         </div>
 
-        <div class="ion-padding-horizontal">
-          <app-import-seed-phrase [selectedNetworkMetadata]="selectedNetworkMetadata"
-            (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
-        </div>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-  <ion-modal #importPrivateKeyModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
-    <ng-template>
-      <ion-toolbar class="main-modal-toolbar">
-        <ion-title>Import</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="importPrivateKeyModal.dismiss()">
-            <ion-icon name="close" style="color: white;"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-      <ion-content>
-        <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
-          <h1 style="font-weight: bold;">Import Private Key</h1>
-          <span style="font-size: 15px;">
-            Restore an existing wallet with your private key.
-          </span>
-        </div>
-
-        <div class="ion-padding-horizontal">
-          <app-import-private-key [selectedNetworkMetadata]="selectedNetworkMetadata"
-            (onImportedWallet)="onImportWalletPrivateKey($event)"></app-import-private-key>
-        </div>
+        <ion-content>
+          <div class="modal-content-container">
+            <app-import-seed-phrase [selectedChain]="selectedChain"
+              (onImportedWallet)="onImportWalletSeedPhrase($event)"></app-import-seed-phrase>
+          </div>
+        </ion-content>
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -109,10 +81,12 @@
           </span>
         </div>
 
-        <div class="ion-padding-horizontal">
-          <app-import-from-backup [selectedNetworkMetadata]="selectedNetworkMetadata"
-            (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
-        </div>
+        <ion-content>
+          <div class="modal-content-container">
+            <app-import-from-backup [selectedChain]="selectedChain"
+              (onImportedWallet)="onImportWalletFromBackup($event)"></app-import-from-backup>
+          </div>
+        </ion-content>
       </ion-content>
     </ng-template>
   </ion-modal>

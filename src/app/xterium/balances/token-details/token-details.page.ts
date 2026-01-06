@@ -8,12 +8,12 @@ import { ApiPromise } from '@polkadot/api';
 import { Subscription } from 'rxjs';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
-import {
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexTitleSubtitle,
-  ApexXAxis
-} from "ng-apexcharts";
+// import {
+//   ApexAxisChartSeries,
+//   ApexChart,
+//   ApexTitleSubtitle,
+//   ApexXAxis
+// } from "ng-apexcharts";
 
 import {
   IonContent,
@@ -30,6 +30,8 @@ import {
   IonModal,
   IonTitle,
   IonToolbar,
+  IonToast,
+  ToastController,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -46,6 +48,8 @@ import { PolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/po
 import { AssethubPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/assethub-polkadot/assethub-polkadot.service';
 import { XodePolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-polkadot/xode-polkadot.service';
 import { HydrationPolkadotService } from 'src/app/api/polkadot/blockchains/polkadot-js/hydration-polkadot/hydration-polkadot.service';
+import { XodePaseoService } from 'src/app/api/polkadot/blockchains/polkadot-js/xode-paseo/xode-paseo.service';
+import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/polaris/polaris.service';
 import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
@@ -79,6 +83,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonModal,
     IonTitle,
     IonToolbar,
+    IonToast,
     ReceiveComponent,
     SendComponent,
     NgApexchartsModule,
@@ -98,10 +103,13 @@ export class TokenDetailsPage implements OnInit {
     private assethubPolkadotService: AssethubPolkadotService,
     private xodePolkadotService: XodePolkadotService,
     private hydrationPolkadotService: HydrationPolkadotService,
+    private xodePaseoService: XodePaseoService,
+    private polarisService: PolarisService,
     private chainsService: ChainsService,
     private walletsService: WalletsService,
     private balancesService: BalancesService,
     private multipayxApiService: MultipayxApiService,
+    private toastController: ToastController,
   ) {
     addIcons({
       arrowBackOutline,
@@ -111,7 +119,10 @@ export class TokenDetailsPage implements OnInit {
     });
   }
 
-  pjsApi!: ApiPromise;
+  private pjsApiMap: Map<number, ApiPromise> = new Map();
+  get pjsApi(): ApiPromise | undefined {
+    return this.pjsApiMap.get(this.currentWallet?.chain?.chain_id);
+  }
 
   balance: Balance = new Balance();
 
@@ -196,7 +207,7 @@ export class TokenDetailsPage implements OnInit {
     this.multipayxApiService.getPricePerCurrency("USD").then(async pricePerCurrency => {
       if (pricePerCurrency.data.length > 0) {
         let price = pricePerCurrency.data.filter(item => item.symbol.toLowerCase() === this.balance.token.symbol.toLowerCase())
-        if (price) {
+        if (price && price.length > 0) {
           this.balance.price = price[0].price;
         }
       }
@@ -208,14 +219,25 @@ export class TokenDetailsPage implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;
 
-    this.pjsApi = await service.connect();
+    let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
+    if (!pjsApi) {
+      pjsApi = await service.connect();
+      this.pjsApiMap.set(this.currentWallet.chain.chain_id, pjsApi);
+    }
+
+    if (!pjsApi.isConnected) {
+      await pjsApi.connect()
+    };
+
     this.observableTimeout = setTimeout(() => {
       if (this.balancesSubscription.closed) {
         this.balancesSubscription = service.watchBalance(
-          this.pjsApi,
+          pjsApi,
           this.balance.token,
           this.currentWalletPublicAddress
         ).subscribe(balance => {
@@ -234,7 +256,7 @@ export class TokenDetailsPage implements OnInit {
     if (Number.isInteger(value)) {
       return value.toString();
     }
-  
+
     const decimals = value.toFixed(7);
     const [intPart, decPart] = decimals.split(".");
 
@@ -247,7 +269,7 @@ export class TokenDetailsPage implements OnInit {
 
     return parseFloat(value.toFixed(4)).toString();
   }
-  
+
   // Price history is currently not available
   //
   // generateDummyPriceHistory(symbol: string) {

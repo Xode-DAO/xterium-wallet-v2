@@ -1,7 +1,7 @@
 <div class="networks-list">
   <ion-grid>
     <ion-row>
-      @for (networkMetadata of networkMetadatas; track networkMetadata;) {
+      @for (networkMetadata of networkMetadatas; track networkMetadata; let idx = $index) {
       <ion-col size="12">
         <ion-list>
           <ion-item button detail="false" lines="none" (click)="selectNetworkMetadata(networkMetadata)">

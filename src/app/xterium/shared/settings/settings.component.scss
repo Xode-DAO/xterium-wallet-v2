@@ -1,32 +1,32 @@
 .settings-list {
-    border: none;
+  border: none;
 
-    ion-list {
-      background: transparent;
-      padding-bottom: 20px;
-  
-      ion-item.custom-buttons {
-  
-        --background: #333333;
-  
-        border-radius: 25px;
-        transition: background 0.2s;
-        margin-bottom: 10px;
+  ion-list {
+    background: transparent;
+    padding-bottom: 20px;
 
-        ion-icon {
-          color: #0bbab5;
-        }
-      }
-  
-      h2 {
-        color: white;
-        font-size: 18px;
-        font-weight: 600;
-        margin: 0px;
-      }
+    ion-item.custom-buttons {
 
-      p {
-        color: #b9b8b8 !important;
+      --background: #333333;
+
+      border-radius: 1.5rem;
+      transition: background 0.2s;
+      margin-bottom: 10px;
+
+      ion-icon {
+        color: #0bbab5;
       }
     }
+
+    h2 {
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0px;
+    }
+
+    p {
+      color: #b9b8b8 !important;
+    }
   }
+}

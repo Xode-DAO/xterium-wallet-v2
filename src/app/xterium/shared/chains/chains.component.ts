@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {
@@ -8,13 +8,14 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonAvatar
+  IonAvatar,
 } from '@ionic/angular/standalone';
 
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 
 import { ChainsService } from 'src/app/api/chains/chains.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 @Component({
   selector: 'app-chains',
@@ -28,7 +29,7 @@ import { ChainsService } from 'src/app/api/chains/chains.service';
     IonList,
     IonItem,
     IonLabel,
-    IonAvatar
+    IonAvatar,
   ]
 })
 export class ChainsComponent implements OnInit {
@@ -37,21 +38,42 @@ export class ChainsComponent implements OnInit {
 
   constructor(
     private chainsService: ChainsService,
+    private settingsService: SettingsService
   ) { }
 
   chains: Chain[] = [];
 
-  getChains(): void {
-    if (this.isAllChainIncluded) {
-      this.chains = this.chainsService.getChainsByNetwork(Network.All);
+  async getChains(): Promise<void> {
+    const [allChains, polkadotChains, paseoChains, rococoChains] = [
+      this.chainsService.getChainsByNetwork(Network.AllNetworks),
+      this.chainsService.getChainsByNetwork(Network.Polkadot),
+      this.chainsService.getChainsByNetwork(Network.Paseo),
+      this.chainsService.getChainsByNetwork(Network.Rococo),
+    ];
 
-      const liveChains = this.chainsService.getChainsByNetwork(Network.Polkadot);
-      if (liveChains.length > 0) {
-        this.chains.push(...liveChains);
-      }
-    } else {
-      this.chains = this.chainsService.getChainsByNetwork(Network.Polkadot);
+    let chains: Chain[] = this.isAllChainIncluded
+      ? [...allChains, ...polkadotChains]
+      : [...polkadotChains];
+
+    const settings = await this.settingsService.get();
+    const isTestnetEnabled = settings?.user_preferences?.testnet_enabled;
+
+    if (isTestnetEnabled) {
+      chains = this.isAllChainIncluded
+        ? [
+          ...allChains,
+          ...polkadotChains,
+          ...paseoChains,
+          ...rococoChains
+        ]
+        : [
+          ...polkadotChains,
+          ...paseoChains,
+          ...rococoChains
+        ];
     }
+
+    this.chains = chains;
   }
 
   selectChain(chain: Chain) {

@@ -30,6 +30,7 @@ import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.compone
 import { SendComponent } from "src/app/xterium/shared/send/send.component"
 
 import { SettingsService } from 'src/app/api/settings/settings.service';
+import { BalancesService } from 'src/app/api/balances/balances.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -69,6 +70,7 @@ export class BalancesPage implements OnInit {
   constructor(
     private router: Router,
     private settingsService: SettingsService,
+    private balancesService: BalancesService,
   ) {
     addIcons({
       qrCode,
@@ -83,7 +85,7 @@ export class BalancesPage implements OnInit {
   selectedBalance: Balance = new Balance();
   isZeroBalancesHidden: boolean = true;
 
-  symbols: string = ''; 
+  currencySymbol: string = '';
 
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;
@@ -91,6 +93,10 @@ export class BalancesPage implements OnInit {
     setTimeout(() => {
       event.target.complete();
     }, 1000);
+  }
+
+  formatTotalAmount(amount: number): string {
+    return this.balancesService.formatTotalAmount(amount);
   }
 
   openBalancesReceiveModal() {
@@ -137,8 +143,7 @@ export class BalancesPage implements OnInit {
     const settings = await this.settingsService.get();
     if (settings) {
       this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
-      this.symbols = settings.user_preferences.currency.symbol;
-      
+      this.currencySymbol = settings.user_preferences.currency.symbol;
     };
   }
 
@@ -149,6 +154,8 @@ export class BalancesPage implements OnInit {
     if (settings) {
       settings.user_preferences.hide_zero_balances = isHidden;
       this.settingsService.set(settings);
+
+      this.refreshCounter++;
     }
   }
 
@@ -160,5 +167,4 @@ export class BalancesPage implements OnInit {
       }
     });
   }
-
 }

@@ -8,7 +8,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom xterium-header">
-            <h1>{{ symbols }} {{ totalAmount | number: '1.2-2' }}</h1>
+            <h1>{{ currencySymbol }} {{ formatTotalAmount(totalAmount) }}</h1>
             <span>{{ 'Total Balance' | translate }}</span>
           </div>
         </ion-col>
@@ -19,7 +19,7 @@
             <div class="button-content">
               <ion-icon name="qr-code"></ion-icon>
               <span class="label">{{ 'Receive' | translate }}</span>
-              
+
             </div>
           </ion-button>
         </ion-col>
@@ -46,12 +46,16 @@
         <ion-col size="12">
           <div class="token-list-header">
             <h3 style="font-size: 16px; margin-right: 10px;">{{ 'Tokens' | translate }}</h3>
-            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden" (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle>
+            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden"
+              (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle>
             <!-- <a (click)="openManageTokensModal()">Manage</a> -->
           </div>
         </ion-col>
       </ion-row>
     </ion-grid>
+  </div>
+
+  <div class="ion-padding-horizontal">
     <app-tokens [refreshCounter]="refreshCounter" (onTotalAmount)="onTotalAmount($event)"
       (onOpenToken)="goToTokenDetails($event)"></app-tokens>
   </div>
@@ -67,7 +71,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-receive></app-receive>
         </div>
       </ion-content>
@@ -86,7 +90,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-tokens [refreshCounter]="refreshCounter" (onOpenToken)="openBalancesSendModal($event)"></app-tokens>
         </div>
       </ion-content>
@@ -97,7 +101,7 @@
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>{{ 'Send' | translate }}</ion-title>
-        
+
         <ion-buttons slot="end">
           <ion-button (click)="balancesSendModal.dismiss()">
             <ion-icon name="close" style="color: white;"></ion-icon>
@@ -105,7 +109,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-padding-horizontal">
+        <div class="modal-content-container">
           <app-send [balance]="selectedBalance" (onClickSend)="onClickSend($event)"></app-send>
         </div>
       </ion-content>
@@ -123,7 +127,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-content>
-        <div class="ion-text-center ion-padding">
+        <div class="modal-content-container">
 
         </div>
       </ion-content>

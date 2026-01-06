@@ -1,6 +1,13 @@
 .chains-list {
   border: none;
 
+  .network-metadata-label {
+    margin: 10px 0px 0px 0px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #c7c7c7;
+  }
+
   ion-list {
     background: transparent;
   }
@@ -8,8 +15,9 @@
   ion-item {
     --background: #333333;
 
-    border-radius: 25px;
+    border-radius: 1.5rem;
     transition: background 0.2s;
+
   }
 
   h2 {
@@ -26,4 +34,8 @@
     margin: 0px;
     padding: 0px 0px 8px 0px;
   }
+}
+
+ion-modal.select-network-metadata-modal {
+  --height: auto;
 }
