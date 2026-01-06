@@ -81,7 +81,7 @@
       @if (relatedWalletsByChain[chain.id] && relatedWalletsByChain[chain.id].length > 0) {
       <ion-chip [color]="'warning'" [outline]="true"
         (click)="createManyWallets(relatedWalletsByChain[chain.id], chain)">
-        {{ relatedWalletsByChain[chain.id].length + ' related wallets found, click to add' }}
+        {{ relatedWalletsByChain[chain.id].length + ' ' + ('related wallets found, click to add' | translate) }}
       </ion-chip>
       }
     </div>
