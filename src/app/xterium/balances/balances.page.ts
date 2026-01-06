@@ -93,6 +93,22 @@ export class BalancesPage implements OnInit {
     }, 1000);
   }
 
+  formatTotalAmount(amount: number): string {
+    const absAmount = Math.abs(amount);
+
+    if (absAmount >= 1e12) {
+      return (amount / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
+    }
+    if (absAmount >= 1e9) {
+      return (amount / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+    }
+    if (absAmount >= 1e6) {
+      return (amount / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    }
+
+    return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
   openBalancesReceiveModal() {
     this.balancesReceiveModal.present();
   }
