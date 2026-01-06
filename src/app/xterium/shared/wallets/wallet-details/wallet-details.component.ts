@@ -212,7 +212,7 @@ export class WalletDetailsComponent implements OnInit {
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 1000) service = this.assethubPolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 3417) service = this.xodePolkadotService;
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 2034) service = this.hydrationPolkadotService;
-    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5102) service = this.xodePaseoService;
+    if (this.currentWallet.chain.network === Network.Paseo && this.currentWallet.chain.chain_id === 5109) service = this.xodePaseoService;
     if (this.currentWallet.chain.network === Network.Rococo && this.currentWallet.chain.chain_id === 2000) service = this.polarisService;
 
     if (!service) return;

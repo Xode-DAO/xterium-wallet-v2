@@ -110,7 +110,7 @@ export class ChainsService {
       network: Network.Paseo,
       name: "Paseo",
       description: "Test and experience Xode on the Paseo test network.",
-      chain_id: 5102,
+      chain_id: 5109,
       unit: "XON",
       decimal: 12,
       address_prefix: 280,
