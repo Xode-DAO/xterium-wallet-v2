@@ -30,6 +30,7 @@ import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.compone
 import { SendComponent } from "src/app/xterium/shared/send/send.component"
 
 import { SettingsService } from 'src/app/api/settings/settings.service';
+import { BalancesService } from 'src/app/api/balances/balances.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -69,6 +70,7 @@ export class BalancesPage implements OnInit {
   constructor(
     private router: Router,
     private settingsService: SettingsService,
+    private balancesService: BalancesService,
   ) {
     addIcons({
       qrCode,
@@ -94,19 +96,7 @@ export class BalancesPage implements OnInit {
   }
 
   formatTotalAmount(amount: number): string {
-    const absAmount = Math.abs(amount);
-
-    if (absAmount >= 1e12) {
-      return (amount / 1e12).toFixed(1).replace(/\.0$/, '') + 'T';
-    }
-    if (absAmount >= 1e9) {
-      return (amount / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
-    }
-    if (absAmount >= 1e6) {
-      return (amount / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-    }
-
-    return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return this.balancesService.formatTotalAmount(amount);
   }
 
   openBalancesReceiveModal() {

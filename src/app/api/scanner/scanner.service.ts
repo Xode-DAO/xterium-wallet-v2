@@ -34,7 +34,7 @@ export class ScannerService {
         const blocks = response || [];
 
         for (const block of blocks) {
-          const transferData = block.transfers || [];
+          const transferData = block.transfer || [];
 
           for (const item of transferData) {
             const isNativeTransfer = item.token === chain.unit;

@@ -9,7 +9,6 @@ import {
   IonItem,
   IonLabel,
   IonAvatar,
-  IonChip,
 } from '@ionic/angular/standalone';
 
 import { Network } from 'src/models/network.model';
@@ -31,7 +30,6 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
     IonItem,
     IonLabel,
     IonAvatar,
-    IonChip,
   ]
 })
 export class ChainsComponent implements OnInit {

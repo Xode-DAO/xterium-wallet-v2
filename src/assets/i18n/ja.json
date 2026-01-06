@@ -163,5 +163,8 @@
   "Biometric authentication is not available on this device": "このデバイスでは生体認証は利用できません",
   "Sign in with Biometrics": "生体認証でサインイン",
   "Enable Testnet": "テストネットを有効にする",
-  "Select Network": "ネットワークの選択"
+  "Select Network": "ネットワークの選択",
+  "related wallets found, click to add": "関連するウォレットが見つかりました。クリックして追加してください。",
+  "EXPORT": "輸出",
+  "DELETE": "消す"
 }

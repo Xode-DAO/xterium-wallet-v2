@@ -163,5 +163,8 @@
   "Biometric authentication is not available on this device": "이 기기에서는 생체 인증을 사용할 수 없습니다",
   "Sign in with Biometrics": "생체 인증으로 로그인",
   "Enable Testnet": "테스트넷 활성화",
-  "Select Network": "네트워크 선택"
+  "Select Network": "네트워크 선택",
+  "related wallets found, click to add": "관련 지갑이 발견되었습니다. 클릭하여 추가하세요.",
+  "EXPORT": "내보내다",
+  "DELETE": "삭제"
 }
