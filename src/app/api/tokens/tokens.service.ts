@@ -36,7 +36,7 @@ export class TokensService {
 
   async attachIcon(token: Token): Promise<void> {
     let symbol = token.symbol;
-    if (token.chain_id === 9) {
+    if (token.chain_id === 9 && token.type === 'native') {
       symbol = 'XON_POLARIS';
     }
 
