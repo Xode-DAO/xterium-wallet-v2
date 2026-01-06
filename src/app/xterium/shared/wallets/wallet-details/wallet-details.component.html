@@ -14,7 +14,7 @@
           </ion-item>
           <ion-item class="primary-input-item ion-margin-bottom" lines="none">
             <ion-label>{{ 'Chain:' | translate }}</ion-label>
-            <ion-input type="text" placeholder="" [(ngModel)]="currentWallet.chain.name" readonly="true"
+            <ion-input type="text" placeholder="" [(ngModel)]="wallet.chain.name" readonly="true"
               (ngModelChange)="updateWalletOnModelChange()"></ion-input>
           </ion-item>
         </ion-list>
@@ -47,7 +47,7 @@
       <ion-col size="6">
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="success-button" (click)="exportWallet()">
-            {{ 'EXPORT WALLET' | translate }}
+            {{ 'EXPORT' | translate }}
           </ion-button>
         </div>
       </ion-col>
@@ -55,7 +55,7 @@
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="danger-button" (click)="deleteWallet()"
             [disabled]="this.currentWallet.id === wallet.id">
-            {{ 'DELETE WALLET' | translate }}
+            {{ 'DELETE' | translate }}
           </ion-button>
         </div>
       </ion-col>

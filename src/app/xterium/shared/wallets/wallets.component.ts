@@ -19,7 +19,6 @@ import {
   IonButton,
   IonIcon,
   IonChip,
-  IonCard,
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -60,7 +59,6 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonButton,
     IonIcon,
     IonChip,
-    IonCard,
     ChainsComponent,
     WalletDetailsComponent,
     TranslatePipe
@@ -100,7 +98,7 @@ export class WalletsComponent implements OnInit {
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  chainsWithAddButton: Chain[] = [];
+  relatedWalletsByChain: Record<number, Wallet[]> = {};
 
   async getChains(): Promise<void> {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
@@ -146,6 +144,8 @@ export class WalletsComponent implements OnInit {
   async getWallets(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
     await this.loadWalletsByChain();
+
+    this.getRelatedWalletsPerNetwork();
   }
 
   async loadWalletsByChain(): Promise<void> {
@@ -165,48 +165,59 @@ export class WalletsComponent implements OnInit {
 
       this.walletsByChain[chain.id] = mapped;
     }
-
-    await this.getChainsAvailableForWallet();
   }
 
-  async getChainsAvailableForWallet(): Promise<void> {
-    if (!this.currentWallet || !this.currentWallet.public_key) return;
+  getRelatedWalletsPerNetwork(): void {
+    this.relatedWalletsByChain = {};
 
-    const polkadotChains = this.chains.filter(chain => chain.network === Network.Polkadot);
+    if (this.chains.length > 0) {
+      for (const chain of this.chains) {
+        const chain_id = chain.id;
+        const chain_wallets = this.wallets.filter(w => w.chain.id === chain.id);
 
-    this.chainsWithAddButton = [];
+        const rawPublicKeys = new Set<string>();
 
-    for (const chain of polkadotChains) {
-      const encodedCurrentWallet = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, chain);
+        for (const chainWallet of chain_wallets) {
+          const originalWallet = this.wallets.find(w => w.id === chainWallet.id);
+          if (originalWallet) {
+            rawPublicKeys.add(originalWallet.public_key);
+          }
+        }
 
-      const walletsInChain = this.walletsByChain[chain.id] || [];
+        const network = this.chains.find(c => c.id === chain_id)?.network;
+        const relatedWallets = this.wallets.filter(w => {
+          return w.chain.network === network &&
+            w.chain.id !== chain_id &&
+            !rawPublicKeys.has(w.public_key);
+        });
 
-      const walletExists = walletsInChain.some(
-        w => w.public_key === encodedCurrentWallet
-      );
+        const groupedByPublicKey = relatedWallets.reduce((acc, wallet) => {
+          if (!acc[wallet.public_key]) {
+            acc[wallet.public_key] = { ...wallet };
+          }
+          return acc;
+        }, {} as Record<string, Wallet>);
 
-      if (!walletExists) {
-        this.chainsWithAddButton.push(chain);
+        this.relatedWalletsByChain[chain_id] = Object.values(groupedByPublicKey);
       }
     }
   }
 
-  async createWalletForChain(chain: Chain): Promise<void> {
-    if (!this.currentWallet) return;
+  async createManyWallets(related_wallets: Wallet[], chain: Chain): Promise<void> {
+    for (const wallet of related_wallets) {
+      let newId = uuidv4();
+      const newWallet: Wallet = new Wallet();
+      newWallet.id = newId;
+      newWallet.name = wallet.name;
+      newWallet.chain = chain;
+      newWallet.mnemonic_phrase = wallet.mnemonic_phrase;
+      newWallet.public_key = wallet.public_key;
+      newWallet.private_key = wallet.private_key;
 
-    let newId = uuidv4();
-    const newWallet: Wallet = new Wallet();
-    newWallet.id = newId;
-    newWallet.public_key = this.currentWallet.public_key;
-    newWallet.private_key = this.currentWallet.private_key;
-    newWallet.mnemonic_phrase = this.currentWallet.mnemonic_phrase;
-    newWallet.name = "My wallet";
-    newWallet.chain = chain;
-
-    await this.walletsService.create(newWallet);
+      await this.walletsService.create(newWallet);
+    }
 
     await this.getWallets();
-    await this.getCurrentWallet();
   }
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {

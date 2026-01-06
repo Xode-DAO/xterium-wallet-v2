@@ -10,8 +10,6 @@
           }
           <ion-label style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">
             {{ selectedChain.name || 'Select Chain' }}
-            {{ selectedChain.network.toString() !== 'All Networks' && selectedChain.network.toString() !== 'Polkadot' ?
-            '(' + selectedChain.network + ')' : '' }}
           </ion-label>
           <ion-button size="small" fill="clear">
             <ion-icon name="chevron-down-outline" slot="end"></ion-icon>
@@ -41,70 +39,54 @@
 
   <ion-grid class="wallet-grid">
     @for (chain of chainsById[selectedChain.id]; track chain) {
-    @if (walletsByChain[chain.id] && walletsByChain[chain.id].length > 0) {
+    @if (chain.name !== 'All Chains') {
     <div class="chain-label">
       @if (selectedChain.id === 0) {
       <ion-chip [color]="'dark'">
         <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
         &nbsp; {{ chain.name }}
-        {{ chain.network.toString() !== 'All Networks' && chain.network.toString() !== 'Polkadot' ?
-        '(' + chain.network + ')' : '' }}
+      </ion-chip>
+      <ion-chip [color]="'dark'" [outline]="true" [disabled]="true">
+        {{ walletsByChain[chain.id].length }}
       </ion-chip>
       }
     </div>
     }
-    <ion-row>
-      @for (wallet of walletsByChain[chain.id]; track wallet) {
-      <ion-col size="6">
-        <ion-list>
-          <ion-item class="wallet-item" [ngClass]="{ 'selected-wallet': wallet.id === currentWallet.id }" button
-            detail="false" lines="none" (click)="setCurrentWallet(wallet)">
-            <ion-label>
-              <div class="wallet-header">
-                <ion-icon name="wallet" slot="icon-only" style="color: #0bbab5; font-size: 27px;"></ion-icon>
-                <ion-button fill="clear" size="small" class="menu-button"
-                  (click)="openWalletDetailsModal(wallet); $event.stopPropagation()">
-                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-                </ion-button>
-              </div>
-              <h2>{{ wallet.name | slice:0:10 }}</h2>
-              <p>{{ truncateAddress(wallet.public_key) }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-      }
-    </ion-row>
-    @if (chainsWithAddButton.includes(chain)) {
-    <div class="chain-label">
-      @if (selectedChain.id === 0) {
-      <ion-chip [color]="'dark'" style="margin-bottom: 8px;">
-        <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
-        &nbsp; {{ chain.name }}
-        {{ chain.network.toString() !== 'All Networks' && chain.network.toString() !== 'Polkadot' ?
-        '(' + chain.network + ')' : '' }}
+
+    @if (chain.name !== 'All Chains') {
+    <div style="margin-bottom: 20px;">
+      <ion-row>
+        @for (wallet of walletsByChain[chain.id]; track wallet) {
+        <ion-col size="6">
+          <ion-list>
+            <ion-item class="wallet-item" [ngClass]="{ 'selected-wallet': wallet.id === currentWallet.id }" button
+              detail="false" lines="none" (click)="setCurrentWallet(wallet)">
+              <ion-label>
+                <div class="wallet-header">
+                  <ion-icon name="wallet" slot="icon-only" style="color: #0bbab5; font-size: 27px;"></ion-icon>
+                  <ion-button fill="clear" size="small" class="menu-button"
+                    (click)="openWalletDetailsModal(wallet); $event.stopPropagation()">
+                    <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </div>
+                <h2>{{ wallet.name | slice:0:10 }}</h2>
+                <p>{{ truncateAddress(wallet.public_key) }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+        }
+      </ion-row>
+
+      @if (relatedWalletsByChain[chain.id] && relatedWalletsByChain[chain.id].length > 0) {
+      <ion-chip [color]="'warning'" [outline]="true"
+        (click)="createManyWallets(relatedWalletsByChain[chain.id], chain)">
+        {{ relatedWalletsByChain[chain.id].length + ' related wallets found, click to add' }}
       </ion-chip>
-      } 
-      <ion-card class="wallet-cta" button (click)="createWalletForChain(chain)">
-        <ion-grid class="wallet-cta-grid">
-          <ion-row class="ion-align-items-center ion-justify-content-between">
-            <ion-col size="8">
-              <div class="wallet-cta-text">
-                <h2 class="wallet-title">3 Wallets Found</h2>
-                <p class="wallet-subtitle">Would you like to add one?</p>
-              </div>
-            </ion-col>
-            <ion-col size="4" class="ion-text-end">
-              <ion-button expand="block" fill="solid" color="light" class="wallet-btn">
-                Add Wallet
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card>
+      }
     </div>
     }
-  }
+    }
   </ion-grid>
 </div>
 
