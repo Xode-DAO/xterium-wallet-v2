@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Xterium",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "A web3 wallet designed to interact with Xode and other Polkadot blockchains.",
   "permissions": [
     "activeTab",
