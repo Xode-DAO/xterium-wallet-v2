@@ -35,7 +35,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
+import { arrowBackOutline, qrCode, send, swapHorizontal, card } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
@@ -116,6 +116,7 @@ export class TokenDetailsPage implements OnInit {
       qrCode,
       send,
       swapHorizontal,
+      card,
     });
   }
 
@@ -184,6 +185,10 @@ export class TokenDetailsPage implements OnInit {
 
   goToSwap() {
     this.router.navigate(['/xterium/swap']);
+  }
+
+  goToBuy() {
+    this.router.navigate(['/xterium/buy']);
   }
 
   getChainName(chainId: number): string {

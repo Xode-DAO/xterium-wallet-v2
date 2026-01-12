@@ -68,6 +68,10 @@ export const routes: Routes = [
         loadComponent: () => import('./xterium/pay/pay.page').then(m => m.PayPage),
       },
       {
+        path: 'buy',
+        loadComponent: () => import('./xterium/buy/buy.page').then( m => m.BuyPage)
+      },
+      {
         path: 'payment-details',
         loadComponent: () => import('./xterium/pay/payment-details/payment-details.page').then(m => m.PaymentDetailsPage)
       },

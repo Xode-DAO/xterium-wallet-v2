@@ -21,7 +21,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { qrCode, send, swapHorizontal } from 'ionicons/icons';
+import { qrCode, send, swapHorizontal, card } from 'ionicons/icons';
 
 import { Balance } from 'src/models/balance.model';
 
@@ -76,6 +76,7 @@ export class BalancesPage implements OnInit {
       qrCode,
       send,
       swapHorizontal,
+      card,
     });
   }
 
@@ -128,6 +129,10 @@ export class BalancesPage implements OnInit {
 
   goToSwap() {
     this.router.navigate(['/xterium/swap']);
+  }
+
+   goToBuy() {
+    this.router.navigate(['/xterium/buy']);
   }
 
   onTotalAmount(amount: number) {
