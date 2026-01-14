@@ -5,7 +5,7 @@
         <div class="qrcode">
           <qrcode [qrdata]="currentWalletPublicAddress" [allowEmptyString]="true" [colorDark]="'#000000ff'"
             [colorLight]="'#ffffffff'" [elementType]="'canvas'" [errorCorrectionLevel]="'M'" [imageSrc]="qrImageIcon"
-            [imageHeight]="70" [imageWidth]="70" [margin]="0" [scale]="1" [width]="300">
+            [imageHeight]="70" [imageWidth]="70" [margin]="0" [scale]="1" [width]="230">
           </qrcode>
         </div>
       </ion-col>
@@ -34,7 +34,7 @@
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" (click)="shareAddress()"
             [disabled]="isSharing || !currentWalletPublicAddress">
-            {{ isSharing ? 'SHARING...' : 'SHARE ADDRESS' }}
+            {{ isSharing ? ('SHARING...' | translate) : ('SHARE ADDRESS' | translate) }}
           </ion-button>
         </div>
       </ion-col>

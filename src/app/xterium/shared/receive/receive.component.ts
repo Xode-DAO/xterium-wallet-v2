@@ -33,6 +33,8 @@ import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { TokensService } from 'src/app/api/tokens/tokens.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-receive',
   templateUrl: './receive.component.html',
@@ -48,7 +50,8 @@ import { TokensService } from 'src/app/api/tokens/tokens.service';
     IonLabel,
     IonButton,
     IonIcon,
-    QRCodeComponent
+    QRCodeComponent,
+    TranslatePipe,
   ]
 })
 export class ReceiveComponent implements OnInit {

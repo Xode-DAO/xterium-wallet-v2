@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
+import {
   IonContent, 
   IonHeader, 
   IonTitle, 
@@ -9,12 +9,13 @@ import {
   IonButtons,
   IonBackButton,
  } from '@ionic/angular/standalone';
+
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-buy',
-  templateUrl: './buy.page.html',
-  styleUrls: ['./buy.page.scss'],
+  selector: 'app-cash',
+  templateUrl: './cash.page.html',
+  styleUrls: ['./cash.page.scss'],
   standalone: true,
   imports: [
     IonContent, 
@@ -27,19 +28,14 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     IonBackButton,
   ]
 })
-export class BuyPage implements OnInit {
+export class CashPage implements OnInit {
 
-  buyUrl: SafeResourceUrl;
-  iframeLoaded = false;
+  cashUrl: SafeResourceUrl;
 
   constructor(private sanitizer: DomSanitizer) {
-    this.buyUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+    this.cashUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
       'https://www.miming.net/'
     );
-  }
-
-  onIframeLoad() {
-    this.iframeLoaded = true;
   }
 
   ngOnInit() {

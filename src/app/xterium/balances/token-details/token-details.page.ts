@@ -191,8 +191,8 @@ export class TokenDetailsPage implements OnInit {
     this.router.navigate(['/xterium/swap']);
   }
 
-  goToBuy() {
-    this.router.navigate(['/xterium/buy']);
+  goToCash() {
+    this.router.navigate(['/xterium/cash']);
   }
 
   getChainName(chainId: number): string {

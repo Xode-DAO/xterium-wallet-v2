@@ -131,8 +131,8 @@ export class BalancesPage implements OnInit {
     this.router.navigate(['/xterium/swap']);
   }
 
-  goToBuy() {
-    this.router.navigate(['/xterium/buy']);
+  goToCash() {
+    this.router.navigate(['/xterium/cash']);
   }
 
   onTotalAmount(amount: number) {
