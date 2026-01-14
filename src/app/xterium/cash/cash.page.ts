@@ -34,7 +34,7 @@ export class CashPage implements OnInit {
 
   constructor(private sanitizer: DomSanitizer) {
     this.cashUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-      'https://www.miming.net/'
+      'https://dapp.miming.net/dapp/p2p'
     );
   }
 
