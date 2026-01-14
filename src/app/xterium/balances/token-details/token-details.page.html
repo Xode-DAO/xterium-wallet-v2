@@ -20,7 +20,7 @@
               </ion-item>
             </ion-list>
             <div class="ion-text-center token-price">
-              <h1>$ {{ formatPrice(balance.price) }} </h1>
+              <h1>{{ currencySymbol }} {{ formatPrice(balance.price) }} </h1>
             </div>
           </div>
         </ion-col>
@@ -92,7 +92,7 @@
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>
-                  $ {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
+                 {{ currencySymbol }} {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
                 </h2>
                 <p style="color: #333333">-</p>
               </div>

@@ -131,6 +131,8 @@
 
 :root {
   --ion-font-family: 'Poppins', sans-serif !important;
+
+  --avatar-size: clamp(40px, 18vw, 65px);
 }
 
 ion-content {
@@ -355,7 +357,7 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 .xterium-header {
   h1 {
     font-weight: 600;
-    font-size: 35px;
+    font-size: clamp(20px, 8vw, 35px);
     margin-top: 75px;
     color: #ffffff;
   }
