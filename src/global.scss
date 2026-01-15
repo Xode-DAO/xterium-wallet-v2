@@ -242,6 +242,7 @@ ion-toolbar.main-modal-toolbar {
     justify-content: center;
     align-items: center;
     text-align: center;
+    font-size: clamp(14px, 4vw, 18px);
     font-weight: 600;
     margin: 5px 0px;
   }
@@ -253,13 +254,13 @@ ion-toolbar.main-modal-toolbar {
     padding: 15px 5px;
 
     ion-icon {
-      font-size: 30px;
+      font-size: clamp(18px, 8vw, 30px);
       margin-bottom: 10px;
       color: white;
     }
 
     .label {
-      font-size: 15px;
+      font-size: clamp(13px, 4vw, 16px);
       color: white;
     }
   }
