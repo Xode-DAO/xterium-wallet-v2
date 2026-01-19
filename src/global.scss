@@ -131,6 +131,8 @@
 
 :root {
   --ion-font-family: 'Poppins', sans-serif !important;
+
+  --avatar-size: clamp(40px, 18vw, 65px);
 }
 
 ion-content {
@@ -240,6 +242,7 @@ ion-toolbar.main-modal-toolbar {
     justify-content: center;
     align-items: center;
     text-align: center;
+    font-size: clamp(14px, 4vw, 18px);
     font-weight: 600;
     margin: 5px 0px;
   }
@@ -251,13 +254,13 @@ ion-toolbar.main-modal-toolbar {
     padding: 15px 5px;
 
     ion-icon {
-      font-size: 30px;
+      font-size: clamp(18px, 8vw, 30px);
       margin-bottom: 10px;
       color: white;
     }
 
     .label {
-      font-size: 15px;
+      font-size: clamp(13px, 4vw, 16px);
       color: white;
     }
   }
@@ -272,6 +275,7 @@ ion-item.primary-select-button-item {
   box-shadow: none !important;
 
   ion-label {
+    font-size: clamp(12px, 4vw, 20px);
     font-weight: 600;
   }
 }
@@ -332,7 +336,7 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 
   h3.global-loader-text {
     margin-top: 12px;
-    font-size: 1rem;
+    font-size: clamp(14px, 4vw, 18px);
     font-weight: 500;
     animation: fadePulse 1.5s infinite;
   }
@@ -355,7 +359,7 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 .xterium-header {
   h1 {
     font-weight: 600;
-    font-size: 35px;
+    font-size: clamp(20px, 8vw, 35px);
     margin-top: 75px;
     color: #ffffff;
   }
@@ -367,4 +371,8 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 
 ion-toggle {
   --track-background-checked: #0bbab5;
+}
+
+ion-title {
+  font-size: clamp(12px, 4vw, 25px);
 }

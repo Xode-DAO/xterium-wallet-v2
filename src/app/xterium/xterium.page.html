@@ -65,7 +65,7 @@
         <ion-buttons slot="start">
           <ion-button (click)="openCreateWalletModal()">
             <ion-icon name="add-circle" style="color: white;"></ion-icon>
-            <span style="margin-left: 4px; color: white;">{{ 'Create' | translate }}</span>
+            <span style="font-size: clamp(12px, 4vw, 20px); margin-left: 4px; color: white;">{{ 'Create' | translate }}</span>
           </ion-button>
 
           <ion-modal #createWalletModal class="create-wallet-modal" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"

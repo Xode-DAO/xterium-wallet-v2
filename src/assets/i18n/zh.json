@@ -166,5 +166,8 @@
   "Select Network": "选择网络",
   "related wallets found, click to add": "已找到相关钱包，点击添加",
   "EXPORT": "导出",
-  "DELETE": "删除"
+  "DELETE": "删除",
+  "SHARING...": "正在共享...",
+  "SHARE ADDRESS": "分享地址",
+  "Cash": "现金"
 }

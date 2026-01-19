@@ -226,7 +226,7 @@ export class ApprovalPage implements OnInit {
         this.router.navigate(['/xterium/balances']);
 
         const finalUrl = `${this.paramsCallbackUrl}?selectedAccounts=${encodeURIComponent(JSON.stringify(encodedWallets))}`;
-        window.location.href = finalUrl;
+        window.open(finalUrl, '_blank');
       } else {
         const toast = await this.toastController.create({
           message: 'No callback URL provided.',

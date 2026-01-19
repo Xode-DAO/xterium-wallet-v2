@@ -35,7 +35,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, qrCode, send, swapHorizontal } from 'ionicons/icons';
+import { arrowBackOutline, qrCode, send, swapHorizontal, card } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
@@ -59,6 +59,7 @@ import { ReceiveComponent } from "src/app/xterium/shared/receive/receive.compone
 import { SendComponent } from "src/app/xterium/shared/send/send.component"
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 
 @Component({
   selector: 'app-token-details',
@@ -109,6 +110,7 @@ export class TokenDetailsPage implements OnInit {
     private walletsService: WalletsService,
     private balancesService: BalancesService,
     private multipayxApiService: MultipayxApiService,
+    private settingsService: SettingsService,
     private toastController: ToastController,
   ) {
     addIcons({
@@ -116,6 +118,7 @@ export class TokenDetailsPage implements OnInit {
       qrCode,
       send,
       swapHorizontal,
+      card,
     });
   }
 
@@ -131,6 +134,8 @@ export class TokenDetailsPage implements OnInit {
 
   observableTimeout: any = null;
   balancesSubscription: Subscription = new Subscription();
+
+  currencySymbol: string = '';
 
   // candlestickSeries: ApexAxisChartSeries = [];
 
@@ -186,6 +191,10 @@ export class TokenDetailsPage implements OnInit {
     this.router.navigate(['/xterium/swap']);
   }
 
+  goToCash() {
+    this.router.navigate(['/xterium/cash']);
+  }
+
   getChainName(chainId: number): string {
     const chain = this.chainsService.getChainById(chainId);
     if (!chain) {
@@ -204,7 +213,12 @@ export class TokenDetailsPage implements OnInit {
   }
 
   async getPrice(): Promise<void> {
-    this.multipayxApiService.getPricePerCurrency("USD").then(async pricePerCurrency => {
+    const currencies = await this.settingsService.get();
+    const currencyCode = currencies?.user_preferences.currency.code || "USD";
+    const currencySymbol = currencies?.user_preferences.currency.symbol || "$";
+    this.currencySymbol = currencySymbol;
+
+    this.multipayxApiService.getPricePerCurrency(currencyCode).then(async pricePerCurrency => {
       if (pricePerCurrency.data.length > 0) {
         let price = pricePerCurrency.data.filter(item => item.symbol.toLowerCase() === this.balance.token.symbol.toLowerCase())
         if (price && price.length > 0) {
@@ -303,6 +317,12 @@ export class TokenDetailsPage implements OnInit {
   ngOnInit() {
     this.walletsService.currentWalletObservable.subscribe(wallet => {
       this.fetchData();
+    });
+
+    this.settingsService.currentSettingsObservable.subscribe(settings => {
+      if (settings) {
+        this.getPrice();
+      }
     });
 
     this.route.queryParams.subscribe(params => {
