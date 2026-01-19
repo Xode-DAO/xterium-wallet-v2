@@ -313,7 +313,7 @@ export class SignTransactionPage implements OnInit {
         this.router.navigate(['/xterium/balances']);
 
         const url = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
-        window.location.href = url;
+        window.open(url, '_blank');
       } else {
         service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
           next: async (event) => {
