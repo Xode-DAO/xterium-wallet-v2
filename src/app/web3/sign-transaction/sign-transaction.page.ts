@@ -37,7 +37,8 @@ import {
   arrowUpOutline,
   arrowDownOutline,
   globeOutline,
-  flame
+  flame,
+  close, checkmarkCircleOutline
 } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
@@ -108,6 +109,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class SignTransactionPage implements OnInit {
   @ViewChild('confirmSignTransactionModal', { read: IonModal }) confirmSignTransactionModal!: IonModal;
+  @ViewChild('postSignModal', { read: IonModal }) postSignModal!: IonModal;
   @ViewChild('noWalletModal', { read: IonModal }) noWalletModal!: IonModal;
 
   constructor(
@@ -129,14 +131,7 @@ export class SignTransactionPage implements OnInit {
     private localNotificationsService: LocalNotificationsService,
     private toastController: ToastController,
   ) {
-    addIcons({
-      cube,
-      cubeOutline,
-      arrowUpOutline,
-      arrowDownOutline,
-      globeOutline,
-      flame
-    });
+    addIcons({ arrowUpOutline, globeOutline, flame, close, checkmarkCircleOutline, cube, cubeOutline, arrowDownOutline });
   }
 
   private pjsApiMap: Map<number, ApiPromise> = new Map();
@@ -161,6 +156,9 @@ export class SignTransactionPage implements OnInit {
   paramsEncodedCallDataHex: string | null = null;
   paramsWalletAddress: string | null = null;
   paramsCallbackUrl: string | null = null;
+
+  postSignUrl: string | null = null;
+  postSignedHex: string = '';
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -312,8 +310,13 @@ export class SignTransactionPage implements OnInit {
         this.confirmSignTransactionModal.dismiss();
         this.router.navigate(['/xterium/balances']);
 
-        const url = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
-        window.open(url, '_blank');
+        this.postSignedHex = signedHex;
+        this.postSignUrl = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
+
+        if (this.postSignModal) {
+          this.postSignModal.canDismiss = false;
+          this.postSignModal.present();
+        }
       } else {
         service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
           next: async (event) => {
@@ -335,6 +338,17 @@ export class SignTransactionPage implements OnInit {
         position: 'top',
       });
       await toast.present();
+    }
+  }
+
+  continueToApp() {
+    if (this.postSignUrl) {
+      window.open(this.postSignUrl, '_blank');
+    }
+
+    if (this.postSignModal) {
+      this.postSignModal.canDismiss = true;
+      this.postSignModal.dismiss();
     }
   }
 
