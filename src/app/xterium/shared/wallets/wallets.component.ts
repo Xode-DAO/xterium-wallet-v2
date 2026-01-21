@@ -304,7 +304,6 @@ export class WalletsComponent implements OnInit {
   }
 
   async fetchData() {
-    // await this.getNetworkMetadatas();
     await this.getChains();
     await this.getCurrentWallet();
     await this.setCurrentFilters();

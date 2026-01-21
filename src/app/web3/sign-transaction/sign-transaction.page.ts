@@ -308,15 +308,17 @@ export class SignTransactionPage implements OnInit {
         );
 
         this.confirmSignTransactionModal.dismiss();
-        this.router.navigate(['/xterium/balances']);
 
         this.postSignedHex = signedHex;
         this.postSignUrl = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
 
-        if (this.postSignModal) {
-          this.postSignModal.canDismiss = false;
-          this.postSignModal.present();
-        }
+        setTimeout(() => {
+          if (this.postSignModal) {
+            this.postSignModal.canDismiss = false;
+            this.postSignModal.present();
+          }
+        }, 500);
+
       } else {
         service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
           next: async (event) => {
@@ -350,6 +352,10 @@ export class SignTransactionPage implements OnInit {
       this.postSignModal.canDismiss = true;
       this.postSignModal.dismiss();
     }
+
+    setTimeout(() => {
+      this.router.navigate(['/xterium/balances']);
+    }, 500);
   }
 
   async handleTransactionEvent(event: ISubmittableResult) {
