@@ -33,16 +33,24 @@ import {
 
 import { CurrencyComponent } from './currency/currency.component';
 import { LanguageComponent } from './language/language.component';
+import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
+import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
+import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
 
 import { Currency } from 'src/models/currency.model';
 import { LanguageTranslation } from 'src/models/language-translation.model';
+import { Network } from 'src/models/network.model';
+import { Auth } from 'src/models/auth.model';
+
 
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { BiometricService } from 'src/app/api/biometric/biometric.service';
+import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { Network } from 'src/models/network.model';
+
 
 @Component({
   selector: 'app-settings',
@@ -67,11 +75,16 @@ import { Network } from 'src/models/network.model';
     CurrencyComponent,
     LanguageComponent,
     TranslatePipe,
+    PinLoginComponent,
+    BiometricComponent,
+    PinSetupComponent,
   ]
 })
+
 export class SettingsComponent implements OnInit {
   @ViewChild('currencyModal', { read: IonModal }) currencyModal!: IonModal;
   @ViewChild('languageModal', { read: IonModal }) languageModal!: IonModal;
+  @ViewChild('confirmBiometricModal', { read: IonModal }) confirmBiometricModal!: IonModal;
 
   constructor(
     private authService: AuthService,
@@ -79,7 +92,9 @@ export class SettingsComponent implements OnInit {
     private walletsService: WalletsService,
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private encryptionService: EncryptionService,
+    private biometricService : BiometricService
 
   ) {
     addIcons({
@@ -96,9 +111,15 @@ export class SettingsComponent implements OnInit {
   selectedLanguage: LanguageTranslation = new LanguageTranslation();
   code: string = '';
 
-  useBiometric: boolean = false;
-
   isTestnetEnabled: boolean = false;
+
+  currentAuth: Auth | null = null;
+  isBiometricAvailable: boolean = false;
+
+  isBiometricEnabled: boolean = false;
+  biometricModalMode: 'enable' | 'disable' | 'setup-pin' | null = null;
+
+  decryptedPassword: string = '';
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -170,15 +191,191 @@ export class SettingsComponent implements OnInit {
     this.languageModal.dismiss();
   }
 
-  // async enableBiometric(event: any): Promise<void> {
-  //   const enableBiometric = event.detail.checked;
-  //   const settings = await this.settingsService.get();
+  async onBiometricToggle(event: any) {
+    const enable = event.detail.checked;
 
-  //   if (settings) {
-  //     settings.user_preferences = enableBiometric;
-  //     this.settingsService.set(settings);
-  //   }
-  // }
+    const auth = await this.authService.getAuth();
+    if (auth) {
+      this.currentAuth = auth;
+    }
+
+    if (!enable) {
+      const alert = await this.alertController.create({
+        header: 'Disable Biometric',
+        message: 'Are you sure you want to disable biometric authentication?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+              this.isBiometricEnabled = false;
+            }
+          },
+          {
+            text: 'Yes',
+            role: 'confirm',
+            handler: async () => {
+              this.biometricModalMode = 'disable';
+
+              await this.confirmBiometricModal.present();
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Enable Biometric',
+      message: 'Do you want to enable biometric authentication?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            this.isBiometricEnabled = false;
+          }
+        },
+        {
+          text: 'Yes',
+          role: 'confirm',
+          handler: async () => {
+            this.biometricModalMode = 'enable';
+
+            await this.confirmBiometricModal.present();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async onBiometricSetup(decryptedPassword: string) {
+    const wallets = await this.walletsService.getAllWallets();
+
+    const decryptedWallets = await Promise.all(
+      wallets.map(async wallet => ({
+        id: wallet.id,
+        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, decryptedPassword),
+        privateKey: await this.encryptionService.decrypt(wallet.private_key, decryptedPassword)
+      }))
+    );
+
+    const availability = await this.biometricService.isAvailable();
+    this.isBiometricAvailable = availability.available;
+
+    if (!this.isBiometricAvailable) {
+      const toast = await this.toastController.create({
+        message: 'Biometric not available on this device.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+      await toast.present();
+      return;
+    }
+
+    await this.biometricService.enableBiometric();
+    await this.biometricService.setCredentials();
+    const credentials = await this.biometricService.getCredentials();
+
+    const encryptedPassword = await this.encryptionService.encrypt(credentials.password, credentials.password);
+    await this.authService.setupPassword(encryptedPassword, 'biometric');
+
+    for (const wallet of decryptedWallets) {
+      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, credentials.password);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, credentials.password);
+      await this.walletsService.update(wallet.id, {
+        mnemonic_phrase: encryptedMnemonic,
+        private_key: encryptedPrivateKey
+      });
+    }
+
+    const settings = await this.settingsService.get();
+
+    if (!settings) return;
+
+    settings.user_preferences.biometric_enabled = true;
+    await this.settingsService.set(settings);
+
+    this.isBiometricEnabled = true;
+
+    await this.confirmBiometricModal.dismiss();
+
+    const toast = await this.toastController.create({
+      message: 'Biometric enable.',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+    await toast.present();
+  }
+
+  async onBiometricAuthenticated(decryptedPassword: string) {
+    this.decryptedPassword = decryptedPassword;
+    
+    this.biometricModalMode = 'setup-pin';
+  }
+
+  async onPinSetup(newPin: string) {
+    
+    if (!newPin) {
+      const toast = await this.toastController.create({
+        message: 'PIN was not provided. Please try again.',
+        color: 'danger',
+        duration: 2000,
+        position: 'top',
+      });
+      await toast.present();
+      return;
+    }
+
+    const wallets = await this.walletsService.getAllWallets();
+
+    const decryptedWallets = await Promise.all(
+      wallets.map(async wallet => ({
+        id: wallet.id,
+        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, this.decryptedPassword),
+        privateKey: await this.encryptionService.decrypt(wallet.private_key, this.decryptedPassword)
+      }))
+    );
+
+    const encryptedPassword = await this.encryptionService.encrypt(newPin, newPin);
+    await this.authService.setupPassword(encryptedPassword, 'pin');
+
+    for (const wallet of decryptedWallets) {
+      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPin);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPin);
+      await this.walletsService.update(wallet.id, {
+        mnemonic_phrase: encryptedMnemonic,
+        private_key: encryptedPrivateKey
+      });
+    }
+
+    const settings = await this.settingsService.get();
+
+    if (!settings) return;
+
+    settings.user_preferences.biometric_enabled = false;
+    await this.settingsService.set(settings);
+
+    this.isBiometricEnabled = true;
+
+    this.decryptedPassword = '';
+    this.biometricModalMode = null;
+
+    await this.confirmBiometricModal.dismiss();
+
+    const toast = await this.toastController.create({
+      message: 'Biometric disabled.',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+    await toast.present();
+  }
 
   async developerMode(event: any): Promise<void> {
     const settings = await this.settingsService.get();
@@ -224,6 +421,7 @@ export class SettingsComponent implements OnInit {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
+      this.isBiometricEnabled = settings.user_preferences.biometric_enabled;
     }
   }
 }
