@@ -293,6 +293,7 @@ export class SettingsComponent implements OnInit {
       });
     }
 
+    
     const settings = await this.settingsService.get();
 
     if (!settings) return;
@@ -301,7 +302,7 @@ export class SettingsComponent implements OnInit {
     await this.settingsService.set(settings);
 
     this.isBiometricEnabled = true;
-
+    
     await this.confirmBiometricModal.dismiss();
 
     const toast = await this.toastController.create({
@@ -421,7 +422,13 @@ export class SettingsComponent implements OnInit {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
+      if (this.currentAuth?.type === 'biometric') {
+        settings.user_preferences.biometric_enabled = true;
+        await this.settingsService.set(settings);
+        this.isBiometricEnabled = true;
+      } else {
       this.isBiometricEnabled = settings.user_preferences.biometric_enabled;
+      }
     }
   }
 }
