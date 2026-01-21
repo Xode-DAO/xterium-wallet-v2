@@ -94,7 +94,7 @@ export class SettingsComponent implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private encryptionService: EncryptionService,
-    private biometricService : BiometricService
+    private biometricService: BiometricService
 
   ) {
     addIcons({
@@ -117,7 +117,7 @@ export class SettingsComponent implements OnInit {
   isBiometricAvailable: boolean = false;
 
   isBiometricEnabled: boolean = false;
-  biometricModalMode: 'enable' | 'disable' | 'setup-pin' | null = null;
+  biometricState: 'enable' | 'disable' | 'setup-pin' | 'setup-biometric' | null = null;
 
   decryptedPassword: string = '';
 
@@ -191,18 +191,51 @@ export class SettingsComponent implements OnInit {
     this.languageModal.dismiss();
   }
 
-  async onBiometricToggle(event: any) {
+  async enableTestnet(event: any): Promise<void> {
+    const settings = await this.settingsService.get();
+    if (settings) {
+      settings.user_preferences.testnet_enabled = event.target.checked;
+      await this.settingsService.set(settings);
+
+      if (event.detail.checked) {
+        const alert = await this.alertController.create({
+          header: 'Enable Testnet',
+          message: 'By enabling testnet, you can access test networks like Rococo and Paseo. Please note that test networks may be unstable and are intended for development and testing purposes only.',
+          buttons: [
+            {
+              text: 'Ok',
+              role: 'confirm'
+            },
+          ],
+        });
+
+        await alert.present();
+        this.isTestnetEnabled = true;
+      } else {
+        const wallets = await this.walletsService.getAllWallets();
+        if (wallets.length > 0) {
+          const currentWallet = await this.walletsService.getCurrentWallet();
+          if (currentWallet) {
+            if (currentWallet.chain.network !== Network.Polkadot) {
+              const firstWallet = wallets[0];
+              if (firstWallet) {
+                await this.walletsService.setCurrentWallet(firstWallet.id);
+              }
+            }
+          }
+        }
+        this.isTestnetEnabled = false;
+      }
+    }
+  }
+
+  async enableBiometric(event: any) {
     const enable = event.detail.checked;
 
-    const auth = await this.authService.getAuth();
-    if (auth) {
-      this.currentAuth = auth;
-    }
-
-    if (!enable) {
+    if (enable) {
       const alert = await this.alertController.create({
-        header: 'Disable Biometric',
-        message: 'Are you sure you want to disable biometric authentication?',
+        header: 'Enable Biometric',
+        message: 'Are you sure you want to enable biometric authentication?',
         buttons: [
           {
             text: 'Cancel',
@@ -215,20 +248,20 @@ export class SettingsComponent implements OnInit {
             text: 'Yes',
             role: 'confirm',
             handler: async () => {
-              this.biometricModalMode = 'disable';
-
+              this.biometricState = 'enable';
               await this.confirmBiometricModal.present();
             }
           }
         ]
       });
+
       await alert.present();
       return;
     }
 
     const alert = await this.alertController.create({
-      header: 'Enable Biometric',
-      message: 'Do you want to enable biometric authentication?',
+      header: 'Disable Biometric',
+      message: 'Are you sure you want to disable biometric authentication?',
       buttons: [
         {
           text: 'Cancel',
@@ -241,8 +274,7 @@ export class SettingsComponent implements OnInit {
           text: 'Yes',
           role: 'confirm',
           handler: async () => {
-            this.biometricModalMode = 'enable';
-
+            this.biometricState = 'disable';
             await this.confirmBiometricModal.present();
           }
         }
@@ -250,6 +282,18 @@ export class SettingsComponent implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async confirmBiometriclDismiss(event: any): Promise<void> {
+    const settings = await this.settingsService.get();
+    if (settings) {
+      this.isBiometricEnabled = settings.user_preferences.biometric_enabled;
+    }
+  }
+
+  async confirmBiometric(decryptedPassword: string) {
+    this.decryptedPassword = decryptedPassword;
+    this.biometricState = 'setup-pin';
   }
 
   async onBiometricSetup(decryptedPassword: string) {
@@ -293,16 +337,13 @@ export class SettingsComponent implements OnInit {
       });
     }
 
-    
     const settings = await this.settingsService.get();
-
-    if (!settings) return;
-
-    settings.user_preferences.biometric_enabled = true;
-    await this.settingsService.set(settings);
+    if (settings) {
+      settings.user_preferences.biometric_enabled = true;
+      await this.settingsService.set(settings);
+    };
 
     this.isBiometricEnabled = true;
-    
     await this.confirmBiometricModal.dismiss();
 
     const toast = await this.toastController.create({
@@ -314,14 +355,14 @@ export class SettingsComponent implements OnInit {
     await toast.present();
   }
 
-  async onBiometricAuthenticated(decryptedPassword: string) {
+  async confirmPin(decryptedPassword: string) {
     this.decryptedPassword = decryptedPassword;
-    
-    this.biometricModalMode = 'setup-pin';
+    this.biometricState = 'setup-biometric';
+
+    this.biometricService.clearCredentials();
   }
 
   async onPinSetup(newPin: string) {
-    
     if (!newPin) {
       const toast = await this.toastController.create({
         message: 'PIN was not provided. Please try again.',
@@ -329,6 +370,7 @@ export class SettingsComponent implements OnInit {
         duration: 2000,
         position: 'top',
       });
+
       await toast.present();
       return;
     }
@@ -349,6 +391,7 @@ export class SettingsComponent implements OnInit {
     for (const wallet of decryptedWallets) {
       const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPin);
       const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPin);
+
       await this.walletsService.update(wallet.id, {
         mnemonic_phrase: encryptedMnemonic,
         private_key: encryptedPrivateKey
@@ -356,16 +399,15 @@ export class SettingsComponent implements OnInit {
     }
 
     const settings = await this.settingsService.get();
+    if (settings) {
+      settings.user_preferences.biometric_enabled = false;
+      await this.settingsService.set(settings);
+    }
 
-    if (!settings) return;
-
-    settings.user_preferences.biometric_enabled = false;
-    await this.settingsService.set(settings);
-
-    this.isBiometricEnabled = true;
+    this.isBiometricEnabled = false;
 
     this.decryptedPassword = '';
-    this.biometricModalMode = null;
+    this.biometricState = null;
 
     await this.confirmBiometricModal.dismiss();
 
@@ -375,60 +417,32 @@ export class SettingsComponent implements OnInit {
       duration: 1500,
       position: 'top',
     });
+
     await toast.present();
   }
 
-  async developerMode(event: any): Promise<void> {
-    const settings = await this.settingsService.get();
-    if (settings) {
-      settings.user_preferences.testnet_enabled = event.target.checked;
-      await this.settingsService.set(settings);
-
-      if (event.detail.checked) {
-        const alert = await this.alertController.create({
-          header: 'Enable Testnet',
-          message: 'By enabling testnet, you can access test networks like Rococo and Paseo. Please note that test networks may be unstable and are intended for development and testing purposes only.',
-          buttons: [
-            {
-              text: 'Ok',
-              role: 'confirm'
-            },
-          ],
-        });
-
-        await alert.present();
-        this.isTestnetEnabled = true;
-      } else {
-        const wallets = await this.walletsService.getAllWallets();
-        if (wallets.length > 0) {
-          const currentWallet = await this.walletsService.getCurrentWallet();
-          if (currentWallet) {
-            if (currentWallet.chain.network !== Network.Polkadot) {
-              const firstWallet = wallets[0];
-              if (firstWallet) {
-                await this.walletsService.setCurrentWallet(firstWallet.id);
-              }
-            }
-          }
-        }
-        this.isTestnetEnabled = false;
-      }
-    }
-  }
-
-  async ngOnInit() {
+  async fetchData(): Promise<void> {
     const settings = await this.settingsService.get();
     if (settings) {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
-      if (this.currentAuth?.type === 'biometric') {
-        settings.user_preferences.biometric_enabled = true;
-        await this.settingsService.set(settings);
-        this.isBiometricEnabled = true;
-      } else {
-      this.isBiometricEnabled = settings.user_preferences.biometric_enabled;
+
+      const auth = await this.authService.getAuth();
+      if (auth) {
+        this.currentAuth = auth;
+
+        if (this.currentAuth.type === 'biometric') {
+          settings.user_preferences.biometric_enabled = true;
+          this.isBiometricEnabled = true;
+        }
       }
+
+      await this.settingsService.set(settings);
     }
+  }
+
+  ngOnInit() {
+    this.fetchData();
   }
 }

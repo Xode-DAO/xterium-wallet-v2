@@ -24,19 +24,16 @@
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="code-outline"></ion-icon>
             <h2>{{ 'Enable Testnet' | translate }}</h2>
-            <ion-toggle slot="end" [checked]="isTestnetEnabled" (ionChange)="developerMode($event)">
+            <ion-toggle slot="end" [checked]="isTestnetEnabled" (ionChange)="enableTestnet($event)">
             </ion-toggle>
           </ion-item>
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="finger-print-outline"></ion-icon>
             <h2>Enable Biometric</h2>
-            <ion-toggle
-              slot="end"
-              [(ngModel)]="isBiometricEnabled"
-              (ionChange)="onBiometricToggle($event)">
+            <ion-toggle slot="end" [(ngModel)]="isBiometricEnabled" (ionChange)="enableBiometric($event)">
             </ion-toggle>
           </ion-item>
-            
+
           <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
             <h2>{{ 'Logout' | translate }}</h2>
@@ -84,17 +81,17 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #confirmBiometricModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
-    [expandToScroll]="false">
+  <ion-modal #confirmBiometricModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false"
+    (didDismiss)="confirmBiometriclDismiss($event)">
     <ng-template>
-        <ion-toolbar class="main-modal-toolbar">
-          <ion-title>{{ 'Confirm' | translate }}</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="confirmBiometricModal.dismiss()">
-              <ion-icon name="close" style="color: white;"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
+      <ion-toolbar class="main-modal-toolbar">
+        <ion-title>{{ 'Confirm' | translate }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="confirmBiometricModal.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
       <ion-content>
         <div class="sign-transaction">
           <div class="ion-text-center ion-margin-bottom">
@@ -102,36 +99,42 @@
           </div>
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
             <h1 style="font-weight: bold">
-              @if (biometricModalMode === 'enable' && currentAuth?.type === 'biometric') {
+              @if (biometricState === 'enable' && currentAuth?.type === 'biometric') {
               {{ 'Biometric' | translate }}
-              } @else if (biometricModalMode === 'enable' && currentAuth?.type === 'pin') {
+              } @else if (biometricState === 'enable' && currentAuth?.type === 'pin') {
               {{ 'Enter Pin' | translate }}
-              } @else if (biometricModalMode === 'disable' && currentAuth?.type === 'biometric') {
+              } @else if (biometricState === 'disable' && currentAuth?.type === 'biometric') {
               {{ 'Biometric' | translate }}
-              } @else if (biometricModalMode === 'setup-pin') {
+              } @else if (biometricState === 'setup-biometric') {
+              {{ 'Set Up Your Biometric' | translate }}
+              } @else if (biometricState === 'setup-pin') {
               {{ 'Set Up Your PIN' | translate }}
               }
-             </h1>
+            </h1>
             <span style="font-size: 15px;">
-              @if (biometricModalMode === 'enable' && currentAuth?.type === 'biometric') {
+              @if (biometricState === 'enable' && currentAuth?.type === 'biometric') {
               {{ 'Please authenticate using your biometric data or face recognition to enable biometric authentication.' | translate }}
-              } @else if (biometricModalMode === 'enable' && currentAuth?.type === 'pin') {
+              } @else if (biometricState === 'enable' && currentAuth?.type === 'pin') {
               {{ 'Please enter your PIN to enable biometric authentication.' | translate }}
-              } @else if (biometricModalMode === 'disable' && currentAuth?.type === 'biometric') {
+              } @else if (biometricState === 'disable' && currentAuth?.type === 'biometric') {
               {{ 'Please authenticate using your biometric data or face recognition to disable biometric authentication.' | translate }}
-              } @else if (biometricModalMode === 'setup-pin') {
+              } @else if (biometricState === 'setup-biometric') {
+              {{ 'Set a Biometric to secure your wallets after disabling biometric authentication.' | translate }}
+              } @else if (biometricState === 'setup-pin') {
               {{ 'Set a PIN to secure your wallets after disabling biometric authentication.' | translate }}
               }
             </span>
           </div>
           <div class="ion-padding-horizontal">
-            @if (biometricModalMode === 'enable' && currentAuth?.type === 'biometric') {
+            @if (biometricState === 'enable' && currentAuth?.type === 'biometric') {
             <app-biometric (onLogin)="onBiometricSetup($event)"></app-biometric>
-            } @else if (biometricModalMode === 'enable' && currentAuth?.type === 'pin') {
-            <app-pin-login (onLogin)="onBiometricSetup($event)"></app-pin-login>
-            } @else if (biometricModalMode === 'disable' && currentAuth?.type === 'biometric') {
-            <app-biometric (onLogin)="onBiometricAuthenticated($event)"></app-biometric>
-            } @else if (biometricModalMode === 'setup-pin') {
+            } @else if (biometricState === 'enable' && currentAuth?.type === 'pin') {
+            <app-pin-login (onLogin)="confirmPin($event)"></app-pin-login>
+            } @else if (biometricState === 'disable' && currentAuth?.type === 'biometric') {
+            <app-biometric (onLogin)="confirmBiometric($event)"></app-biometric>
+            } @else if (biometricState === 'setup-biometric') {
+            <app-biometric (onLogin)="onBiometricSetup($event)"></app-biometric>
+            } @else if (biometricState === 'setup-pin') {
             <app-pin-setup (onPasswordSetup)="onPinSetup($event)"></app-pin-setup>
             }
           </div>

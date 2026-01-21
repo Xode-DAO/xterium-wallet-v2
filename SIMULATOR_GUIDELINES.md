@@ -43,8 +43,7 @@ This guide helps you build and run your Ionic app on Android and iOS simulators 
 
 ### 2. Sync and Copy Capacitor Files for iOS
 
-    npx cap sync ios
-    npx cap copy ios
+    npx cap sync ios && npx cap copy ios
 
 ### 3. Open iOS Project in Xcode
 
