@@ -169,5 +169,12 @@
   "DELETE": "消す",
   "SHARING...": "共有中...",
   "SHARE ADDRESS": "アドレスを共有",
-  "Cash": "現金"
+  "Cash": "現金",
+  "Set Up Your Biometric": "生体認証を設定する",
+  "Please enter your PIN to enable biometric authentication.": "生体認証を有効にするには、PINを入力してください。",
+  "Please authenticate using your biometric data or face recognition to disable biometric authentication.": "生体情報または顔認証を使用して認証し、生体認証を無効にしてください。",
+  "Set a PIN to secure your wallets after disabling biometric authentication.": "生体認証を無効にした後、ウォレットを保護するためにPINを設定してください。",
+  "Set a Biometric to secure your wallets after enabling biometric authentication.": "生体認証を有効にした後、ウォレットを保護するために生体認証を設定してください。",
+  "Setup Biometrics": "生体認証を設定",
+  "Enable Biometric": "生体認証を有効にする"
 }

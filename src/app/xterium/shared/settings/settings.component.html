@@ -29,7 +29,7 @@
           </ion-item>
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="finger-print-outline"></ion-icon>
-            <h2>Enable Biometric</h2>
+            <h2>{{ 'Enable Biometric' | translate }}</h2>
             <ion-toggle slot="end" [(ngModel)]="isBiometricEnabled" (ionChange)="enableBiometric($event)">
             </ion-toggle>
           </ion-item>

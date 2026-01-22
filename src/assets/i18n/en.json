@@ -169,5 +169,12 @@
   "DELETE": "DELETE",
   "SHARING...": "SHARING...",
   "SHARE ADDRESS": "SHARE ADDRESS",
-  "Cash": "Cash"
+  "Cash": "Cash",
+  "Set Up Your Biometric": "Set Up Your Biometric",
+  "Please enter your PIN to enable biometric authentication.": "Please enter your PIN to enable biometric authentication.",
+  "Please authenticate using your biometric data or face recognition to disable biometric authentication.": "Please authenticate using your biometric data or face recognition to disable biometric authentication.",
+  "Set a PIN to secure your wallets after disabling biometric authentication.": "Set a PIN to secure your wallets after disabling biometric authentication.",
+  "Set a Biometric to secure your wallets after enabling biometric authentication.": "Set a Biometric to secure your wallets after enabling biometric authentication.",
+  "Setup Biometrics": "Setup Biometrics",
+  "Enable Biometric": "Enable Biometric"
 }

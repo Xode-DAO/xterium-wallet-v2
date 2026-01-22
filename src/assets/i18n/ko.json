@@ -169,5 +169,12 @@
   "DELETE": "삭제",
   "SHARING...": "공유 중...",
   "SHARE ADDRESS": "주소 공유",
-  "Cash": "현금"
+  "Cash": "현금",
+  "Set Up Your Biometric": "생체 인증 설정",
+  "Please enter your PIN to enable biometric authentication.": "생체 인증을 활성화하려면 PIN을 입력하세요.",
+  "Please authenticate using your biometric data or face recognition to disable biometric authentication.": "생체 정보 또는 얼굴 인식을 사용하여 인증하고 생체 인증을 비활성화하세요.",
+  "Set a PIN to secure your wallets after disabling biometric authentication.": "생체 인증을 비활성화한 후 지갑을 보호하기 위해 PIN을 설정하세요.",
+  "Set a Biometric to secure your wallets after enabling biometric authentication.": "생체 인증을 활성화한 후 지갑을 보호하기 위해 생체 인증을 설정하세요.",
+  "Setup Biometrics": "생체 인증 설정",
+  "Enable Biometric": "생체 인증 활성화"
 }
