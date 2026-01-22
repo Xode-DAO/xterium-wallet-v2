@@ -16,9 +16,9 @@
   <ion-row class="ion-margin-top">
     <ion-col size="12">
       <div class="primary-button-wrapper">
-        <ion-button expand="block" class="ion-margin-bottom" size="default" (click)="login()"
-          [disabled]="!isBiometricAvailable">
-          {{ 'Sign in with Biometrics' | translate }}
+        <ion-button expand="block" class="ion-margin-bottom" size="default" (click)="setupBiometric()"
+          [disabled]="!isBiometricAvailable || isProcessing">
+          {{ 'Setup Biometrics' | translate }}
         </ion-button>
       </div>
     </ion-col>

@@ -169,5 +169,12 @@
   "DELETE": "删除",
   "SHARING...": "正在共享...",
   "SHARE ADDRESS": "分享地址",
-  "Cash": "现金"
+  "Cash": "现金",
+  "Set Up Your Biometric": "设置生物识别",
+  "Please enter your PIN to enable biometric authentication.": "请输入您的 PIN 以启用生物识别认证。",
+  "Please authenticate using your biometric data or face recognition to disable biometric authentication.": "请使用生物识别数据或面部识别进行验证，以禁用生物识别认证。",
+  "Set a PIN to secure your wallets after disabling biometric authentication.": "禁用生物识别认证后，请设置 PIN 以保护您的钱包。",
+  "Set a Biometric to secure your wallets after enabling biometric authentication.": "启用生物识别认证后，请设置生物识别以保护您的钱包。",
+  "Setup Biometrics": "设置生物识别",
+  "Enable Biometric": "启用生物识别"
 }

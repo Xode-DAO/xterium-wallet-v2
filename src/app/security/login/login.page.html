@@ -53,7 +53,7 @@
     } @else if (isChromeExtension && !currentAuth) {
     <app-password-setup (onPasswordSetup)="goToXteriumPage($event)"></app-password-setup>
     } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type === 'biometric')) {
-    <app-biometric (onLogin)="goToXteriumPage($event)"></app-biometric>
+    <app-biometric-login (onLogin)="goToXteriumPage($event)"></app-biometric-login>
     } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
     <app-pin-login (onLogin)="goToXteriumPage($event)"></app-pin-login>
     } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {

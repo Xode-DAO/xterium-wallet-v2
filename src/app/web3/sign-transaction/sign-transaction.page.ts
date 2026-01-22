@@ -37,7 +37,8 @@ import {
   arrowUpOutline,
   arrowDownOutline,
   globeOutline,
-  flame
+  flame,
+  close, checkmarkCircleOutline
 } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
@@ -66,7 +67,7 @@ import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/p
 import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
-import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
+import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -102,12 +103,13 @@ import { TranslatePipe } from '@ngx-translate/core';
     PasswordLoginComponent,
     PinSetupComponent,
     PinLoginComponent,
-    BiometricComponent,
+    BiometricLoginComponent,
     TranslatePipe,
   ],
 })
 export class SignTransactionPage implements OnInit {
   @ViewChild('confirmSignTransactionModal', { read: IonModal }) confirmSignTransactionModal!: IonModal;
+  @ViewChild('postSignModal', { read: IonModal }) postSignModal!: IonModal;
   @ViewChild('noWalletModal', { read: IonModal }) noWalletModal!: IonModal;
 
   constructor(
@@ -129,14 +131,7 @@ export class SignTransactionPage implements OnInit {
     private localNotificationsService: LocalNotificationsService,
     private toastController: ToastController,
   ) {
-    addIcons({
-      cube,
-      cubeOutline,
-      arrowUpOutline,
-      arrowDownOutline,
-      globeOutline,
-      flame
-    });
+    addIcons({ arrowUpOutline, globeOutline, flame, close, checkmarkCircleOutline, cube, cubeOutline, arrowDownOutline });
   }
 
   private pjsApiMap: Map<number, ApiPromise> = new Map();
@@ -161,6 +156,9 @@ export class SignTransactionPage implements OnInit {
   paramsEncodedCallDataHex: string | null = null;
   paramsWalletAddress: string | null = null;
   paramsCallbackUrl: string | null = null;
+
+  postSignUrl: string | null = null;
+  postSignedHex: string = '';
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -310,10 +308,17 @@ export class SignTransactionPage implements OnInit {
         );
 
         this.confirmSignTransactionModal.dismiss();
-        this.router.navigate(['/xterium/balances']);
 
-        const url = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
-        window.open(url, '_blank');
+        this.postSignedHex = signedHex;
+        this.postSignUrl = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(signedHex)}`;
+
+        setTimeout(() => {
+          if (this.postSignModal) {
+            this.postSignModal.canDismiss = false;
+            this.postSignModal.present();
+          }
+        }, 500);
+
       } else {
         service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
           next: async (event) => {
@@ -336,6 +341,21 @@ export class SignTransactionPage implements OnInit {
       });
       await toast.present();
     }
+  }
+
+  continueToApp() {
+    if (this.postSignUrl) {
+      window.open(this.postSignUrl, '_blank');
+    }
+
+    if (this.postSignModal) {
+      this.postSignModal.canDismiss = true;
+      this.postSignModal.dismiss();
+    }
+
+    setTimeout(() => {
+      this.router.navigate(['/xterium/balances']);
+    }, 500);
   }
 
   async handleTransactionEvent(event: ISubmittableResult) {

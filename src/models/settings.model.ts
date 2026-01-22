@@ -6,6 +6,7 @@ export class SettingsUserPreferences {
   currency: Currency = new Currency();
   language: LanguageTranslation = new LanguageTranslation();
   testnet_enabled: boolean = false;
+  biometric_enabled: boolean = false;
 }
 
 export class Settings {

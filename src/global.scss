@@ -372,7 +372,3 @@ ion-item.primary-select-button-item:focus-within:not(:has(ion-select[readonly]))
 ion-toggle {
   --track-background-checked: #0bbab5;
 }
-
-ion-title {
-  font-size: clamp(12px, 4vw, 25px);
-}

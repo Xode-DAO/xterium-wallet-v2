@@ -91,11 +91,8 @@
         <div class="ion-padding-horizontal">
           @if (isChromeExtension && currentAuth) {
           <app-password-login (onLogin)="confirmSignTransaction($event)"></app-password-login>
-          } @else if (isChromeExtension && !currentAuth) {
-          <app-password-setup (onPasswordSetup)="confirmSignTransaction($event)"></app-password-setup>
-          } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type === 'biometric'))
-          {
-          <app-biometric (onLogin)="confirmSignTransaction($event)"></app-biometric>
+          } @else if (!isChromeExtension && isBiometricAvailable && (!currentAuth || currentAuth.type === 'biometric')) {
+          <app-biometric-login (onLogin)="confirmSignTransaction($event)"></app-biometric-login>
           } @else if (!isChromeExtension && isBiometricAvailable && currentAuth?.type === 'pin') {
           <app-pin-login (onLogin)="confirmSignTransaction($event)"></app-pin-login>
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
@@ -107,8 +104,6 @@
           </div>
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {
           <app-pin-login (onLogin)="confirmSignTransaction($event)"></app-pin-login>
-          } @else {
-          <app-pin-setup (onPasswordSetup)="confirmSignTransaction($event)"></app-pin-setup>
           }
         </div>
       </div>

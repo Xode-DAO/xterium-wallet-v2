@@ -51,11 +51,9 @@ import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/pol
 
 import { Auth } from 'src/models/auth.model';
 
-import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
 import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
-import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
-import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
+import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -82,11 +80,9 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonButtons,
     IonIcon,
     IonContent,
-    PasswordSetupComponent,
     PasswordLoginComponent,
-    PinSetupComponent,
     PinLoginComponent,
-    BiometricComponent,
+    BiometricLoginComponent,
     TranslatePipe
   ]
 })

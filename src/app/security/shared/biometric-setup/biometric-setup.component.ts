@@ -19,8 +19,8 @@ import { AuthService } from 'src/app/api/auth/auth.service';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-biometric',
-  templateUrl: './biometric.component.html',
+  selector: 'app-biometric-setup',
+  templateUrl: './biometric-setup.component.html',
   imports: [
     IonGrid,
     IonRow,
@@ -29,10 +29,10 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonIcon,
     TranslatePipe,
   ],
-  styleUrls: ['./biometric.component.scss'],
+  styleUrls: ['./biometric-setup.component.scss'],
 })
-export class BiometricComponent implements OnInit {
-  @Output() onLogin = new EventEmitter<string>();
+export class BiometricSetupComponent implements OnInit {
+  @Output() onBiometricSetup = new EventEmitter<string>();
 
   constructor(
     private biometricService: BiometricService,
@@ -52,6 +52,10 @@ export class BiometricComponent implements OnInit {
   async initBiometric() {
     const availability = await this.biometricService.isAvailable();
     this.isBiometricAvailable = availability.available;
+  }
+
+  async setupBiometric() {
+    this.isProcessing = true;
 
     if (!this.isBiometricAvailable) {
       const toast = await this.toastController.create({
@@ -74,21 +78,7 @@ export class BiometricComponent implements OnInit {
 
       const encryptedPassword = await this.encryptionService.encrypt(credentials.password, credentials.password);
       await this.authService.setupPassword(encryptedPassword, 'biometric');
-
-      const toast = await this.toastController.create({
-        message: 'Biometric setup complete! Please login again.',
-        color: 'success',
-        duration: 1500,
-        position: 'top',
-      });
-
-      await toast.present();
-      return;
     }
-  }
-
-  async login() {
-    this.isProcessing = true;
 
     const auth = await this.authService.getAuth();
 
@@ -97,21 +87,6 @@ export class BiometricComponent implements OnInit {
 
       const toast = await this.toastController.create({
         message: 'No password found. Please set it up first.',
-        color: 'danger',
-        duration: 1500,
-        position: 'top',
-      });
-
-      await toast.present();
-      return;
-    }
-
-    const success = await this.biometricService.verifyIdentity();
-    if (!success) {
-      this.isProcessing = false;
-
-      const toast = await this.toastController.create({
-        message: 'Biometric authentication failed.',
         color: 'danger',
         duration: 1500,
         position: 'top',
@@ -140,7 +115,7 @@ export class BiometricComponent implements OnInit {
 
     await this.authService.renewAuth();
 
-    this.onLogin.emit(decryptedPassword);
+    this.onBiometricSetup.emit(decryptedPassword);
     this.isProcessing = false;
   }
 
