@@ -117,6 +117,13 @@ export class BiometricService {
     });
   }
 
+  async disableBiometric(): Promise<void> {
+    await Preferences.set({
+      key: this.ENABLE_BIOMETRIC_STORAGE_KEY,
+      value: "false"
+    });
+  }
+
   async isBiometricEnabled(): Promise<boolean> {
     const { value } = await Preferences.get({ key: this.ENABLE_BIOMETRIC_STORAGE_KEY });
     return value === "true";

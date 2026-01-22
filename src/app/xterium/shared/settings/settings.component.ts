@@ -34,8 +34,9 @@ import {
 import { CurrencyComponent } from './currency/currency.component';
 import { LanguageComponent } from './language/language.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
-import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
+import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
+import { BiometricSetupComponent } from 'src/app/security/shared/biometric-setup/biometric-setup.component';
 
 import { Currency } from 'src/models/currency.model';
 import { LanguageTranslation } from 'src/models/language-translation.model';
@@ -76,8 +77,9 @@ import { TranslatePipe } from '@ngx-translate/core';
     LanguageComponent,
     TranslatePipe,
     PinLoginComponent,
-    BiometricComponent,
     PinSetupComponent,
+    BiometricLoginComponent,
+    BiometricSetupComponent,
   ]
 })
 
@@ -114,12 +116,11 @@ export class SettingsComponent implements OnInit {
   isTestnetEnabled: boolean = false;
 
   currentAuth: Auth | null = null;
-  isBiometricAvailable: boolean = false;
 
   isBiometricEnabled: boolean = false;
-  biometricState: 'enable' | 'disable' | 'setup-pin' | 'setup-biometric' | null = null;
-
-  decryptedPassword: string = '';
+  biometricState: 'enabled' | 'disabled' | 'setup-pin' | 'setup-biometric' | null = null;
+  decryptedPin: string = '';
+  decryptedBiometricCredentials: string = '';
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -248,7 +249,9 @@ export class SettingsComponent implements OnInit {
             text: 'Yes',
             role: 'confirm',
             handler: async () => {
-              this.biometricState = 'enable';
+              this.biometricState = 'enabled';
+              this.getCurrentAuth();
+
               await this.confirmBiometricModal.present();
             }
           }
@@ -274,7 +277,9 @@ export class SettingsComponent implements OnInit {
           text: 'Yes',
           role: 'confirm',
           handler: async () => {
-            this.biometricState = 'disable';
+            this.biometricState = 'disabled';
+            this.getCurrentAuth();
+
             await this.confirmBiometricModal.present();
           }
         }
@@ -291,79 +296,13 @@ export class SettingsComponent implements OnInit {
     }
   }
 
-  async confirmBiometric(decryptedPassword: string) {
-    this.decryptedPassword = decryptedPassword;
+  async confirmBiometric(oldPassword: string) {
+    this.decryptedBiometricCredentials = oldPassword;
     this.biometricState = 'setup-pin';
   }
 
-  async onBiometricSetup(decryptedPassword: string) {
-    const wallets = await this.walletsService.getAllWallets();
-
-    const decryptedWallets = await Promise.all(
-      wallets.map(async wallet => ({
-        id: wallet.id,
-        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, decryptedPassword),
-        privateKey: await this.encryptionService.decrypt(wallet.private_key, decryptedPassword)
-      }))
-    );
-
-    const availability = await this.biometricService.isAvailable();
-    this.isBiometricAvailable = availability.available;
-
-    if (!this.isBiometricAvailable) {
-      const toast = await this.toastController.create({
-        message: 'Biometric not available on this device.',
-        color: 'danger',
-        duration: 1500,
-        position: 'top',
-      });
-      await toast.present();
-      return;
-    }
-
-    await this.biometricService.enableBiometric();
-    await this.biometricService.setCredentials();
-    const credentials = await this.biometricService.getCredentials();
-
-    const encryptedPassword = await this.encryptionService.encrypt(credentials.password, credentials.password);
-    await this.authService.setupPassword(encryptedPassword, 'biometric');
-
-    for (const wallet of decryptedWallets) {
-      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, credentials.password);
-      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, credentials.password);
-      await this.walletsService.update(wallet.id, {
-        mnemonic_phrase: encryptedMnemonic,
-        private_key: encryptedPrivateKey
-      });
-    }
-
-    const settings = await this.settingsService.get();
-    if (settings) {
-      settings.user_preferences.biometric_enabled = true;
-      await this.settingsService.set(settings);
-    };
-
-    this.isBiometricEnabled = true;
-    await this.confirmBiometricModal.dismiss();
-
-    const toast = await this.toastController.create({
-      message: 'Biometric enable.',
-      color: 'success',
-      duration: 1500,
-      position: 'top',
-    });
-    await toast.present();
-  }
-
-  async confirmPin(decryptedPassword: string) {
-    this.decryptedPassword = decryptedPassword;
-    this.biometricState = 'setup-biometric';
-
-    this.biometricService.clearCredentials();
-  }
-
-  async onPinSetup(newPin: string) {
-    if (!newPin) {
+  async onPinSetup(newPassword: string) {
+    if (!newPassword) {
       const toast = await this.toastController.create({
         message: 'PIN was not provided. Please try again.',
         color: 'danger',
@@ -380,17 +319,17 @@ export class SettingsComponent implements OnInit {
     const decryptedWallets = await Promise.all(
       wallets.map(async wallet => ({
         id: wallet.id,
-        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, this.decryptedPassword),
-        privateKey: await this.encryptionService.decrypt(wallet.private_key, this.decryptedPassword)
+        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, this.decryptedBiometricCredentials),
+        privateKey: await this.encryptionService.decrypt(wallet.private_key, this.decryptedBiometricCredentials)
       }))
     );
 
-    const encryptedPassword = await this.encryptionService.encrypt(newPin, newPin);
+    const encryptedPassword = await this.encryptionService.encrypt(newPassword, newPassword);
     await this.authService.setupPassword(encryptedPassword, 'pin');
 
     for (const wallet of decryptedWallets) {
-      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPin);
-      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPin);
+      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPassword);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPassword);
 
       await this.walletsService.update(wallet.id, {
         mnemonic_phrase: encryptedMnemonic,
@@ -402,14 +341,14 @@ export class SettingsComponent implements OnInit {
     if (settings) {
       settings.user_preferences.biometric_enabled = false;
       await this.settingsService.set(settings);
+
+      this.isBiometricEnabled = false;
     }
 
-    this.isBiometricEnabled = false;
-
-    this.decryptedPassword = '';
-    this.biometricState = null;
-
+    this.decryptedBiometricCredentials = '';
     await this.confirmBiometricModal.dismiss();
+
+    await this.biometricService.disableBiometric();
 
     const toast = await this.toastController.create({
       message: 'Biometric disabled.',
@@ -421,6 +360,58 @@ export class SettingsComponent implements OnInit {
     await toast.present();
   }
 
+  async confirmPin(oldPassword: string) {
+    this.decryptedPin = oldPassword;
+    this.biometricState = 'setup-biometric';
+  }
+
+  async onBiometricSetup(newPassword: string) {
+    const wallets = await this.walletsService.getAllWallets();
+
+    const decryptedWallets = await Promise.all(
+      wallets.map(async wallet => ({
+        id: wallet.id,
+        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, this.decryptedPin),
+        privateKey: await this.encryptionService.decrypt(wallet.private_key, this.decryptedPin)
+      }))
+    );
+
+    for (const wallet of decryptedWallets) {
+      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPassword);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPassword);
+      await this.walletsService.update(wallet.id, {
+        mnemonic_phrase: encryptedMnemonic,
+        private_key: encryptedPrivateKey
+      });
+    }
+
+    const settings = await this.settingsService.get();
+    if (settings) {
+      settings.user_preferences.biometric_enabled = true;
+      await this.settingsService.set(settings);
+
+      this.isBiometricEnabled = true;
+    };
+
+    this.decryptedPin = '';
+    await this.confirmBiometricModal.dismiss();
+
+    const toast = await this.toastController.create({
+      message: 'Biometric enable.',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+    await toast.present();
+  }
+
+  async getCurrentAuth(): Promise<void> {
+    const auth = await this.authService.getAuth();
+    if (auth) {
+      this.currentAuth = auth;
+    }
+  }
+
   async fetchData(): Promise<void> {
     const settings = await this.settingsService.get();
     if (settings) {
@@ -428,10 +419,9 @@ export class SettingsComponent implements OnInit {
       this.selectedLanguage = settings.user_preferences.language;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
 
-      const auth = await this.authService.getAuth();
-      if (auth) {
-        this.currentAuth = auth;
+      await this.getCurrentAuth();
 
+      if (this.currentAuth) {
         if (this.currentAuth.type === 'biometric') {
           settings.user_preferences.biometric_enabled = true;
           this.isBiometricEnabled = true;

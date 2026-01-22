@@ -1,0 +1,33 @@
+.biometric-icon-container {
+  width: 100%;
+  padding: 25px;
+  justify-content: center;
+
+  .biometric-icon {
+    font-size: 60px;
+    color: white;
+  }
+}
+
+.biometric-unavailable {
+  text-align: center;
+  padding: 15px;
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+  border-radius: 1.5rem;
+  border: 3px solid rgba(var(--ion-color-warning-rgb), 0.2);
+
+  .unavailable-text {
+    color: var(--ion-color-warning);
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+.security-tips {
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    margin-right: 8px;
+    color: var(--ion-color-success);
+  }
+}

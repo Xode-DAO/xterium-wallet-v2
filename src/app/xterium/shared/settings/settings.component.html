@@ -99,43 +99,37 @@
           </div>
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
             <h1 style="font-weight: bold">
-              @if (biometricState === 'enable' && currentAuth?.type === 'biometric') {
-              {{ 'Biometric' | translate }}
-              } @else if (biometricState === 'enable' && currentAuth?.type === 'pin') {
+              @if (biometricState === 'enabled' && currentAuth?.type === 'pin') {
               {{ 'Enter Pin' | translate }}
-              } @else if (biometricState === 'disable' && currentAuth?.type === 'biometric') {
+              } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
               {{ 'Biometric' | translate }}
-              } @else if (biometricState === 'setup-biometric') {
-              {{ 'Set Up Your Biometric' | translate }}
               } @else if (biometricState === 'setup-pin') {
               {{ 'Set Up Your PIN' | translate }}
+              } @else if (biometricState === 'setup-biometric') {
+              {{ 'Set Up Your Biometric' | translate }}
               }
             </h1>
             <span style="font-size: 15px;">
-              @if (biometricState === 'enable' && currentAuth?.type === 'biometric') {
-              {{ 'Please authenticate using your biometric data or face recognition to enable biometric authentication.' | translate }}
-              } @else if (biometricState === 'enable' && currentAuth?.type === 'pin') {
+              @if (biometricState === 'enabled' && currentAuth?.type === 'pin') {
               {{ 'Please enter your PIN to enable biometric authentication.' | translate }}
-              } @else if (biometricState === 'disable' && currentAuth?.type === 'biometric') {
+              } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
               {{ 'Please authenticate using your biometric data or face recognition to disable biometric authentication.' | translate }}
-              } @else if (biometricState === 'setup-biometric') {
-              {{ 'Set a Biometric to secure your wallets after disabling biometric authentication.' | translate }}
               } @else if (biometricState === 'setup-pin') {
               {{ 'Set a PIN to secure your wallets after disabling biometric authentication.' | translate }}
+              } @else if (biometricState === 'setup-biometric') {
+              {{ 'Set a Biometric to secure your wallets after enabling biometric authentication.' | translate }}
               }
             </span>
           </div>
           <div class="ion-padding-horizontal">
-            @if (biometricState === 'enable' && currentAuth?.type === 'biometric') {
-            <app-biometric (onLogin)="onBiometricSetup($event)"></app-biometric>
-            } @else if (biometricState === 'enable' && currentAuth?.type === 'pin') {
+            @if (biometricState === 'enabled' && currentAuth?.type === 'pin') {
             <app-pin-login (onLogin)="confirmPin($event)"></app-pin-login>
-            } @else if (biometricState === 'disable' && currentAuth?.type === 'biometric') {
-            <app-biometric (onLogin)="confirmBiometric($event)"></app-biometric>
-            } @else if (biometricState === 'setup-biometric') {
-            <app-biometric (onLogin)="onBiometricSetup($event)"></app-biometric>
+            } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
+            <app-biometric-login (onLogin)="confirmBiometric($event)"></app-biometric-login>
             } @else if (biometricState === 'setup-pin') {
             <app-pin-setup (onPasswordSetup)="onPinSetup($event)"></app-pin-setup>
+            } @else if (biometricState === 'setup-biometric') {
+            <app-biometric-setup (onBiometricSetup)="onBiometricSetup($event)"></app-biometric-setup>
             }
           </div>
         </div>

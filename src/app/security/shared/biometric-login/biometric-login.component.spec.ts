@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { BiometricComponent } from './biometric.component';
+import { BiometricLoginComponent } from './biometric-login.component';
 
-describe('BiometricComponent', () => {
-  let component: BiometricComponent;
-  let fixture: ComponentFixture<BiometricComponent>;
+describe('BiometricLoginComponent', () => {
+  let component: BiometricLoginComponent;
+  let fixture: ComponentFixture<BiometricLoginComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ BiometricComponent ],
+      declarations: [ BiometricLoginComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BiometricComponent);
+    fixture = TestBed.createComponent(BiometricLoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

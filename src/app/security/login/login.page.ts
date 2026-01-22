@@ -16,7 +16,7 @@ import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/p
 import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
-import { BiometricComponent } from 'src/app/security/shared/biometric/biometric.component';
+import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
@@ -44,8 +44,8 @@ import { TranslatePipe } from '@ngx-translate/core';
     PasswordLoginComponent,
     PinSetupComponent,
     PinLoginComponent,
-    BiometricComponent,
     TranslatePipe,
+    BiometricLoginComponent
   ]
 })
 export class LoginPage implements OnInit {
