@@ -11,36 +11,37 @@ window.addEventListener("message", (event) => {
   if (!event.data) return;
   if (typeof event.data !== "object") return;
 
+  const methods = ["approval", "get-accounts", "subscribe-accounts"];
+
   const msg = event.data;
-  if (!msg.xterium || !msg.type) return;
+  if (!msg.type) return;
 
-  const type = msg.type;
-  const payload = msg.payload || {};
+  let type = msg.type;
+  let method = msg.method;
+  let payload = msg.payload;
 
-  const requestTypes = [
-    "xterium-request-approval",
-    "xterium-get-accounts",
-    "xterium-subscribe-accounts",
-    "xterium-sign-payload",
-    "xterium-sign-raw",
-  ];
+  if (type === "request") {
+    if (methods.includes(method)) {
+      chrome.runtime.sendMessage(
+        {
+          method: method,
+          payload: payload,
+        },
+        (response) => {
+          const responseMessage = {
+            type: "response",
+            method: method,
+            response: response,
+          };
 
-  if (requestTypes.includes(type)) {
-    chrome.runtime.sendMessage(
-      {
-        xterium: true,
-        type: type,
-        payload: payload,
-      },
-      (response) => {
-        const responseMessage = {
-          xterium: true,
-          type: type + "-results",
-          response: response,
-        };
+          window.postMessage(responseMessage, "*");
+        },
+      );
+    }
+  }
 
-        window.postMessage(responseMessage, "*");
-      }
-    );
+  if (method === "response") {
+    window.removeEventListener("message", this);
+    resolve(event.data.response);
   }
 });

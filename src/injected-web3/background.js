@@ -2,12 +2,13 @@ const FIXED_WINDOW_WIDTH = 450;
 const FIXED_WINDOW_HEIGHT = 600;
 
 let approvalWindowId = null;
+let signTransactionWindowId = null;
 
 function createApprovalPopup(origin) {
   chrome.windows.create(
     {
       url: chrome.runtime.getURL(
-        `index.html#/web3/approval?origin=${encodeURIComponent(origin)}`
+        `index.html#/web3/approval?origin=${encodeURIComponent(origin)}`,
       ),
       type: "popup",
       width: FIXED_WINDOW_WIDTH,
@@ -21,14 +22,34 @@ function createApprovalPopup(origin) {
           approvalWindowId = null;
         }
       });
-    }
+    },
+  );
+}
+
+function createSignTransactionPopup(encodedHex) {
+  chrome.windows.create(
+    {
+      url: chrome.runtime.getURL(
+        `index.html#/web3/sign-transaction?encodedCallDataHex=${encodedHex}`,
+      ),
+      type: "popup",
+      width: FIXED_WINDOW_WIDTH,
+      height: FIXED_WINDOW_HEIGHT,
+    },
+    (newWindow) => {
+      signTransactionWindowId = newWindow.id;
+
+      chrome.windows.onRemoved.addListener((closedId) => {
+        if (closedId === signTransactionWindowId) {
+          signTransactionWindowId = null;
+        }
+      });
+    },
   );
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("Background received message:", message, sender);
-
-  if (message.type === "xterium-request-approval") {
+  if (message.method === "approval") {
     const origin = sender.origin || sender.url;
 
     chrome.storage.local.get(["origins"], (results) => {
@@ -64,11 +85,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         createApprovalPopup(origin);
       }
     });
-
-    return true;
   }
 
-  if (message.type === "xterium-approval-response") {
+  if (message.method === "connection-approval") {
     const origin = message.payload.origin;
     const selectedAccounts = message.payload.selected_accounts || [];
 
@@ -91,8 +110,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               });
             }
 
-            console.log("Storing connected accounts:", connectedAccounts);
-
             chrome.storage.local.set({ accounts: connectedAccounts });
           }
 
@@ -107,12 +124,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
   }
 
-  if (message.type === "xterium-get-accounts") {
-    console.log("Received request for connected accounts");
-
+  if (message.method === "get-accounts") {
     chrome.storage.local.get(["accounts"], (results) => {
-      console.log("Retrieving connected accounts:", results.accounts);
-
       let accounts = [];
 
       if (results.accounts && results.accounts.length > 0) {
