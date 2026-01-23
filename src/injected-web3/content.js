@@ -8,39 +8,41 @@
 
 window.addEventListener("message", (event) => {
   if (!event || event.source !== window) return;
-  if (!event.data) return;
-  if (typeof event.data !== "object") return;
+  if (!event.data || typeof event.data !== "object") return;
+  if (event.data.source !== "xterium-extension") return;
 
-  const msg = event.data;
-  if (!msg.xterium || !msg.type) return;
-
-  const type = msg.type;
-  const payload = msg.payload || {};
-
-  const requestTypes = [
-    "xterium-request-approval",
-    "xterium-get-accounts",
-    "xterium-subscribe-accounts",
-    "xterium-sign-payload",
-    "xterium-sign-raw",
+  const methods = [
+    "approval",
+    "get-accounts",
+    "subscribe-accounts",
+    "sign-payload",
+    "sign-raw",
   ];
 
-  if (requestTypes.includes(type)) {
+  const msg = event.data;
+  if (!msg.type || msg.type !== "request") return;
+
+  let method = msg.method;
+  let payload = msg.payload;
+
+  if (methods.includes(method)) {
     chrome.runtime.sendMessage(
       {
-        xterium: true,
-        type: type,
+        method: method,
         payload: payload,
       },
       (response) => {
+        if (chrome.runtime.lastError) return;
+
         const responseMessage = {
-          xterium: true,
-          type: type + "-results",
+          source: "xterium-extension",
+          type: "response",
+          method: method,
           response: response,
         };
 
         window.postMessage(responseMessage, "*");
-      }
+      },
     );
   }
 });

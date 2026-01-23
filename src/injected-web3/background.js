@@ -2,12 +2,13 @@ const FIXED_WINDOW_WIDTH = 450;
 const FIXED_WINDOW_HEIGHT = 600;
 
 let approvalWindowId = null;
+let signTransactionWindowId = null;
 
 function createApprovalPopup(origin) {
   chrome.windows.create(
     {
       url: chrome.runtime.getURL(
-        `index.html#/web3/approval?origin=${encodeURIComponent(origin)}`
+        `index.html#/web3/approval?origin=${encodeURIComponent(origin)}`,
       ),
       type: "popup",
       width: FIXED_WINDOW_WIDTH,
@@ -21,14 +22,34 @@ function createApprovalPopup(origin) {
           approvalWindowId = null;
         }
       });
-    }
+    },
+  );
+}
+
+function createSignTransactionPopup(encodedHex, walletAddress) {
+  chrome.windows.create(
+    {
+      url: chrome.runtime.getURL(
+        `index.html#/web3/sign-transaction?encodedCallDataHex=${encodedHex}&walletAddress=${walletAddress}`,
+      ),
+      type: "popup",
+      width: FIXED_WINDOW_WIDTH,
+      height: FIXED_WINDOW_HEIGHT,
+    },
+    (newWindow) => {
+      signTransactionWindowId = newWindow.id;
+
+      chrome.windows.onRemoved.addListener((closedId) => {
+        if (closedId === signTransactionWindowId) {
+          signTransactionWindowId = null;
+        }
+      });
+    },
   );
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("Background received message:", message, sender);
-
-  if (message.type === "xterium-request-approval") {
+  if (message.method === "approval") {
     const origin = sender.origin || sender.url;
 
     chrome.storage.local.get(["origins"], (results) => {
@@ -47,9 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         };
         origins.push(newOrigin);
 
-        chrome.storage.local.set({ origins: origins }, () => {
-          sendResponse(newOrigin);
-        });
+        chrome.storage.local.set({ origins: origins });
       }
 
       if (approvalWindowId !== null) {
@@ -63,12 +82,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       } else {
         createApprovalPopup(origin);
       }
+
+      sendResponse({ origin: origin, approved: false, pending: true });
     });
 
     return true;
   }
 
-  if (message.type === "xterium-approval-response") {
+  if (message.method === "connection-approval") {
     const origin = message.payload.origin;
     const selectedAccounts = message.payload.selected_accounts || [];
 
@@ -81,17 +102,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         chrome.storage.local.set({ origins: origins }, () => {
           if (selectedAccounts.length > 0) {
-            const connectedAccounts = [];
-
-            for (let i = 0; i < selectedAccounts.length; i++) {
-              connectedAccounts.push({
-                address: selectedAccounts[i].address,
-                name: selectedAccounts[i].name,
-                type: "sr25519",
-              });
-            }
-
-            console.log("Storing connected accounts:", connectedAccounts);
+            const connectedAccounts = selectedAccounts.map((account) => ({
+              address: account.address,
+              name: account.name,
+              type: "sr25519",
+            }));
 
             chrome.storage.local.set({ accounts: connectedAccounts });
           }
@@ -103,16 +118,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             approvalWindowId = null;
           }
         });
+      } else {
+        sendResponse({ error: "Origin not found" });
       }
     });
+
+    return true;
   }
 
-  if (message.type === "xterium-get-accounts") {
-    console.log("Received request for connected accounts");
-
+  if (message.method === "get-accounts") {
     chrome.storage.local.get(["accounts"], (results) => {
-      console.log("Retrieving connected accounts:", results.accounts);
-
       let accounts = [];
 
       if (results.accounts && results.accounts.length > 0) {
@@ -125,6 +140,41 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       sendResponse(accounts);
     });
+
+    return true;
+  }
+
+  if (message.method === "sign-payload") {
+    const payload = message.payload;
+    if (payload) {
+      if (signTransactionWindowId !== null) {
+        chrome.windows.get(signTransactionWindowId, (win) => {
+          if (chrome.runtime.lastError || !win) {
+            createSignTransactionPopup(payload.method, payload.address);
+          } else {
+            chrome.windows.update(signTransactionWindowId, { focused: true });
+          }
+        });
+      } else {
+        createSignTransactionPopup(payload.method, payload.address);
+      }
+    }
+
+    return true;
+  }
+
+  if (message.method === "signed-transaction") {
+    const payload = message.payload;
+    if (payload) {
+      sendResponse(payload.signature);
+
+      if (signTransactionWindowId !== null) {
+        chrome.windows.remove(signTransactionWindowId);
+        signTransactionWindowId = null;
+      }
+    }
+
+    return true;
   }
 
   return true;

@@ -215,8 +215,6 @@ export class SignTransactionPage implements OnInit {
 
     this.route.queryParams.subscribe(async params => {
       if (params['encodedCallDataHex']) {
-        this.paramsEncodedCallDataHex = params['encodedCallDataHex'];
-
         let service: PolkadotJsService | null = null;
 
         if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
@@ -238,11 +236,14 @@ export class SignTransactionPage implements OnInit {
           await pjsApi.connect()
         };
 
-        const extrinsic = pjsApi.registry.createType('Extrinsic', params['encodedCallDataHex']);
+        const convertedHex = this.normalizeToExtrinsicHex(params['encodedCallDataHex'], pjsApi);
 
+        this.paramsEncodedCallDataHex = convertedHex;
+
+        const extrinsic = pjsApi.registry.createType('Extrinsic', convertedHex);
         this.extrinsic = `${extrinsic.method.section}(${extrinsic.method.method})`;
 
-        const estimatedFee = await service.estimatedFees(pjsApi, params['encodedCallDataHex'], this.currentWalletPublicAddress, null);
+        const estimatedFee = await service.estimatedFees(pjsApi, convertedHex, this.currentWalletPublicAddress, null);
         this.estimatedFee = estimatedFee;
         this.isLoadingFee = false;
       }
@@ -258,6 +259,21 @@ export class SignTransactionPage implements OnInit {
     });
   }
 
+  normalizeToExtrinsicHex(hexData: string, api: ApiPromise): string {
+    if (!hexData.startsWith('0x')) {
+      hexData = '0x' + hexData;
+    }
+
+    try {
+      api.registry.createType('Extrinsic', hexData);
+      return hexData;
+    } catch (error) {
+      const call = api.registry.createType('Call', hexData);
+      const extrinsic = api.tx(call);
+      return extrinsic.toHex();
+    }
+  }
+
   navigateToOnboarding(modal: IonModal) {
     modal.dismiss();
     this.router.navigate(['/onboarding']);
@@ -268,6 +284,8 @@ export class SignTransactionPage implements OnInit {
   }
 
   async confirmSignTransaction(decryptedPassword: string) {
+    console.log("Confirming sign transaction...");
+
     this.isProcessing = true;
 
     let service: PolkadotJsService | null = null;
@@ -300,6 +318,7 @@ export class SignTransactionPage implements OnInit {
     };
 
     if (this.paramsEncodedCallDataHex && this.paramsEncodedCallDataHex !== null) {
+      console.log("Signing transaction with encoded call data hex:", this.paramsEncodedCallDataHex);
       if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
         const signedHex = await service.signTransaction(
           pjsApi,
@@ -322,12 +341,25 @@ export class SignTransactionPage implements OnInit {
       } else {
         service.signAndSubmitTransaction(pjsApi, this.paramsEncodedCallDataHex, walletSigner).subscribe({
           next: async (event) => {
+            chrome.runtime.sendMessage(
+              {
+                method: "signed-transaction",
+                payload: {
+                  signature: event.toHuman(),
+                },
+              },
+              (response) => {
+                console.log('Approval response sent', response);
+              }
+            );
+
             this.confirmSignTransactionModal.dismiss();
             this.router.navigate(['/xterium/balances']);
 
             this.handleTransactionEvent(event);
           },
           error: async (err) => {
+            console.error("Transaction error:", err);
             this.isProcessing = false;
           }
         });
@@ -365,6 +397,8 @@ export class SignTransactionPage implements OnInit {
     const eventStatus = event.status.type.toString();
     const txHashValue = event.txHash.toHex();
     const shortTxHash = `${txHashValue.slice(0, 6)}...${txHashValue.slice(-4)}`;
+
+    console.log("Handling transaction event:", event.toHuman());
 
     switch (eventStatus) {
       case "Broadcast":

@@ -3,80 +3,82 @@
     window.injectedWeb3 = {};
   }
 
-  function postAndWait(type, payload) {
+  function postAndListen(data) {
     return new Promise((resolve) => {
+      const messageHandler = (event) => {
+        if (!event || event.source !== window) return;
+        if (!event.data || typeof event.data !== "object") return;
+
+        if (
+          event.data.type === "response" &&
+          event.data.method === data.method
+        ) {
+          window.removeEventListener("message", messageHandler);
+          resolve(event.data.response);
+        }
+      };
+
+      window.addEventListener("message", messageHandler);
+
       window.postMessage(
         {
-          xterium: true,
-          type: type,
-          payload: payload,
+          source: "xterium-extension",
+          type: "request",
+          method: data.method,
+          payload: data.payload,
         },
-        "*"
+        "*",
       );
-
-      window.addEventListener("message", (event) => {
-        if (!event || event.source !== window) return;
-
-        if (!event.data) return;
-        if (event.data.xterium !== true) return;
-        if (event.data.type !== type + "-results") return;
-
-        window.removeEventListener("message", this);
-        resolve(event.data.response);
-      });
     });
   }
 
   window.injectedWeb3["xterium"] = {
-    version: "2.0.1",
-    enable: async (origin) => {
-      const requestApproval = await postAndWait("xterium-request-approval", {
-        origin: origin,
+    version: "2.3.0",
+    enable: async (originName) => {
+      const requestApproval = await postAndListen({
+        method: "approval",
+        payload: {
+          origin: originName,
+        },
       });
 
-      if (!requestApproval.approved) throw new Error("User rejected Xterium connection");
+      if (!requestApproval || !requestApproval.approved) {
+        throw new Error("User rejected Xterium connection");
+      }
 
       return {
         accounts: {
           get: async (anyType) => {
-            const accounts = await postAndWait("xterium-get-accounts", {
-              anyType,
+            const accounts = await postAndListen({
+              method: "get-accounts",
+              payload: {
+                anyType,
+              },
             });
 
             return accounts || [];
           },
           subscribe: (cb) => {
-            postAndWait("xterium-subscribe-accounts", {}).then((accounts) => {
-              try {
-                cb(accounts || []);
-              } catch (e) {}
-            });
-
-            function handler(event) {
-              if (!event || event.source !== window) return;
-              if (!event.data) return;
-              if (event.data.xterium !== true) return;
-              if (event.data.type !== "xterium-accounts-changed") return;
-
-              cb(event.data.response || []);
-            }
-            window.addEventListener("message", handler);
-
-            return () => window.removeEventListener("message", handler);
+            // TODO: Implement account subscription
+            return () => {}; // Return unsubscribe function
           },
         },
         signer: {
           signPayload: async (payload) => {
-            const signature = await postAndWait("xterium-sign-payload", {
+            const signature = await postAndListen({
+              method: "sign-payload",
               payload: payload,
             });
 
             return signature;
           },
           signRaw: async ({ address, data }) => {
-            const signature = await postAndWait("xterium-sign-raw", {
-              address: address,
-              data: data,
+            const signature = await postAndListen({
+              method: "sign-raw",
+              payload: {
+                address: address,
+                data: data,
+              },
             });
 
             return signature;
@@ -89,4 +91,6 @@
       };
     },
   };
+
+  window.dispatchEvent(new Event("web3-injected"));
 })();

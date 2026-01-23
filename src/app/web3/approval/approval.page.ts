@@ -213,14 +213,19 @@ export class ApprovalPage implements OnInit {
     )
 
     if (this.environmentService.isChromeExtension()) {
-      chrome.runtime.sendMessage({
-        type: "xterium-approval-response",
-        payload: {
-          origin: this.paramsOrigin,
-          selected_accounts: encodedWallets,
-          approved: true,
+      chrome.runtime.sendMessage(
+        {
+          method: "connection-approval",
+          payload: {
+            origin: this.paramsOrigin,
+            selected_accounts: encodedWallets,
+            approved: true,
+          },
         },
-      });
+        (response) => {
+          console.log('Approval response sent', response);
+        }
+      );
     } else {
       if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
         this.router.navigate(['/xterium/balances']);
@@ -241,14 +246,19 @@ export class ApprovalPage implements OnInit {
 
   reject() {
     if (this.environmentService.isChromeExtension()) {
-      chrome.runtime.sendMessage({
-        type: "xterium-approval-response",
-        payload: {
-          origin: this.paramsOrigin,
-          selected_accounts: [],
-          approved: false,
+      chrome.runtime.sendMessage(
+        {
+          method: "connection-approval",
+          payload: {
+            origin: this.paramsOrigin,
+            selected_accounts: [],
+            approved: false,
+          },
         },
-      });
+        (response) => {
+          console.log('Approval response sent', response);
+        }
+      );
     } else {
       this.router.navigate(['/xterium/balances']);
       App.exitApp();
