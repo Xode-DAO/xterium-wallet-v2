@@ -107,6 +107,10 @@ export const routes: Routes = [
         loadComponent: () => import('./web3/sign-transaction/sign-transaction.page').then(m => m.SignTransactionPage)
       },
       {
+        path: 'connected-accounts',
+        loadComponent: () => import('./web3/connected-accounts/connected-accounts.page').then( m => m.ConnectedAccountsPage)
+      },
+      {
         path: '',
         redirectTo: '/web3/approval',
         pathMatch: 'full',
