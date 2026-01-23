@@ -5,8 +5,24 @@
 
   function postAndListen(data) {
     return new Promise((resolve) => {
+      const messageHandler = (event) => {
+        if (!event || event.source !== window) return;
+        if (!event.data || typeof event.data !== "object") return;
+
+        if (
+          event.data.type === "response" &&
+          event.data.method === data.method
+        ) {
+          window.removeEventListener("message", messageHandler);
+          resolve(event.data.response);
+        }
+      };
+
+      window.addEventListener("message", messageHandler);
+
       window.postMessage(
         {
+          source: "xterium-extension",
           type: "request",
           method: data.method,
           payload: data.payload,
@@ -26,7 +42,7 @@
         },
       });
 
-      if (!requestApproval.approved) {
+      if (!requestApproval || !requestApproval.approved) {
         throw new Error("User rejected Xterium connection");
       }
 
@@ -42,7 +58,10 @@
 
             return accounts || [];
           },
-          subscribe: (cb) => {},
+          subscribe: (cb) => {
+            // TODO: Implement account subscription
+            return () => {}; // Return unsubscribe function
+          },
         },
         signer: {
           signPayload: async (payload) => {
@@ -72,4 +91,6 @@
       };
     },
   };
+
+  window.dispatchEvent(new Event("web3-injected"));
 })();

@@ -26,11 +26,11 @@ function createApprovalPopup(origin) {
   );
 }
 
-function createSignTransactionPopup(encodedHex) {
+function createSignTransactionPopup(encodedHex, walletAddress) {
   chrome.windows.create(
     {
       url: chrome.runtime.getURL(
-        `index.html#/web3/sign-transaction?encodedCallDataHex=${encodedHex}`,
+        `index.html#/web3/sign-transaction?encodedCallDataHex=${encodedHex}&walletAddress=${walletAddress}`,
       ),
       type: "popup",
       width: FIXED_WINDOW_WIDTH,
@@ -68,9 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         };
         origins.push(newOrigin);
 
-        chrome.storage.local.set({ origins: origins }, () => {
-          sendResponse(newOrigin);
-        });
+        chrome.storage.local.set({ origins: origins });
       }
 
       if (approvalWindowId !== null) {
@@ -84,7 +82,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       } else {
         createApprovalPopup(origin);
       }
+
+      sendResponse({ origin: origin, approved: false, pending: true });
     });
+
+    return true;
   }
 
   if (message.method === "connection-approval") {
@@ -100,15 +102,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         chrome.storage.local.set({ origins: origins }, () => {
           if (selectedAccounts.length > 0) {
-            const connectedAccounts = [];
-
-            for (let i = 0; i < selectedAccounts.length; i++) {
-              connectedAccounts.push({
-                address: selectedAccounts[i].address,
-                name: selectedAccounts[i].name,
-                type: "sr25519",
-              });
-            }
+            const connectedAccounts = selectedAccounts.map((account) => ({
+              address: account.address,
+              name: account.name,
+              type: "sr25519",
+            }));
 
             chrome.storage.local.set({ accounts: connectedAccounts });
           }
@@ -120,8 +118,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             approvalWindowId = null;
           }
         });
+      } else {
+        sendResponse({ error: "Origin not found" });
       }
     });
+
+    return true;
   }
 
   if (message.method === "get-accounts") {
@@ -138,6 +140,41 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       sendResponse(accounts);
     });
+
+    return true;
+  }
+
+  if (message.method === "sign-payload") {
+    const payload = message.payload;
+    if (payload) {
+      if (signTransactionWindowId !== null) {
+        chrome.windows.get(signTransactionWindowId, (win) => {
+          if (chrome.runtime.lastError || !win) {
+            createSignTransactionPopup(payload.method, payload.address);
+          } else {
+            chrome.windows.update(signTransactionWindowId, { focused: true });
+          }
+        });
+      } else {
+        createSignTransactionPopup(payload.method, payload.address);
+      }
+    }
+
+    return true;
+  }
+
+  if (message.method === "signed-transaction") {
+    const payload = message.payload;
+    if (payload) {
+      sendResponse(payload.signature);
+
+      if (signTransactionWindowId !== null) {
+        chrome.windows.remove(signTransactionWindowId);
+        signTransactionWindowId = null;
+      }
+    }
+
+    return true;
   }
 
   return true;
