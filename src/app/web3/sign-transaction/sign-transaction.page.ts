@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { hexToString, u8aToHex } from '@polkadot/util';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiPromise } from '@polkadot/api';
 import { ISubmittableResult, SignerPayloadJSON, SignerPayloadRaw, SignerResult } from '@polkadot/types/types';
+import { Bytes } from '@polkadot/types-codec';
 
 import {
   IonContent,
@@ -71,7 +71,6 @@ import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.c
 import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { Bytes } from '@polkadot/types-codec';
 
 @Component({
   selector: 'app-sign-transaction',
