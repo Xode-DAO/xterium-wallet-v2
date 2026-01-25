@@ -59,8 +59,7 @@
             return accounts || [];
           },
           subscribe: (cb) => {
-            // TODO: Implement account subscription
-            return () => {}; // Return unsubscribe function
+            return () => {};
           },
         },
         signer: {
@@ -83,6 +82,7 @@
 
             return signature;
           },
+
         },
         metadata: {
           get: async () => [],

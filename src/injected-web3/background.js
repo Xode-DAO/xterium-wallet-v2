@@ -2,7 +2,6 @@ const FIXED_WINDOW_WIDTH = 450;
 const FIXED_WINDOW_HEIGHT = 600;
 
 let approvalWindowId = null;
-let signTransactionWindowId = null;
 
 function createApprovalPopup(origin) {
   chrome.windows.create(
@@ -26,11 +25,18 @@ function createApprovalPopup(origin) {
   );
 }
 
-function createSignTransactionPopup(encodedHex, walletAddress) {
+let signTransactionWindowId = null;
+let pendingSignRequest = null;
+
+function createSignTransactionPopup(signingType, payload, walletAddress) {
+  const signingTypeParam = encodeURIComponent(signingType);
+  const payloadParam = encodeURIComponent(JSON.stringify(payload));
+  const addressParam = encodeURIComponent(walletAddress);
+
   chrome.windows.create(
     {
       url: chrome.runtime.getURL(
-        `index.html#/web3/sign-transaction?encodedCallDataHex=${encodedHex}&walletAddress=${walletAddress}`,
+        `index.html#/web3/sign-transaction?signingType=${signingTypeParam}&payload=${payloadParam}&walletAddress=${addressParam}`,
       ),
       type: "popup",
       width: FIXED_WINDOW_WIDTH,
@@ -42,6 +48,14 @@ function createSignTransactionPopup(encodedHex, walletAddress) {
       chrome.windows.onRemoved.addListener((closedId) => {
         if (closedId === signTransactionWindowId) {
           signTransactionWindowId = null;
+
+          // User closed window without signing - reject the pending request
+          if (pendingSignRequest) {
+            pendingSignRequest.sendResponse({
+              error: "User cancelled signing",
+            });
+            pendingSignRequest = null;
+          }
         }
       });
     },
@@ -146,27 +160,70 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.method === "sign-payload") {
     const payload = message.payload;
-    if (payload) {
-      if (signTransactionWindowId !== null) {
-        chrome.windows.get(signTransactionWindowId, (win) => {
-          if (chrome.runtime.lastError || !win) {
-            createSignTransactionPopup(payload.method, payload.address);
-          } else {
-            chrome.windows.update(signTransactionWindowId, { focused: true });
-          }
-        });
-      } else {
-        createSignTransactionPopup(payload.method, payload.address);
-      }
+
+    if (!payload) {
+      sendResponse({ error: "Invalid payload" });
+      return false;
+    }
+
+    pendingSignRequest = {
+      sendResponse: sendResponse,
+      payload: payload,
+    };
+
+    if (signTransactionWindowId !== null) {
+      chrome.windows.get(signTransactionWindowId, (win) => {
+        if (chrome.runtime.lastError || !win) {
+          createSignTransactionPopup("signPayload", payload, payload.address);
+        } else {
+          chrome.windows.update(signTransactionWindowId, { focused: true });
+        }
+      });
+    } else {
+      createSignTransactionPopup("signPayload", payload, payload.address);
+    }
+
+    return true;
+  }
+
+  if (message.method === "sign-raw") {
+    const payload = message.payload;
+
+    if (!payload) {
+      sendResponse({ error: "Invalid payload" });
+      return false;
+    }
+
+    pendingSignRequest = {
+      sendResponse: sendResponse,
+      payload: payload,
+    };
+
+    if (signTransactionWindowId !== null) {
+      chrome.windows.get(signTransactionWindowId, (win) => {
+        if (chrome.runtime.lastError || !win) {
+          createSignTransactionPopup("signRaw", payload, payload.address);
+        } else {
+          chrome.windows.update(signTransactionWindowId, { focused: true });
+        }
+      });
+    } else {
+      createSignTransactionPopup("signRaw", payload, payload.address);
     }
 
     return true;
   }
 
   if (message.method === "signed-transaction") {
-    const payload = message.payload;
-    if (payload) {
-      sendResponse(payload.signature);
+    const signedResult = message.payload;
+
+    if (!signedResult) {
+      return false;
+    }
+
+    if (pendingSignRequest) {
+      pendingSignRequest.sendResponse(signedResult);
+      pendingSignRequest = null;
 
       if (signTransactionWindowId !== null) {
         chrome.windows.remove(signTransactionWindowId);
@@ -174,8 +231,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     }
 
-    return true;
+    return false;
   }
 
-  return true;
+  if (message.method === "cancel-signing") {
+    if (pendingSignRequest) {
+      pendingSignRequest.sendResponse({
+        error: "User cancelled signing",
+      });
+      pendingSignRequest = null;
+    }
+
+    if (signTransactionWindowId !== null) {
+      chrome.windows.remove(signTransactionWindowId);
+      signTransactionWindowId = null;
+    }
+
+    return false;
+  }
+
+  return false;
 });

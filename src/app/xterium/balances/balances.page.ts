@@ -21,7 +21,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { qrCode, send, swapHorizontal, card } from 'ionicons/icons';
+import { qrCode, send, swapHorizontal, card, close } from 'ionicons/icons';
 
 import { Balance } from 'src/models/balance.model';
 
@@ -72,12 +72,7 @@ export class BalancesPage implements OnInit {
     private settingsService: SettingsService,
     private balancesService: BalancesService,
   ) {
-    addIcons({
-      qrCode,
-      send,
-      swapHorizontal,
-      card,
-    });
+    addIcons({qrCode,send,swapHorizontal,close,card,});
   }
 
   refreshCounter: number = 0;
@@ -139,7 +134,7 @@ export class BalancesPage implements OnInit {
     this.totalAmount = amount;
   }
 
-  onClickSend(_: string) {
+  onClickSend() {
     this.balancesSelectTokenModal.dismiss();
     this.balancesSendModal.dismiss();
   }
