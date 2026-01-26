@@ -25,6 +25,8 @@ import { ChainsService } from 'src/app/api/chains/chains.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 
+import { TranslatePipe } from '@ngx-translate/core';
+
 interface Account {
   address: string;
   name: string;
@@ -49,6 +51,7 @@ interface Account {
     IonLabel,
     IonButton,
     IonCheckbox,
+    TranslatePipe
 ]
 })
 export class ConnectedAccountsPage implements OnInit {

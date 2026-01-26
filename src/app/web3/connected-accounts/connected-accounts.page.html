@@ -9,7 +9,7 @@
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
             <h1 style="font-weight: bold">
-              Connected Accounts
+            {{ 'Connected Accounts' | translate }}
             </h1>
           </div>
         </ion-col>
@@ -41,12 +41,12 @@
             }
             @else {
             <div class="ion-text-center ion-padding">
-              <p>No wallets available to connect.</p>
+              <p>{{ 'No wallets available to connect.' | translate }}</p>
             </div>
             }
             @if (wallets.length === 0) {
             <div class="ion-text-center ion-padding">
-              <p>No wallets available to connect.</p>
+              <p>{{ 'No wallets available to connect.' | translate }}</p>
             </div>
             }
           </div>
@@ -70,7 +70,7 @@
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="connect()"
               [disabled]="selectedWallets.length === 0">
-              Connect
+              {{ 'Connect' | translate }}
             </ion-button>
           </div>
         </ion-col>
@@ -78,7 +78,7 @@
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom danger-button" (click)="reject()">
               @if (selectedWallets.length === 0) {
-              Close
+              {{ 'Close' | translate }}
               }
               @else {
               Reject
