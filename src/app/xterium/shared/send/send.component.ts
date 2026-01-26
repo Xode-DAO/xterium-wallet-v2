@@ -399,6 +399,7 @@ export class SendComponent implements OnInit {
     const payload = JSON.stringify(await this.utilsService.createSignerPayload(pjsApi, transferTransaction, this.currentWalletPublicAddress));
     this.router.navigate(['/web3/sign-transaction'], {
       queryParams: {
+        signingType: 'signPayload',
         payload: encodeURIComponent(payload),
       }
     });
