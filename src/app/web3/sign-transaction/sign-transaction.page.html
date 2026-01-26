@@ -18,7 +18,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center">
-            @if (paramsSigningType !== null && (paramsSigningType === 'signPayload' || paramsSigningType === 'signHex'))
+            @if (paramsSigningType !== null && (paramsSigningType === 'signPayload' || paramsSigningType === 'signTransactionHex'))
             {
             <ion-chip [color]="'success'">
               <ion-icon [name]="'cube'"></ion-icon>
@@ -66,7 +66,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="payload-container">
-            @if (paramsSigningType === 'signPayload' || paramsSigningType === 'signHex') {
+            @if (paramsSigningType === 'signPayload' || paramsSigningType === 'signTransactionHex') {
             <ion-card class="transaction-card">
               <ion-list>
                 <ion-item lines="none">

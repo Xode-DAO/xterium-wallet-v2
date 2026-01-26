@@ -159,7 +159,7 @@ export class SignTransactionPage implements OnInit {
 
   isProcessing: boolean = false;
 
-  paramsSigningType: 'signPayload' | 'signRaw' | 'signHex' | null = null;
+  paramsSigningType: 'signPayload' | 'signRaw' | 'signTransactionHex' | null = null;
   paramsPayload: SignerPayloadJSON | SignerPayloadRaw | HexString | null = null;
   paramsWalletAddress: string | null = null;
   paramsCallbackUrl: string | null = null;
@@ -224,7 +224,7 @@ export class SignTransactionPage implements OnInit {
     this.route.queryParams.subscribe(async params => {
       if (params['signingType']) {
         const decodedSigningType = decodeURIComponent(params['signingType']);
-        if (decodedSigningType === 'signPayload' || decodedSigningType === 'signRaw' || decodedSigningType === 'signHex') {
+        if (decodedSigningType === 'signPayload' || decodedSigningType === 'signRaw' || decodedSigningType === 'signTransactionHex') {
           this.paramsSigningType = decodedSigningType;
         } else {
           this.paramsSigningType = null;
@@ -287,7 +287,7 @@ export class SignTransactionPage implements OnInit {
           this.isLoadingFee = false;
         }
 
-        if (this.paramsSigningType === 'signHex') {
+        if (this.paramsSigningType === 'signTransactionHex') {
           this.paramsPayload = decodeURIComponent(params['payload']) as HexString;
           const payloadHex = this.paramsPayload;
 
@@ -370,7 +370,7 @@ export class SignTransactionPage implements OnInit {
         payloadRaw,
         walletSigner
       );
-    } else if (this.paramsSigningType === 'signHex') {
+    } else if (this.paramsSigningType === 'signTransactionHex') {
       const payloadHex = this.paramsPayload as HexString;
       const convertedHex = this.utilsService.normalizeToExtrinsicHex(payloadHex, pjsApi);
 
