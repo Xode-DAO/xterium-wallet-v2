@@ -33,6 +33,10 @@
             <ion-toggle slot="end" [(ngModel)]="isBiometricEnabled" (ionChange)="enableBiometric($event)">
             </ion-toggle>
           </ion-item>
+          <ion-item button lines="none" class="custom-buttons" (click)="goToConnectedAccounts()">
+            <ion-icon slot="start" name="link-outline"></ion-icon>
+            <h2>{{ 'Connected Accounts' | translate }}</h2>
+          </ion-item>
 
           <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>

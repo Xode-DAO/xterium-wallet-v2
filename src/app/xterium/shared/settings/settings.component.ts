@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { Router } from '@angular/router';
+
 import {
   IonContent,
   IonToolbar,
@@ -18,7 +20,8 @@ import {
   IonToggle,
   AlertController,
   ToastController,
-  ActionSheetController
+  ActionSheetController,
+  ModalController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -28,7 +31,8 @@ import {
   logoUsd,
   languageOutline,
   fingerPrintOutline,
-  codeOutline
+  codeOutline,
+  linkOutline
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -96,7 +100,9 @@ export class SettingsComponent implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private encryptionService: EncryptionService,
-    private biometricService: BiometricService
+    private biometricService: BiometricService,
+    private modalController: ModalController,
+    private router: Router
 
   ) {
     addIcons({
@@ -105,7 +111,8 @@ export class SettingsComponent implements OnInit {
       logoUsd,
       languageOutline,
       fingerPrintOutline,
-      codeOutline
+      codeOutline,
+      linkOutline
     });
   }
 
@@ -161,6 +168,11 @@ export class SettingsComponent implements OnInit {
 
   async openLanguageModal() {
     this.languageModal.present();
+  }
+
+  async goToConnectedAccounts() {
+    this.modalController.dismiss();
+    this.router.navigate(['/web3/connected-accounts']);
   }
 
   async selectCurrency(currency: Currency) {
