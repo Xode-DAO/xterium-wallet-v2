@@ -110,6 +110,12 @@ export class ApprovalPage implements OnInit {
 
   async getWallets(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
+
+    /// temporary fix: only show xode wallets only in Chrome Extension
+     if (this.environmentService.isChromeExtension()) {
+      this.wallets = this.wallets.filter(w => w.chain.chain_id === 3417);
+     }
+
     await this.loadWalletsByChain();
   }
 

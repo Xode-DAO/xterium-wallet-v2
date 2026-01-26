@@ -220,7 +220,7 @@ export class HydrationPolkadotService extends PolkadotJsService {
     const keyring = new Keyring({ type: 'sr25519' });
     const pair = keyring.addFromPair({ publicKey, secretKey });
 
-    if ('withSignedTransaction' in payload && payload.withSignedTransaction) {
+    if ('withSignedTransaction' in payload) {
       const method = api.registry.createType('Call', payload.method);
       const extrinsic = api.registry.createType('Extrinsic', { method }, { version: payload.version });
 
@@ -253,11 +253,9 @@ export class HydrationPolkadotService extends PolkadotJsService {
       return {
         id: 1,
         signature: signature,
-        signedTransaction: signedTx,
+        signedTransaction: payload.withSignedTransaction ? signedTx : undefined,
       };
-    }
-
-    if ('data' in payload) {
+    } else {
       const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload);
       const { signature } = extrinsicPayload.sign(pair);
 
@@ -266,18 +264,6 @@ export class HydrationPolkadotService extends PolkadotJsService {
         signature: signature,
       };
     }
-
-    const signerPayload = api.registry.createType('SignerPayload', payload);
-    const rawPayload = signerPayload.toRaw();
-    const payloadU8a = hexToU8a(rawPayload.data);
-
-    const signature = pair.sign(payloadU8a);
-    const signatureWithPrefix = new Uint8Array([0x01, ...signature]);
-
-    return {
-      id: 1,
-      signature: u8aToHex(signatureWithPrefix),
-    };
   }
 
   signAndSend(api: ApiPromise, transactionHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult> {
