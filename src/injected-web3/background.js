@@ -225,10 +225,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       pendingSignRequest.sendResponse(signedResult);
       pendingSignRequest = null;
 
-      if (signTransactionWindowId !== null) {
-        chrome.windows.remove(signTransactionWindowId);
-        signTransactionWindowId = null;
-      }
+      setTimeout(() => {
+        if (signTransactionWindowId !== null) {
+          chrome.windows.remove(signTransactionWindowId);
+          signTransactionWindowId = null;
+        }
+      }, 1500);
     }
 
     return false;

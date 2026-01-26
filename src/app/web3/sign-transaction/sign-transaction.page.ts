@@ -30,7 +30,9 @@ import {
   IonTitle,
   IonToolbar,
   IonToast,
-  ToastController
+  IonLoading,
+  ToastController,
+  LoadingController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -103,6 +105,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonTitle,
     IonToolbar,
     IonToast,
+    IonLoading,
     PasswordSetupComponent,
     PasswordLoginComponent,
     PinSetupComponent,
@@ -134,6 +137,7 @@ export class SignTransactionPage implements OnInit {
     private balancesService: BalancesService,
     private localNotificationsService: LocalNotificationsService,
     private toastController: ToastController,
+    private loadingController: LoadingController,
   ) {
     addIcons({ arrowUpOutline, globeOutline, flame, close, checkmarkCircleOutline, cube, cubeOutline, arrowDownOutline });
   }
@@ -325,6 +329,11 @@ export class SignTransactionPage implements OnInit {
   async confirmSignTransaction(decryptedPassword: string) {
     this.isProcessing = true;
 
+    const loading = await this.loadingController.create({
+      message: 'Processing your transaction...',
+    });
+    await loading.present();
+
     let service: PolkadotJsService | null = null;
 
     if (this.currentWallet.chain.network === Network.Polkadot && this.currentWallet.chain.chain_id === 0) service = this.polkadotService;
@@ -386,9 +395,12 @@ export class SignTransactionPage implements OnInit {
     }
 
     if (signedResult) {
-      this.confirmSignTransactionModal.dismiss();
-
       if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
+        setTimeout(async () => {
+          await loading.dismiss();
+          this.confirmSignTransactionModal.dismiss();
+        }, 1500);
+
         if (signedResult.signedTransaction) {
           this.postSignature = signedResult.signature.toString();
           this.postSignedHex = signedResult.signedTransaction.toString();
@@ -408,16 +420,18 @@ export class SignTransactionPage implements OnInit {
             payload: signedResult
           });
 
-          this.confirmSignTransactionModal.dismiss();
           this.router.navigate(['/xterium/balances']);
-
           return;
         }
 
         if (signedResult.signedTransaction) {
           service.signAndSend(pjsApi, signedResult.signedTransaction.toString(), walletSigner).subscribe({
             next: async (event) => {
-              this.confirmSignTransactionModal.dismiss();
+              setTimeout(async () => {
+                await loading.dismiss();
+                this.confirmSignTransactionModal.dismiss();
+              }, 1500);
+
               this.router.navigate(['/xterium/balances']);
 
               this.handleTransactionEvent(event);
@@ -429,6 +443,11 @@ export class SignTransactionPage implements OnInit {
           });
         } else {
           this.postSignature = signedResult.signature.toString();
+
+          setTimeout(async () => {
+            await loading.dismiss();
+            this.confirmSignTransactionModal.dismiss();
+          }, 1500);
 
           setTimeout(() => {
             if (this.postSignModal) {

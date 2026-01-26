@@ -18,7 +18,8 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center">
-            @if (paramsSigningType !== null && (paramsSigningType === 'signPayload' || paramsSigningType === 'signTransactionHex'))
+            @if (paramsSigningType !== null && (paramsSigningType === 'signPayload' || paramsSigningType ===
+            'signTransactionHex'))
             {
             <ion-chip [color]="'success'">
               <ion-icon [name]="'cube'"></ion-icon>
@@ -308,3 +309,4 @@
 </ion-modal>
 
 <ion-toast [duration]="5000"></ion-toast>
+<ion-loading></ion-loading>
