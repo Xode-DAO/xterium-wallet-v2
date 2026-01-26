@@ -3,18 +3,17 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
-import { cryptoWaitReady, signatureVerify } from '@polkadot/util-crypto';
-import { hexToString, hexToU8a, u8aToHex } from '@polkadot/util';
-import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
+import { hexToString, hexToU8a } from '@polkadot/util';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { ISubmittableResult, SignerPayloadJSON, SignerPayloadRaw, SignerResult } from '@polkadot/types/types';
+import { ISubmittableResult } from '@polkadot/types/types';
 
 import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 
 import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
-import { WalletSigner } from 'src/models/wallet.model';
 
 @Injectable({
   providedIn: 'root',
@@ -362,119 +361,5 @@ export class XodePolkadotService extends PolkadotJsService {
     const { partialFee } = await tx.paymentInfo(publicKey);
 
     return Number(BigInt(partialFee.toString()));
-  }
-
-  sign(api: ApiPromise, payload: SignerPayloadJSON | SignerPayloadRaw, walletSigner: WalletSigner): SignerResult {
-    const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-    const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
-
-    const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromPair({ publicKey, secretKey });
-
-    if ('withSignedTransaction' in payload) {
-      const method = api.registry.createType('Call', payload.method);
-      const extrinsic = api.registry.createType('Extrinsic', { method }, { version: payload.version });
-
-      const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload, {
-        version: payload.version
-      });
-
-      const { signature } = extrinsicPayload.sign(pair);
-
-      extrinsic.addSignature(
-        payload.address,
-        signature,
-        {
-          blockHash: payload.blockHash,
-          era: payload.era,
-          genesisHash: payload.genesisHash,
-          method: payload.method,
-          nonce: payload.nonce,
-          specVersion: payload.specVersion,
-          tip: payload.tip,
-          transactionVersion: payload.transactionVersion,
-          assetId: payload.assetId,
-          mode: payload.mode,
-          metadataHash: payload.metadataHash,
-        }
-      );
-
-      const signedTx = extrinsic.toHex();
-
-      return {
-        id: 1,
-        signature: signature,
-        signedTransaction: payload.withSignedTransaction ? signedTx : undefined,
-      };
-    } else {
-      const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload);
-      const { signature } = extrinsicPayload.sign(pair);
-
-      return {
-        id: 1,
-        signature: signature,
-      };
-    }
-  }
-
-  signAndSend(api: ApiPromise, transactionHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult> {
-    return new Observable<ISubmittableResult>(subscriber => {
-      const subscriptions: any[] = [];
-
-      (async () => {
-        try {
-          const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-          const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
-
-          const keyring = new Keyring({ type: 'sr25519' });
-          const pair = keyring.addFromPair({ publicKey, secretKey });
-
-          const extrinsic = api.registry.createType('Extrinsic', transactionHex);
-
-          const tx = await api.tx(extrinsic).signAsync(pair);
-          const unsubscribe = await tx.send((result: ISubmittableResult) => {
-            subscriber.next(result);
-
-            if (result.status.isInvalid || result.isError) {
-              console.error('Transaction error');
-              subscriber.error(new Error('Transaction failed'));
-              return;
-            }
-
-            if (result.status.isInBlock || result.status.isFinalized) {
-              const dispatchError = result.dispatchError;
-
-              if (dispatchError) {
-                let errorMessage = 'Transaction failed';
-
-                if (dispatchError.isModule) {
-                  const decoded = api.registry.findMetaError(dispatchError.asModule);
-                  errorMessage = `${decoded.section}.${decoded.name}: ${decoded.docs.join(' ')}`;
-                } else {
-                  errorMessage = dispatchError.toString();
-                }
-
-                console.error('Dispatch error:', errorMessage);
-                subscriber.error(new Error(errorMessage));
-                return;
-              }
-            }
-
-            if (result.status.isFinalized) {
-              subscriber.complete();
-            }
-          });
-
-          subscriptions.push(unsubscribe);
-        } catch (error) {
-          console.error('Error in send:', error);
-          subscriber.error(error);
-        }
-      })();
-
-      return () => {
-        subscriptions.forEach(unsub => unsub());
-      };
-    });
   }
 }
