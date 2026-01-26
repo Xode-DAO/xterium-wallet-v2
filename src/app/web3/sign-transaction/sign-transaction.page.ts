@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiPromise } from '@polkadot/api';
 import { ISubmittableResult, SignerPayloadJSON, SignerPayloadRaw, SignerResult } from '@polkadot/types/types';
+import { HexString } from '@polkadot/util/types';
 import { Bytes } from '@polkadot/types-codec';
 
 import {
@@ -15,6 +16,7 @@ import {
   IonList,
   IonItem,
   IonText,
+  IonTextarea,
   IonLabel,
   IonAvatar,
   IonButton,
@@ -87,6 +89,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonList,
     IonItem,
     IonText,
+    IonTextarea,
     IonLabel,
     IonAvatar,
     IonButton,
@@ -156,8 +159,8 @@ export class SignTransactionPage implements OnInit {
 
   isProcessing: boolean = false;
 
-  paramsSigningType: 'signPayload' | 'signRaw' | null = null;
-  paramsPayload: SignerPayloadJSON | SignerPayloadRaw | null = null;
+  paramsSigningType: 'signPayload' | 'signRaw' | 'signHex' | null = null;
+  paramsPayload: SignerPayloadJSON | SignerPayloadRaw | HexString | null = null;
   paramsWalletAddress: string | null = null;
   paramsCallbackUrl: string | null = null;
 
@@ -221,7 +224,7 @@ export class SignTransactionPage implements OnInit {
     this.route.queryParams.subscribe(async params => {
       if (params['signingType']) {
         const decodedSigningType = decodeURIComponent(params['signingType']);
-        if (decodedSigningType === 'signPayload' || decodedSigningType === 'signRaw') {
+        if (decodedSigningType === 'signPayload' || decodedSigningType === 'signRaw' || decodedSigningType === 'signHex') {
           this.paramsSigningType = decodedSigningType;
         } else {
           this.paramsSigningType = null;
@@ -250,9 +253,8 @@ export class SignTransactionPage implements OnInit {
       };
 
       if (params['payload']) {
-        this.paramsPayload = JSON.parse(decodeURIComponent(params['payload']));
-
         if (this.paramsSigningType === 'signPayload') {
+          this.paramsPayload = JSON.parse(decodeURIComponent(params['payload']));
           const payloadJSON = this.paramsPayload as SignerPayloadJSON;
 
           if (!payloadJSON.method) {
@@ -271,6 +273,7 @@ export class SignTransactionPage implements OnInit {
         }
 
         if (this.paramsSigningType === 'signRaw') {
+          this.paramsPayload = JSON.parse(decodeURIComponent(params['payload']));
           const payloadRaw = this.paramsPayload as SignerPayloadRaw;
 
           let decoded = new Bytes(pjsApi.registry, payloadRaw.data).toUtf8();
@@ -281,6 +284,20 @@ export class SignTransactionPage implements OnInit {
           }
 
           this.rawData = decoded;
+          this.isLoadingFee = false;
+        }
+
+        if (this.paramsSigningType === 'signHex') {
+          this.paramsPayload = decodeURIComponent(params['payload']) as HexString;
+          const payloadHex = this.paramsPayload;
+
+          const convertedHex = this.utilsService.normalizeToExtrinsicHex(payloadHex, pjsApi);
+
+          const extrinsic = pjsApi.registry.createType('Extrinsic', convertedHex);
+          this.extrinsic = `${extrinsic.method.section}(${extrinsic.method.method})`;
+
+          const estimatedFee = await service.getEstimatedFees(pjsApi, params['encodedCallDataHex'], this.currentWalletPublicAddress, null);
+          this.estimatedFee = estimatedFee;
           this.isLoadingFee = false;
         }
       }
@@ -337,7 +354,7 @@ export class SignTransactionPage implements OnInit {
       await pjsApi.connect()
     };
 
-    let signedResult: SignerResult | null = null;
+    let signedResult: SignerResult | HexString | null = null;
 
     if (this.paramsSigningType === 'signPayload') {
       const payloadJSON = this.paramsPayload as SignerPayloadJSON;
@@ -353,9 +370,14 @@ export class SignTransactionPage implements OnInit {
         payloadRaw,
         walletSigner
       );
+    } else if (this.paramsSigningType === 'signHex') {
+      const payloadHex = this.paramsPayload as HexString;
+      const convertedHex = this.utilsService.normalizeToExtrinsicHex(payloadHex, pjsApi);
+
+      signedResult = await service.signAsync(pjsApi, convertedHex as HexString, walletSigner);
     } else {
       const toast = await this.toastController.create({
-        message: 'No encoded call data found.',
+        message: 'Invalid signing type.',
         color: 'danger',
         duration: 1500,
         position: 'top',
@@ -370,7 +392,7 @@ export class SignTransactionPage implements OnInit {
         if (signedResult.signedTransaction) {
           this.postSignature = signedResult.signature.toString();
           this.postSignedHex = signedResult.signedTransaction.toString();
-          this.postCallbackUrl = `${this.paramsCallbackUrl}?signedHex=${encodeURIComponent(this.postSignedHex)}`;
+          this.postCallbackUrl = `${this.paramsCallbackUrl}?signedTransactionHex=${encodeURIComponent(this.postSignedHex)}`;
         }
 
         setTimeout(() => {

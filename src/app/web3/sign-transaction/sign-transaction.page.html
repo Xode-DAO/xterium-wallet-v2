@@ -18,7 +18,8 @@
       <ion-row>
         <ion-col size="12">
           <div class="ion-text-center">
-            @if (paramsSigningType !== null && paramsSigningType === 'signPayload') {
+            @if (paramsSigningType !== null && (paramsSigningType === 'signPayload' || paramsSigningType === 'signHex'))
+            {
             <ion-chip [color]="'success'">
               <ion-icon [name]="'cube'"></ion-icon>
               @if (isLoadingFee) {
@@ -65,7 +66,7 @@
       <ion-row>
         <ion-col size="12">
           <div class="payload-container">
-            @if (paramsSigningType === 'signPayload') {
+            @if (paramsSigningType === 'signPayload' || paramsSigningType === 'signHex') {
             <ion-card class="transaction-card">
               <ion-list>
                 <ion-item lines="none">
@@ -253,7 +254,7 @@
               <ion-icon name="checkmark-circle-outline" color="success" style="font-size: 80px;"></ion-icon>
             </ion-col>
           </ion-row>
-          <ion-row class="ion-justify-content-center ion-margin-top">
+          <ion-row class="ion-justify-content-center">
             <ion-col size="12" class="ion-text-center">
               <h2 style="font-weight: bold;">{{ 'Sign Successful' | translate }}</h2>
               <p class="ion-padding-horizontal">
@@ -264,33 +265,13 @@
           @if (postSignedHex) {
           <ion-row class="ion-margin-bottom">
             <ion-col size="12">
-              <div class="post-signed-content">
-                <h2>
-                  {{ 'Transaction hash' | translate }}
-                </h2>
-                <p class="post-signed-text">
-                  {{ postSignedHex }}
-                </p>
-              </div>
+              <ion-item class="primary-textarea-item" lines="none">
+                <ion-label position="stacked">{{ 'Signed Transaction Hex:' | translate }}</ion-label>
+                <ion-textarea rows="7" placeholder="" readonly="true" [(ngModel)]="postSignedHex"></ion-textarea>
+              </ion-item>
             </ion-col>
           </ion-row>
           }
-
-          @if (postSignature) {
-          <ion-row class="ion-margin-bottom">
-            <ion-col size="12">
-              <div class="signature-content">
-                <h2>
-                  {{ 'Signature' | translate }}
-                </h2>
-                <p class="signature-text">
-                  {{ postSignature }}
-                </p>
-              </div>
-            </ion-col>
-          </ion-row>
-          }
-
           <ion-row class="ion-justify-content-center ion-margin-top">
             <ion-col size="12">
               <div class="primary-button-wrapper">
@@ -306,6 +287,20 @@
               </div>
             </ion-col>
           </ion-row>
+          @if (postSignature) {
+          <ion-row class="ion-margin-bottom">
+            <ion-col size="12">
+              <div class="signature-content">
+                <h2>
+                  {{ 'Signature' | translate }}
+                </h2>
+                <p class="signature-text">
+                  {{ postSignature }}
+                </p>
+              </div>
+            </ion-col>
+          </ion-row>
+          }
         </ion-grid>
       </div>
     </ion-content>
