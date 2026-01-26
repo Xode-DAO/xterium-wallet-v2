@@ -35,7 +35,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, qrCode, send, swapHorizontal, card } from 'ionicons/icons';
+import { arrowBackOutline, qrCode, send, swapHorizontal, card, close } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
@@ -94,8 +94,6 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
 export class TokenDetailsPage implements OnInit {
   @ViewChild('tokenDetailsSend', { read: IonModal }) tokenDetailsSendModal!: IonModal;
 
-  @Output() onClickSendSuccessful = new EventEmitter<string>();
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -113,13 +111,7 @@ export class TokenDetailsPage implements OnInit {
     private settingsService: SettingsService,
     private toastController: ToastController,
   ) {
-    addIcons({
-      arrowBackOutline,
-      qrCode,
-      send,
-      swapHorizontal,
-      card,
-    });
+    addIcons({arrowBackOutline,qrCode,send,swapHorizontal,close,card,});
   }
 
   private pjsApiMap: Map<number, ApiPromise> = new Map();
@@ -309,9 +301,8 @@ export class TokenDetailsPage implements OnInit {
   //   ];
   // }
 
-  onClickSend(_: string) {
+  onClickSend() {
     this.tokenDetailsSendModal.dismiss();
-    this.onClickSendSuccessful.emit(_);
   }
 
   ngOnInit() {

@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiPromise } from '@polkadot/api';
-import { ISubmittableResult } from '@polkadot/types/types';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { ISubmittableResult, SignerPayloadJSON, SignerPayloadRaw, SignerResult } from '@polkadot/types/types';
 
 import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
@@ -25,9 +26,10 @@ export abstract class PolkadotJsService {
   abstract getBalance(api: ApiPromise, token: Token, publicKey: string): Promise<Balance>;
   abstract watchBalance(api: ApiPromise, token: Token, publicKey: string): Observable<Balance>;
 
-  abstract transfer(api: ApiPromise, balance: Balance, destPublicKey: string, value: number): Promise<string>;
+  abstract transfer(api: ApiPromise, balance: Balance, destPublicKey: string, value: number): SubmittableExtrinsic<"promise", ISubmittableResult>;
 
-  abstract estimatedFees(api: ApiPromise, encodedCallDataHex: string, publicKey: string, token: Token | null): Promise<number>;
-  abstract signTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Promise<string>;
-  abstract signAndSubmitTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult>;
+  abstract getEstimatedFees(api: ApiPromise, extrinsicHex: string, publicKey: string, token: Token | null): Promise<number>;
+
+  abstract sign(api: ApiPromise, payload: SignerPayloadJSON | SignerPayloadRaw, walletSigner: WalletSigner): SignerResult;
+  abstract signAndSend(api: ApiPromise, transactionHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult>;
 }

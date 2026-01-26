@@ -128,3 +128,45 @@ div.content {
     font-size: 15px;
   }
 }
+
+.signature-content {
+  text-align: center;
+  padding: 25px;
+  background: rgba(var(--ion-color-success-rgb), 0.1);
+  border-radius: 1.5rem;
+  border: 3px solid rgba(var(--ion-color-success-rgb), 0.2);
+
+  h2 {
+    color: var(--ion-color-success);
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .signature-text {
+    color: var(--ion-color-success);
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+.raw-data-content {
+  text-align: center;
+  padding: 25px 10px;
+  background: rgba(var(--ion-color-secondary-rgb), 0.1);
+  border-radius: 1.5rem;
+  border: 3px solid rgba(var(--ion-color-secondary-rgb), 0.2);
+
+  h2 {
+    color: var(--ion-color-secondary);
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .raw-data-text {
+    color: var(--ion-color-secondary);
+    margin: 0;
+    font-size: 15px;
+  }
+}
