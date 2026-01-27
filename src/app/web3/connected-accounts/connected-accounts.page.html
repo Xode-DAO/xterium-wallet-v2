@@ -27,22 +27,22 @@
       </ion-row>
       <ion-row>
         <ion-col size="12">
-          @if (walletAccountGroups.length > 0) {
-          @for (accountGroup of walletAccountGroups; track accountGroup) {
+          @if (wrappedWalletAccounts.length > 0) {
+          @for (wrappedAccount of wrappedWalletAccounts; track wrappedAccount) {
           <ion-list>
-            <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(accountGroup, $event)">
-              <ion-checkbox slot="start" class="wallet-checkbox" [checked]="isAccountSelected(accountGroup)"
-                (click)="$event.stopPropagation()" (ionChange)="toggleCheckbox(accountGroup, $event)"></ion-checkbox>
+            <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(wrappedAccount, $event)">
+              <ion-checkbox slot="start" class="wallet-checkbox" [checked]="isAccountSelected(wrappedAccount)"
+                (click)="$event.stopPropagation()" (ionChange)="toggleCheckbox(wrappedAccount, $event)"></ion-checkbox>
               <ion-label>
                 <div style="margin: 5px 5px;">
-                  <h2>{{ truncateAddress(accountGroup.address) }}</h2>
+                  <h2>{{ truncateAddress(wrappedAccount.wallet_account.address) }}</h2>
                 </div>
-                <ion-chip [color]="'dark'" (click)="openWalletAccountsModal($event, accountGroup)">
+                <ion-chip [color]="'dark'" (click)="openWalletAccountsModal($event, wrappedAccount)">
                   <div style="display: flex; align-items: center; cursor: pointer;">
-                    <img [src]="'/assets/images/chains/' + accountGroup.wallet_account.wallet?.chain?.image" height="20"
-                      style="margin-right: 5px;" />
+                    <img [src]="'/assets/images/chains/' + wrappedAccount.wallet_account.wallet?.chain?.image"
+                      height="20" style="margin-right: 5px;" />
                     <ion-label>
-                      {{ accountGroup.wallet_account.wallet?.name }}
+                      {{ wrappedAccount.wallet_account.wallet?.name }}
                     </ion-label>
                   </div>
                 </ion-chip>
@@ -56,15 +56,10 @@
             <p>{{ 'No wallets available to connect.' | translate }}</p>
           </div>
           }
-          @if (walletAccountGroups.length === 0) {
-          <div class="ion-text-center ion-padding">
-            <p>{{ 'No wallets available to connect.' | translate }}</p>
-          </div>
-          }
 
-          @if (checkedWalletAccountGroups.length > 0) {
+          @if (checkedWrappedWalletAccounts.length > 0) {
           <div class="ion-text-center ion-padding">
-            <p>{{ checkedWalletAccountGroups.length }} account(s) selected</p>
+            <p>{{ checkedWrappedWalletAccounts.length }} account(s) selected</p>
           </div>
           }
         </ion-col>
@@ -80,7 +75,7 @@
         <ion-col size="6">
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="connect()"
-              [disabled]="checkedWalletAccountGroups.length === 0">
+              [disabled]="checkedWrappedWalletAccounts.length === 0">
               {{ 'Connect' | translate }}
             </ion-button>
           </div>
@@ -88,7 +83,7 @@
         <ion-col size="6">
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom danger-button" (click)="reject()">
-              @if (checkedWalletAccountGroups.length === 0) {
+              @if (checkedWrappedWalletAccounts.length === 0) {
               {{ 'Close' | translate }}
               }
               @else {

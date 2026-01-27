@@ -33,7 +33,7 @@ import {
 } from 'ionicons/icons';
 
 import { Wallet } from 'src/models/wallet.model';
-import { WalletAccount, WalletAccountGroup, ConnectedWalletAccounts } from 'src/models/origin-accounts.model';
+import { WalletAccount, WrappedWalletAccount, Web3WalletAccounts } from 'src/models/web3-accounts.model';
 
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
@@ -90,26 +90,26 @@ export class ConnectedAccountsPage implements OnInit {
 
   wallets: Wallet[] = [];
 
-  walletAccountGroups: WalletAccountGroup[] = [];
-  checkedWalletAccountGroups: WalletAccountGroup[] = [];
+  wrappedWalletAccounts: WrappedWalletAccount[] = [];
+  checkedWrappedWalletAccounts: WrappedWalletAccount[] = [];
 
-  currentWalletAccountGroup: WalletAccountGroup = new WalletAccountGroup();
+  currentWrappedWalletAccount: WrappedWalletAccount = new WrappedWalletAccount();
   walletAccounts: WalletAccount[] = [];
 
-  connectedWalletAccounts: ConnectedWalletAccounts = new ConnectedWalletAccounts();
+  web3WalletAccounts: Web3WalletAccounts = new Web3WalletAccounts();
 
-  async getWalletAccountGroup(): Promise<void> {
+  async getWrappedWalletAccount(): Promise<void> {
     this.wallets = await this.walletsService.getAllWallets();
 
     if (this.wallets.length > 0) {
       for (const wallet of this.wallets) {
         const convertedAddress = await this.encodePublicAddressByDefaultFormat(wallet.public_key)
 
-        const existingAccount = this.walletAccountGroups.find(acc => acc.address === convertedAddress);
+        const existingAccount = this.wrappedWalletAccounts.find(acc => acc.wallet_account.address === convertedAddress);
         if (!existingAccount) {
-          this.walletAccountGroups.push({
-            address: await this.encodePublicAddressByDefaultFormat(wallet.public_key),
+          this.wrappedWalletAccounts.push({
             wallet_account: {
+              address: convertedAddress,
               name: wallet.name,
               wallet: wallet
             }
@@ -128,54 +128,55 @@ export class ConnectedAccountsPage implements OnInit {
     return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
   }
 
-  toggleCheckbox(accountGroup: WalletAccountGroup, event: any) {
+  toggleCheckbox(wrappedAccount: WrappedWalletAccount, event: any) {
     let isChecked: boolean;
 
     if (event && event.detail && typeof event.detail.checked !== 'undefined') {
       isChecked = event.detail.checked;
     } else {
-      const currentlySelected = this.checkedWalletAccountGroups.some(
-        acc => acc.address === accountGroup.address
+      const currentlySelected = this.checkedWrappedWalletAccounts.some(
+        acc => acc.wallet_account.address === wrappedAccount.wallet_account.address
       );
 
       isChecked = !currentlySelected;
     }
 
     if (isChecked) {
-      if (!this.checkedWalletAccountGroups.some(acc => acc.address === accountGroup.address)) {
-        this.checkedWalletAccountGroups.push(accountGroup);
+      if (!this.checkedWrappedWalletAccounts.some(acc => acc.wallet_account.address === wrappedAccount.wallet_account.address)) {
+        this.checkedWrappedWalletAccounts.push(wrappedAccount);
       }
     } else {
-      this.checkedWalletAccountGroups = this.checkedWalletAccountGroups.filter(
-        acc => acc.address !== accountGroup.address
+      this.checkedWrappedWalletAccounts = this.checkedWrappedWalletAccounts.filter(
+        acc => acc.wallet_account.address !== wrappedAccount.wallet_account.address
       );
     }
   }
 
-  isAccountSelected(accountGroup: WalletAccountGroup): boolean {
-    return this.checkedWalletAccountGroups.some(acc => acc.address === accountGroup.address);
+  isAccountSelected(wrappedAccount: WrappedWalletAccount): boolean {
+    return this.checkedWrappedWalletAccounts.some(acc => acc.wallet_account.address === wrappedAccount.wallet_account.address);
   }
 
   truncateAddress(address: string): string {
     return this.utilsService.truncateAddress(address);
   }
 
-  async openWalletAccountsModal(event: Event, accountGroup: WalletAccountGroup): Promise<void> {
+  async openWalletAccountsModal(event: Event, wrappedAccount: WrappedWalletAccount): Promise<void> {
     event.stopPropagation();
 
     this.walletAccountsModal.present();
-    await this.getWalletAccounts(accountGroup);
+    await this.getWalletAccounts(wrappedAccount);
   }
 
-  async getWalletAccounts(accountGroup: WalletAccountGroup): Promise<void> {
-    this.currentWalletAccountGroup = accountGroup;
+  async getWalletAccounts(wrappedAccount: WrappedWalletAccount): Promise<void> {
+    this.currentWrappedWalletAccount = wrappedAccount;
     this.walletAccounts = [];
 
     if (this.wallets.length > 0) {
       for (const wallet of this.wallets) {
         const convertedAddress = await this.encodePublicAddressByDefaultFormat(wallet.public_key);
-        if (convertedAddress === accountGroup.address) {
+        if (convertedAddress === wrappedAccount.wallet_account.address) {
           this.walletAccounts.push({
+            address: convertedAddress,
             name: wallet.name,
             wallet: wallet
           });
@@ -186,7 +187,7 @@ export class ConnectedAccountsPage implements OnInit {
 
   selectWalletAccount(walletAccount: WalletAccount): void {
     this.walletAccountsModal.dismiss();
-    this.currentWalletAccountGroup.wallet_account = walletAccount;
+    this.currentWrappedWalletAccount.wallet_account = walletAccount;
   }
 
   async initConnection(): Promise<void> {
@@ -200,21 +201,20 @@ export class ConnectedAccountsPage implements OnInit {
       }
     });
 
-    await this.getWalletAccountGroup();
+    await this.getWrappedWalletAccount();
   }
 
   async connect(): Promise<void> {
-    const connectedWalletAccounts: ConnectedWalletAccounts = new ConnectedWalletAccounts();
+    const web3WalletAccounts: Web3WalletAccounts = new Web3WalletAccounts();
 
     if (this.paramsOrigin) {
-      for (const wallet of this.checkedWalletAccountGroups) {
-        connectedWalletAccounts.origin = this.paramsOrigin;
-        connectedWalletAccounts.approved = true;
-        connectedWalletAccounts.wallet_accounts.push(wallet.wallet_account);
+      for (const wallet of this.checkedWrappedWalletAccounts) {
+        web3WalletAccounts.origin = this.paramsOrigin;
+        web3WalletAccounts.wallet_accounts.push(wallet.wallet_account);
       }
     } else {
       const toast = await this.toastController.create({
-        message: 'No origin provided.',
+        message: 'No origin or origin URL provided.',
         color: 'danger',
         duration: 1500,
         position: 'top',
@@ -227,22 +227,18 @@ export class ConnectedAccountsPage implements OnInit {
     if (this.environmentService.isChromeExtension()) {
       chrome.runtime.sendMessage(
         {
-          method: "connection-approval",
-          payload: {
-            origin: this.paramsOrigin,
-            selected_accounts: connectedWalletAccounts,
-            approved: true,
-          },
+          method: "connect-web3-accounts",
+          payload: web3WalletAccounts,
         },
         (response) => {
-          console.log('Approval response sent', response);
+          console.log('Connection response sent', response);
         }
       );
     } else {
       if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
         this.router.navigate(['/xterium/balances']);
 
-        const finalUrl = `${this.paramsCallbackUrl}?selectedAccounts=${encodeURIComponent(JSON.stringify(connectedWalletAccounts.wallet_accounts))}`;
+        const finalUrl = `${this.paramsCallbackUrl}?selectedAccounts=${encodeURIComponent(JSON.stringify(web3WalletAccounts.wallet_accounts))}`;
         window.open(finalUrl, '_blank');
       } else {
         const toast = await this.toastController.create({
@@ -259,6 +255,17 @@ export class ConnectedAccountsPage implements OnInit {
   }
 
   reject(): void {
+    if (this.environmentService.isChromeExtension()) {
+      chrome.runtime.sendMessage(
+        {
+          method: "reject-connection"
+        },
+        (response) => {
+          console.log('Rejection response sent', response);
+        }
+      );
+    }
+
     this.router.navigate(['/xterium/balances']);
   }
 

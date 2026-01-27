@@ -1,17 +1,16 @@
 import { Wallet } from "./wallet.model";
 
 export class WalletAccount {
+  address: string = "";
   name: string = "";
   wallet: Wallet | null = null;
 }
 
-export class WalletAccountGroup {
-  address: string = "";
+export class WrappedWalletAccount {
   wallet_account: WalletAccount = new WalletAccount();
 }
 
-export class ConnectedWalletAccounts {
+export class Web3WalletAccounts {
   origin: string = "";
-  approved: boolean = false;
   wallet_accounts: WalletAccount[] = [];
 }

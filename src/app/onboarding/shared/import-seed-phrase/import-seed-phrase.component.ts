@@ -31,11 +31,9 @@ import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet } from 'src/models/wallet.model'
 
-import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
-import { ChainsService } from 'src/app/api/chains/chains.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
@@ -72,11 +70,9 @@ export class ImportSeedPhraseComponent implements OnInit {
   @Output() onImportedWallet = new EventEmitter<Wallet>();
 
   constructor(
-    private environmentService: EnvironmentService,
     private utilsService: UtilsService,
     private onboardingService: OnboardingService,
     private encryptionService: EncryptionService,
-    private chainsService: ChainsService,
     private walletsService: WalletsService,
     private toastController: ToastController
   ) {
@@ -86,8 +82,6 @@ export class ImportSeedPhraseComponent implements OnInit {
       close
     });
   }
-
-  isChromeExtension = false;
 
   walletName: string = '';
   walletMnemonicPhrase: string[] = new Array(12).fill('');
@@ -224,24 +218,6 @@ export class ImportSeedPhraseComponent implements OnInit {
         await this.walletsService.setCurrentWallet(newId);
       }
 
-      if (this.isChromeExtension) {
-        const newlySavedWallets = await this.walletsService.getAllWallets();
-        const encodedWallets = await Promise.all(
-          newlySavedWallets.map(async (wallet) => {
-            const publicKeyU8a = new Uint8Array(
-              wallet.public_key.split(",").map((byte) => Number(byte.trim()))
-            );
-
-            return {
-              address: await this.utilsService.encodePublicAddressByChainFormat(publicKeyU8a, 0),
-              name: wallet.name,
-            };
-          })
-        );
-
-        chrome.storage.local.set({ accounts: encodedWallets });
-      }
-
       const onboarding = await this.onboardingService.get();
       if (onboarding) {
         if (onboarding.step3_created_wallet === null && onboarding.step4_completed == false) {
@@ -274,7 +250,5 @@ export class ImportSeedPhraseComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.isChromeExtension = this.environmentService.isChromeExtension();
-  }
+  ngOnInit() { }
 }

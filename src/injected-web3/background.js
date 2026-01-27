@@ -1,256 +1,313 @@
 const FIXED_WINDOW_WIDTH = 450;
 const FIXED_WINDOW_HEIGHT = 600;
 
-let approvalWindowId = null;
+async function windowExists(windowId) {
+  if (!windowId) return false;
+  try {
+    await chrome.windows.get(windowId);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-function createApprovalPopup(origin) {
-  chrome.windows.create(
-    {
-      url: chrome.runtime.getURL(
-        `index.html#/web3/approval?origin=${encodeURIComponent(origin)}`,
-      ),
-      type: "popup",
-      width: FIXED_WINDOW_WIDTH,
-      height: FIXED_WINDOW_HEIGHT,
-    },
-    (newWindow) => {
-      approvalWindowId = newWindow.id;
+let connectWeb3AccountsWindowId = null;
 
-      chrome.windows.onRemoved.addListener((closedId) => {
-        if (closedId === approvalWindowId) {
-          approvalWindowId = null;
-        }
-      });
-    },
-  );
+async function createOrFocusConnectAccountsPopup(origin) {
+  if (await windowExists(connectWeb3AccountsWindowId)) {
+    chrome.windows.update(connectWeb3AccountsWindowId, { focused: true });
+    return;
+  }
+
+  const newWindow = await chrome.windows.create({
+    url: chrome.runtime.getURL(
+      `index.html#/web3/connected-accounts?origin=${encodeURIComponent(origin)}`,
+    ),
+    type: "popup",
+    width: FIXED_WINDOW_WIDTH,
+    height: FIXED_WINDOW_HEIGHT,
+  });
+
+  connectWeb3AccountsWindowId = newWindow.id;
 }
 
 let signTransactionWindowId = null;
-let pendingSignRequest = null;
+let pendingSignTransactionRequest = null;
 
-function createSignTransactionPopup(signingType, payload, walletAddress) {
+async function createOrFocusSignTransactionPopup(
+  signingType,
+  payload,
+  walletAddress,
+) {
+  if (await windowExists(signTransactionWindowId)) {
+    chrome.windows.update(signTransactionWindowId, { focused: true });
+    return;
+  }
+
   const signingTypeParam = encodeURIComponent(signingType);
   const payloadParam = encodeURIComponent(JSON.stringify(payload));
   const addressParam = encodeURIComponent(walletAddress);
 
-  chrome.windows.create(
-    {
-      url: chrome.runtime.getURL(
-        `index.html#/web3/sign-transaction?signingType=${signingTypeParam}&payload=${payloadParam}&walletAddress=${addressParam}`,
-      ),
-      type: "popup",
-      width: FIXED_WINDOW_WIDTH,
-      height: FIXED_WINDOW_HEIGHT,
-    },
-    (newWindow) => {
-      signTransactionWindowId = newWindow.id;
+  const newWindow = await chrome.windows.create({
+    url: chrome.runtime.getURL(
+      `index.html#/web3/sign-transaction?signingType=${signingTypeParam}&payload=${payloadParam}&walletAddress=${addressParam}`,
+    ),
+    type: "popup",
+    width: FIXED_WINDOW_WIDTH,
+    height: FIXED_WINDOW_HEIGHT,
+  });
 
-      chrome.windows.onRemoved.addListener((closedId) => {
-        if (closedId === signTransactionWindowId) {
-          signTransactionWindowId = null;
+  signTransactionWindowId = newWindow.id;
+}
 
-          // User closed window without signing - reject the pending request
-          if (pendingSignRequest) {
-            pendingSignRequest.sendResponse({
-              error: "User cancelled signing",
-            });
-            pendingSignRequest = null;
-          }
-        }
+chrome.windows.onRemoved.addListener((closedId) => {
+  if (closedId === connectWeb3AccountsWindowId) {
+    connectWeb3AccountsWindowId = null;
+  }
+
+  if (closedId === signTransactionWindowId) {
+    signTransactionWindowId = null;
+
+    if (pendingSignTransactionRequest) {
+      pendingSignTransactionRequest.sendResponse({
+        error: "User cancelled signing",
       });
-    },
+      pendingSignTransactionRequest = null;
+    }
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  handleMessage(message, sender, sendResponse);
+  return true;
+});
+
+async function handleMessage(message, sender, sendResponse) {
+  try {
+    console.log("[Xterium Background] Received message:", message.method);
+
+    switch (message.method) {
+      case "request-web3-connection":
+        await handleRequestWeb3Connection(message, sendResponse);
+        break;
+
+      case "connect-web3-accounts":
+        await handleConnectWeb3Accounts(message, sendResponse);
+        break;
+
+      case "reject-connection":
+        await handleRejectConnection(sendResponse);
+        break;
+
+      case "get-web3-accounts":
+        await handleGetWeb3Accounts(message, sendResponse);
+        break;
+
+      case "sign-payload":
+        await handleSignPayload(message, sendResponse);
+        break;
+
+      case "sign-raw":
+        await handleSignRaw(message, sendResponse);
+        break;
+
+      case "signed-transaction":
+        handleSignedTransaction(message);
+        break;
+
+      case "cancel-signing":
+        handleCancelSigning();
+        break;
+
+      default:
+        console.warn("[Xterium Background] Unknown method:", message.method);
+        sendResponse({ error: "Unknown method" });
+    }
+  } catch (error) {
+    console.error("[Xterium Background] Error handling message:", error);
+    sendResponse({ error: error.message });
+  }
+}
+
+async function handleRequestWeb3Connection(message, sendResponse) {
+  const origin = message.payload?.origin;
+
+  if (!origin) {
+    sendResponse({ error: "Missing origin" });
+    return;
+  }
+
+  const result = await chrome.storage.local.get(["web3_accounts"]);
+  const web3Accounts = result.web3_accounts || [];
+
+  const existingConnection = web3Accounts.find((o) => o.origin === origin);
+
+  if (existingConnection) {
+    const accounts = existingConnection.wallet_accounts.map((account) => ({
+      address: account.address,
+      name: account.name,
+      type: "sr25519",
+    }));
+
+    console.log("[Xterium] Found existing connection:", origin);
+    sendResponse(accounts);
+    return;
+  }
+
+  await createOrFocusConnectAccountsPopup(origin);
+}
+
+async function handleConnectWeb3Accounts(message, sendResponse) {
+  const origin = message.payload?.origin;
+
+  if (!origin) {
+    sendResponse({ error: "Missing origin" });
+    return;
+  }
+
+  const result = await chrome.storage.local.get(["web3_accounts"]);
+  const web3Accounts = result.web3_accounts || [];
+
+  const updatedAccounts = [...web3Accounts, message.payload];
+
+  await chrome.storage.local.set({ web3_accounts: updatedAccounts });
+
+  const connectedAccount = updatedAccounts.find((o) => o.origin === origin);
+
+  if (connectedAccount) {
+    const accounts = connectedAccount.wallet_accounts.map((account) => ({
+      address: account.address,
+      name: account.name,
+      type: "sr25519",
+    }));
+
+    sendResponse(accounts);
+  } else {
+    sendResponse({ error: "Failed to connect accounts" });
+  }
+
+  if (connectWeb3AccountsWindowId) {
+    try {
+      await chrome.windows.remove(connectWeb3AccountsWindowId);
+    } catch (error) {
+      console.warn("[Xterium] Failed to close window:", error);
+    }
+    connectWeb3AccountsWindowId = null;
+  }
+}
+
+async function handleRejectConnection(sendResponse) {
+  if (connectWeb3AccountsWindowId) {
+    try {
+      await chrome.windows.remove(connectWeb3AccountsWindowId);
+    } catch (error) {
+      console.warn("[Xterium] Failed to close window:", error);
+    }
+    connectWeb3AccountsWindowId = null;
+  }
+
+  sendResponse({ error: "User rejected connection" });
+}
+
+async function handleGetWeb3Accounts(message, sendResponse) {
+  const origin = message.payload?.origin;
+
+  if (!origin) {
+    sendResponse({ error: "Missing origin" });
+    return;
+  }
+
+  const result = await chrome.storage.local.get(["web3_accounts"]);
+  const web3Accounts = result.web3_accounts || [];
+
+  const existingConnection = web3Accounts.find((o) => o.origin === origin);
+
+  if (existingConnection) {
+    const accounts = existingConnection.wallet_accounts.map((account) => ({
+      address: account.address,
+      name: account.name,
+      type: "sr25519",
+    }));
+
+    sendResponse(accounts);
+  } else {
+    sendResponse([]);
+  }
+}
+
+async function handleSignPayload(message, sendResponse) {
+  const payload = message.payload;
+
+  if (!payload || !payload.address) {
+    sendResponse({ error: "Invalid payload" });
+    return;
+  }
+
+  pendingSignTransactionRequest = {
+    sendResponse: sendResponse,
+    payload: payload,
+  };
+
+  await createOrFocusSignTransactionPopup(
+    "signPayload",
+    payload,
+    payload.address,
   );
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.method === "approval") {
-    const origin = sender.origin || sender.url;
+async function handleSignRaw(message, sendResponse) {
+  const payload = message.payload;
 
-    chrome.storage.local.get(["origins"], (results) => {
-      let origins = results.origins || [];
+  if (!payload || !payload.address) {
+    sendResponse({ error: "Invalid payload" });
+    return;
+  }
 
-      const existingOrigin = origins.find((o) => o.origin === origin);
-      if (existingOrigin) {
-        if (existingOrigin.approved) {
-          sendResponse(existingOrigin);
-          return;
+  pendingSignTransactionRequest = {
+    sendResponse: sendResponse,
+    payload: payload,
+  };
+
+  await createOrFocusSignTransactionPopup("signRaw", payload, payload.address);
+}
+
+function handleSignedTransaction(message) {
+  const signedResult = message.payload;
+
+  if (!signedResult) {
+    console.error("[Xterium] Missing signed result");
+    return;
+  }
+
+  if (pendingSignTransactionRequest) {
+    pendingSignTransactionRequest.sendResponse(signedResult);
+    pendingSignTransactionRequest = null;
+
+    setTimeout(async () => {
+      if (signTransactionWindowId) {
+        try {
+          await chrome.windows.remove(signTransactionWindowId);
+        } catch (error) {
+          console.warn("[Xterium] Failed to close signing window:", error);
         }
-      } else {
-        const newOrigin = {
-          origin: origin,
-          approved: false,
-        };
-        origins.push(newOrigin);
-
-        chrome.storage.local.set({ origins: origins });
+        signTransactionWindowId = null;
       }
+    }, 1500);
+  }
+}
 
-      if (approvalWindowId !== null) {
-        chrome.windows.get(approvalWindowId, (win) => {
-          if (chrome.runtime.lastError || !win) {
-            createApprovalPopup(origin);
-          } else {
-            chrome.windows.update(approvalWindowId, { focused: true });
-          }
-        });
-      } else {
-        createApprovalPopup(origin);
-      }
-
-      sendResponse({ origin: origin, approved: false, pending: true });
+function handleCancelSigning() {
+  if (pendingSignTransactionRequest) {
+    pendingSignTransactionRequest.sendResponse({
+      error: "User cancelled signing",
     });
-
-    return true;
+    pendingSignTransactionRequest = null;
   }
 
-  if (message.method === "connection-approval") {
-    const origin = message.payload.origin;
-    const selectedAccounts = message.payload.selected_accounts || [];
-
-    chrome.storage.local.get(["origins"], (results) => {
-      let origins = results.origins || [];
-
-      const existingOrigin = origins.find((o) => o.origin === origin);
-      if (existingOrigin) {
-        existingOrigin.approved = message.payload.approved;
-
-        chrome.storage.local.set({ origins: origins }, () => {
-          if (selectedAccounts.length > 0) {
-            const connectedAccounts = selectedAccounts.map((account) => ({
-              address: account.address,
-              name: account.name,
-              type: "sr25519",
-            }));
-
-            chrome.storage.local.set({ accounts: connectedAccounts });
-          }
-
-          sendResponse(existingOrigin);
-
-          if (approvalWindowId !== null) {
-            chrome.windows.remove(approvalWindowId);
-            approvalWindowId = null;
-          }
-        });
-      } else {
-        sendResponse({ error: "Origin not found" });
-      }
-    });
-
-    return true;
+  if (signTransactionWindowId) {
+    chrome.windows.remove(signTransactionWindowId).catch(console.warn);
+    signTransactionWindowId = null;
   }
+}
 
-  if (message.method === "get-accounts") {
-    chrome.storage.local.get(["accounts"], (results) => {
-      let accounts = [];
-
-      if (results.accounts && results.accounts.length > 0) {
-        accounts = results.accounts.map((account) => ({
-          address: account.address,
-          name: account.name,
-          type: "sr25519",
-        }));
-      }
-
-      sendResponse(accounts);
-    });
-
-    return true;
-  }
-
-  if (message.method === "sign-payload") {
-    const payload = message.payload;
-
-    if (!payload) {
-      sendResponse({ error: "Invalid payload" });
-      return false;
-    }
-
-    pendingSignRequest = {
-      sendResponse: sendResponse,
-      payload: payload,
-    };
-
-    if (signTransactionWindowId !== null) {
-      chrome.windows.get(signTransactionWindowId, (win) => {
-        if (chrome.runtime.lastError || !win) {
-          createSignTransactionPopup("signPayload", payload, payload.address);
-        } else {
-          chrome.windows.update(signTransactionWindowId, { focused: true });
-        }
-      });
-    } else {
-      createSignTransactionPopup("signPayload", payload, payload.address);
-    }
-
-    return true;
-  }
-
-  if (message.method === "sign-raw") {
-    const payload = message.payload;
-
-    if (!payload) {
-      sendResponse({ error: "Invalid payload" });
-      return false;
-    }
-
-    pendingSignRequest = {
-      sendResponse: sendResponse,
-      payload: payload,
-    };
-
-    if (signTransactionWindowId !== null) {
-      chrome.windows.get(signTransactionWindowId, (win) => {
-        if (chrome.runtime.lastError || !win) {
-          createSignTransactionPopup("signRaw", payload, payload.address);
-        } else {
-          chrome.windows.update(signTransactionWindowId, { focused: true });
-        }
-      });
-    } else {
-      createSignTransactionPopup("signRaw", payload, payload.address);
-    }
-
-    return true;
-  }
-
-  if (message.method === "signed-transaction") {
-    const signedResult = message.payload;
-
-    if (!signedResult) {
-      return false;
-    }
-
-    if (pendingSignRequest) {
-      pendingSignRequest.sendResponse(signedResult);
-      pendingSignRequest = null;
-
-      setTimeout(() => {
-        if (signTransactionWindowId !== null) {
-          chrome.windows.remove(signTransactionWindowId);
-          signTransactionWindowId = null;
-        }
-      }, 1500);
-    }
-
-    return false;
-  }
-
-  if (message.method === "cancel-signing") {
-    if (pendingSignRequest) {
-      pendingSignRequest.sendResponse({
-        error: "User cancelled signing",
-      });
-      pendingSignRequest = null;
-    }
-
-    if (signTransactionWindowId !== null) {
-      chrome.windows.remove(signTransactionWindowId);
-      signTransactionWindowId = null;
-    }
-
-    return false;
-  }
-
-  return false;
-});
+console.log("[Xterium Background] Service worker initialized");
