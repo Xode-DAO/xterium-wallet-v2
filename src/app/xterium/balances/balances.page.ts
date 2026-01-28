@@ -34,8 +34,6 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { ChainsService } from 'src/app/api/chains/chains.service';
-import { Chain } from 'src/models/chain.model';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { Wallet } from 'src/models/wallet.model';
 
@@ -59,7 +57,6 @@ import { Wallet } from 'src/models/wallet.model';
     IonModal,
     IonTitle,
     IonToolbar,
-    IonToggle,
     IonChip,
     TokensComponent,
     ReceiveComponent,
@@ -179,7 +176,7 @@ export class BalancesPage implements OnInit {
     this.initSettings();
     this.getCurrentWallet();
 
-    
+
     this.walletsService.currentWalletObservable.subscribe(wallet => {
       if (wallet) {
         this.currentWallet = wallet;

@@ -47,7 +47,7 @@ import { LanguageTranslation } from 'src/models/language-translation.model';
 import { Network } from 'src/models/network.model';
 import { Auth } from 'src/models/auth.model';
 
-
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
@@ -55,7 +55,6 @@ import { BiometricService } from 'src/app/api/biometric/biometric.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
-
 
 @Component({
   selector: 'app-settings',
@@ -93,6 +92,7 @@ export class SettingsComponent implements OnInit {
   @ViewChild('confirmBiometricModal', { read: IonModal }) confirmBiometricModal!: IonModal;
 
   constructor(
+    private environmentService: EnvironmentService,
     private authService: AuthService,
     private settingsService: SettingsService,
     private walletsService: WalletsService,
@@ -115,6 +115,8 @@ export class SettingsComponent implements OnInit {
       linkOutline
     });
   }
+
+  isChromeExtension = false;
 
   selectedCurrency: Currency = new Currency();
   selectedLanguage: LanguageTranslation = new LanguageTranslation();
@@ -173,12 +175,15 @@ export class SettingsComponent implements OnInit {
   async goToConnectAccounts() {
     this.modalController.dismiss();
 
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const url = tabs[0].url;
+    let origin = window.location.origin;
 
-    let origin = '';
-    if (url) {
-      origin = new URL(url).origin;
+    if (this.isChromeExtension) {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const url = tabs[0].url;
+
+      if (url) {
+        origin = new URL(url).origin;
+      }
     }
 
     this.router.navigate(['/web3/connect-accounts'], {
@@ -438,6 +443,8 @@ export class SettingsComponent implements OnInit {
   }
 
   async fetchData(): Promise<void> {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+
     const settings = await this.settingsService.get();
     if (settings) {
       this.selectedCurrency = settings.user_preferences.currency;
