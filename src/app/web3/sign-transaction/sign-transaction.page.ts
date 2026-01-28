@@ -163,6 +163,7 @@ export class SignTransactionPage implements OnInit {
 
   isProcessing: boolean = false;
 
+  paramsIsXterium: boolean = false;
   paramsSigningType: 'signPayload' | 'signRaw' | 'signTransactionHex' | null = null;
   paramsPayload: SignerPayloadJSON | SignerPayloadRaw | HexString | null = null;
   paramsWalletAddress: string | null = null;
@@ -226,6 +227,10 @@ export class SignTransactionPage implements OnInit {
     await this.getCurrentWallet();
 
     this.route.queryParams.subscribe(async params => {
+      if (params['isXterium']) {
+        this.paramsIsXterium = params['isXterium'] === 'true';
+      }
+
       if (params['signingType']) {
         const decodedSigningType = decodeURIComponent(params['signingType']);
         if (decodedSigningType === 'signPayload' || decodedSigningType === 'signRaw' || decodedSigningType === 'signTransactionHex') {
@@ -414,7 +419,7 @@ export class SignTransactionPage implements OnInit {
           }
         }, 500);
       } else {
-        if (this.isChromeExtension) {
+        if (this.isChromeExtension && !this.paramsIsXterium) {
           chrome.runtime.sendMessage({
             method: "signed-transaction",
             payload: signedResult
