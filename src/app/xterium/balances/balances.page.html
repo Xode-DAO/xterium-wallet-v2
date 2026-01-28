@@ -48,13 +48,22 @@
         </ion-col> -->
       </ion-row>
     </ion-grid>
+
     <ion-grid>
       <ion-row>
         <ion-col size="12">
           <div class="token-list-header">
-            <h3 style="font-size: 16px; margin-right: 10px;">{{ 'Tokens' | translate }}</h3>
-            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden"
-              (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle>
+            <h3 style="font-size: 16px;">{{ 'Assets' | translate }}</h3>
+            @if (currentWallet.chain) {
+              <ion-chip color="dark">
+                <img [src]="'./../../assets/images/chains/' + currentWallet.chain.image" [alt]="currentWallet.chain.name" height="20"/>
+                &nbsp; <span style="font-weight: 600; font-size: 16px; white-space: nowrap;">
+                  {{ currentWallet.chain.name }}
+                </span>
+              </ion-chip>
+            }
+            <!-- <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden"
+              (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle> -->
             <!-- <a (click)="openManageTokensModal()">Manage</a> -->
           </div>
         </ion-col>

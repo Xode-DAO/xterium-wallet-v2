@@ -18,6 +18,7 @@ import {
   IonTitle,
   IonToolbar,
   IonToggle,
+  IonChip
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -33,6 +34,10 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { ChainsService } from 'src/app/api/chains/chains.service';
+import { Chain } from 'src/models/chain.model';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { Wallet } from 'src/models/wallet.model';
 
 @Component({
   selector: 'app-balances',
@@ -55,6 +60,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonTitle,
     IonToolbar,
     IonToggle,
+    IonChip,
     TokensComponent,
     ReceiveComponent,
     SendComponent,
@@ -71,6 +77,7 @@ export class BalancesPage implements OnInit {
     private router: Router,
     private settingsService: SettingsService,
     private balancesService: BalancesService,
+    private walletsService: WalletsService,
   ) {
     addIcons({qrCode,send,swapHorizontal,close,card,});
   }
@@ -82,6 +89,8 @@ export class BalancesPage implements OnInit {
   isZeroBalancesHidden: boolean = true;
 
   currencySymbol: string = '';
+
+  currentWallet: Wallet = new Wallet();
 
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;
@@ -159,8 +168,24 @@ export class BalancesPage implements OnInit {
     }
   }
 
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
+    }
+  }
+
   ngOnInit() {
     this.initSettings();
+    this.getCurrentWallet();
+
+    
+    this.walletsService.currentWalletObservable.subscribe(wallet => {
+      if (wallet) {
+        this.currentWallet = wallet;
+      }
+    });
+
     this.settingsService.currentSettingsObservable.subscribe(settings => {
       if (settings) {
         this.initSettings();
