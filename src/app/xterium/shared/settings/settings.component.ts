@@ -170,9 +170,22 @@ export class SettingsComponent implements OnInit {
     this.languageModal.present();
   }
 
-  async goToConnectedAccounts() {
+  async goToConnectAccounts() {
     this.modalController.dismiss();
-    this.router.navigate(['/web3/connected-accounts']);
+
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const url = tabs[0].url;
+
+    let origin = '';
+    if (url) {
+      origin = new URL(url).origin;
+    }
+
+    this.router.navigate(['/web3/connect-accounts'], {
+      queryParams: {
+        origin: origin
+      }
+    });
   }
 
   async selectCurrency(currency: Currency) {

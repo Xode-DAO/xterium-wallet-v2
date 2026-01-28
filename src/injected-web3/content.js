@@ -40,7 +40,10 @@ window.addEventListener("message", (event) => {
     },
     (response) => {
       if (chrome.runtime.lastError) {
-        console.error("[Xterium] Runtime error:", chrome.runtime.lastError);
+        console.error(
+          "[Xterium Content Script] Runtime error:",
+          chrome.runtime.lastError,
+        );
 
         window.postMessage(
           {

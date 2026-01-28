@@ -9,9 +9,11 @@
         <ion-col size="12">
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
             <h1 style="font-weight: bold">
-              {{ 'Connected Accounts' | translate }}
+              {{ 'Connect Accounts' | translate }}
             </h1>
-            <span style="font-size: 15px;">{{ 'Your connected accounts' | translate }}</span>
+            <span style="font-size: 15px;">
+              {{ 'Select one or more accounts to connect to this application.' | translate }}
+            </span>
           </div>
         </ion-col>
       </ion-row>
@@ -20,7 +22,7 @@
           <div class="ion-text-center">
             <ion-chip [color]="'success'">
               <ion-icon [name]="'globe-outline'"></ion-icon>
-              <ion-label>https://dapp.miming.net</ion-label>
+              <ion-label>{{ paramsOrigin }}</ion-label>
             </ion-chip>
           </div>
         </ion-col>
@@ -31,7 +33,7 @@
           @for (wrappedAccount of wrappedWalletAccounts; track wrappedAccount) {
           <ion-list>
             <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(wrappedAccount, $event)">
-              <ion-checkbox slot="start" class="wallet-checkbox" [checked]="isAccountSelected(wrappedAccount)"
+              <ion-checkbox slot="start" class="wallet-checkbox" [checked]="wrappedAccount.checked"
                 (click)="$event.stopPropagation()" (ionChange)="toggleCheckbox(wrappedAccount, $event)"></ion-checkbox>
               <ion-label>
                 <div style="margin: 5px 5px;">
@@ -83,12 +85,7 @@
         <ion-col size="6">
           <div class="primary-button-wrapper">
             <ion-button expand="block" size="default" class="ion-margin-bottom danger-button" (click)="reject()">
-              @if (checkedWrappedWalletAccounts.length === 0) {
               {{ 'Close' | translate }}
-              }
-              @else {
-              Reject
-              }
             </ion-button>
           </div>
         </ion-col>

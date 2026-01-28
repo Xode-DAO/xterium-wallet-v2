@@ -2,7 +2,6 @@
   "use strict";
 
   if (window.injectedWeb3?.["xterium"]) {
-    console.warn("[Xterium] Already injected");
     return;
   }
 
@@ -71,24 +70,15 @@
 
         return {
           accounts: {
-            get: async (anyType) => {
-              console.log("[Xterium] Fetching accounts with anyType:", anyType);
-
+            get: async () => {
               const accounts = await postAndListen({
                 method: "get-web3-accounts",
-                payload: {
-                  origin: origin,
-                  anyType: anyType,
-                },
               });
 
               return accounts || [];
             },
             subscribe: (cb) => {
               // TODO: Implement subscription
-              console.warn(
-                "[Xterium] Account subscription not implemented yet",
-              );
               return () => {};
             },
           },
@@ -120,7 +110,6 @@
           },
         };
       } catch (error) {
-        console.error("[Xterium] Enable failed:", error);
         throw error;
       }
     },
@@ -131,6 +120,4 @@
       detail: { version: "2.3.0" },
     }),
   );
-
-  console.log("[Xterium] Wallet injected successfully");
 })();

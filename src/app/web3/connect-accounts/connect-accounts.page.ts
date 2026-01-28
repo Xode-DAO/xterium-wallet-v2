@@ -42,9 +42,9 @@ import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-connected-accounts',
-  templateUrl: './connected-accounts.page.html',
-  styleUrls: ['./connected-accounts.page.scss'],
+  selector: 'app-connect-accounts',
+  templateUrl: './connect-accounts.page.html',
+  styleUrls: ['./connect-accounts.page.scss'],
   standalone: true,
   imports: [
     RouterModule,
@@ -71,7 +71,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     TranslatePipe
   ]
 })
-export class ConnectedAccountsPage implements OnInit {
+export class ConnectAccountsPage implements OnInit {
   @ViewChild('walletAccountsModal', { read: IonModal }) walletAccountsModal!: IonModal;
 
   constructor(
@@ -107,16 +107,50 @@ export class ConnectedAccountsPage implements OnInit {
 
         const existingAccount = this.wrappedWalletAccounts.find(acc => acc.wallet_account.address === convertedAddress);
         if (!existingAccount) {
+
+          let isChecked = false;
+          if (this.environmentService.isChromeExtension()) {
+            isChecked = await this.isWeb3AccountConnected(convertedAddress);
+          }
+
           this.wrappedWalletAccounts.push({
+            checked: isChecked,
             wallet_account: {
               address: convertedAddress,
               name: wallet.name,
               wallet: wallet
             }
           });
+
+          if (isChecked) {
+            this.checkedWrappedWalletAccounts.push({
+              checked: isChecked,
+              wallet_account: {
+                address: convertedAddress,
+                name: wallet.name,
+                wallet: wallet
+              }
+            });
+          }
         }
       }
     }
+  }
+
+  async isWeb3AccountConnected(address: string): Promise<boolean> {
+    const result: any = await chrome.storage.local.get(["web3_accounts"]);
+    const web3Accounts = result.web3_accounts || [];
+
+    console.log("Web3 Accounts from storage:", web3Accounts);
+
+    const existingConnection = web3Accounts.find((o: any) =>
+      o.origin === this.paramsOrigin && o.wallet_accounts.some((wa: any) => wa.address === address)
+    );
+    if (existingConnection) {
+      return true;
+    }
+
+    return false;
   }
 
   async encodePublicAddressByDefaultFormat(publicKey: string): Promise<string> {
@@ -133,12 +167,14 @@ export class ConnectedAccountsPage implements OnInit {
 
     if (event && event.detail && typeof event.detail.checked !== 'undefined') {
       isChecked = event.detail.checked;
+      wrappedAccount.checked = isChecked;
     } else {
       const currentlySelected = this.checkedWrappedWalletAccounts.some(
         acc => acc.wallet_account.address === wrappedAccount.wallet_account.address
       );
 
       isChecked = !currentlySelected;
+      wrappedAccount.checked = isChecked;
     }
 
     if (isChecked) {
@@ -150,10 +186,6 @@ export class ConnectedAccountsPage implements OnInit {
         acc => acc.wallet_account.address !== wrappedAccount.wallet_account.address
       );
     }
-  }
-
-  isAccountSelected(wrappedAccount: WrappedWalletAccount): boolean {
-    return this.checkedWrappedWalletAccounts.some(acc => acc.wallet_account.address === wrappedAccount.wallet_account.address);
   }
 
   truncateAddress(address: string): string {
@@ -225,6 +257,22 @@ export class ConnectedAccountsPage implements OnInit {
     }
 
     if (this.environmentService.isChromeExtension()) {
+      let originsResult: any = await chrome.storage.local.get(["origins"]);
+      const origins = originsResult.origins || [];
+
+      const existingOrigin = origins.find((o: any) => o.origin === this.paramsOrigin);
+      if (!existingOrigin) {
+        const toast = await this.toastController.create({
+          message: 'Origin not found in storage.',
+          color: 'danger',
+          duration: 1500,
+          position: 'top',
+        });
+
+        await toast.present();
+        return;
+      }
+
       chrome.runtime.sendMessage(
         {
           method: "connect-web3-accounts",
@@ -234,6 +282,8 @@ export class ConnectedAccountsPage implements OnInit {
           console.log('Connection response sent', response);
         }
       );
+
+      this.router.navigate(['/xterium/balances']);
     } else {
       if (this.paramsCallbackUrl && this.paramsCallbackUrl !== null) {
         this.router.navigate(['/xterium/balances']);

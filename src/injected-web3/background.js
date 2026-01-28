@@ -21,7 +21,7 @@ async function createOrFocusConnectAccountsPopup(origin) {
 
   const newWindow = await chrome.windows.create({
     url: chrome.runtime.getURL(
-      `index.html#/web3/connected-accounts?origin=${encodeURIComponent(origin)}`,
+      `index.html#/web3/connect-accounts?origin=${encodeURIComponent(origin)}`,
     ),
     type: "popup",
     width: FIXED_WINDOW_WIDTH,
@@ -88,7 +88,7 @@ async function handleMessage(message, sender, sendResponse) {
 
     switch (message.method) {
       case "request-web3-connection":
-        await handleRequestWeb3Connection(message, sendResponse);
+        await handleRequestWeb3Connection(sender, sendResponse);
         break;
 
       case "connect-web3-accounts":
@@ -100,7 +100,7 @@ async function handleMessage(message, sender, sendResponse) {
         break;
 
       case "get-web3-accounts":
-        await handleGetWeb3Accounts(message, sendResponse);
+        await handleGetWeb3Accounts(sender, sendResponse);
         break;
 
       case "sign-payload":
@@ -129,16 +129,30 @@ async function handleMessage(message, sender, sendResponse) {
   }
 }
 
-async function handleRequestWeb3Connection(message, sendResponse) {
-  const origin = message.payload?.origin;
+async function handleRequestWeb3Connection(sender, sendResponse) {
+  const origin = sender.origin;
 
   if (!origin) {
     sendResponse({ error: "Missing origin" });
     return;
   }
 
-  const result = await chrome.storage.local.get(["web3_accounts"]);
-  const web3Accounts = result.web3_accounts || [];
+  let originsResult = await chrome.storage.local.get(["origins"]);
+  const origins = originsResult.origins || [];
+
+  const existingOrigin = origins.find((o) => o.origin === origin);
+  if (!existingOrigin) {
+    const newOrigin = {
+      origin: origin,
+      approved: false,
+    };
+    origins.push(newOrigin);
+
+    await chrome.storage.local.set({ origins: origins });
+  }
+
+  const web3AccountsResult = await chrome.storage.local.get(["web3_accounts"]);
+  const web3Accounts = web3AccountsResult.web3_accounts || [];
 
   const existingConnection = web3Accounts.find((o) => o.origin === origin);
 
@@ -149,7 +163,7 @@ async function handleRequestWeb3Connection(message, sendResponse) {
       type: "sr25519",
     }));
 
-    console.log("[Xterium] Found existing connection:", origin);
+    console.log("[Xterium Background] Found existing connection:", origin);
     sendResponse(accounts);
     return;
   }
@@ -158,21 +172,51 @@ async function handleRequestWeb3Connection(message, sendResponse) {
 }
 
 async function handleConnectWeb3Accounts(message, sendResponse) {
-  const origin = message.payload?.origin;
+  const origin = message.payload.origin;
 
   if (!origin) {
     sendResponse({ error: "Missing origin" });
     return;
   }
 
+  let originsResult = await chrome.storage.local.get(["origins"]);
+  const origins = originsResult.origins || [];
+
+  if (origins.length > 0) {
+    const updatedOrigins = origins.map((o) =>
+      o.origin === origin ? { approved: true, origin } : o,
+    );
+
+    await chrome.storage.local.set({ origins: updatedOrigins });
+  } else {
+    const newOrigin = {
+      origin: origin,
+      approved: true,
+    };
+
+    await chrome.storage.local.set({ origins: [newOrigin] });
+  }
+
   const result = await chrome.storage.local.get(["web3_accounts"]);
   const web3Accounts = result.web3_accounts || [];
 
-  const updatedAccounts = [...web3Accounts, message.payload];
+  let updatedWeb3Accounts = null;
 
-  await chrome.storage.local.set({ web3_accounts: updatedAccounts });
+  if (web3Accounts.length > 0) {
+    const newWeb3Account = web3Accounts.map((o) =>
+      o.origin === origin ? { ...message.payload, origin } : o,
+    );
+    updatedWeb3Accounts = newWeb3Account;
 
-  const connectedAccount = updatedAccounts.find((o) => o.origin === origin);
+    await chrome.storage.local.set({ web3_accounts: newWeb3Account });
+  } else {
+    const newWeb3Account = message.payload;
+    updatedWeb3Accounts = [newWeb3Account];
+
+    await chrome.storage.local.set({ web3_accounts: [newWeb3Account] });
+  }
+
+  const connectedAccount = updatedWeb3Accounts.find((o) => o.origin === origin);
 
   if (connectedAccount) {
     const accounts = connectedAccount.wallet_accounts.map((account) => ({
@@ -190,7 +234,7 @@ async function handleConnectWeb3Accounts(message, sendResponse) {
     try {
       await chrome.windows.remove(connectWeb3AccountsWindowId);
     } catch (error) {
-      console.warn("[Xterium] Failed to close window:", error);
+      console.warn("[Xterium Background] Failed to close window:", error);
     }
     connectWeb3AccountsWindowId = null;
   }
@@ -201,7 +245,7 @@ async function handleRejectConnection(sendResponse) {
     try {
       await chrome.windows.remove(connectWeb3AccountsWindowId);
     } catch (error) {
-      console.warn("[Xterium] Failed to close window:", error);
+      console.warn("[Xterium Background] Failed to close window:", error);
     }
     connectWeb3AccountsWindowId = null;
   }
@@ -209,8 +253,8 @@ async function handleRejectConnection(sendResponse) {
   sendResponse({ error: "User rejected connection" });
 }
 
-async function handleGetWeb3Accounts(message, sendResponse) {
-  const origin = message.payload?.origin;
+async function handleGetWeb3Accounts(sender, sendResponse) {
+  const origin = sender.origin;
 
   if (!origin) {
     sendResponse({ error: "Missing origin" });
@@ -275,7 +319,7 @@ function handleSignedTransaction(message) {
   const signedResult = message.payload;
 
   if (!signedResult) {
-    console.error("[Xterium] Missing signed result");
+    console.error("[Xterium Background] Missing signed result");
     return;
   }
 
@@ -288,7 +332,10 @@ function handleSignedTransaction(message) {
         try {
           await chrome.windows.remove(signTransactionWindowId);
         } catch (error) {
-          console.warn("[Xterium] Failed to close signing window:", error);
+          console.warn(
+            "[Xterium Background] Failed to close signing window:",
+            error,
+          );
         }
         signTransactionWindowId = null;
       }
@@ -305,7 +352,12 @@ function handleCancelSigning() {
   }
 
   if (signTransactionWindowId) {
-    chrome.windows.remove(signTransactionWindowId).catch(console.warn);
+    chrome.windows.remove(signTransactionWindowId).catch((error) => {
+      console.warn(
+        "[Xterium Background] Failed to close signing window:",
+        error,
+      );
+    });
     signTransactionWindowId = null;
   }
 }

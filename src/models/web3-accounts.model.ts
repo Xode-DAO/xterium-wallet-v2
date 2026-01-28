@@ -7,6 +7,7 @@ export class WalletAccount {
 }
 
 export class WrappedWalletAccount {
+  checked: boolean = false;
   wallet_account: WalletAccount = new WalletAccount();
 }
 
