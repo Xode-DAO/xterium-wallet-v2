@@ -148,21 +148,8 @@ export class BalancesPage implements OnInit {
   async initSettings(): Promise<void> {
     const settings = await this.settingsService.get();
     if (settings) {
-      this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
       this.currencySymbol = settings.user_preferences.currency.symbol;
     };
-  }
-
-  async hideZeroBalances(event: any): Promise<void> {
-    const isHidden = event.detail.checked;
-    const settings = await this.settingsService.get();
-
-    if (settings) {
-      settings.user_preferences.hide_zero_balances = isHidden;
-      this.settingsService.set(settings);
-
-      this.refreshCounter++;
-    }
   }
 
   async getCurrentWallet(): Promise<void> {
@@ -176,7 +163,6 @@ export class BalancesPage implements OnInit {
     this.initSettings();
     this.getCurrentWallet();
 
-
     this.walletsService.currentWalletObservable.subscribe(wallet => {
       if (wallet) {
         this.currentWallet = wallet;
@@ -185,7 +171,14 @@ export class BalancesPage implements OnInit {
 
     this.settingsService.currentSettingsObservable.subscribe(settings => {
       if (settings) {
-        this.initSettings();
+        const newValue = settings.user_preferences.hide_zero_balances;
+        if (this.isZeroBalancesHidden !== newValue) {
+          this.isZeroBalancesHidden = newValue;
+
+          this.refreshCounter++;
+        }
+
+        this.currencySymbol = settings.user_preferences.currency.symbol;
       }
     });
   }

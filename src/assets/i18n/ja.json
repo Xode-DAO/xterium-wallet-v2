@@ -177,8 +177,10 @@
   "Set a Biometric to secure your wallets after enabling biometric authentication.": "生体認証を有効にした後、ウォレットを保護するために生体認証を設定してください。",
   "Setup Biometrics": "生体認証を設定",
   "Enable Biometric": "生体認証を有効にする",
-  "Connected Accounts": "接続されているアカウント",
+  "Connect Accounts": "アカウントを接続",
   "No wallets available to connect.": "接続可能なウォレットはありません。",
   "Connect": "接続",
-  "Close": "閉じる"
+  "Close": "閉じる",
+  "Assets": "資産",
+  "Select one or more accounts to connect to this application.": "このアプリケーションに接続するアカウントを1つ以上選択してください。"
 }

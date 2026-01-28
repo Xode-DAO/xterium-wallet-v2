@@ -32,7 +32,8 @@ import {
   languageOutline,
   fingerPrintOutline,
   codeOutline,
-  linkOutline
+  linkOutline,
+  eyeOffOutline
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -112,7 +113,8 @@ export class SettingsComponent implements OnInit {
       languageOutline,
       fingerPrintOutline,
       codeOutline,
-      linkOutline
+      linkOutline,
+      eyeOffOutline
     });
   }
 
@@ -121,6 +123,8 @@ export class SettingsComponent implements OnInit {
   selectedCurrency: Currency = new Currency();
   selectedLanguage: LanguageTranslation = new LanguageTranslation();
   code: string = '';
+
+  isZeroBalancesHidden: boolean = false;
 
   isTestnetEnabled: boolean = false;
 
@@ -220,6 +224,18 @@ export class SettingsComponent implements OnInit {
 
     this.selectedLanguage = language;
     this.languageModal.dismiss();
+  }
+
+  async hideZeroBalances(event: any): Promise<void> {
+    const isHidden = event.detail.checked;
+    const settings = await this.settingsService.get();
+
+    if (settings) {
+      settings.user_preferences.hide_zero_balances = isHidden;
+      await this.settingsService.set(settings);
+
+      this.isZeroBalancesHidden = isHidden;
+    }
   }
 
   async enableTestnet(event: any): Promise<void> {
@@ -449,6 +465,7 @@ export class SettingsComponent implements OnInit {
     if (settings) {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
+      this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
 
       await this.getCurrentAuth();
