@@ -202,22 +202,30 @@ async function handleConnectWeb3Accounts(message, sendResponse) {
 
   let updatedWeb3Accounts = null;
 
-  if (web3Accounts.length > 0) {
-    const newWeb3Account = web3Accounts.map((o) =>
-      o.origin === origin ? { ...message.payload, origin } : o,
-    );
-    updatedWeb3Accounts = newWeb3Account;
-
-    await chrome.storage.local.set({ web3_accounts: newWeb3Account });
-  } else {
+  const existingWeb3Accounts = web3Accounts.find((o) => o.origin === origin);
+  if (!existingWeb3Accounts) {
     const newWeb3Account = message.payload;
-    updatedWeb3Accounts = [newWeb3Account];
+    web3Accounts.push(newWeb3Account);
 
-    await chrome.storage.local.set({ web3_accounts: [newWeb3Account] });
+    await chrome.storage.local.set({ web3_accounts: web3Accounts });
+    updatedWeb3Accounts = web3Accounts;
+  } else {
+    if (web3Accounts.length > 0) {
+      const newWeb3Account = web3Accounts.map((o) =>
+        o.origin === origin ? { ...message.payload, origin } : o,
+      );
+
+      await chrome.storage.local.set({ web3_accounts: newWeb3Account });
+      updatedWeb3Accounts = newWeb3Account;
+    } else {
+      const newWeb3Account = message.payload;
+
+      await chrome.storage.local.set({ web3_accounts: [newWeb3Account] });
+      updatedWeb3Accounts = [newWeb3Account];
+    }
   }
 
   const connectedAccount = updatedWeb3Accounts.find((o) => o.origin === origin);
-
   if (connectedAccount) {
     const accounts = connectedAccount.wallet_accounts.map((account) => ({
       address: account.address,
