@@ -118,6 +118,7 @@ export class PolarisService extends PolkadotJsService {
               quantity: Number(account.data.free),
               price: 0,
               amount: 0,
+              status: "",
             });
           } else {
             const assetId = token.reference_id;
@@ -137,6 +138,7 @@ export class PolarisService extends PolkadotJsService {
                 quantity: balance,
                 price: 0,
                 amount: 0,
+                status: account?.status || "",
               });
             }
           }
@@ -187,6 +189,7 @@ export class PolarisService extends PolkadotJsService {
                   quantity: balance,
                   price: 0,
                   amount: 0,
+                  status: account?.status || "",
                 };
               } else {
                 return null;
@@ -261,6 +264,7 @@ export class PolarisService extends PolkadotJsService {
         quantity: Number(account.data.free),
         price: 0,
         amount: 0,
+        status: "",
       };
     } else {
       const assetId = token.reference_id;
@@ -274,6 +278,7 @@ export class PolarisService extends PolkadotJsService {
           quantity: Number(account?.balance || 0),
           price: 0,
           amount: 0,
+          status: account?.status || "",
         };
       }
     }
@@ -295,6 +300,7 @@ export class PolarisService extends PolkadotJsService {
               quantity: Number(account.data.free),
               price: 0,
               amount: 0,
+              status: "",
             };
 
             subscriber.next(newBalance);
@@ -311,6 +317,7 @@ export class PolarisService extends PolkadotJsService {
               quantity: Number(account.balance),
               price: 0,
               amount: 0,
+              status: account?.status || "",
             };
 
             subscriber.next(newBalance);

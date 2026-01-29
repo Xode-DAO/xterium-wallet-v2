@@ -82,7 +82,23 @@
             <ion-item detail="false" lines="none">
               <ion-avatar slot="start">
                 <img [src]="balance.token.image" />
+                @if (balance.status === 'Frozen') {
+                <ion-icon 
+                  name="snow-outline" 
+                  style="
+                    position: absolute;
+                    bottom: 18px;
+                    right: 320px;
+                    font-size: 14px;
+                    color: white;
+                    background: var(--ion-color-secondary);
+                    border-radius: 50%;
+                    padding: 2px;
+                  ">
+                </ion-icon>
+                }
               </ion-avatar>
+              
               <ion-label>
                 <h2>{{ balance.token.name }}</h2>
                 <p>

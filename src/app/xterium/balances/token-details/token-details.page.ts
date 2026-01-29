@@ -35,7 +35,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, qrCode, send, swapHorizontal, card, close } from 'ionicons/icons';
+import { arrowBackOutline, qrCode, send, swapHorizontal, card, close, snowOutline } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
@@ -111,7 +111,15 @@ export class TokenDetailsPage implements OnInit {
     private settingsService: SettingsService,
     private toastController: ToastController,
   ) {
-    addIcons({arrowBackOutline,qrCode,send,swapHorizontal,close,card,});
+    addIcons({
+      arrowBackOutline,
+      qrCode,
+      send,
+      swapHorizontal,
+      close,
+      card, 
+      snowOutline
+    });
   }
 
   private pjsApiMap: Map<number, ApiPromise> = new Map();

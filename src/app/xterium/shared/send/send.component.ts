@@ -329,9 +329,21 @@ export class SendComponent implements OnInit {
   }
 
   async send(): Promise<void> {
-    if (this.recipientAddress === "" || this.formattedAmountValue === "0" || this.formattedAmountValue === "0.00") {
+    if (this.recipientAddress === "") {
       const toast = await this.toastController.create({
         message: 'Recipient address is required!',
+        color: 'warning',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
+    if (this.formattedAmountValue === "0" || this.formattedAmountValue === "0.00") {
+      const toast = await this.toastController.create({
+        message: 'Amount is required.',
         color: 'warning',
         duration: 1500,
         position: 'top',
