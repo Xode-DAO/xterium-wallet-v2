@@ -41,7 +41,7 @@
     @for (chain of chainsById[selectedChain.id]; track chain) {
     @if (chain.name !== 'All Chains') {
     <div class="chain-label">
-      @if (selectedChain.id === 0) {
+      @if (selectedChain.id === 1) {
       <ion-chip [color]="'dark'">
         <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
         &nbsp; {{ chain.name }}

@@ -131,8 +131,8 @@ export class WalletsComponent implements OnInit {
   async loadChainByName(): Promise<void> {
     this.chainsById = {};
 
-    if (this.selectedChain.id === 0) {
-      this.chainsById[0] = this.chains;
+    if (this.selectedChain.id === 1) {
+      this.chainsById[1] = this.chains;
     } else {
       const mapped = this.chains.filter(chain => chain.id === this.selectedChain.id);
       this.chainsById[this.selectedChain.id] = mapped;
@@ -184,9 +184,9 @@ export class WalletsComponent implements OnInit {
           }
         }
 
-        const network = this.chains.find(c => c.id === chain_id)?.network;
+        const chain_type = this.chains.find(c => c.id === chain_id)?.chain_type;
         const relatedWallets = this.wallets.filter(w => {
-          return w.chain.network === network &&
+          return w.chain.chain_type === chain_type &&
             w.chain.id !== chain_id &&
             !rawPublicKeys.has(w.public_key);
         });
@@ -246,12 +246,14 @@ export class WalletsComponent implements OnInit {
 
     if (matchedChain) {
       this.selectedChain = matchedChain;
-
-      await this.loadChainByName();
-      await this.loadWalletsByChain();
-
-      this.onFilteredChain.emit(matchedChain);
+    } else {
+      this.selectedChain = this.chains[0];
     }
+
+    await this.loadChainByName();
+    await this.loadWalletsByChain();
+
+    this.onFilteredChain.emit(matchedChain);
   }
 
   truncateAddress(address: string): string {

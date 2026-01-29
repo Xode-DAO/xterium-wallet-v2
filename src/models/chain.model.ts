@@ -1,5 +1,9 @@
 import { Network } from "./network.model";
 
+export enum ChainType {
+  Substrate = 'Substrate',
+}
+
 export enum ScannerType {
   Subscan = 'Subscan',
   Subsquid = 'Subsquid',
@@ -20,6 +24,7 @@ export class Chain {
   chain_id: number = 3417;
   unit: string = "XON";
   decimal: number = 12;
+  chain_type: ChainType = ChainType.Substrate;
   address_prefix: string | number | null = 280;
   image: string = "src/assets/images/networks/xode.png";
   scanner?: Scanner = {
