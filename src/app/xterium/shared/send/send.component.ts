@@ -394,8 +394,6 @@ export class SendComponent implements OnInit {
       return;
     }
 
-    console.log('Transfer Transaction:', transferTransaction.toHuman());
-
     const payload = JSON.stringify(await this.utilsService.createSignerPayload(pjsApi, transferTransaction, this.currentWalletPublicAddress));
     this.router.navigate(['/web3/sign-transaction'], {
       queryParams: {

@@ -15,6 +15,7 @@ export class ChainsService {
       name: "All Chains",
       description: "Includes every supported chains.",
       chain_id: 0,
+      genesis_hash: "0x-all-networks-genesis-hash-placeholder",
       unit: "DOT",
       decimal: 10,
       chain_type: ChainType.Substrate,
@@ -28,6 +29,7 @@ export class ChainsService {
       name: "Polkadot",
       description: "The heart of Web3, connecting multiple specialized blockchains into a unified network.",
       chain_id: 0,
+      genesis_hash: "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3",
       unit: "DOT",
       decimal: 10,
       chain_type: ChainType.Substrate,
@@ -41,6 +43,7 @@ export class ChainsService {
       name: "Polkadot Hub",
       description: "Manage your assets easily on the AssetHub parachain.",
       chain_id: 1000,
+      genesis_hash: "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
       unit: "DOT",
       decimal: 10,
       chain_type: ChainType.Substrate,
@@ -58,6 +61,7 @@ export class ChainsService {
       name: "Xode",
       description: "Experience smooth and fast transactions with Xode.",
       chain_id: 3417,
+      genesis_hash: "0xb2985e778bb748c70e450dcc084cc7da79fe742cc23d3b040abd7028187de69c",
       unit: "XON",
       decimal: 12,
       chain_type: ChainType.Substrate,
@@ -75,6 +79,7 @@ export class ChainsService {
       name: "Hydration",
       description: "Participate in decentralized trading and liquidity on the Hydration network.",
       chain_id: 2034,
+      genesis_hash: "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d",
       unit: "HDX",
       decimal: 12,
       chain_type: ChainType.Substrate,
@@ -92,6 +97,7 @@ export class ChainsService {
       name: "Paseo",
       description: "Test and experience Xode on the Paseo test network.",
       chain_id: 5109,
+      genesis_hash: "0x190115504f77174ba6d0a7adfb848e8c77dc4240dd01ef7abcf90ccf5f4138fe",
       unit: "XON",
       decimal: 12,
       chain_type: ChainType.Substrate,
@@ -105,7 +111,8 @@ export class ChainsService {
       name: "Polaris",
       description: "Xode's devnet parachain on Rococo for testing purposes.",
       chain_id: 2000,
-      unit: "POL",
+      genesis_hash: "0x9cd4eb3af767b8ab4929576a0773ee37ab997fdb159e2e470e156f7388f21c78",
+      unit: "XON",
       decimal: 12,
       chain_type: ChainType.Substrate,
       address_prefix: 280,
@@ -124,15 +131,15 @@ export class ChainsService {
     return this.chains.find(chain => chain.id === id);
   }
 
+  getChainByGenesisHash(genesisHash: string): Chain | undefined {
+    return this.chains.find(chain => chain.genesis_hash === genesisHash);
+  }
+
   getChainsByNetwork(network: Network): Chain[] {
     return this.chains.filter(chain => chain.network === network);
   }
 
   getChainByChainId(chainId: number): Chain | undefined {
     return this.chains.find(chain => chain.chain_id === chainId);
-  }
-
-  getChainByName(name: string): Chain | undefined {
-    return this.chains.find(chain => chain.name.toLowerCase() === name.toLowerCase());
   }
 }

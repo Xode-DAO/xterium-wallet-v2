@@ -187,8 +187,8 @@ export class TokenDetailsPage implements OnInit {
     this.router.navigate(['/xterium/cash']);
   }
 
-  getChainName(chainId: number): string {
-    const chain = this.chainsService.getChainById(chainId);
+  getChainName(genesisHash: string): string {
+    const chain = this.chainsService.getChainByGenesisHash(genesisHash);
     if (!chain) {
       return "";
     }

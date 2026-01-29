@@ -49,6 +49,7 @@ import {
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
 import { Wallet, WalletSigner } from 'src/models/wallet.model';
+import { SignerPayloadTransactionHex } from 'src/models/web3-transactions.model';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
@@ -165,8 +166,7 @@ export class SignTransactionPage implements OnInit {
 
   paramsIsXterium: boolean = false;
   paramsSigningType: 'signPayload' | 'signRaw' | 'signTransactionHex' | null = null;
-  paramsPayload: SignerPayloadJSON | SignerPayloadRaw | HexString | null = null;
-  paramsWalletAddress: string | null = null;
+  paramsPayload: SignerPayloadJSON | SignerPayloadRaw | SignerPayloadTransactionHex | null = null;
   paramsCallbackUrl: string | null = null;
 
   postSignature: string = '';
@@ -190,18 +190,23 @@ export class SignTransactionPage implements OnInit {
     }
   }
 
-  async replaceCurrentWallet(address: string): Promise<void> {
+  async replaceCurrentWallet(address: string, genesisHash: HexString): Promise<void> {
     const decodedAddress = decodeURIComponent(address);
 
-    const wallets = await this.walletsService.getAllWallets();
-    const walletsPublicAddresse = await Promise.all(
-      wallets.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
-    );
+    const allWallets = await this.walletsService.getAllWallets();
+    if (allWallets.length > 0) {
+      const walletsByChain = allWallets.filter(wallet => wallet.chain.genesis_hash === genesisHash);
+      if (walletsByChain.length > 0) {
+        const walletsPublicAddresses = await Promise.all(
+          walletsByChain.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
+        );
 
-    const index = walletsPublicAddresse.indexOf(decodedAddress);
-    if (index >= 0) {
-      this.currentWallet = wallets[index];
-      this.currentWalletPublicAddress = walletsPublicAddresse[index];
+        const index = walletsPublicAddresses.indexOf(decodedAddress);
+        if (index >= 0) {
+          this.currentWallet = walletsByChain[index];
+          this.currentWalletPublicAddress = walletsPublicAddresses[index];
+        }
+      }
     }
   }
 
@@ -266,6 +271,8 @@ export class SignTransactionPage implements OnInit {
           this.paramsPayload = JSON.parse(decodeURIComponent(params['payload']));
           const payloadJSON = this.paramsPayload as SignerPayloadJSON;
 
+          await this.replaceCurrentWallet(payloadJSON.address, payloadJSON.genesisHash);
+
           if (!payloadJSON.method) {
             this.isLoadingFee = false;
             return;
@@ -297,23 +304,20 @@ export class SignTransactionPage implements OnInit {
         }
 
         if (this.paramsSigningType === 'signTransactionHex') {
-          this.paramsPayload = decodeURIComponent(params['payload']) as HexString;
-          const payloadHex = this.paramsPayload;
+          this.paramsPayload = JSON.parse(decodeURIComponent(params['payload']));
+          const payloadTransactionHex = this.paramsPayload as SignerPayloadTransactionHex;
 
-          const convertedHex = this.utilsService.normalizeToExtrinsicHex(payloadHex, pjsApi);
+          await this.replaceCurrentWallet(payloadTransactionHex.address, payloadTransactionHex.genesis_hash);
+
+          const convertedHex = this.utilsService.normalizeToExtrinsicHex(payloadTransactionHex.transaction_hex, pjsApi);
 
           const extrinsic = pjsApi.registry.createType('Extrinsic', convertedHex);
           this.extrinsic = `${extrinsic.method.section}(${extrinsic.method.method})`;
 
-          const estimatedFee = await service.getEstimatedFees(pjsApi, params['encodedCallDataHex'], this.currentWalletPublicAddress, null);
+          const estimatedFee = await service.getEstimatedFees(pjsApi, convertedHex, this.currentWalletPublicAddress, null);
           this.estimatedFee = estimatedFee;
           this.isLoadingFee = false;
         }
-      }
-
-      if (params['walletAddress']) {
-        this.paramsWalletAddress = params['walletAddress'];
-        await this.replaceCurrentWallet(params['walletAddress']);
       }
 
       if (params['callbackUrl']) {
@@ -385,8 +389,8 @@ export class SignTransactionPage implements OnInit {
         walletSigner
       );
     } else if (this.paramsSigningType === 'signTransactionHex') {
-      const payloadHex = this.paramsPayload as HexString;
-      const convertedHex = this.utilsService.normalizeToExtrinsicHex(payloadHex, pjsApi);
+      const payloadTransactionHex = this.paramsPayload as SignerPayloadTransactionHex;
+      const convertedHex = this.utilsService.normalizeToExtrinsicHex(payloadTransactionHex.transaction_hex, pjsApi);
 
       signedResult = await service.signAsync(pjsApi, convertedHex as HexString, walletSigner);
     } else {
