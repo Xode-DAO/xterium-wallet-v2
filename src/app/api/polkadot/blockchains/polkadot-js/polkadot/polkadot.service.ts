@@ -97,6 +97,7 @@ export class PolkadotService extends PolkadotJsService {
             quantity: Number(account.data.free),
             price: 0,
             amount: 0,
+            status: "",
           });
         })
       );
@@ -170,6 +171,7 @@ export class PolkadotService extends PolkadotJsService {
       quantity: Number(account.data.free),
       price: 0,
       amount: 0,
+      status: "",
     };
 
     return balance;
@@ -188,6 +190,7 @@ export class PolkadotService extends PolkadotJsService {
             quantity: Number(account.data.free),
             price: 0,
             amount: 0,
+            status: "",
           };
 
           subscriber.next(newBalance);

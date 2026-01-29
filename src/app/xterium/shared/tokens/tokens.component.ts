@@ -12,8 +12,13 @@ import {
   IonAvatar,
   IonSpinner,
   IonToast,
+  IonIcon,
+  IonChip,
   ToastController,
 } from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import { snowOutline } from 'ionicons/icons';
 
 import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
@@ -51,6 +56,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
     IonAvatar,
     IonSpinner,
     IonToast,
+    IonIcon,
+    IonChip,
     TranslatePipe,
   ]
 })
@@ -75,7 +82,9 @@ export class TokensComponent implements OnInit {
     private settingsService: SettingsService,
     private translate: TranslateService,
     private toastController: ToastController,
-  ) { }
+  ) {
+    addIcons({ snowOutline });
+   }
 
   private pjsApiMap: Map<number, ApiPromise> = new Map();
   get pjsApi(): ApiPromise | undefined {
