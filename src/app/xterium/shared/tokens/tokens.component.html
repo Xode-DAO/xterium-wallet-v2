@@ -23,19 +23,11 @@
             <ion-spinner name="lines"></ion-spinner>
             }
             @if (balance.status === 'Frozen') {
-            <ion-icon 
-              name="snow-outline" 
-              style="
-                position: absolute;
-                bottom: 18px;
-                right: 320px;
-                font-size: 14px;
-                color: white;
-                background: var(--ion-color-secondary);
-                border-radius: 50%;
-                padding: 2px;
-              ">
-            </ion-icon>
+            <div style="margin-top: -20px; margin-right: -25px;">
+              <ion-icon name="snow-outline"
+                style="color: white; background: var(--ion-color-secondary); border-radius: 50%; padding: 2px;">
+              </ion-icon>
+            </div>
             }
           </ion-avatar>
           <ion-label>

@@ -80,25 +80,17 @@
               <h3>{{ 'Your Balance' | translate }}</h3>
             </div>
             <ion-item detail="false" lines="none">
-              <ion-avatar slot="start">
+              <ion-avatar slot="start" style="text-align: center;">
                 <img [src]="balance.token.image" />
                 @if (balance.status === 'Frozen') {
-                <ion-icon 
-                  name="snow-outline" 
-                  style="
-                    position: absolute;
-                    bottom: 18px;
-                    right: 320px;
-                    font-size: 14px;
-                    color: white;
-                    background: var(--ion-color-secondary);
-                    border-radius: 50%;
-                    padding: 2px;
-                  ">
-                </ion-icon>
+                <div style="margin-top: -20px; margin-right: -25px;">
+                  <ion-icon name="snow-outline"
+                    style="color: white; background: var(--ion-color-secondary); border-radius: 50%; padding: 2px;">
+                  </ion-icon>
+                </div>
                 }
               </ion-avatar>
-              
+
               <ion-label>
                 <h2>{{ balance.token.name }}</h2>
                 <p>
@@ -108,7 +100,7 @@
               </ion-label>
               <div slot="end" class="ion-text-right">
                 <h2>
-                 {{ currencySymbol }} {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
+                  {{ currencySymbol }} {{ formatBalanceWithSuffix(balance.amount, balance.token.decimals) }}
                 </h2>
                 <p style="color: #333333">-</p>
               </div>
