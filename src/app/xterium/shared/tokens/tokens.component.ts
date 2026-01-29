@@ -13,7 +13,6 @@ import {
   IonSpinner,
   IonToast,
   IonIcon,
-  IonChip,
   ToastController,
 } from '@ionic/angular/standalone';
 
@@ -57,7 +56,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
     IonSpinner,
     IonToast,
     IonIcon,
-    IonChip,
     TranslatePipe,
   ]
 })
