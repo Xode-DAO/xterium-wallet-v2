@@ -141,7 +141,7 @@ export class XodePolkadotService extends PolkadotJsService {
                 quantity: balance,
                 price: 0,
                 amount: 0,
-                status: account.status || "",
+                status: account?.status || "",
               });
             }
           }
@@ -173,6 +173,7 @@ export class XodePolkadotService extends PolkadotJsService {
                 quantity: Number(account.data.free),
                 price: 0,
                 amount: 0,
+                status: "",
               };
             } else {
               const assetId = token.reference_id;
@@ -281,7 +282,7 @@ export class XodePolkadotService extends PolkadotJsService {
           quantity: Number(account?.balance || 0),
           price: 0,
           amount: 0,
-          status: account.status || "",
+          status: account?.status || "",
         };
       }
     }
@@ -320,7 +321,7 @@ export class XodePolkadotService extends PolkadotJsService {
               quantity: Number(account.balance),
               price: 0,
               amount: 0,
-              status: account.status || "",
+              status: account?.status || "",
             };
 
             subscriber.next(newBalance);

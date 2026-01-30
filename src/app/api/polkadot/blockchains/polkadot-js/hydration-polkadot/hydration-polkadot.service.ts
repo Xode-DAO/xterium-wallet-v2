@@ -117,7 +117,7 @@ export class HydrationPolkadotService extends PolkadotJsService {
               quantity: Number(account.data.free),
               price: 0,
               amount: 0,
-              status: account?.status || "",
+              status: "",
             };
           })
         );

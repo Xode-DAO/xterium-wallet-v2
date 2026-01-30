@@ -9,6 +9,7 @@ import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/p
 import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
+import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 
 @Component({
   selector: 'app-sign-wallet',
@@ -18,6 +19,7 @@ import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.c
     PasswordLoginComponent,
     PinSetupComponent,
     PinLoginComponent,
+    BiometricLoginComponent,
   ],
   styleUrls: ['./sign-wallet.component.scss'],
 })
