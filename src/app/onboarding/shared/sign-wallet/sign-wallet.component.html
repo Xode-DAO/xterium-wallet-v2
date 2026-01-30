@@ -6,15 +6,15 @@
     <h1 style="font-weight: bold;">Confirm Save</h1>
     <span style="font-size: 15px;">
       @if (isChromeExtension && currentAuth) {
-        To confirm saving your wallet, please authenticate using your password.
+      To confirm saving your wallet, please authenticate using your password.
       } @else if (isChromeExtension && !currentAuth) {
-        To confirm saving your wallet, please set up a password.
+      To confirm saving your wallet, please set up a password.
       } @else if (!isChromeExtension && currentAuth?.type === 'pin') {
-        To confirm saving your wallet, please authenticate using your PIN.
-      } @else if (!isChromeExtension && currentAuth?.type === 'biometric') { 
-        To confirm saving your wallet, please authenticate using your biometric data or face recognition.
+      To confirm saving your wallet, please authenticate using your PIN.
+      } @else if (!isChromeExtension && currentAuth?.type === 'biometric') {
+      To confirm saving your wallet, please authenticate using your biometric data or face recognition.
       } @else {
-        To confirm saving your wallet, please set up a PIN.
+      To confirm saving your wallet, please set up a PIN.
       }
     </span>
   </div>

@@ -82,7 +82,7 @@ export class TokensComponent implements OnInit {
     private toastController: ToastController,
   ) {
     addIcons({ snowOutline });
-   }
+  }
 
   private pjsApiMap: Map<number, ApiPromise> = new Map();
   get pjsApi(): ApiPromise | undefined {
