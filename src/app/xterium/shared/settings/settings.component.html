@@ -33,12 +33,14 @@
             <ion-toggle slot="end" [checked]="isTestnetEnabled" (ionChange)="enableTestnet($event)">
             </ion-toggle>
           </ion-item>
+          @if (!isChromeExtension) {
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="finger-print-outline"></ion-icon>
             <h2>{{ 'Enable Biometric' | translate }}</h2>
             <ion-toggle slot="end" [(ngModel)]="isBiometricEnabled" (ionChange)="enableBiometric($event)">
             </ion-toggle>
           </ion-item>
+          }
           <ion-item button lines="none" class="custom-buttons" (click)="goToConnectAccounts()">
             <ion-icon slot="start" name="link-outline"></ion-icon>
             <h2>{{ 'Connect Accounts' | translate }}</h2>
@@ -111,10 +113,14 @@
             <h1 style="font-weight: bold">
               @if (biometricState === 'enabled' && currentAuth?.type === 'pin') {
               {{ 'Enter Pin' | translate }}
+              } @else if (biometricState === 'enabled' && currentAuth?.type === 'password') {
+              {{ 'Enter Password' | translate }}
               } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
               {{ 'Biometric' | translate }}
               } @else if (biometricState === 'setup-pin') {
               {{ 'Set Up Your PIN' | translate }}
+              } @else if (biometricState === 'setup-password') {
+              {{ 'Set Up Your Password' | translate }}
               } @else if (biometricState === 'setup-biometric') {
               {{ 'Set Up Your Biometric' | translate }}
               }
@@ -122,10 +128,15 @@
             <span style="font-size: 15px;">
               @if (biometricState === 'enabled' && currentAuth?.type === 'pin') {
               {{ 'Please enter your PIN to enable biometric authentication.' | translate }}
+              } @else if (biometricState === 'enabled' && currentAuth?.type === 'password') {
+              {{ 'Please enter your password to enable biometric authentication.' | translate }}
               } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
-              {{ 'Please authenticate using your biometric data or face recognition to disable biometric authentication.' | translate }}
+              {{ 'Please authenticate using your biometric data or face recognition to disable biometric
+              authentication.' | translate }}
               } @else if (biometricState === 'setup-pin') {
               {{ 'Set a PIN to secure your wallets after disabling biometric authentication.' | translate }}
+              } @else if (biometricState === 'setup-password') {
+              {{ 'Set a Password to secure your wallets after enabling biometric authentication.' | translate }}
               } @else if (biometricState === 'setup-biometric') {
               {{ 'Set a Biometric to secure your wallets after enabling biometric authentication.' | translate }}
               }
@@ -133,11 +144,15 @@
           </div>
           <div class="ion-padding-horizontal">
             @if (biometricState === 'enabled' && currentAuth?.type === 'pin') {
-            <app-pin-login (onLogin)="confirmPin($event)"></app-pin-login>
+            <app-pin-login (onLogin)="confirmPinOrPassword($event)"></app-pin-login>
+            } @if (biometricState === 'enabled' && currentAuth?.type === 'password') {
+            <app-password-login (onLogin)="confirmPinOrPassword($event)"></app-password-login>
             } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
             <app-biometric-login (onLogin)="confirmBiometric($event)"></app-biometric-login>
             } @else if (biometricState === 'setup-pin') {
-            <app-pin-setup (onPasswordSetup)="onPinSetup($event)"></app-pin-setup>
+            <app-pin-setup (onPasswordSetup)="onPinOrPasswordSetup($event)"></app-pin-setup>
+            } @else if (biometricState === 'setup-password') {
+            <app-password-setup (onPasswordSetup)="onPinOrPasswordSetup($event)"></app-password-setup>
             } @else if (biometricState === 'setup-biometric') {
             <app-biometric-setup (onBiometricSetup)="onBiometricSetup($event)"></app-biometric-setup>
             }

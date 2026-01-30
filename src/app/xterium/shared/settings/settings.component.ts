@@ -40,6 +40,8 @@ import { CurrencyComponent } from './currency/currency.component';
 import { LanguageComponent } from './language/language.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
+import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
+import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
 import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 import { BiometricSetupComponent } from 'src/app/security/shared/biometric-setup/biometric-setup.component';
 
@@ -82,6 +84,8 @@ import { TranslatePipe } from '@ngx-translate/core';
     TranslatePipe,
     PinLoginComponent,
     PinSetupComponent,
+    PasswordLoginComponent,
+    PasswordSetupComponent,
     BiometricLoginComponent,
     BiometricSetupComponent,
   ]
@@ -131,7 +135,7 @@ export class SettingsComponent implements OnInit {
   currentAuth: Auth | null = null;
 
   isBiometricEnabled: boolean = false;
-  biometricState: 'enabled' | 'disabled' | 'setup-pin' | 'setup-biometric' | null = null;
+  biometricState: 'enabled' | 'disabled' | 'setup-pin' | 'setup-password' | 'setup-biometric' | null = null;
   decryptedPin: string = '';
   decryptedBiometricCredentials: string = '';
 
@@ -344,10 +348,14 @@ export class SettingsComponent implements OnInit {
 
   async confirmBiometric(oldPassword: string) {
     this.decryptedBiometricCredentials = oldPassword;
+
     this.biometricState = 'setup-pin';
+    if (this.isChromeExtension) {
+      this.biometricState = 'setup-password';
+    }
   }
 
-  async onPinSetup(newPassword: string) {
+  async onPinOrPasswordSetup(newPassword: string) {
     if (!newPassword) {
       const toast = await this.toastController.create({
         message: 'PIN was not provided. Please try again.',
@@ -406,7 +414,7 @@ export class SettingsComponent implements OnInit {
     await toast.present();
   }
 
-  async confirmPin(oldPassword: string) {
+  async confirmPinOrPassword(oldPassword: string) {
     this.decryptedPin = oldPassword;
     this.biometricState = 'setup-biometric';
   }
