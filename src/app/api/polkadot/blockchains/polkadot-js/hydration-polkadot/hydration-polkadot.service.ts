@@ -4,15 +4,15 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { cryptoWaitReady } from '@polkadot/util-crypto';
-import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
-import { hexToU8a, } from '@polkadot/util';
+import { hexToU8a } from '@polkadot/util';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 
 import { PolkadotJsService } from 'src/app/api/polkadot/blockchains/polkadot-js/polkadot-js.service';
 
 import { Token } from 'src/models/token.model';
 import { Balance } from 'src/models/balance.model';
-import { WalletSigner } from 'src/models/wallet.model';
 
 @Injectable({
   providedIn: 'root',
@@ -88,6 +88,7 @@ export class HydrationPolkadotService extends PolkadotJsService {
             quantity: Number(account.data.free),
             price: 0,
             amount: 0,
+            status: "",
           });
         })
       );
@@ -116,6 +117,7 @@ export class HydrationPolkadotService extends PolkadotJsService {
               quantity: Number(account.data.free),
               price: 0,
               amount: 0,
+              status: "",
             };
           })
         );
@@ -161,6 +163,7 @@ export class HydrationPolkadotService extends PolkadotJsService {
       quantity: Number(account.data.free),
       price: 0,
       amount: 0,
+      status: "",
     };
 
     return balance;
@@ -179,6 +182,7 @@ export class HydrationPolkadotService extends PolkadotJsService {
             quantity: Number(account.data.free),
             price: 0,
             amount: 0,
+            status: "",
           };
 
           subscriber.next(newBalance);
@@ -191,7 +195,7 @@ export class HydrationPolkadotService extends PolkadotJsService {
     });
   }
 
-  async transfer(api: ApiPromise, balance: Balance, destPublicKey: string, value: number): Promise<string> {
+  transfer(api: ApiPromise, balance: Balance, destPublicKey: string, value: number): SubmittableExtrinsic<"promise", ISubmittableResult> {
     const bigIntAmount = BigInt(value);
 
     const transferExtrinsic = api.tx['balances']['transferKeepAlive'](
@@ -199,64 +203,16 @@ export class HydrationPolkadotService extends PolkadotJsService {
       bigIntAmount
     );
 
-    return transferExtrinsic.toHex();
+    return transferExtrinsic;
   }
 
-  async estimatedFees(api: ApiPromise, encodedCallDataHex: string, publicKey: string, token: Token | null): Promise<number> {
-    const txBytes = hexToU8a(encodedCallDataHex);
+  async getEstimatedFees(api: ApiPromise, extrinsicHex: string, publicKey: string, token: Token | null): Promise<number> {
+    const txBytes = hexToU8a(extrinsicHex);
     const call = api.createType('Extrinsic', txBytes);
     const tx = api.tx(call);
 
     const { partialFee } = await tx.paymentInfo(publicKey);
 
     return Number(BigInt(partialFee.toString()));
-  }
-
-  async signTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Promise<string> {
-    const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-    const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
-
-    const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromPair({
-      publicKey,
-      secretKey,
-    });
-
-    const txBytes = hexToU8a(encodedCallDataHex);
-    const call = api.createType('Extrinsic', txBytes);
-    const tx = api.tx(call);
-
-    const signedTx = await tx.signAsync(pair, { nonce: -1 });
-
-    return signedTx.toHex();
-  }
-
-  signAndSubmitTransaction(api: ApiPromise, encodedCallDataHex: string, walletSigner: WalletSigner): Observable<ISubmittableResult> {
-    return new Observable<ISubmittableResult>(subscriber => {
-      const subscriptions: any[] = [];
-
-      (async () => {
-        const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-        const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
-
-        const keyring = new Keyring({ type: 'sr25519' });
-        const pair = keyring.addFromPair({
-          publicKey,
-          secretKey,
-        });
-
-        const txBytes = hexToU8a(encodedCallDataHex);
-        const call = api.createType('Extrinsic', txBytes);
-        const tx = api.tx(call);
-
-        const txSignAndSendSubscription = await tx.signAndSend(pair, { nonce: -1 }, (data) => {
-          subscriber.next(data);
-        });
-
-        subscriptions.push(txSignAndSendSubscription);
-      })();
-
-      return () => subscriptions.forEach(unsub => unsub());
-    });
   }
 }

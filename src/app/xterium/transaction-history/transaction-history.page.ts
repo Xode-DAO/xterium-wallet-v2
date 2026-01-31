@@ -154,8 +154,8 @@ export class TransactionHistoryPage implements OnInit {
   async fetchPayments(): Promise<void> {
     this.payments = [];
 
-    const substrateChain = this.chainsService.getChainsByNetwork(Network.Substrate)[0];
-    const address = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, substrateChain);
+    const polkadotChain = this.chainsService.getChainsByNetwork(Network.Polkadot)[0];
+    const address = await this.encodePublicAddressByChainFormat(this.currentWallet.public_key, polkadotChain);
 
     const paymentsData = await this.multipayxApiService.fetchPayments(address);
     this.payments = this.groupPaymentsByDate(paymentsData);
@@ -185,7 +185,7 @@ export class TransactionHistoryPage implements OnInit {
 
     const names = name.trim().split(/\s+/);
     const upperCaseName = names.map(name => name.toUpperCase());
-    
+
     const maskedParts = upperCaseName.map((namePart, index) => {
       if (index === upperCaseName.length - 1) {
         return `${namePart[0]}.`;
@@ -197,7 +197,7 @@ export class TransactionHistoryPage implements OnInit {
         }
       }
     });
-    
+
     return maskedParts.join(' ');
   }
 
@@ -217,7 +217,7 @@ export class TransactionHistoryPage implements OnInit {
     }
 
     const length = cleanAccount.length;
-    
+
     if (length <= 8) {
       return `${cleanAccount.slice(0, 4)}***${cleanAccount.slice(-2)}`;
     } else if (length <= 12) {

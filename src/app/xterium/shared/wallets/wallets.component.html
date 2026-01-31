@@ -38,16 +38,16 @@
   </ion-grid>
 
   <ion-grid class="wallet-grid">
-    @for (chain of chainsById[selectedChain.id]; track chain) {
+    @for (chain of chainsByGenesisHash[selectedChain.genesis_hash]; track chain) {
     @if (chain.name !== 'All Chains') {
     <div class="chain-label">
-      @if (selectedChain.id === 0) {
+      @if (selectedChain.genesis_hash === "0x-all-networks-genesis-hash-placeholder") {
       <ion-chip [color]="'dark'">
         <img [src]="'/assets/images/chains/' + chain.image" alt="{{ chain.name }}" height="20" />
         &nbsp; {{ chain.name }}
       </ion-chip>
       <ion-chip [color]="'dark'" [outline]="true" [disabled]="true">
-        {{ walletsByChain[chain.id].length }}
+        {{ walletsByChain[chain.genesis_hash].length }}
       </ion-chip>
       }
     </div>
@@ -56,14 +56,15 @@
     @if (chain.name !== 'All Chains') {
     <div style="margin-bottom: 20px;">
       <ion-row>
-        @for (wallet of walletsByChain[chain.id]; track wallet) {
+        @for (wallet of walletsByChain[chain.genesis_hash]; track wallet) {
         <ion-col size="6">
           <ion-list>
             <ion-item class="wallet-item" [ngClass]="{ 'selected-wallet': wallet.id === currentWallet.id }" button
               detail="false" lines="none" (click)="setCurrentWallet(wallet)">
               <ion-label>
                 <div class="wallet-header">
-                  <ion-icon name="wallet" slot="icon-only" style="color: #0bbab5; font-size: clamp(22px, 6vw, 27px);;"></ion-icon>
+                  <ion-icon name="wallet" slot="icon-only"
+                    style="color: #0bbab5; font-size: clamp(22px, 6vw, 27px);;"></ion-icon>
                   <ion-button fill="clear" size="small" class="menu-button"
                     (click)="openWalletDetailsModal(wallet); $event.stopPropagation()">
                     <ion-icon name="create-outline" slot="icon-only"></ion-icon>
@@ -78,10 +79,11 @@
         }
       </ion-row>
 
-      @if (relatedWalletsByChain[chain.id] && relatedWalletsByChain[chain.id].length > 0) {
+      @if (relatedWalletsByChain[chain.genesis_hash] && relatedWalletsByChain[chain.genesis_hash].length > 0) {
       <ion-chip [color]="'warning'" [outline]="true"
-        (click)="createManyWallets(relatedWalletsByChain[chain.id], chain)">
-        {{ relatedWalletsByChain[chain.id].length + ' ' + ('related wallets found, click to add' | translate) }}
+        (click)="createManyWallets(relatedWalletsByChain[chain.genesis_hash], chain)">
+        {{ relatedWalletsByChain[chain.genesis_hash].length + ' ' + ('related wallets found, click to add' | translate)
+        }}
       </ion-chip>
       }
     </div>

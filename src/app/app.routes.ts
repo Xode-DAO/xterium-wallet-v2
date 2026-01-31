@@ -69,7 +69,7 @@ export const routes: Routes = [
       },
       {
         path: 'cash',
-        loadComponent: () => import('./xterium/cash/cash.page').then( m => m.CashPage)
+        loadComponent: () => import('./xterium/cash/cash.page').then(m => m.CashPage)
       },
       {
         path: 'payment-details',
@@ -99,8 +99,8 @@ export const routes: Routes = [
     loadComponent: () => import('./web3/web3.page').then(m => m.Web3Page),
     children: [
       {
-        path: 'approval',
-        loadComponent: () => import('./web3/approval/approval.page').then(m => m.ApprovalPage)
+        path: 'connect-accounts',
+        loadComponent: () => import('./web3/connect-accounts/connect-accounts.page').then(m => m.ConnectAccountsPage)
       },
       {
         path: 'sign-transaction',
@@ -108,7 +108,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/web3/approval',
+        redirectTo: '/web3/connect-accounts',
         pathMatch: 'full',
       },
     ]
@@ -121,5 +121,9 @@ export const routes: Routes = [
   {
     path: 'select-chain',
     loadComponent: () => import('./onboarding/select-chain/select-chain.page').then(m => m.SelectChainPage)
+  },
+  {
+    path: 'connect-accounts',
+    loadComponent: () => import('./web3/connect-accounts/connect-accounts.page').then(m => m.ConnectAccountsPage)
   },
 ];

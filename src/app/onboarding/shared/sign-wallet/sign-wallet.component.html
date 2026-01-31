@@ -6,25 +6,27 @@
     <h1 style="font-weight: bold;">Confirm Save</h1>
     <span style="font-size: 15px;">
       @if (isChromeExtension && currentAuth) {
-        To confirm saving your wallet, please authenticate using your password.
+      To confirm saving your wallet, please authenticate using your password.
       } @else if (isChromeExtension && !currentAuth) {
-        To confirm saving your wallet, please set up a password.
+      To confirm saving your wallet, please set up a password.
       } @else if (!isChromeExtension && currentAuth?.type === 'pin') {
-        To confirm saving your wallet, please authenticate using your PIN.
+      To confirm saving your wallet, please authenticate using your PIN.
+      } @else if (!isChromeExtension && currentAuth?.type === 'biometric') {
+      To confirm saving your wallet, please authenticate using your biometric data or face recognition.
       } @else {
-        To confirm saving your wallet, please set up a PIN.
+      To confirm saving your wallet, please set up a PIN.
       }
     </span>
   </div>
-  <div class="ion-padding-horizontal">
-    @if (isChromeExtension && currentAuth) {
-    <app-password-login (onLogin)="signWallet($event)"></app-password-login>
-    } @else if (isChromeExtension && !currentAuth) {
-    <app-password-setup (onPasswordSetup)="signWallet($event)"></app-password-setup>
-    } @else if (!isChromeExtension && currentAuth?.type === 'pin') {
-    <app-pin-login (onLogin)="signWallet($event)"></app-pin-login>
-    } @else {
-    <app-pin-setup (onPasswordSetup)="signWallet($event)"></app-pin-setup>
-    }
-  </div>
+  @if (isChromeExtension && currentAuth) {
+  <app-password-login (onLogin)="signWallet($event)"></app-password-login>
+  } @else if (isChromeExtension && !currentAuth) {
+  <app-password-setup (onPasswordSetup)="signWallet($event)"></app-password-setup>
+  } @else if (!isChromeExtension && currentAuth?.type === 'pin') {
+  <app-pin-login (onLogin)="signWallet($event)"></app-pin-login>
+  } @else if (!isChromeExtension && currentAuth?.type === 'biometric') {
+  <app-biometric-login (onLogin)="signWallet($event)"></app-biometric-login>
+  } @else {
+  <app-pin-setup (onPasswordSetup)="signWallet($event)"></app-pin-setup>
+  }
 </div>

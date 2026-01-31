@@ -38,28 +38,21 @@
             </div>
           </ion-button>
         </ion-col>
-        <!-- <ion-col size="3" class="ion-text-center">
-          <ion-button fill="clear" class="icon-button" expand="block" (click)="goToCash()">
-            <div class="button-content">
-              <ion-icon name="card"></ion-icon>
-              <span class="label">{{ 'Cash' | translate }}</span>
-            </div>
-          </ion-button>
-        </ion-col> -->
       </ion-row>
     </ion-grid>
-    <ion-grid>
-      <ion-row>
-        <ion-col size="12">
-          <div class="token-list-header">
-            <h3 style="font-size: 16px; margin-right: 10px;">{{ 'Tokens' | translate }}</h3>
-            <ion-toggle style="font-size: 16px;" [checked]="isZeroBalancesHidden"
-              (ionChange)="hideZeroBalances($event)">{{ 'Hide Zero Balances' | translate }}</ion-toggle>
-            <!-- <a (click)="openManageTokensModal()">Manage</a> -->
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+  </div>
+
+  <div class="token-list-header">
+    <h3 style="font-size: 16px;">{{ 'Assets' | translate }}</h3>
+    @if (currentWallet.chain) {
+    <ion-chip color="dark">
+      <img [src]="'./../../assets/images/chains/' + currentWallet.chain.image" [alt]="currentWallet.chain.name"
+        height="20" />
+      &nbsp; <span style="font-weight: 600; font-size: 16px; white-space: nowrap;">
+        {{ currentWallet.chain.name }} {{ 'Network' | translate }}
+      </span>
+    </ion-chip>
+    }
   </div>
 
   <div class="ion-padding-horizontal">
@@ -117,7 +110,7 @@
       </ion-toolbar>
       <ion-content>
         <div class="modal-content-container">
-          <app-send [balance]="selectedBalance" (onClickSend)="onClickSend($event)"></app-send>
+          <app-send [balance]="selectedBalance" (onClickSend)="onClickSend()"></app-send>
         </div>
       </ion-content>
     </ng-template>

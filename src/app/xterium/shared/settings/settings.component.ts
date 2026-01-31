@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { Router } from '@angular/router';
+
 import {
   IonContent,
   IonToolbar,
@@ -18,7 +20,8 @@ import {
   IonToggle,
   AlertController,
   ToastController,
-  ActionSheetController
+  ActionSheetController,
+  ModalController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -28,13 +31,17 @@ import {
   logoUsd,
   languageOutline,
   fingerPrintOutline,
-  codeOutline
+  codeOutline,
+  linkOutline,
+  eyeOffOutline
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
 import { LanguageComponent } from './language/language.component';
 import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.component';
 import { PinSetupComponent } from 'src/app/security/shared/pin-setup/pin-setup.component';
+import { PasswordLoginComponent } from 'src/app/security/shared/password-login/password-login.component';
+import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
 import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 import { BiometricSetupComponent } from 'src/app/security/shared/biometric-setup/biometric-setup.component';
 
@@ -43,7 +50,7 @@ import { LanguageTranslation } from 'src/models/language-translation.model';
 import { Network } from 'src/models/network.model';
 import { Auth } from 'src/models/auth.model';
 
-
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
@@ -51,7 +58,6 @@ import { BiometricService } from 'src/app/api/biometric/biometric.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
-
 
 @Component({
   selector: 'app-settings',
@@ -78,6 +84,8 @@ import { TranslatePipe } from '@ngx-translate/core';
     TranslatePipe,
     PinLoginComponent,
     PinSetupComponent,
+    PasswordLoginComponent,
+    PasswordSetupComponent,
     BiometricLoginComponent,
     BiometricSetupComponent,
   ]
@@ -89,6 +97,7 @@ export class SettingsComponent implements OnInit {
   @ViewChild('confirmBiometricModal', { read: IonModal }) confirmBiometricModal!: IonModal;
 
   constructor(
+    private environmentService: EnvironmentService,
     private authService: AuthService,
     private settingsService: SettingsService,
     private walletsService: WalletsService,
@@ -96,7 +105,9 @@ export class SettingsComponent implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private encryptionService: EncryptionService,
-    private biometricService: BiometricService
+    private biometricService: BiometricService,
+    private modalController: ModalController,
+    private router: Router
 
   ) {
     addIcons({
@@ -105,20 +116,26 @@ export class SettingsComponent implements OnInit {
       logoUsd,
       languageOutline,
       fingerPrintOutline,
-      codeOutline
+      codeOutline,
+      linkOutline,
+      eyeOffOutline
     });
   }
+
+  isChromeExtension = false;
 
   selectedCurrency: Currency = new Currency();
   selectedLanguage: LanguageTranslation = new LanguageTranslation();
   code: string = '';
+
+  isZeroBalancesHidden: boolean = false;
 
   isTestnetEnabled: boolean = false;
 
   currentAuth: Auth | null = null;
 
   isBiometricEnabled: boolean = false;
-  biometricState: 'enabled' | 'disabled' | 'setup-pin' | 'setup-biometric' | null = null;
+  biometricState: 'enabled' | 'disabled' | 'setup-pin' | 'setup-password' | 'setup-biometric' | null = null;
   decryptedPin: string = '';
   decryptedBiometricCredentials: string = '';
 
@@ -163,6 +180,27 @@ export class SettingsComponent implements OnInit {
     this.languageModal.present();
   }
 
+  async goToConnectAccounts() {
+    this.modalController.dismiss();
+
+    let origin = window.location.origin;
+
+    if (this.isChromeExtension) {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const url = tabs[0].url;
+
+      if (url) {
+        origin = new URL(url).origin;
+      }
+    }
+
+    this.router.navigate(['/web3/connect-accounts'], {
+      queryParams: {
+        origin: origin
+      }
+    });
+  }
+
   async selectCurrency(currency: Currency) {
     const currencies = await this.settingsService.get();
 
@@ -190,6 +228,18 @@ export class SettingsComponent implements OnInit {
 
     this.selectedLanguage = language;
     this.languageModal.dismiss();
+  }
+
+  async hideZeroBalances(event: any): Promise<void> {
+    const isHidden = event.detail.checked;
+    const settings = await this.settingsService.get();
+
+    if (settings) {
+      settings.user_preferences.hide_zero_balances = isHidden;
+      await this.settingsService.set(settings);
+
+      this.isZeroBalancesHidden = isHidden;
+    }
   }
 
   async enableTestnet(event: any): Promise<void> {
@@ -298,10 +348,14 @@ export class SettingsComponent implements OnInit {
 
   async confirmBiometric(oldPassword: string) {
     this.decryptedBiometricCredentials = oldPassword;
+
     this.biometricState = 'setup-pin';
+    if (this.isChromeExtension) {
+      this.biometricState = 'setup-password';
+    }
   }
 
-  async onPinSetup(newPassword: string) {
+  async onPinOrPasswordSetup(newPassword: string) {
     if (!newPassword) {
       const toast = await this.toastController.create({
         message: 'PIN was not provided. Please try again.',
@@ -360,7 +414,7 @@ export class SettingsComponent implements OnInit {
     await toast.present();
   }
 
-  async confirmPin(oldPassword: string) {
+  async confirmPinOrPassword(oldPassword: string) {
     this.decryptedPin = oldPassword;
     this.biometricState = 'setup-biometric';
   }
@@ -413,10 +467,13 @@ export class SettingsComponent implements OnInit {
   }
 
   async fetchData(): Promise<void> {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+
     const settings = await this.settingsService.get();
     if (settings) {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
+      this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
 
       await this.getCurrentAuth();

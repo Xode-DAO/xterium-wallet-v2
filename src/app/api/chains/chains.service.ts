@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Network } from "src/models/network.model"
-import { Chain, ScannerType } from "src/models/chain.model"
+import { Chain, ChainType, ScannerType } from "src/models/chain.model"
 
 @Injectable({
   providedIn: 'root'
@@ -10,27 +10,17 @@ export class ChainsService {
 
   private readonly chains: Chain[] = [
     {
-      id: 0,
+      id: 1,
       network: Network.AllNetworks,
       name: "All Chains",
       description: "Includes every supported chains.",
       chain_id: 0,
+      genesis_hash: "0x-all-networks-genesis-hash-placeholder",
       unit: "DOT",
       decimal: 10,
+      chain_type: ChainType.Substrate,
       address_prefix: 0,
       image: "all-chains.png",
-      scanner: undefined
-    },
-    {
-      id: 1,
-      network: Network.Substrate,
-      name: "Substrate",
-      description: "Includes every supported Substrate-based blockchain network for selection.",
-      chain_id: 0,
-      unit: "UNIT",
-      decimal: 10,
-      address_prefix: 42,
-      image: "substrate.png",
       scanner: undefined
     },
     {
@@ -39,8 +29,10 @@ export class ChainsService {
       name: "Polkadot",
       description: "The heart of Web3, connecting multiple specialized blockchains into a unified network.",
       chain_id: 0,
+      genesis_hash: "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3",
       unit: "DOT",
       decimal: 10,
+      chain_type: ChainType.Substrate,
       address_prefix: 0,
       image: "polkadot.png",
       scanner: undefined
@@ -51,8 +43,10 @@ export class ChainsService {
       name: "Polkadot Hub",
       description: "Manage your assets easily on the AssetHub parachain.",
       chain_id: 1000,
+      genesis_hash: "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f",
       unit: "DOT",
       decimal: 10,
+      chain_type: ChainType.Substrate,
       address_prefix: 0,
       image: "assethub.png",
       scanner: {
@@ -67,8 +61,10 @@ export class ChainsService {
       name: "Xode",
       description: "Experience smooth and fast transactions with Xode.",
       chain_id: 3417,
+      genesis_hash: "0xb2985e778bb748c70e450dcc084cc7da79fe742cc23d3b040abd7028187de69c",
       unit: "XON",
       decimal: 12,
+      chain_type: ChainType.Substrate,
       address_prefix: 280,
       image: "xode.png",
       scanner: {
@@ -83,8 +79,10 @@ export class ChainsService {
       name: "Hydration",
       description: "Participate in decentralized trading and liquidity on the Hydration network.",
       chain_id: 2034,
+      genesis_hash: "0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d",
       unit: "HDX",
       decimal: 12,
+      chain_type: ChainType.Substrate,
       address_prefix: 0,
       image: "hydration.png",
       scanner: {
@@ -93,90 +91,34 @@ export class ChainsService {
         extrinsics_url: "https://hydration.api.subscan.io/api/v2/scan/extrinsics"
       }
     },
-    // {
-    //   id: 6,
-    //   network: Network.Paseo,
-    //   name: "AssetHub - Paseo",
-    //   description: "Manage your assets easily on the Paseo AssetHub parachain.",
-    //   chain_id: 1000,
-    //   unit: "PAS",
-    //   decimal: 10,
-    //   address_prefix: 0,
-    //   image: "assethub.png",
-    //   scanner: undefined
-    // },
     {
-      id: 7,
+      id: 6,
       network: Network.Paseo,
       name: "Paseo",
       description: "Test and experience Xode on the Paseo test network.",
       chain_id: 5109,
+      genesis_hash: "0x190115504f77174ba6d0a7adfb848e8c77dc4240dd01ef7abcf90ccf5f4138fe",
       unit: "XON",
       decimal: 12,
+      chain_type: ChainType.Substrate,
       address_prefix: 280,
       image: "paseo.png",
       scanner: undefined
     },
-    // {
-    //   id: 8,
-    //   network: Network.Paseo,
-    //   name: "Hydration - Paseo",
-    //   description: "Test decentralized trading and liquidity features on Hydration’s Paseo test network.",
-    //   chain_id: 2034,
-    //   unit: "HDX",
-    //   decimal: 12,
-    //   address_prefix: 0,
-    //   image: "hydration-paseo.png",
-    //   scanner: undefined
-    // },
     {
-      id: 9,
+      id: 7,
       network: Network.Rococo,
       name: "Polaris",
       description: "Xode's devnet parachain on Rococo for testing purposes.",
       chain_id: 2000,
-      unit: "POL",
+      genesis_hash: "0x9cd4eb3af767b8ab4929576a0773ee37ab997fdb159e2e470e156f7388f21c78",
+      unit: "XON",
       decimal: 12,
+      chain_type: ChainType.Substrate,
       address_prefix: 280,
       image: "polaris.png",
       scanner: undefined
-    },
-    // {
-    //   id: 10,
-    //   network: Network.Solana,
-    //   name: "Solana",
-    //   description: "Make low-cost transactions on the high-performance Solana blockchain.",
-    //   chain_id: 0,
-    //   unit: "SOL",
-    //   decimal: 9,
-    //   address_prefix: null,
-    //   image: "solana.png",
-    //   scanner: undefined
-    // },
-    // {
-    //   id: 11,
-    //   network: Network.SolanaTestnet,
-    //   name: "Solana - Testnet",
-    //   description: "Make low-cost transactions on the high-performance Solana blockchain.",
-    //   chain_id: 0,
-    //   unit: "SOL",
-    //   decimal: 9,
-    //   address_prefix: null,
-    //   image: "solana.png",
-    //   scanner: undefined
-    // },
-    // {
-    //   id: 12,
-    //   network: Network.SolanaDevnet,
-    //   name: "Solana - Devnet",
-    //   description: "Make low-cost transactions on the high-performance Solana blockchain.",
-    //   chain_id: 0,
-    //   unit: "SOL",
-    //   decimal: 9,
-    //   address_prefix: null,
-    //   image: "solana.png",
-    //   scanner: undefined
-    // },
+    }
   ];
 
   constructor() { }
@@ -189,15 +131,15 @@ export class ChainsService {
     return this.chains.find(chain => chain.id === id);
   }
 
+  getChainByGenesisHash(genesisHash: string): Chain | undefined {
+    return this.chains.find(chain => chain.genesis_hash === genesisHash);
+  }
+
   getChainsByNetwork(network: Network): Chain[] {
     return this.chains.filter(chain => chain.network === network);
   }
 
   getChainByChainId(chainId: number): Chain | undefined {
     return this.chains.find(chain => chain.chain_id === chainId);
-  }
-
-  getChainByName(name: string): Chain | undefined {
-    return this.chains.find(chain => chain.name.toLowerCase() === name.toLowerCase());
   }
 }

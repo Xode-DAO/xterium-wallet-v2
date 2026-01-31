@@ -176,5 +176,11 @@
   "Set a PIN to secure your wallets after disabling biometric authentication.": "생체 인증을 비활성화한 후 지갑을 보호하기 위해 PIN을 설정하세요.",
   "Set a Biometric to secure your wallets after enabling biometric authentication.": "생체 인증을 활성화한 후 지갑을 보호하기 위해 생체 인증을 설정하세요.",
   "Setup Biometrics": "생체 인증 설정",
-  "Enable Biometric": "생체 인증 활성화"
+  "Enable Biometric": "생체 인증 활성화",
+  "Connect Accounts": "계정 연결",
+  "No wallets available to connect.": "연결할 수 있는 지갑이 없습니다.",
+  "Connect": "연결",
+  "Close": "닫기",
+  "Assets": "자산",
+  "Select one or more accounts to connect to this application.": "이 애플리케이션에 연결할 하나 이상의 계정을 선택하세요."
 }

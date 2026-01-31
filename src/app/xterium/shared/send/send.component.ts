@@ -86,7 +86,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class SendComponent implements OnInit {
   @Input() balance: Balance = new Balance();
 
-  @Output() onClickSend = new EventEmitter<string>();
+  @Output() onClickSend = new EventEmitter<void>();
   @Output() onSendSuccessful = new EventEmitter<string>();
 
   @ViewChild('selectChainModal', { read: IonModal }) selectChainModal!: IonModal;
@@ -329,9 +329,21 @@ export class SendComponent implements OnInit {
   }
 
   async send(): Promise<void> {
-    if (this.recipientAddress === "" || this.formattedAmountValue === "0" || this.formattedAmountValue === "0.00") {
+    if (this.recipientAddress === "") {
       const toast = await this.toastController.create({
         message: 'Recipient address is required!',
+        color: 'warning',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
+    if (this.formattedAmountValue === "0" || this.formattedAmountValue === "0.00") {
+      const toast = await this.toastController.create({
+        message: 'Amount is required.',
         color: 'warning',
         duration: 1500,
         position: 'top',
@@ -367,14 +379,14 @@ export class SendComponent implements OnInit {
     const rawAmount = this.formattedAmountValue.replace(/,/g, '');
     const parseAmount = this.balancesService.parseBalance(Number(rawAmount), this.balance.token.decimals);
 
-    const transactionHex = await service.transfer(pjsApi, this.balance, this.recipientAddress, parseAmount);
+    const transferTransaction = service.transfer(pjsApi, this.balance, this.recipientAddress, parseAmount);
 
     let existentialDeposit = 0;
     let estimatedFee = 0;
 
     if (this.balance.token.type === 'native') {
       existentialDeposit = await service.getExistentialDepositOfNativeToken(pjsApi);
-      estimatedFee = await service.estimatedFees(pjsApi, transactionHex, this.currentWalletPublicAddress, this.balance.token);
+      estimatedFee = await service.getEstimatedFees(pjsApi, transferTransaction.toHex(), this.currentWalletPublicAddress, this.balance.token);
     }
 
     const balanceAmountRequired = parseAmount + existentialDeposit + estimatedFee;
@@ -394,13 +406,16 @@ export class SendComponent implements OnInit {
       return;
     }
 
-    this.onClickSend.emit(transactionHex);
-
+    const payload = JSON.stringify(await this.utilsService.createSignerPayload(pjsApi, transferTransaction, this.currentWalletPublicAddress));
     this.router.navigate(['/web3/sign-transaction'], {
       queryParams: {
-        encodedCallDataHex: transactionHex
+        isXterium: true,
+        signingType: 'signPayload',
+        payload: encodeURIComponent(payload),
       }
     });
+
+    this.onClickSend.emit();
   }
 
   ngOnInit() {

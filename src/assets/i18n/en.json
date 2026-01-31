@@ -176,5 +176,11 @@
   "Set a PIN to secure your wallets after disabling biometric authentication.": "Set a PIN to secure your wallets after disabling biometric authentication.",
   "Set a Biometric to secure your wallets after enabling biometric authentication.": "Set a Biometric to secure your wallets after enabling biometric authentication.",
   "Setup Biometrics": "Setup Biometrics",
-  "Enable Biometric": "Enable Biometric"
+  "Enable Biometric": "Enable Biometric",
+  "Connect Accounts": "Connect Accounts",
+  "No wallets available to connect.": "No wallets available to connect.",
+  "Connect": "Connect",
+  "Close": "Close",
+  "Assets": "Assets",
+  "Select one or more accounts to connect to this application.": "Select one or more accounts to connect to this application."
 }

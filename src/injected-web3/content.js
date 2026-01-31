@@ -1,46 +1,73 @@
 (function () {
+  if (document.getElementById("xterium-injected")) {
+    return;
+  }
+
   const script = document.createElement("script");
   script.src = chrome.runtime.getURL("injected.js");
   script.type = "text/javascript";
   script.id = "xterium-injected";
+
   (document.head || document.documentElement).appendChild(script);
+  script.onload = () => script.remove();
 })();
 
 window.addEventListener("message", (event) => {
   if (!event || event.source !== window) return;
-  if (!event.data) return;
-  if (typeof event.data !== "object") return;
+  if (!event.data || typeof event.data !== "object") return;
 
-  const msg = event.data;
-  if (!msg.xterium || !msg.type) return;
+  if (event.data.source !== "xterium-extension") return;
 
-  const type = msg.type;
-  const payload = msg.payload || {};
-
-  const requestTypes = [
-    "xterium-request-approval",
-    "xterium-get-accounts",
-    "xterium-subscribe-accounts",
-    "xterium-sign-payload",
-    "xterium-sign-raw",
+  const methods = [
+    "request-web3-connection",
+    "get-web3-accounts",
+    "sign-payload",
+    "sign-raw",
   ];
 
-  if (requestTypes.includes(type)) {
-    chrome.runtime.sendMessage(
-      {
-        xterium: true,
-        type: type,
-        payload: payload,
-      },
-      (response) => {
-        const responseMessage = {
-          xterium: true,
-          type: type + "-results",
-          response: response,
-        };
+  const msg = event.data;
+  if (!msg.type || msg.type !== "request") return;
+  if (!methods.includes(msg.method)) return;
 
-        window.postMessage(responseMessage, "*");
+  const messageId = msg.id;
+  const method = msg.method;
+  const payload = msg.payload;
+
+  chrome.runtime.sendMessage(
+    {
+      method: method,
+      payload: payload,
+    },
+    (response) => {
+      if (chrome.runtime.lastError) {
+        console.error(
+          "[Xterium Content Script] Runtime error:",
+          chrome.runtime.lastError,
+        );
+
+        window.postMessage(
+          {
+            id: messageId,
+            source: "xterium-extension",
+            type: "response",
+            method: method,
+            error: chrome.runtime.lastError.message,
+          },
+          "*",
+        );
+        return;
       }
-    );
-  }
+
+      window.postMessage(
+        {
+          id: messageId,
+          source: "xterium-extension",
+          type: "response",
+          method: method,
+          response: response,
+        },
+        "*",
+      );
+    },
+  );
 });

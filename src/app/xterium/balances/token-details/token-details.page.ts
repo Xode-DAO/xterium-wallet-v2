@@ -35,7 +35,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, qrCode, send, swapHorizontal, card } from 'ionicons/icons';
+import { arrowBackOutline, qrCode, send, swapHorizontal, card, close, snowOutline } from 'ionicons/icons';
 
 import { Network } from 'src/models/network.model';
 import { Chain } from 'src/models/chain.model';
@@ -94,8 +94,6 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
 export class TokenDetailsPage implements OnInit {
   @ViewChild('tokenDetailsSend', { read: IonModal }) tokenDetailsSendModal!: IonModal;
 
-  @Output() onClickSendSuccessful = new EventEmitter<string>();
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -118,7 +116,9 @@ export class TokenDetailsPage implements OnInit {
       qrCode,
       send,
       swapHorizontal,
-      card,
+      close,
+      card, 
+      snowOutline
     });
   }
 
@@ -195,8 +195,8 @@ export class TokenDetailsPage implements OnInit {
     this.router.navigate(['/xterium/cash']);
   }
 
-  getChainName(chainId: number): string {
-    const chain = this.chainsService.getChainById(chainId);
+  getChainName(genesisHash: string): string {
+    const chain = this.chainsService.getChainByGenesisHash(genesisHash);
     if (!chain) {
       return "";
     }
@@ -309,9 +309,8 @@ export class TokenDetailsPage implements OnInit {
   //   ];
   // }
 
-  onClickSend(_: string) {
+  onClickSend() {
     this.tokenDetailsSendModal.dismiss();
-    this.onClickSendSuccessful.emit(_);
   }
 
   ngOnInit() {

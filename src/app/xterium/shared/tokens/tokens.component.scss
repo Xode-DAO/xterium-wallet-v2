@@ -10,6 +10,24 @@
     border-radius: 1.5rem;
     transition: background 0.2s;
 
+    .frozen-chip {
+      height: 26px;
+      padding: 0 8px;
+      border-radius: 999px;
+    
+      ion-icon {
+        font-size: 14px;
+        margin-right: 4px;
+        color: var(--ion-color-secondary-contrast);
+      }
+    
+      ion-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ion-color-secondary-contrast);
+      }
+    }
+
     ion-label {
       max-width: 60%;
       min-width: 0;

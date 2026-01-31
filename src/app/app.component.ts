@@ -15,6 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { DeepLinkService } from 'src/app/api/deep-link/deep-link.service';
+import { WalletsService } from './api/wallets/wallets.service';
+import { ChainsService } from './api/chains/chains.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 
 @Component({
@@ -35,6 +37,8 @@ export class AppComponent {
     private environmentService: EnvironmentService,
     private deepLinkService: DeepLinkService,
     private translate: TranslateService,
+    private walletsService: WalletsService,
+    private chainsService: ChainsService,
     private settingsService: SettingsService,
   ) {
     this.initApp();
@@ -52,7 +56,28 @@ export class AppComponent {
       await this.initNotifications();
 
       this.initDeepLinks();
+
+      await this.initWalletsMetadata();
     });
+  }
+
+  async initWalletsMetadata(): Promise<void> {
+    const wallets = await this.walletsService.getAllWallets();
+
+    if (wallets.length > 0) {
+      for (const wallet of wallets) {
+        const chain = this.chainsService.getChainByChainId(wallet.chain.chain_id);
+        if (chain) {
+          wallet.chain = chain;
+          await this.walletsService.update(wallet.id, { chain });
+        }
+      }
+    }
+
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      await this.walletsService.setCurrentWallet(currentWallet.id);
+    }
   }
 
   async initLanguage(): Promise<void> {

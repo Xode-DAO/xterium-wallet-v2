@@ -88,17 +88,17 @@ export class WalletsComponent implements OnInit {
   }
 
   chains: Chain[] = [];
-  chainsById: Record<number, Chain[]> = {};
+  chainsByGenesisHash: Record<string, Chain[]> = {};
   selectedChain: Chain = new Chain();
 
   wallets: Wallet[] = [];
-  walletsByChain: Record<number, Wallet[]> = {};
+  walletsByChain: Record<string, Wallet[]> = {};
   selectedWallet: Wallet = new Wallet();
 
   currentWallet: Wallet = new Wallet();
   currentWalletPublicAddress: string = '';
 
-  relatedWalletsByChain: Record<number, Wallet[]> = {};
+  relatedWalletsByChain: Record<string, Wallet[]> = {};
 
   async getChains(): Promise<void> {
     const allChains = this.chainsService.getChainsByNetwork(Network.AllNetworks);
@@ -129,13 +129,13 @@ export class WalletsComponent implements OnInit {
   }
 
   async loadChainByName(): Promise<void> {
-    this.chainsById = {};
+    this.chainsByGenesisHash = {};
 
-    if (this.selectedChain.id === 0) {
-      this.chainsById[0] = this.chains;
+    if (this.selectedChain.genesis_hash === "0x-all-networks-genesis-hash-placeholder") {
+      this.chainsByGenesisHash["0x-all-networks-genesis-hash-placeholder"] = this.chains;
     } else {
-      const mapped = this.chains.filter(chain => chain.id === this.selectedChain.id);
-      this.chainsById[this.selectedChain.id] = mapped;
+      const mapped = this.chains.filter(chain => chain.genesis_hash === this.selectedChain.genesis_hash);
+      this.chainsByGenesisHash[this.selectedChain.genesis_hash] = mapped;
     }
 
     await this.getWallets();
@@ -153,7 +153,7 @@ export class WalletsComponent implements OnInit {
 
     for (const chain of this.chains) {
       const filtered = this.wallets.filter(
-        w => w.chain.id === chain.id
+        w => w.chain.genesis_hash === chain.genesis_hash
       );
 
       const mapped = await Promise.all(
@@ -163,7 +163,7 @@ export class WalletsComponent implements OnInit {
         }))
       );
 
-      this.walletsByChain[chain.id] = mapped;
+      this.walletsByChain[chain.genesis_hash] = mapped;
     }
   }
 
@@ -172,8 +172,8 @@ export class WalletsComponent implements OnInit {
 
     if (this.chains.length > 0) {
       for (const chain of this.chains) {
-        const chain_id = chain.id;
-        const chain_wallets = this.wallets.filter(w => w.chain.id === chain.id);
+        const chain_genesis_hash = chain.genesis_hash;
+        const chain_wallets = this.wallets.filter(w => w.chain.genesis_hash === chain.genesis_hash);
 
         const rawPublicKeys = new Set<string>();
 
@@ -184,10 +184,10 @@ export class WalletsComponent implements OnInit {
           }
         }
 
-        const network = this.chains.find(c => c.id === chain_id)?.network;
+        const chain_type = this.chains.find(c => c.genesis_hash === chain_genesis_hash)?.chain_type;
         const relatedWallets = this.wallets.filter(w => {
-          return w.chain.network === network &&
-            w.chain.id !== chain_id &&
+          return w.chain.chain_type === chain_type &&
+            w.chain.genesis_hash !== chain_genesis_hash &&
             !rawPublicKeys.has(w.public_key);
         });
 
@@ -198,7 +198,7 @@ export class WalletsComponent implements OnInit {
           return acc;
         }, {} as Record<string, Wallet>);
 
-        this.relatedWalletsByChain[chain_id] = Object.values(groupedByPublicKey);
+        this.relatedWalletsByChain[chain_genesis_hash] = Object.values(groupedByPublicKey);
       }
     }
   }
@@ -241,17 +241,19 @@ export class WalletsComponent implements OnInit {
     await this.getChains();
 
     const matchedChain = this.chains.find(
-      chain => chain.id === this.currentWallet.chain.id
+      chain => chain.genesis_hash === this.currentWallet.chain.genesis_hash
     );
 
     if (matchedChain) {
       this.selectedChain = matchedChain;
-
-      await this.loadChainByName();
-      await this.loadWalletsByChain();
-
-      this.onFilteredChain.emit(matchedChain);
+    } else {
+      this.selectedChain = this.chains[0];
     }
+
+    await this.loadChainByName();
+    await this.loadWalletsByChain();
+
+    this.onFilteredChain.emit(matchedChain);
   }
 
   truncateAddress(address: string): string {

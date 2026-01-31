@@ -18,10 +18,11 @@ import {
   IonTitle,
   IonToolbar,
   IonToggle,
+  IonChip
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { qrCode, send, swapHorizontal, card } from 'ionicons/icons';
+import { qrCode, send, swapHorizontal, card, close } from 'ionicons/icons';
 
 import { Balance } from 'src/models/balance.model';
 
@@ -33,6 +34,8 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { WalletsService } from 'src/app/api/wallets/wallets.service';
+import { Wallet } from 'src/models/wallet.model';
 
 @Component({
   selector: 'app-balances',
@@ -54,7 +57,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonModal,
     IonTitle,
     IonToolbar,
-    IonToggle,
+    IonChip,
     TokensComponent,
     ReceiveComponent,
     SendComponent,
@@ -71,13 +74,9 @@ export class BalancesPage implements OnInit {
     private router: Router,
     private settingsService: SettingsService,
     private balancesService: BalancesService,
+    private walletsService: WalletsService,
   ) {
-    addIcons({
-      qrCode,
-      send,
-      swapHorizontal,
-      card,
-    });
+    addIcons({qrCode,send,swapHorizontal,close,card,});
   }
 
   refreshCounter: number = 0;
@@ -87,6 +86,8 @@ export class BalancesPage implements OnInit {
   isZeroBalancesHidden: boolean = true;
 
   currencySymbol: string = '';
+
+  currentWallet: Wallet = new Wallet();
 
   handleRefresh(event: RefresherCustomEvent) {
     this.refreshCounter++;
@@ -139,7 +140,7 @@ export class BalancesPage implements OnInit {
     this.totalAmount = amount;
   }
 
-  onClickSend(_: string) {
+  onClickSend() {
     this.balancesSelectTokenModal.dismiss();
     this.balancesSendModal.dismiss();
   }
@@ -147,28 +148,37 @@ export class BalancesPage implements OnInit {
   async initSettings(): Promise<void> {
     const settings = await this.settingsService.get();
     if (settings) {
-      this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
       this.currencySymbol = settings.user_preferences.currency.symbol;
     };
   }
 
-  async hideZeroBalances(event: any): Promise<void> {
-    const isHidden = event.detail.checked;
-    const settings = await this.settingsService.get();
-
-    if (settings) {
-      settings.user_preferences.hide_zero_balances = isHidden;
-      this.settingsService.set(settings);
-
-      this.refreshCounter++;
+  async getCurrentWallet(): Promise<void> {
+    const currentWallet = await this.walletsService.getCurrentWallet();
+    if (currentWallet) {
+      this.currentWallet = currentWallet;
     }
   }
 
   ngOnInit() {
     this.initSettings();
+    this.getCurrentWallet();
+
+    this.walletsService.currentWalletObservable.subscribe(wallet => {
+      if (wallet) {
+        this.currentWallet = wallet;
+      }
+    });
+
     this.settingsService.currentSettingsObservable.subscribe(settings => {
       if (settings) {
-        this.initSettings();
+        const newValue = settings.user_preferences.hide_zero_balances;
+        if (this.isZeroBalancesHidden !== newValue) {
+          this.isZeroBalancesHidden = newValue;
+
+          this.refreshCounter++;
+        }
+
+        this.currencySymbol = settings.user_preferences.currency.symbol;
       }
     });
   }

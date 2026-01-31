@@ -1,0 +1,136 @@
+<ion-content [fullscreen]="true" class="web3-connected-account-page">
+  <div class="ion-text-center ion-margin-bottom">
+    <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
+  </div>
+
+  <div class="ion-padding">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom" style="margin-top: -75px;">
+            <h1 style="font-weight: bold">
+              {{ 'Connect Accounts' | translate }}
+            </h1>
+            <span style="font-size: 15px;">
+              {{ 'Select one or more accounts to connect to this application.' | translate }}
+            </span>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-margin-bottom">
+        <ion-col size="12">
+          <div class="ion-text-center">
+            <ion-chip [color]="'success'">
+              <ion-icon [name]="'globe-outline'"></ion-icon>
+              <ion-label>{{ paramsOrigin }}</ion-label>
+            </ion-chip>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          @if (wrappedWalletAccounts.length > 0) {
+          @for (wrappedAccount of wrappedWalletAccounts; track wrappedAccount) {
+          <ion-list>
+            <ion-item class="wallet-item" lines="none" (click)="toggleCheckbox(wrappedAccount, $event)">
+              <ion-checkbox slot="start" class="wallet-checkbox" [checked]="wrappedAccount.checked"
+                (click)="$event.stopPropagation()" (ionChange)="toggleCheckbox(wrappedAccount, $event)"></ion-checkbox>
+              <ion-label>
+                <div style="margin: 5px 5px;">
+                  <h2>{{ truncateAddress(wrappedAccount.wallet_account.address) }}</h2>
+                </div>
+                <ion-chip [color]="'dark'" (click)="openWalletAccountsModal($event, wrappedAccount)">
+                  <div style="display: flex; align-items: center; cursor: pointer;">
+                    <img [src]="'/assets/images/chains/' + wrappedAccount.wallet_account.wallet?.chain?.image"
+                      height="20" style="margin-right: 5px;" />
+                    <ion-label>
+                      {{ wrappedAccount.wallet_account.wallet?.name }}
+                    </ion-label>
+                  </div>
+                </ion-chip>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          }
+          }
+          @else {
+          <div class="ion-text-center ion-padding">
+            <p>{{ 'No wallets available to connect.' | translate }}</p>
+          </div>
+          }
+
+          @if (checkedWrappedWalletAccounts.length > 0) {
+          <div class="ion-text-center ion-padding">
+            <p>{{ checkedWrappedWalletAccounts.length }} account(s) selected</p>
+          </div>
+          }
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="ion-padding-horizontal">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <div class="primary-button-wrapper">
+            <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="connect()"
+              [disabled]="checkedWrappedWalletAccounts.length === 0">
+              {{ 'Connect' | translate }}
+            </ion-button>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="primary-button-wrapper">
+            <ion-button expand="block" size="default" class="ion-margin-bottom danger-button" (click)="reject()">
+              {{ 'Close' | translate }}
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-footer>
+
+<ion-modal #walletAccountsModal class="wallet-accounts-modal" [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]"
+  [expandToScroll]="false">
+  <ng-template>
+    <ion-toolbar class="main-modal-toolbar">
+      <ion-title>{{ 'Select Wallet Name' | translate }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="walletAccountsModal.dismiss()">
+          <ion-icon name="close" style="color: white;"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+
+    <div class="modal-content-container">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <div class="wallet-account-details">
+              <ion-list>
+                @for (walletAccount of walletAccounts; track walletAccount) {
+                <ion-item detail="false" lines="none" button (click)="selectWalletAccount(walletAccount)">
+                  <ion-avatar slot="start" style="padding: 3px; margin-right: 7px;">
+                    <img [src]="'./../../../../assets/images/chains/' + walletAccount.wallet?.chain?.image"
+                      alt="Chain Logo" />
+                  </ion-avatar>
+                  <ion-label>
+                    <h2>{{ walletAccount.name }}</h2>
+                    <p>Chain: {{ walletAccount.wallet?.chain?.name }}</p>
+                  </ion-label>
+                </ion-item>
+                }
+              </ion-list>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<ion-toast [duration]="5000"></ion-toast>

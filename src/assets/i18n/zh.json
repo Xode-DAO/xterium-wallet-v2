@@ -176,5 +176,11 @@
   "Set a PIN to secure your wallets after disabling biometric authentication.": "禁用生物识别认证后，请设置 PIN 以保护您的钱包。",
   "Set a Biometric to secure your wallets after enabling biometric authentication.": "启用生物识别认证后，请设置生物识别以保护您的钱包。",
   "Setup Biometrics": "设置生物识别",
-  "Enable Biometric": "启用生物识别"
+  "Enable Biometric": "启用生物识别",
+  "Connect Accounts": "连接账户",
+  "No wallets available to connect.": "没有可用的钱包可以连接。",
+  "Connect": "连接",
+  "Close": "关闭",
+  "Assets": "资产",
+  "Select one or more accounts to connect to this application.": "请选择一个或多个账户以连接到此应用程序。"
 }

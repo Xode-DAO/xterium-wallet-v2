@@ -7,9 +7,13 @@ import {
   mnemonicValidate,
   sr25519PairFromSeed,
 } from "@polkadot/util-crypto"
-import { u8aToHex, hexToU8a } from '@polkadot/util';
+import { u8aToHex, hexToU8a, stringToHex } from '@polkadot/util';
 import { encodeAddress, decodeAddress, Keyring } from '@polkadot/keyring';
 import { u8aEq } from '@polkadot/util';
+import { ApiPromise } from '@polkadot/api';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
+import type { AccountInfo } from '@polkadot/types/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -53,14 +57,14 @@ export class UtilsService {
 
   async deriveKeypair(mnemonic: string, derivationPath: string): Promise<{ publicKey: Uint8Array; secretKey: Uint8Array }> {
     await this.ensureReady();
-    
+
     const keyring = new Keyring({ type: 'sr25519' });
-    
+
     const uri = `${mnemonic}${derivationPath}`;
     const derivedPair = keyring.addFromUri(uri);
-    
+
     const { secretKey } = sr25519PairFromSeed(derivedPair.derive('').publicKey);
-    
+
     return {
       publicKey: derivedPair.publicKey,
       secretKey: secretKey
@@ -125,5 +129,60 @@ export class UtilsService {
     } catch (e) {
       return false;
     }
+  }
+
+  payloadToHex(payload: string): string {
+    const hex = stringToHex(payload);
+    return hex;
+  }
+
+  normalizeToExtrinsicHex(hexData: string, api: ApiPromise): string {
+    if (!hexData.startsWith('0x')) {
+      hexData = '0x' + hexData;
+    }
+
+    try {
+      api.registry.createType('Extrinsic', hexData);
+      return hexData;
+    } catch (error) {
+      const call = api.registry.createType('Call', hexData);
+      const extrinsic = api.tx(call);
+      return extrinsic.toHex();
+    }
+  }
+
+  async createSignerPayload(api: ApiPromise, extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>, signerAddress: string): Promise<SignerPayloadJSON> {
+    const runtimeVersion = api.runtimeVersion;
+    const blockHash = await api.rpc.chain.getBlockHash();
+    const signedBlock = await api.rpc.chain.getBlock(blockHash);
+    const blockNumber = signedBlock.block.header.number;
+    const era = api.registry.createType('ExtrinsicEra');
+    const genesisHash = api.genesisHash;
+    const accountInfo = await api.query['system']['account'](signerAddress) as AccountInfo;
+    const nonce = accountInfo.nonce.toNumber();
+
+    const signerPayload: SignerPayloadJSON = {
+      specVersion: runtimeVersion.specVersion.toHex(),
+      transactionVersion: runtimeVersion.transactionVersion.toHex(),
+      address: signerAddress,
+      assetId: undefined,
+      blockHash: blockHash.toHex(),
+      blockNumber: blockNumber.toHex(),
+      era: era.toHex(),
+      genesisHash: genesisHash.toHex(),
+      metadataHash: undefined,
+      method: extrinsic.method.toHex(),
+      nonce: api.registry.createType('Compact<u32>', nonce).toHex(),
+      signedExtensions: api.registry.signedExtensions,
+      tip: '0x00000000000000000000000000000000',
+      version: extrinsic.version,
+      withSignedTransaction: true,
+    };
+
+    if (api.registry.signedExtensions.includes('CheckMetadataHash')) {
+      signerPayload.mode = 0;
+    }
+
+    return signerPayload;
   }
 }
