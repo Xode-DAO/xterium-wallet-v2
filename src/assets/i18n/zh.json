@@ -182,5 +182,9 @@
   "Connect": "连接",
   "Close": "关闭",
   "Assets": "资产",
-  "Select one or more accounts to connect to this application.": "请选择一个或多个账户以连接到此应用程序。"
+  "Select one or more accounts to connect to this application.": "请选择一个或多个账户以连接到此应用程序。",
+  "This token is currently frozen and cannot be sent.": "该代币当前已被冻结，无法发送。",
+  "User Preferences": "用户偏好设置",
+  "Networks": "网络",
+  "Accounts and Security": "账户与安全"
 }
