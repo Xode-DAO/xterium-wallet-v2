@@ -102,9 +102,14 @@
       <ion-col size="12">
         <div class="primary-button-wrapper">
           <ion-button expand="block" size="default" class="ion-margin-bottom" (click)="send()"
-            [disabled]="isProcessing">
+            [disabled]="isProcessing || balance.status === 'Frozen'">
             {{ 'SEND' | translate }}
           </ion-button>
+          @if (balance.status === 'Frozen') {
+          <ion-chip color="warning">
+            {{ 'This token is currently frozen and cannot be sent.' | translate }}
+          </ion-chip>
+          }
         </div>
       </ion-col>
     </ion-row>

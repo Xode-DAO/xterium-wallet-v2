@@ -182,5 +182,9 @@
   "Connect": "연결",
   "Close": "닫기",
   "Assets": "자산",
-  "Select one or more accounts to connect to this application.": "이 애플리케이션에 연결할 하나 이상의 계정을 선택하세요."
+  "Select one or more accounts to connect to this application.": "이 애플리케이션에 연결할 하나 이상의 계정을 선택하세요.",
+  "This token is currently frozen and cannot be sent.": "이 토큰은 현재 동결되어 있어 전송할 수 없습니다.",
+  "User Preferences": "사용자 환경설정",
+  "Networks": "네트워크",
+  "Accounts and Security": "계정 및 보안"
 }

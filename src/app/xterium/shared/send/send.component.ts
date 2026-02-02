@@ -24,6 +24,7 @@ import {
   // IonContent,
   // IonTitle,
   // IonToolbar,
+  IonChip,
   ToastController,
   AlertController
 } from '@ionic/angular/standalone';
@@ -75,6 +76,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonTextarea,
     // IonButtons,
     IonToast,
+    IonChip,
     // IonModal,
     // IonContent,
     // IonTitle,

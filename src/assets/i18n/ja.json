@@ -182,5 +182,9 @@
   "Connect": "接続",
   "Close": "閉じる",
   "Assets": "資産",
-  "Select one or more accounts to connect to this application.": "このアプリケーションに接続するアカウントを1つ以上選択してください。"
+  "Select one or more accounts to connect to this application.": "このアプリケーションに接続するアカウントを1つ以上選択してください。",
+  "This token is currently frozen and cannot be sent.": "このトークンは現在凍結されており、送信できません。",
+  "User Preferences": "ユーザー設定",
+  "Networks": "ネットワーク",
+  "Accounts and Security": "アカウントとセキュリティ"
 }
