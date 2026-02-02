@@ -30,7 +30,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { clipboardOutline, scanOutline, chevronDownOutline, close } from 'ionicons/icons';
+import { clipboardOutline, scanOutline, chevronDownOutline, snowOutline, close } from 'ionicons/icons';
 
 import { Balance } from 'src/models/balance.model';
 import { Wallet } from 'src/models/wallet.model';
@@ -113,6 +113,7 @@ export class SendComponent implements OnInit {
       clipboardOutline,
       scanOutline,
       chevronDownOutline,
+      snowOutline,
       close
     });
   }

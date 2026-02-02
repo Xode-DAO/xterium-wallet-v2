@@ -80,7 +80,7 @@
       </ion-row>
 
       @if (relatedWalletsByChain[chain.genesis_hash] && relatedWalletsByChain[chain.genesis_hash].length > 0) {
-      <ion-chip [color]="'warning'" [outline]="true"
+      <ion-chip [color]="'secondary'" [outline]="true"
         (click)="createManyWallets(relatedWalletsByChain[chain.genesis_hash], chain)">
         {{ relatedWalletsByChain[chain.genesis_hash].length + ' ' + ('related wallets found, click to add' | translate)
         }}
