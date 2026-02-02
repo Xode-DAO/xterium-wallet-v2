@@ -3,6 +3,7 @@
     <ion-row>
       <ion-col size="12">
         <ion-list>
+          <ion-label>{{ 'User Preferences' | translate }}</ion-label>
           <ion-item button lines="none" class="custom-buttons" (click)="openCurrencyModal()">
             <ion-icon slot="start" name="logo-usd"></ion-icon>
             <h2>{{ 'Currency' | translate }}</h2>
@@ -27,12 +28,20 @@
             <ion-toggle slot="end" [checked]="isZeroBalancesHidden" (ionChange)="hideZeroBalances($event)">
             </ion-toggle>
           </ion-item>
+        </ion-list>
+
+        <ion-list>
+          <ion-label>{{ 'Networks' | translate }}</ion-label>
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="code-outline"></ion-icon>
             <h2>{{ 'Enable Testnet' | translate }}</h2>
             <ion-toggle slot="end" [checked]="isTestnetEnabled" (ionChange)="enableTestnet($event)">
             </ion-toggle>
           </ion-item>
+        </ion-list>
+
+        <ion-list>
+          <ion-label>{{ 'Accounts and Security' | translate }}</ion-label>
           @if (!isChromeExtension) {
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="finger-print-outline"></ion-icon>
@@ -45,7 +54,9 @@
             <ion-icon slot="start" name="link-outline"></ion-icon>
             <h2>{{ 'Connect Accounts' | translate }}</h2>
           </ion-item>
-
+        </ion-list>
+        
+        <ion-list>
           <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
             <h2>{{ 'Logout' | translate }}</h2>

@@ -13,7 +13,7 @@
         --background-activated: transparent;
         --background-focused: transparent;
 
-        border: 3px solid #777777;
+        border: 3px solid rgba(var(--ion-color-secondary-rgb), 0.3);
         border-radius: 1.5rem;
         box-shadow: none !important;
       }
