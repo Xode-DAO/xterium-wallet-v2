@@ -32,11 +32,13 @@ export abstract class PolkadotJsService {
   abstract getEstimatedFees(api: ApiPromise, extrinsicHex: string, publicKey: string, token: Token | null): Promise<number>;
 
   sign(api: ApiPromise, payload: SignerPayloadJSON | SignerPayloadRaw, walletSigner: WalletSigner): SignerResult {
-    const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-    const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
+    let derivation_path = "";
+    if (walletSigner.derivation_path) {
+      derivation_path = walletSigner.derivation_path;
+    }
 
     const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromPair({ publicKey, secretKey });
+    const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
 
     if ('withSignedTransaction' in payload) {
       const method = api.registry.createType('Call', payload.method);
@@ -85,11 +87,13 @@ export abstract class PolkadotJsService {
   }
 
   async signAsync(api: ApiPromise, transactionHex: HexString, walletSigner: WalletSigner): Promise<SignerResult> {
-    const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-    const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
+    let derivation_path = "";
+    if (walletSigner.derivation_path) {
+      derivation_path = walletSigner.derivation_path;
+    }
 
     const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromPair({ publicKey, secretKey });
+    const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
 
     const txBytes = hexToU8a(transactionHex);
     const call = api.createType('Extrinsic', txBytes);
@@ -110,11 +114,13 @@ export abstract class PolkadotJsService {
 
       (async () => {
         try {
-          const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-          const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
+          let derivation_path = "";
+          if (walletSigner.derivation_path) {
+            derivation_path = walletSigner.derivation_path;
+          }
 
           const keyring = new Keyring({ type: 'sr25519' });
-          const pair = keyring.addFromPair({ publicKey, secretKey });
+          const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
 
           const extrinsic = api.registry.createType('Extrinsic', transactionHex);
 

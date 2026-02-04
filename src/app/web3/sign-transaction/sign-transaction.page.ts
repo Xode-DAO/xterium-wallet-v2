@@ -359,7 +359,8 @@ export class SignTransactionPage implements OnInit {
     const walletSigner: WalletSigner = {
       mnemonic_phrase: decryptedMnemonicPhrase,
       public_key: this.currentWallet.public_key,
-      private_key: decryptedPrivateKey
+      private_key: decryptedPrivateKey,
+      derivation_path: this.currentWallet.derivation_path,
     };
 
     let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
