@@ -214,7 +214,7 @@ export class ConnectAccountsPage implements OnInit {
     if (this.wallets.length > 0) {
       for (const wallet of this.wallets) {
         const convertedAddress = await this.encodePublicAddressByDefaultFormat(wallet.public_key);
-        if (convertedAddress === wrappedAccount.wallet_account.address) {
+        if (convertedAddress === this.encodePublicAddressByChainFormat(wrappedAccount.wallet_account.address, 42)) {
           this.walletAccounts.push({
             address: convertedAddress,
             name: wallet.name,
