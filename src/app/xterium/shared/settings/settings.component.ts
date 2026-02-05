@@ -31,10 +31,11 @@ import {
   logOutOutline,
   logoUsd,
   languageOutline,
+  notificationsOutline,
   fingerPrintOutline,
   codeOutline,
   linkOutline,
-  eyeOffOutline
+  eyeOffOutline,
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -117,6 +118,7 @@ export class SettingsComponent implements OnInit {
       logOutOutline,
       logoUsd,
       languageOutline,
+      notificationsOutline,
       fingerPrintOutline,
       codeOutline,
       linkOutline,
@@ -131,6 +133,8 @@ export class SettingsComponent implements OnInit {
   code: string = '';
 
   isZeroBalancesHidden: boolean = false;
+
+  isNotificationsEnabled: boolean = false;
 
   isTestnetEnabled: boolean = false;
 
@@ -241,6 +245,18 @@ export class SettingsComponent implements OnInit {
       await this.settingsService.set(settings);
 
       this.isZeroBalancesHidden = isHidden;
+    }
+  }
+
+  async enableNotifications(event: any): Promise<void> {
+    const isEnabled = event.detail.checked;
+    const settings = await this.settingsService.get();
+
+    if (settings) {
+      settings.user_preferences.notifications_enabled = isEnabled;
+      await this.settingsService.set(settings);
+      
+      this.isNotificationsEnabled = isEnabled;
     }
   }
 
@@ -476,6 +492,7 @@ export class SettingsComponent implements OnInit {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
       this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
+      this.isNotificationsEnabled = settings.user_preferences.notifications_enabled;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
 
       await this.getCurrentAuth();

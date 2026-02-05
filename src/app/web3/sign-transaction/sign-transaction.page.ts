@@ -65,6 +65,7 @@ import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/pol
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 
 import { Auth } from 'src/models/auth.model';
@@ -136,6 +137,7 @@ export class SignTransactionPage implements OnInit {
     private walletsService: WalletsService,
     private encryptionService: EncryptionService,
     private balancesService: BalancesService,
+    private settingsService: SettingsService,
     private localNotificationsService: LocalNotificationsService,
     private toastController: ToastController,
     private loadingController: LoadingController,
@@ -534,7 +536,11 @@ export class SignTransactionPage implements OnInit {
     }
 
     const id = Math.floor(Math.random() * 100000);
-    await this.localNotificationsService.presentNotification(title, body, id);
+
+    const settings = await this.settingsService.get();
+    if (settings?.user_preferences.notifications_enabled === true) {
+      await this.localNotificationsService.presentNotification(title, body, id);
+    }
   }
 
   cancelTransaction() {
