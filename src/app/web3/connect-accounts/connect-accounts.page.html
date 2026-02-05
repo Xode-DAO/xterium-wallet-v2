@@ -37,7 +37,8 @@
                 (click)="$event.stopPropagation()" (ionChange)="toggleCheckbox(wrappedAccount, $event)"></ion-checkbox>
               <ion-label>
                 <div style="margin: 5px 5px;">
-                  <h2>{{ truncateAddress(wrappedAccount.wallet_account.address) }}</h2>
+                  <h2>{{ truncateAddress(encodePublicAddressByChainFormat(wrappedAccount.wallet_account.address,
+                    wrappedAccount.ss58Format) ) }}</h2>
                 </div>
                 <ion-chip [color]="'dark'" (click)="openWalletAccountsModal($event, wrappedAccount)">
                   <div style="display: flex; align-items: center; cursor: pointer;">
