@@ -229,11 +229,24 @@ export class ConnectAccountsPage implements OnInit {
     this.walletAccountsModal.dismiss();
 
     const ss58Format = Number(walletAccount.wallet?.chain?.address_prefix);
-    console.log("Selected SS58 Format:", ss58Format);
+
+    walletAccount.address = this.encodePublicAddressByChainFormat(this.currentWrappedWalletAccount.wallet_account.address, ss58Format);;
 
     this.currentWrappedWalletAccount.ss58Format = ss58Format;
-    this.currentWrappedWalletAccount.wallet_account.address = this.encodePublicAddressByChainFormat(this.currentWrappedWalletAccount.wallet_account.address, ss58Format);
+    this.currentWrappedWalletAccount.wallet_account.address = walletAccount.address;
     this.currentWrappedWalletAccount.wallet_account = walletAccount;
+
+    const wrappedAccount = this.wrappedWalletAccounts.find(acc => acc.wallet_account.address === this.currentWrappedWalletAccount.wallet_account.address);
+    if (wrappedAccount) {
+      wrappedAccount.ss58Format = ss58Format;
+      wrappedAccount.wallet_account = walletAccount;
+    }
+
+    const checkedWrappedAccount = this.checkedWrappedWalletAccounts.find(acc => acc.wallet_account.address === this.currentWrappedWalletAccount.wallet_account.address);
+    if (checkedWrappedAccount) {
+      checkedWrappedAccount.ss58Format = ss58Format;
+      checkedWrappedAccount.wallet_account = walletAccount;
+    }
   }
 
   async initConnection(): Promise<void> {
@@ -256,6 +269,12 @@ export class ConnectAccountsPage implements OnInit {
     if (this.paramsOrigin) {
       for (const wallet of this.checkedWrappedWalletAccounts) {
         web3WalletAccounts.origin = this.paramsOrigin;
+
+        wallet.wallet_account.address = this.encodePublicAddressByChainFormat(
+          wallet.wallet_account.address,
+          wallet.ss58Format
+        );
+
         web3WalletAccounts.wallet_accounts.push(wallet.wallet_account);
       }
     } else {
