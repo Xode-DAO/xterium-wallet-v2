@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
+import { encodeAddress } from '@polkadot/util-crypto';
+
 import {
   IonContent,
   IonFooter,
@@ -115,6 +117,7 @@ export class ConnectAccountsPage implements OnInit {
 
           this.wrappedWalletAccounts.push({
             checked: isChecked,
+            ss58Format: Number(wallet.chain?.address_prefix) || 42,
             wallet_account: {
               address: convertedAddress,
               name: wallet.name,
@@ -125,6 +128,7 @@ export class ConnectAccountsPage implements OnInit {
           if (isChecked) {
             this.checkedWrappedWalletAccounts.push({
               checked: isChecked,
+              ss58Format: Number(wallet.chain?.address_prefix) || 42,
               wallet_account: {
                 address: convertedAddress,
                 name: wallet.name,
@@ -160,6 +164,10 @@ export class ConnectAccountsPage implements OnInit {
 
     const ss58Format = 42;
     return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
+  }
+
+  encodePublicAddressByChainFormat(publicKey: string, ss58Format: number): string {
+    return encodeAddress(publicKey, ss58Format);
   }
 
   toggleCheckbox(wrappedAccount: WrappedWalletAccount, event: any) {
@@ -219,7 +227,26 @@ export class ConnectAccountsPage implements OnInit {
 
   selectWalletAccount(walletAccount: WalletAccount): void {
     this.walletAccountsModal.dismiss();
+
+    const ss58Format = Number(walletAccount.wallet?.chain?.address_prefix);
+
+    walletAccount.address = this.encodePublicAddressByChainFormat(this.currentWrappedWalletAccount.wallet_account.address, ss58Format);;
+
+    this.currentWrappedWalletAccount.ss58Format = ss58Format;
+    this.currentWrappedWalletAccount.wallet_account.address = walletAccount.address;
     this.currentWrappedWalletAccount.wallet_account = walletAccount;
+
+    const wrappedAccount = this.wrappedWalletAccounts.find(acc => acc.wallet_account.address === this.currentWrappedWalletAccount.wallet_account.address);
+    if (wrappedAccount) {
+      wrappedAccount.ss58Format = ss58Format;
+      wrappedAccount.wallet_account = walletAccount;
+    }
+
+    const checkedWrappedAccount = this.checkedWrappedWalletAccounts.find(acc => acc.wallet_account.address === this.currentWrappedWalletAccount.wallet_account.address);
+    if (checkedWrappedAccount) {
+      checkedWrappedAccount.ss58Format = ss58Format;
+      checkedWrappedAccount.wallet_account = walletAccount;
+    }
   }
 
   async initConnection(): Promise<void> {
@@ -242,6 +269,12 @@ export class ConnectAccountsPage implements OnInit {
     if (this.paramsOrigin) {
       for (const wallet of this.checkedWrappedWalletAccounts) {
         web3WalletAccounts.origin = this.paramsOrigin;
+
+        wallet.wallet_account.address = this.encodePublicAddressByChainFormat(
+          wallet.wallet_account.address,
+          wallet.ss58Format
+        );
+
         web3WalletAccounts.wallet_accounts.push(wallet.wallet_account);
       }
     } else {
