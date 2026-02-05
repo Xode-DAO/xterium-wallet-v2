@@ -36,6 +36,9 @@ import {
   codeOutline,
   linkOutline,
   eyeOffOutline,
+  logoChrome,
+  logoGithub,
+  logoDiscord,
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -58,6 +61,7 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BiometricService } from 'src/app/api/biometric/biometric.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
+import { AppVersionService } from 'src/app/api/app-version/app-version.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -109,6 +113,7 @@ export class SettingsComponent implements OnInit {
     private alertController: AlertController,
     private encryptionService: EncryptionService,
     private biometricService: BiometricService,
+    private appVersionService: AppVersionService,
     private modalController: ModalController,
     private router: Router
 
@@ -122,7 +127,10 @@ export class SettingsComponent implements OnInit {
       fingerPrintOutline,
       codeOutline,
       linkOutline,
-      eyeOffOutline
+      eyeOffOutline,
+      logoChrome,
+      logoGithub,
+      logoDiscord,
     });
   }
 
@@ -144,6 +152,8 @@ export class SettingsComponent implements OnInit {
   biometricState: 'enabled' | 'disabled' | 'setup-pin' | 'setup-password' | 'setup-biometric' | null = null;
   decryptedPin: string = '';
   decryptedBiometricCredentials: string = '';
+
+  latestTagName: string = '';
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -484,6 +494,25 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+  goToDiscord() {
+    window.open('https://discord.gg/xPDSf5BZ', '_blank');
+  }
+
+  goToWebsite() {
+    window.open('https://xterium.app', '_blank');
+  }
+
+  goToGithub() {
+    window.open('https://github.com/Xode-DAO/xterium-wallet-v2', '_blank');
+  }
+
+  async loadLatestVersion() {
+    const observable = await this.appVersionService.getLatestVersion();
+    observable.subscribe((tags) => {
+      this.latestTagName = tags[0].name;
+    });
+  }
+  
   async fetchData(): Promise<void> {
     this.isChromeExtension = this.environmentService.isChromeExtension();
 
@@ -506,6 +535,8 @@ export class SettingsComponent implements OnInit {
 
       await this.settingsService.set(settings);
     }
+
+    await this.loadLatestVersion();
   }
 
   ngOnInit() {
