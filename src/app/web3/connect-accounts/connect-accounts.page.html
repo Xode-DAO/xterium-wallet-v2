@@ -40,6 +40,7 @@
                   <h2>{{ truncateAddress(encodePublicAddressByChainFormat(wrappedAccount.wallet_account.address,
                     wrappedAccount.ss58Format) ) }}</h2>
                 </div>
+                <span style="margin: 5px;">Format:</span>
                 <ion-chip [color]="'dark'" (click)="openWalletAccountsModal($event, wrappedAccount)">
                   <div style="display: flex; align-items: center; cursor: pointer;">
                     <img [src]="'/assets/images/chains/' + wrappedAccount.wallet_account.wallet?.chain?.image"
@@ -121,7 +122,7 @@
                   </ion-avatar>
                   <ion-label>
                     <h2>{{ walletAccount.name }}</h2>
-                    <p>Chain: {{ walletAccount.wallet?.chain?.name }}</p>
+                    <p>{{ truncateAddress(encodePublicAddressByChainFormat(walletAccount.address, getChainPrefix(walletAccount))) }}</p>
                   </ion-label>
                 </ion-item>
                 }

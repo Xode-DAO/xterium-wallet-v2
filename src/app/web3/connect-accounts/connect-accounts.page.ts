@@ -117,7 +117,7 @@ export class ConnectAccountsPage implements OnInit {
 
           this.wrappedWalletAccounts.push({
             checked: isChecked,
-            ss58Format: Number(wallet.chain?.address_prefix) || 42,
+            ss58Format: Number(wallet.chain?.address_prefix),
             wallet_account: {
               address: convertedAddress,
               name: wallet.name,
@@ -128,7 +128,7 @@ export class ConnectAccountsPage implements OnInit {
           if (isChecked) {
             this.checkedWrappedWalletAccounts.push({
               checked: isChecked,
-              ss58Format: Number(wallet.chain?.address_prefix) || 42,
+              ss58Format: Number(wallet.chain?.address_prefix),
               wallet_account: {
                 address: convertedAddress,
                 name: wallet.name,
@@ -225,6 +225,9 @@ export class ConnectAccountsPage implements OnInit {
     }
   }
 
+  getChainPrefix(walletAccount: WalletAccount): number {
+    return Number(walletAccount.wallet?.chain?.address_prefix ?? 42);
+  }
   selectWalletAccount(walletAccount: WalletAccount): void {
     this.walletAccountsModal.dismiss();
 
