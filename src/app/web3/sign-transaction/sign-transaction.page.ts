@@ -335,17 +335,18 @@ export class SignTransactionPage implements OnInit {
 
   async signTransactions() {
     if (this.isChromeExtension) {
-      const result = await chrome.storage.session.get(["password"]);
-      const password = result["password"];
+      const result = await chrome.storage.session.get(["decrypted_password"]);
+      const decryptedPassword = result["decrypted_password"];
   
-      if (typeof password === "string") {
-        this.confirmSignTransaction(password);
+      if (typeof decryptedPassword === "string") {
+        this.confirmSignTransaction(decryptedPassword);
       } else {
         this.confirmSignTransactionModal.present();
       }
-    } 
+    } else {
       
-    this.confirmSignTransactionModal.present();
+      this.confirmSignTransactionModal.present();
+    }
   }
 
   async confirmSignTransaction(decryptedPassword: string) {

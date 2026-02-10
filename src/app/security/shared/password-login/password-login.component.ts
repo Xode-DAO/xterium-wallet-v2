@@ -106,7 +106,7 @@ export class PasswordLoginComponent implements OnInit {
 
     await this.authService.renewAuth();
 
-    chrome.storage.session.set({ password: decryptedPassword });
+    chrome.storage.session.set({ decrypted_password: decryptedPassword });
 
     this.onLogin.emit(decryptedPassword);
     this.isProcessing = false;
