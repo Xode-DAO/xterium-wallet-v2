@@ -20,7 +20,7 @@ import { shieldCheckmark } from 'ionicons/icons';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { AuthService } from 'src/app/api/auth/auth.service';
 
-import { Auth, PasswordLogin } from 'src/models/auth.model';
+import { PasswordLogin } from 'src/models/auth.model';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -106,9 +106,12 @@ export class PasswordLoginComponent implements OnInit {
 
     await this.authService.renewAuth();
 
+    chrome.storage.session.set({ password: decryptedPassword });
+
     this.onLogin.emit(decryptedPassword);
     this.isProcessing = false;
   }
+  
 
   ngOnInit() { }
 }
