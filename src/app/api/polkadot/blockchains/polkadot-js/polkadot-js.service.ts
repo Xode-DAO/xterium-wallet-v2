@@ -79,7 +79,11 @@ export abstract class PolkadotJsService {
       let u8aPayload: Uint8Array | string;
 
       if ('data' in payload) {
-        u8aPayload = stringToHex(payload.data);
+        if (typeof payload.data === 'string' && payload.data.startsWith('0x')) {
+          u8aPayload = payload.data;
+        } else {
+          u8aPayload = stringToHex(payload.data);
+        }
       } else {
         u8aPayload = (api.registry.createType('SignerPayload', payload) as any).toU8a({ method: true });
       }
