@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { Router } from '@angular/router';
 
+import { Platform } from '@ionic/angular';
+
 import {
   IonContent,
   IonToolbar,
@@ -39,6 +41,7 @@ import {
   logoChrome,
   logoGithub,
   logoDiscord,
+  starOutline
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -115,7 +118,8 @@ export class SettingsComponent implements OnInit {
     private biometricService: BiometricService,
     private appVersionService: AppVersionService,
     private modalController: ModalController,
-    private router: Router
+    private router: Router, 
+    private platform: Platform
 
   ) {
     addIcons({
@@ -131,6 +135,7 @@ export class SettingsComponent implements OnInit {
       logoChrome,
       logoGithub,
       logoDiscord,
+      starOutline,
     });
   }
 
@@ -491,6 +496,25 @@ export class SettingsComponent implements OnInit {
     const auth = await this.authService.getAuth();
     if (auth) {
       this.currentAuth = auth;
+    }
+  }
+
+  rateUs() {
+    if (this.platform.is('android')) {
+      window.open(
+        'https://play.google.com/store/apps/details?id=com.xterium.wallet',
+        '_blank'
+      );
+    } else if (this.platform.is('ios')) {
+      window.open(
+        'https://apps.apple.com/ph/app/xterium/id6745164228',
+        '_blank'
+      );
+    } else {
+      window.open(
+        'https://chromewebstore.google.com/detail/xterium/klfhdmiebenifpdmdmkjicdohjilabdg/reviews',
+        '_blank'
+      );
     }
   }
 

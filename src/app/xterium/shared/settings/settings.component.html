@@ -62,6 +62,14 @@
           </ion-item>
         </ion-list>
 
+        <ion-list>
+          <ion-label>{{ 'Support & Feedback' | translate }}</ion-label>
+          <ion-item button lines="none" class="custom-buttons" (click)="rateUs()">
+            <ion-icon slot="start" name="star-outline"></ion-icon>
+            <h2>{{ 'Rate us' | translate }}</h2>
+          </ion-item>
+        </ion-list>
+
          <ion-list>
           <ion-label>{{ 'Community' | translate }}</ion-label>
           <ion-item button lines="none" class="custom-buttons" (click)="goToDiscord()">
