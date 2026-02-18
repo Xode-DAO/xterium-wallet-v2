@@ -30,7 +30,6 @@ export class XodePolkadotService extends PolkadotJsService {
     await cryptoWaitReady();
 
     const wsProvider = new WsProvider([
-      "wss://xode-polkadot-rpc-01.zeeve.net/y0yxg038wn1fncc/rpc",
       "wss://polkadot-rpcnode.xode.net",
     ]);
     const api = await ApiPromise.create({ provider: wsProvider });

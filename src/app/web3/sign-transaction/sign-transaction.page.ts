@@ -337,14 +337,12 @@ export class SignTransactionPage implements OnInit {
     if (this.isChromeExtension) {
       const result = await chrome.storage.session.get(["decrypted_password"]);
       const decryptedPassword = result["decrypted_password"];
-  
       if (typeof decryptedPassword === "string") {
         this.confirmSignTransaction(decryptedPassword);
       } else {
         this.confirmSignTransactionModal.present();
       }
     } else {
-      
       this.confirmSignTransactionModal.present();
     }
   }
@@ -425,10 +423,11 @@ export class SignTransactionPage implements OnInit {
           this.confirmSignTransactionModal.dismiss();
         }, 1500);
 
+        this.postSignature = signedResult.signature.toString();
+        this.postCallbackUrl = `${this.paramsCallbackUrl}?signedTransactionHex=${encodeURIComponent(this.postSignedHex)}`;
+
         if (signedResult.signedTransaction) {
-          this.postSignature = signedResult.signature.toString();
           this.postSignedHex = signedResult.signedTransaction.toString();
-          this.postCallbackUrl = `${this.paramsCallbackUrl}?signedTransactionHex=${encodeURIComponent(this.postSignedHex)}`;
         }
 
         setTimeout(() => {

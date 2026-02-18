@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { hexToU8a } from '@polkadot/util';
+import { hexToU8a, stringToHex, u8aToHex } from '@polkadot/util';
 import { ApiPromise, Keyring } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult, SignerPayloadJSON, SignerPayloadRaw, SignerResult } from '@polkadot/types/types';
@@ -76,12 +76,19 @@ export abstract class PolkadotJsService {
         signedTransaction: payload.withSignedTransaction ? signedTx : undefined,
       };
     } else {
-      const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload);
-      const { signature } = extrinsicPayload.sign(pair);
+      let u8aPayload: Uint8Array | string;
+
+      if ('data' in payload) {
+        u8aPayload = stringToHex(payload.data);
+      } else {
+        u8aPayload = (api.registry.createType('SignerPayload', payload) as any).toU8a({ method: true });
+      }
+
+      const signature = pair.sign(u8aPayload);
 
       return {
         id: 1,
-        signature: signature,
+        signature: u8aToHex(signature),
       };
     }
   }
