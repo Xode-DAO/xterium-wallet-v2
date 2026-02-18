@@ -424,10 +424,12 @@ export class SignTransactionPage implements OnInit {
         }, 1500);
 
         this.postSignature = signedResult.signature.toString();
-        this.postCallbackUrl = `${this.paramsCallbackUrl}?signedTransactionHex=${encodeURIComponent(this.postSignedHex)}`;
 
         if (signedResult.signedTransaction) {
           this.postSignedHex = signedResult.signedTransaction.toString();
+          this.postCallbackUrl = `${this.paramsCallbackUrl}?signedTransactionHex=${encodeURIComponent(this.postSignedHex)}`;
+        } else {
+          this.postCallbackUrl = `${this.paramsCallbackUrl}?signature=${encodeURIComponent(this.postSignature)}`;
         }
 
         setTimeout(() => {
