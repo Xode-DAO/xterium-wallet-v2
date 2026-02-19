@@ -333,10 +333,6 @@ export class SendComponent implements OnInit {
     this.recipientAddress = scannedAddress;
   }
 
-  isValidAddress(address: string): boolean {
-    return isAddress(address);
-  }
-
   async send(): Promise<void> {
     if (this.recipientAddress === "") {
       const toast = await this.toastController.create({
@@ -350,7 +346,7 @@ export class SendComponent implements OnInit {
       return;
     }
 
-    if (!this.isValidAddress(this.recipientAddress)) {
+    if (!isAddress(this.recipientAddress)) {
       const toast = await this.toastController.create({
         message: 'Invalid recipient address format.',
         color: 'warning',
