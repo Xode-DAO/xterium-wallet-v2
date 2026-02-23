@@ -77,6 +77,7 @@ import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.c
 import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 
 @Component({
   selector: 'app-sign-transaction',
@@ -125,6 +126,7 @@ export class SignTransactionPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private environmentService: EnvironmentService,
+    private chainsService: ChainsService,
     private authService: AuthService,
     private biometricService: BiometricService,
     private utilsService: UtilsService,
@@ -293,6 +295,9 @@ export class SignTransactionPage implements OnInit {
         if (this.paramsSigningType === 'signRaw') {
           this.paramsPayload = JSON.parse(decodeURIComponent(params['payload']));
           const payloadRaw = this.paramsPayload as SignerPayloadRaw;
+
+          const genesisHash = pjsApi.genesisHash.toHex() as `0x${string}`;
+          await this.replaceCurrentWallet(payloadRaw.address, genesisHash);
 
           let decoded = new Bytes(pjsApi.registry, payloadRaw.data).toUtf8();
           if (decoded.startsWith('<Bytes>')) {
