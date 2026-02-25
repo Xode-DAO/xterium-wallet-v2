@@ -105,7 +105,10 @@ export class ConnectAccountsPage implements OnInit {
 
     if (this.wallets.length > 0) {
       for (const wallet of this.wallets) {
-        const convertedAddress = await this.encodePublicAddressByDefaultFormat(wallet.public_key)
+        const walletPublicKeyUint8 = new Uint8Array(
+          wallet.public_key.split(',').map(byte => Number(byte.trim()))
+        );
+        const convertedAddress = this.encodePublicAddressByChainFormat(walletPublicKeyUint8, 42)
 
         const existingAccount = this.wrappedWalletAccounts.find(acc => acc.wallet_account.address === convertedAddress);
         if (!existingAccount) {
@@ -141,33 +144,28 @@ export class ConnectAccountsPage implements OnInit {
     }
   }
 
+  encodePublicAddressByChainFormat(publicKey: string | Uint8Array<ArrayBufferLike>, ss58Format: number): string {
+    return encodeAddress(publicKey, ss58Format);
+  }
+
   async isWeb3AccountConnected(address: string): Promise<boolean> {
     const result: any = await chrome.storage.local.get(["web3_accounts"]);
     const web3Accounts = result.web3_accounts || [];
 
-    console.log("Web3 Accounts from storage:", web3Accounts);
+    const convertedAddress = this.encodePublicAddressByChainFormat(address, 42);
 
     const existingConnection = web3Accounts.find((o: any) =>
-      o.origin === this.paramsOrigin && o.wallet_accounts.some((wa: any) => wa.address === address)
+      o.origin === this.paramsOrigin && o.wallet_accounts.some((wa: any) => {
+        const existingConvertedAddress = this.encodePublicAddressByChainFormat(wa.address, 42);
+        return existingConvertedAddress === convertedAddress;
+      })
     );
+
     if (existingConnection) {
       return true;
     }
 
     return false;
-  }
-
-  async encodePublicAddressByDefaultFormat(publicKey: string): Promise<string> {
-    const publicKeyUint8 = new Uint8Array(
-      publicKey.split(',').map(byte => Number(byte.trim()))
-    );
-
-    const ss58Format = 42;
-    return await this.utilsService.encodePublicAddressByChainFormat(publicKeyUint8, ss58Format);
-  }
-
-  encodePublicAddressByChainFormat(publicKey: string, ss58Format: number): string {
-    return encodeAddress(publicKey, ss58Format);
   }
 
   toggleCheckbox(wrappedAccount: WrappedWalletAccount, event: any) {
@@ -213,7 +211,10 @@ export class ConnectAccountsPage implements OnInit {
 
     if (this.wallets.length > 0) {
       for (const wallet of this.wallets) {
-        const convertedAddress = await this.encodePublicAddressByDefaultFormat(wallet.public_key);
+        const walletPublicKeyUint8 = new Uint8Array(
+          wallet.public_key.split(',').map(byte => Number(byte.trim()))
+        );
+        const convertedAddress = this.encodePublicAddressByChainFormat(walletPublicKeyUint8, 42);
         if (convertedAddress === this.encodePublicAddressByChainFormat(wrappedAccount.wallet_account.address, 42)) {
           this.walletAccounts.push({
             address: convertedAddress,
@@ -228,12 +229,13 @@ export class ConnectAccountsPage implements OnInit {
   getChainPrefix(walletAccount: WalletAccount): number {
     return Number(walletAccount.wallet?.chain?.address_prefix ?? 42);
   }
+
   selectWalletAccount(walletAccount: WalletAccount): void {
     this.walletAccountsModal.dismiss();
 
     const ss58Format = Number(walletAccount.wallet?.chain?.address_prefix);
 
-    walletAccount.address = this.encodePublicAddressByChainFormat(this.currentWrappedWalletAccount.wallet_account.address, ss58Format);;
+    walletAccount.address = this.encodePublicAddressByChainFormat(this.currentWrappedWalletAccount.wallet_account.address, ss58Format);
 
     this.currentWrappedWalletAccount.ss58Format = ss58Format;
     this.currentWrappedWalletAccount.wallet_account.address = walletAccount.address;
