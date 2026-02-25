@@ -39,7 +39,25 @@
       color: #b9b8b8 !important;
     }
   }
-}
+
+  .footer-container {
+    padding: 16px 0;
+  }
+
+  .footer-logo {
+
+    .app-footer-logo {
+      height: 40px;
+      width: auto;
+    }
+  }
+
+  .footer-info {
+      font-size: 14px;
+      color: #979595;
+      font-weight: 500;
+    }
+  }
 
 .sign-transaction {
   .logo {

@@ -14,6 +14,7 @@ export class WalletSigner {
   mnemonic_phrase: string = "-";
   public_key: string = "";
   private_key: string = "-";
+  derivation_path?: string | null = null;
 }
 
 export class WalletV1Mobile {

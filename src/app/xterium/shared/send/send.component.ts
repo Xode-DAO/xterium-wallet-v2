@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { ApiPromise } from '@polkadot/api';
+import { isAddress  } from '@polkadot/util-crypto';
+
 import { Subscription } from 'rxjs';
 
 import { Clipboard } from '@capacitor/clipboard';
@@ -335,6 +337,18 @@ export class SendComponent implements OnInit {
     if (this.recipientAddress === "") {
       const toast = await this.toastController.create({
         message: 'Recipient address is required!',
+        color: 'warning',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
+    if (!isAddress(this.recipientAddress)) {
+      const toast = await this.toastController.create({
+        message: 'Invalid recipient address format.',
         color: 'warning',
         duration: 1500,
         position: 'top',

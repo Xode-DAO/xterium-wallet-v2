@@ -8,6 +8,7 @@ export class WalletAccount {
 
 export class WrappedWalletAccount {
   checked: boolean = false;
+  ss58Format: number = 42;
   wallet_account: WalletAccount = new WalletAccount();
 }
 

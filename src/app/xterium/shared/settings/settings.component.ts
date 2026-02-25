@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { Router } from '@angular/router';
 
+import { Platform } from '@ionic/angular';
+
 import {
   IonContent,
   IonToolbar,
@@ -31,10 +33,15 @@ import {
   logOutOutline,
   logoUsd,
   languageOutline,
+  notificationsOutline,
   fingerPrintOutline,
   codeOutline,
   linkOutline,
-  eyeOffOutline
+  eyeOffOutline,
+  logoChrome,
+  logoGithub,
+  logoDiscord,
+  starOutline
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -57,6 +64,7 @@ import { SettingsService } from 'src/app/api/settings/settings.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BiometricService } from 'src/app/api/biometric/biometric.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
+import { AppVersionService } from 'src/app/api/app-version/app-version.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -108,8 +116,10 @@ export class SettingsComponent implements OnInit {
     private alertController: AlertController,
     private encryptionService: EncryptionService,
     private biometricService: BiometricService,
+    private appVersionService: AppVersionService,
     private modalController: ModalController,
-    private router: Router
+    private router: Router, 
+    private platform: Platform
 
   ) {
     addIcons({
@@ -117,10 +127,15 @@ export class SettingsComponent implements OnInit {
       logOutOutline,
       logoUsd,
       languageOutline,
+      notificationsOutline,
       fingerPrintOutline,
       codeOutline,
       linkOutline,
-      eyeOffOutline
+      eyeOffOutline,
+      logoChrome,
+      logoGithub,
+      logoDiscord,
+      starOutline,
     });
   }
 
@@ -132,6 +147,8 @@ export class SettingsComponent implements OnInit {
 
   isZeroBalancesHidden: boolean = false;
 
+  isNotificationsEnabled: boolean = false;
+
   isTestnetEnabled: boolean = false;
 
   currentAuth: Auth | null = null;
@@ -140,6 +157,8 @@ export class SettingsComponent implements OnInit {
   biometricState: 'enabled' | 'disabled' | 'setup-pin' | 'setup-password' | 'setup-biometric' | null = null;
   decryptedPin: string = '';
   decryptedBiometricCredentials: string = '';
+
+  latestTagName: string = '';
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -241,6 +260,18 @@ export class SettingsComponent implements OnInit {
       await this.settingsService.set(settings);
 
       this.isZeroBalancesHidden = isHidden;
+    }
+  }
+
+  async enableNotifications(event: any): Promise<void> {
+    const isEnabled = event.detail.checked;
+    const settings = await this.settingsService.get();
+
+    if (settings) {
+      settings.user_preferences.notifications_enabled = isEnabled;
+      await this.settingsService.set(settings);
+      
+      this.isNotificationsEnabled = isEnabled;
     }
   }
 
@@ -468,6 +499,44 @@ export class SettingsComponent implements OnInit {
     }
   }
 
+  rateUs() {
+    if (this.platform.is('android')) {
+      window.open(
+        'https://play.google.com/store/apps/details?id=com.xterium.wallet',
+        '_blank'
+      );
+    } else if (this.platform.is('ios')) {
+      window.open(
+        'https://apps.apple.com/ph/app/xterium/id6745164228',
+        '_blank'
+      );
+    } else {
+      window.open(
+        'https://chromewebstore.google.com/detail/xterium/klfhdmiebenifpdmdmkjicdohjilabdg/reviews',
+        '_blank'
+      );
+    }
+  }
+
+  goToDiscord() {
+    window.open('https://discord.gg/xPDSf5BZ', '_blank');
+  }
+
+  goToWebsite() {
+    window.open('https://xterium.app', '_blank');
+  }
+
+  goToGithub() {
+    window.open('https://github.com/Xode-DAO/xterium-wallet-v2', '_blank');
+  }
+
+  async loadLatestVersion() {
+    const observable = await this.appVersionService.getLatestVersion();
+    observable.subscribe((tags) => {
+      this.latestTagName = tags[0].name;
+    });
+  }
+  
   async fetchData(): Promise<void> {
     this.isChromeExtension = this.environmentService.isChromeExtension();
 
@@ -476,6 +545,7 @@ export class SettingsComponent implements OnInit {
       this.selectedCurrency = settings.user_preferences.currency;
       this.selectedLanguage = settings.user_preferences.language;
       this.isZeroBalancesHidden = settings.user_preferences.hide_zero_balances;
+      this.isNotificationsEnabled = settings.user_preferences.notifications_enabled;
       this.isTestnetEnabled = settings.user_preferences.testnet_enabled;
 
       await this.getCurrentAuth();
@@ -489,6 +559,8 @@ export class SettingsComponent implements OnInit {
 
       await this.settingsService.set(settings);
     }
+
+    await this.loadLatestVersion();
   }
 
   ngOnInit() {

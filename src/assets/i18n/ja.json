@@ -186,5 +186,11 @@
   "This token is currently frozen and cannot be sent.": "このトークンは現在凍結されており、送信できません。",
   "User Preferences": "ユーザー設定",
   "Networks": "ネットワーク",
-  "Accounts and Security": "アカウントとセキュリティ"
+  "Accounts and Security": "アカウントとセキュリティ",
+  "Enable Notifications": "通知を有効にする",
+  "Community": "コミュニティ",
+  "About": "アバウト",
+  "Website": "ウェブサイト",
+  "Rate us": "評価する",
+  "Support & Feedback": "サポートとフィードバック"
 }

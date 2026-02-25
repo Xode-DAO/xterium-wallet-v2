@@ -65,6 +65,7 @@ import { PolarisService } from 'src/app/api/polkadot/blockchains/polkadot-js/pol
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 import { BalancesService } from 'src/app/api/balances/balances.service';
+import { SettingsService } from 'src/app/api/settings/settings.service';
 import { LocalNotificationsService } from 'src/app/api/local-notifications/local-notifications.service';
 
 import { Auth } from 'src/models/auth.model';
@@ -76,6 +77,7 @@ import { PinLoginComponent } from 'src/app/security/shared/pin-login/pin-login.c
 import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { ChainsService } from 'src/app/api/chains/chains.service';
 
 @Component({
   selector: 'app-sign-transaction',
@@ -124,6 +126,7 @@ export class SignTransactionPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private environmentService: EnvironmentService,
+    private chainsService: ChainsService,
     private authService: AuthService,
     private biometricService: BiometricService,
     private utilsService: UtilsService,
@@ -136,6 +139,7 @@ export class SignTransactionPage implements OnInit {
     private walletsService: WalletsService,
     private encryptionService: EncryptionService,
     private balancesService: BalancesService,
+    private settingsService: SettingsService,
     private localNotificationsService: LocalNotificationsService,
     private toastController: ToastController,
     private loadingController: LoadingController,
@@ -292,6 +296,9 @@ export class SignTransactionPage implements OnInit {
           this.paramsPayload = JSON.parse(decodeURIComponent(params['payload']));
           const payloadRaw = this.paramsPayload as SignerPayloadRaw;
 
+          const genesisHash = pjsApi.genesisHash.toHex() as `0x${string}`;
+          await this.replaceCurrentWallet(payloadRaw.address, genesisHash);
+
           let decoded = new Bytes(pjsApi.registry, payloadRaw.data).toUtf8();
           if (decoded.startsWith('<Bytes>')) {
             decoded = decoded
@@ -332,7 +339,17 @@ export class SignTransactionPage implements OnInit {
   }
 
   async signTransactions() {
-    this.confirmSignTransactionModal.present();
+    if (this.isChromeExtension) {
+      const result = await chrome.storage.session.get(["decrypted_password"]);
+      const decryptedPassword = result["decrypted_password"];
+      if (typeof decryptedPassword === "string") {
+        this.confirmSignTransaction(decryptedPassword);
+      } else {
+        this.confirmSignTransactionModal.present();
+      }
+    } else {
+      this.confirmSignTransactionModal.present();
+    }
   }
 
   async confirmSignTransaction(decryptedPassword: string) {
@@ -359,7 +376,8 @@ export class SignTransactionPage implements OnInit {
     const walletSigner: WalletSigner = {
       mnemonic_phrase: decryptedMnemonicPhrase,
       public_key: this.currentWallet.public_key,
-      private_key: decryptedPrivateKey
+      private_key: decryptedPrivateKey,
+      derivation_path: this.currentWallet.derivation_path,
     };
 
     let pjsApi = this.pjsApiMap.get(this.currentWallet.chain.chain_id);
@@ -410,10 +428,13 @@ export class SignTransactionPage implements OnInit {
           this.confirmSignTransactionModal.dismiss();
         }, 1500);
 
+        this.postSignature = signedResult.signature.toString();
+
         if (signedResult.signedTransaction) {
-          this.postSignature = signedResult.signature.toString();
           this.postSignedHex = signedResult.signedTransaction.toString();
           this.postCallbackUrl = `${this.paramsCallbackUrl}?signedTransactionHex=${encodeURIComponent(this.postSignedHex)}`;
+        } else {
+          this.postCallbackUrl = `${this.paramsCallbackUrl}?signature=${encodeURIComponent(this.postSignature)}`;
         }
 
         setTimeout(() => {
@@ -533,7 +554,11 @@ export class SignTransactionPage implements OnInit {
     }
 
     const id = Math.floor(Math.random() * 100000);
-    await this.localNotificationsService.presentNotification(title, body, id);
+
+    const settings = await this.settingsService.get();
+    if (settings?.user_preferences.notifications_enabled === true) {
+      await this.localNotificationsService.presentNotification(title, body, id);
+    }
   }
 
   cancelTransaction() {

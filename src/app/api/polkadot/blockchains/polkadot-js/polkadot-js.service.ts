@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { hexToU8a } from '@polkadot/util';
+import { hexToU8a, stringToHex, u8aToHex } from '@polkadot/util';
 import { ApiPromise, Keyring } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult, SignerPayloadJSON, SignerPayloadRaw, SignerResult } from '@polkadot/types/types';
@@ -32,11 +32,13 @@ export abstract class PolkadotJsService {
   abstract getEstimatedFees(api: ApiPromise, extrinsicHex: string, publicKey: string, token: Token | null): Promise<number>;
 
   sign(api: ApiPromise, payload: SignerPayloadJSON | SignerPayloadRaw, walletSigner: WalletSigner): SignerResult {
-    const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-    const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
+    let derivation_path = "";
+    if (walletSigner.derivation_path) {
+      derivation_path = walletSigner.derivation_path;
+    }
 
     const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromPair({ publicKey, secretKey });
+    const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
 
     if ('withSignedTransaction' in payload) {
       const method = api.registry.createType('Call', payload.method);
@@ -74,22 +76,35 @@ export abstract class PolkadotJsService {
         signedTransaction: payload.withSignedTransaction ? signedTx : undefined,
       };
     } else {
-      const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload);
-      const { signature } = extrinsicPayload.sign(pair);
+      let u8aPayload: Uint8Array | string;
+
+      if ('data' in payload) {
+        if (typeof payload.data === 'string' && payload.data.startsWith('0x')) {
+          u8aPayload = payload.data;
+        } else {
+          u8aPayload = stringToHex(payload.data);
+        }
+      } else {
+        u8aPayload = (api.registry.createType('SignerPayload', payload) as any).toU8a({ method: true });
+      }
+
+      const signature = pair.sign(u8aPayload);
 
       return {
         id: 1,
-        signature: signature,
+        signature: u8aToHex(signature),
       };
     }
   }
 
   async signAsync(api: ApiPromise, transactionHex: HexString, walletSigner: WalletSigner): Promise<SignerResult> {
-    const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-    const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
+    let derivation_path = "";
+    if (walletSigner.derivation_path) {
+      derivation_path = walletSigner.derivation_path;
+    }
 
     const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromPair({ publicKey, secretKey });
+    const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
 
     const txBytes = hexToU8a(transactionHex);
     const call = api.createType('Extrinsic', txBytes);
@@ -110,11 +125,13 @@ export abstract class PolkadotJsService {
 
       (async () => {
         try {
-          const publicKey = new Uint8Array(walletSigner.public_key.split(',').map(Number));
-          const secretKey = new Uint8Array(walletSigner.private_key.split(',').map(Number));
+          let derivation_path = "";
+          if (walletSigner.derivation_path) {
+            derivation_path = walletSigner.derivation_path;
+          }
 
           const keyring = new Keyring({ type: 'sr25519' });
-          const pair = keyring.addFromPair({ publicKey, secretKey });
+          const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
 
           const extrinsic = api.registry.createType('Extrinsic', transactionHex);
 

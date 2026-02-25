@@ -23,6 +23,12 @@
             </div>
           </ion-item>
           <ion-item lines="none" class="custom-buttons">
+            <ion-icon slot="start" name="notifications-outline"></ion-icon>
+            <h2>{{ 'Enable Notifications' | translate }}</h2>
+            <ion-toggle slot="end" [checked]="isNotificationsEnabled" (ionChange)="enableNotifications($event)">
+            </ion-toggle>
+          </ion-item>
+          <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="eye-off-outline"></ion-icon>
             <h2>{{ 'Hide Zero Balances' | translate }}</h2>
             <ion-toggle slot="end" [checked]="isZeroBalancesHidden" (ionChange)="hideZeroBalances($event)">
@@ -55,6 +61,34 @@
             <h2>{{ 'Connect Accounts' | translate }}</h2>
           </ion-item>
         </ion-list>
+
+        <ion-list>
+          <ion-label>{{ 'Support & Feedback' | translate }}</ion-label>
+          <ion-item button lines="none" class="custom-buttons" (click)="rateUs()">
+            <ion-icon slot="start" name="star-outline"></ion-icon>
+            <h2>{{ 'Rate us' | translate }}</h2>
+          </ion-item>
+        </ion-list>
+
+         <ion-list>
+          <ion-label>{{ 'Community' | translate }}</ion-label>
+          <ion-item button lines="none" class="custom-buttons" (click)="goToDiscord()">
+            <ion-icon slot="start" name="logo-discord"></ion-icon>
+            <h2>{{ 'Discord' | translate }}</h2>
+          </ion-item>
+        </ion-list>
+
+        <ion-list>
+          <ion-label>{{ 'About' | translate }}</ion-label>
+          <ion-item button lines="none" class="custom-buttons" (click)="goToWebsite()">
+            <ion-icon slot="start" name="logo-chrome"></ion-icon>
+            <h2>{{ 'Website' | translate }}</h2>
+          </ion-item>
+          <ion-item button lines="none" class="custom-buttons" (click)="goToGithub()">
+            <ion-icon slot="start" name="logo-github"></ion-icon>
+            <h2>{{ 'Github' | translate }}</h2>
+          </ion-item>
+        </ion-list>
         
         <ion-list>
           <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
@@ -62,6 +96,19 @@
             <h2>{{ 'Logout' | translate }}</h2>
           </ion-item>
         </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid class="footer-container">
+    <ion-row>
+      <ion-col size="12" class="ion-text-center ion-padding-vertical">
+        <div class="footer-logo">
+          <img src="./../../assets/icon/xterium-logo.png" height="40" alt="Xterium Logo" />
+        </div>
+        <div class="footer-info">
+          <span>Xterium Wallet {{ latestTagName }}</span>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>

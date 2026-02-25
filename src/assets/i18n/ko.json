@@ -186,5 +186,11 @@
   "This token is currently frozen and cannot be sent.": "이 토큰은 현재 동결되어 있어 전송할 수 없습니다.",
   "User Preferences": "사용자 환경설정",
   "Networks": "네트워크",
-  "Accounts and Security": "계정 및 보안"
+  "Accounts and Security": "계정 및 보안",
+  "Enable Notifications": "알림 사용",
+  "Community": "커뮤니티",
+  "About": "소개",
+  "Website": "웹사이트",
+  "Rate us": "평가하기",
+  "Support & Feedback": "지원 및 피드백"
 }

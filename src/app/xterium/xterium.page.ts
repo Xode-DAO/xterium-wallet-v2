@@ -284,6 +284,7 @@ export class XteriumPage implements OnInit {
           name: "English",
           nativeName: "English"
         },
+        notifications_enabled: settings?.user_preferences.notifications_enabled ?? true,
         testnet_enabled: settings?.user_preferences.testnet_enabled ?? false,
         biometric_enabled: settings?.user_preferences.biometric_enabled ?? false,
       }

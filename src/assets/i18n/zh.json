@@ -186,5 +186,11 @@
   "This token is currently frozen and cannot be sent.": "该代币当前已被冻结，无法发送。",
   "User Preferences": "用户偏好设置",
   "Networks": "网络",
-  "Accounts and Security": "账户与安全"
+  "Accounts and Security": "账户与安全",
+  "Enable Notifications": "启用通知",
+  "Community": "社区",
+  "About": "关于",
+  "Website": "官网",
+  "Rate us": "为我们评分",
+  "Support & Feedback": "支持与反馈"
 }
