@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -34,6 +34,7 @@ import { Wallet } from 'src/models/wallet.model'
 import { UtilsService } from 'src/app/api/polkadot/utils/utils.service';
 import { OnboardingService } from 'src/app/api/onboarding/onboarding.service';
 import { EncryptionService } from 'src/app/api/encryption/encryption.service';
+import { EnvironmentService } from 'src/app/api/environment/environment.service';
 import { WalletsService } from 'src/app/api/wallets/wallets.service';
 
 import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
@@ -64,6 +65,7 @@ import { SignWalletComponent } from '../sign-wallet/sign-wallet.component';
   ]
 })
 export class ImportSeedPhraseComponent implements OnInit {
+  @ViewChildren(IonInput) mnemonicInputs!: QueryList<IonInput>;
   @ViewChild('confirmImportWalletModal', { read: IonModal }) confirmImportWalletModal!: IonModal;
 
   @Input() selectedChain: Chain = new Chain();
@@ -74,6 +76,7 @@ export class ImportSeedPhraseComponent implements OnInit {
     private onboardingService: OnboardingService,
     private encryptionService: EncryptionService,
     private walletsService: WalletsService,
+    private environmentService: EnvironmentService,
     private toastController: ToastController
   ) {
     addIcons({
@@ -89,6 +92,8 @@ export class ImportSeedPhraseComponent implements OnInit {
 
   isProcessing: boolean = false;
 
+  isChromeExtension: boolean = false;
+
   trackByIndex(index: number): number {
     return index;
   }
@@ -97,15 +102,21 @@ export class ImportSeedPhraseComponent implements OnInit {
     this.walletMnemonicPhrase[index] = this.walletMnemonicPhrase[index].trim();
   }
 
+  private parseMnemonic(value: string) {
+    const parts = value.split('//');
+    const mnemonicPhrase = parts[0].trim();
+    const derivationPath = parts.length > 1 ? '//' + parts.slice(1).join('//') : null;
+
+    const words = mnemonicPhrase.split(' ').filter(word => word.length > 0);
+
+    return { words, derivationPath };
+  }
+
   async pasteFromClipboard() {
     const { type, value } = await Clipboard.read();
 
     if (type === 'text/plain') {
-      const parts = value.split('//');
-      const mnemonicPhrase = parts[0].trim();
-      const derivationPath = parts.length > 1 ? '//' + parts.slice(1).join('//') : '';
-
-      const words = mnemonicPhrase.split(' ').filter(word => word.length > 0);
+      const { words, derivationPath } = this.parseMnemonic(value);
 
       if (words.length !== 12) {
         const toast = await this.toastController.create({
@@ -129,6 +140,40 @@ export class ImportSeedPhraseComponent implements OnInit {
           });
           await toast.present();
         }
+      }
+    }
+  }
+
+  async handlePaste(event: ClipboardEvent) {
+    const pastedText = event.clipboardData?.getData('text');
+
+    if (!pastedText) return;
+
+    event.preventDefault();
+
+    const { words, derivationPath } = this.parseMnemonic(pastedText);
+
+    if (words.length !== 12) {
+      const toast = await this.toastController.create({
+        message: 'Invalid mnemonic phrase length! Expected 12 words.',
+        color: 'danger',
+        duration: 1500,
+        position: 'top',
+      });
+
+      await toast.present();
+    } else {
+      this.walletMnemonicPhrase = words;
+      this.derivationPath = derivationPath;
+
+      if (derivationPath) {
+        const toast = await this.toastController.create({
+          message: `Derivation path detected: ${derivationPath}`,
+          color: 'primary',
+          duration: 2000,
+          position: 'top',
+        });
+        await toast.present();
       }
     }
   }
@@ -250,5 +295,7 @@ export class ImportSeedPhraseComponent implements OnInit {
     }
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.isChromeExtension = this.environmentService.isChromeExtension();
+   }
 }
