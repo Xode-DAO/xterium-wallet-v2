@@ -77,6 +77,7 @@ export abstract class PolkadotJsService {
       };
     } else {
       let u8aPayload: Uint8Array | string;
+      let generatedSignature: `0x${string}` = '0x';
 
       if ('data' in payload) {
         if (typeof payload.data === 'string' && payload.data.startsWith('0x')) {
@@ -84,15 +85,19 @@ export abstract class PolkadotJsService {
         } else {
           u8aPayload = stringToHex(payload.data);
         }
-      } else {
-        u8aPayload = (api.registry.createType('SignerPayload', payload) as any).toU8a({ method: true });
-      }
 
-      const signature = pair.sign(u8aPayload);
+        const signature = pair.sign(u8aPayload)
+        generatedSignature = u8aToHex(signature);
+      } else {
+        const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload);
+
+        const { signature } = extrinsicPayload.sign(pair);
+        generatedSignature = signature;
+      }
 
       return {
         id: 1,
-        signature: u8aToHex(signature),
+        signature: generatedSignature,
       };
     }
   }
