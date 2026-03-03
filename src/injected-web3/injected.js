@@ -58,7 +58,7 @@
   }
 
   window.injectedWeb3["xterium"] = {
-    version: "2.4.2",
+    version: "2.4.2.1",
     enable: async (origin) => {
       try {
         await postAndListen({
@@ -117,7 +117,7 @@
 
   window.dispatchEvent(
     new CustomEvent("xterium#initialized", {
-      detail: { version: "2.4.2" },
+      detail: { version: "2.4.2.1" },
     }),
   );
 })();
