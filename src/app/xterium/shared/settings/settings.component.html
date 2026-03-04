@@ -56,6 +56,21 @@
             </ion-toggle>
           </ion-item>
           }
+          
+          @if (!isChromeExtension && currentAuth?.type === 'pin') {
+          <ion-item lines="none" class="custom-buttons" (click)="changePinModal()">
+            <ion-icon slot="start" name="keypad-outline"></ion-icon>
+            <h2>{{ 'Change Pin' | translate }}</h2>
+          </ion-item>
+          }
+
+          @if (isChromeExtension) {
+          <ion-item lines="none" class="custom-buttons">
+            <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+            <h2>{{ 'Change Password' | translate }}</h2>
+          </ion-item>
+          }
+
           <ion-item button lines="none" class="custom-buttons" (click)="goToConnectAccounts()">
             <ion-icon slot="start" name="link-outline"></ion-icon>
             <h2>{{ 'Connect Accounts' | translate }}</h2>
@@ -213,6 +228,46 @@
             <app-password-setup (onPasswordSetup)="onPinOrPasswordSetup($event)"></app-password-setup>
             } @else if (biometricState === 'setup-biometric') {
             <app-biometric-setup (onBiometricSetup)="onBiometricSetup($event)"></app-biometric-setup>
+            }
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #confirmChangePinModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false"
+    (didDismiss)="confirmBiometriclDismiss($event)">
+    <ng-template>
+      <ion-toolbar class="main-modal-toolbar">
+        <ion-title>{{ 'Confirm' | translate }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="confirmChangePinModal.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="sign-transaction">
+          <div class="ion-text-center ion-margin-bottom">
+            <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
+          </div>
+          <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+            <h1 style="font-weight: bold">
+             @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
+              {{ 'Enter Pin' | translate }}
+              } 
+            </h1>
+            <span style="font-size: 15px;">
+              @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
+              {{ 'Please enter your PIN.' | translate }}
+              }
+            </span>
+          </div>
+          <div class="ion-padding-horizontal">
+            @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
+            <app-pin-login (onLogin)="confirmPin($event)"></app-pin-login>
+            } @else if (changePinState === 'setup-pin') {
+            <app-pin-setup (onPasswordSetup)="onChangePinSetup($event)"></app-pin-setup>
             }
           </div>
         </div>
