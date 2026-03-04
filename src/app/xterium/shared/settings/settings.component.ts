@@ -166,7 +166,7 @@ export class SettingsComponent implements OnInit {
   decryptedPinCredentials: string = '';
   changePinState: 'pin' | 'setup-pin' | null = null;
 
-  latestTagName: string = '';
+  appVersion: string = '';
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -600,13 +600,6 @@ export class SettingsComponent implements OnInit {
     window.open('https://github.com/Xode-DAO/xterium-wallet-v2', '_blank');
   }
 
-  async loadLatestVersion() {
-    const observable = await this.appVersionService.getLatestVersion();
-    observable.subscribe((tags) => {
-      this.latestTagName = tags[0].name;
-    });
-  }
-  
   async fetchData(): Promise<void> {
     this.isChromeExtension = this.environmentService.isChromeExtension();
 
@@ -630,7 +623,7 @@ export class SettingsComponent implements OnInit {
       await this.settingsService.set(settings);
     }
 
-    await this.loadLatestVersion();
+    this.appVersion = await this.appVersionService.getAppVersion();
   }
 
   ngOnInit() {
