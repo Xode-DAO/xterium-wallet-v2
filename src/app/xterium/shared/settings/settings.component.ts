@@ -108,6 +108,7 @@ export class SettingsComponent implements OnInit {
   @ViewChild('languageModal', { read: IonModal }) languageModal!: IonModal;
   @ViewChild('confirmBiometricModal', { read: IonModal }) confirmBiometricModal!: IonModal;
   @ViewChild('confirmChangePinModal', { read: IonModal }) confirmChangePinModal!: IonModal;
+   @ViewChild('confirmChangePasswordModal', { read: IonModal }) confirmChangePasswordModal!: IonModal;
 
   constructor(
     private environmentService: EnvironmentService,
@@ -163,8 +164,10 @@ export class SettingsComponent implements OnInit {
   decryptedPin: string = '';
   decryptedBiometricCredentials: string = '';
 
-  decryptedPinCredentials: string = '';
   changePinState: 'pin' | 'setup-pin' | null = null;
+
+  decryptedPassword: string = '';
+  changePasswordState: 'password' | 'setup-password' | null = null;
 
   appVersion: string = '';
 
@@ -515,8 +518,8 @@ export class SettingsComponent implements OnInit {
     await this.confirmChangePinModal.present()
   }
 
-  async confirmPin(oldPassword: string) {
-    this.decryptedPin = oldPassword;
+  async confirmPin(oldPin: string) {
+    this.decryptedPin = oldPin;
     this.changePinState = 'setup-pin';
   }
 
@@ -561,6 +564,66 @@ export class SettingsComponent implements OnInit {
 
     const toast = await this.toastController.create({
       message: 'PIN changed successfully.',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+
+    await toast.present();
+  }
+
+  async changePasswordModal() {
+    await this.getCurrentAuth();
+    this.changePasswordState = 'password';
+    await this.confirmChangePasswordModal.present()
+  }
+
+  async confirmPassword(oldPassword: string) {
+    this.decryptedPassword = oldPassword;
+    this.changePasswordState = 'setup-password';
+  }
+
+  async onChangePasswordSetup(newPassword: string) {
+    if (!newPassword) {
+      const toast = await this.toastController.create({
+        message: 'Password was not provided. Please try again.',
+        color: 'danger',
+        duration: 2000,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
+    const wallets = await this.walletsService.getAllWallets();
+
+    const decryptedWallets = await Promise.all(
+      wallets.map(async wallet => ({
+        id: wallet.id,
+        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, this.decryptedPassword),
+        privateKey: await this.encryptionService.decrypt(wallet.private_key, this.decryptedPassword)
+      }))
+    );
+
+    const encryptedPassword = await this.encryptionService.encrypt(newPassword, newPassword);
+    await this.authService.setupPassword(encryptedPassword, 'password');
+
+    for (const wallet of decryptedWallets) {
+      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPassword);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPassword);
+
+      await this.walletsService.update(wallet.id, {
+        mnemonic_phrase: encryptedMnemonic,
+        private_key: encryptedPrivateKey
+      });
+    }
+   
+    this.decryptedPassword = '';
+    await this.confirmChangePasswordModal.dismiss();
+
+    const toast = await this.toastController.create({
+      message: 'Password changed successfully.',
       color: 'success',
       duration: 1500,
       position: 'top',

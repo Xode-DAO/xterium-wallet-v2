@@ -65,7 +65,7 @@
           }
 
           @if (isChromeExtension) {
-          <ion-item lines="none" class="custom-buttons">
+          <ion-item lines="none" class="custom-buttons" (click)="changePasswordModal()">
             <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
             <h2>{{ 'Change Password' | translate }}</h2>
           </ion-item>
@@ -204,8 +204,7 @@
               } @else if (biometricState === 'enabled' && currentAuth?.type === 'password') {
               {{ 'Please enter your password to enable biometric authentication.' | translate }}
               } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
-              {{ 'Please authenticate using your biometric data or face recognition to disable biometric
-              authentication.' | translate }}
+              {{ 'Please authenticate using your biometric data or face recognition to disable biometric authentication.' | translate }}
               } @else if (biometricState === 'setup-pin') {
               {{ 'Set a PIN to secure your wallets after disabling biometric authentication.' | translate }}
               } @else if (biometricState === 'setup-password') {
@@ -235,8 +234,7 @@
     </ng-template>
   </ion-modal>
 
-  <ion-modal #confirmChangePinModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false"
-    (didDismiss)="confirmBiometriclDismiss($event)">
+  <ion-modal #confirmChangePinModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
     <ng-template>
       <ion-toolbar class="main-modal-toolbar">
         <ion-title>{{ 'Confirm' | translate }}</ion-title>
@@ -268,6 +266,45 @@
             <app-pin-login (onLogin)="confirmPin($event)"></app-pin-login>
             } @else if (changePinState === 'setup-pin') {
             <app-pin-setup (onPasswordSetup)="onChangePinSetup($event)"></app-pin-setup>
+            }
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #confirmChangePasswordModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false">
+    <ng-template>
+      <ion-toolbar class="main-modal-toolbar">
+        <ion-title>{{ 'Confirm' | translate }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="confirmChangePasswordModal.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="sign-transaction">
+          <div class="ion-text-center ion-margin-bottom">
+            <img alt="xterium" src="./../../../assets/icon/xterium-logo.png" class="logo" />
+          </div>
+          <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+            <h1 style="font-weight: bold">
+             @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
+              {{ 'Enter Password' | translate }}
+              } 
+            </h1>
+            <span style="font-size: 15px;">
+              @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
+              {{ 'Please enter your password.' | translate }}
+              }
+            </span>
+          </div>
+          <div class="ion-padding-horizontal">
+            @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
+            <app-password-login (onLogin)="confirmPassword($event)"></app-password-login>
+            } @else if (changePasswordState === 'setup-password') {
+            <app-password-setup (onPasswordSetup)="onChangePasswordSetup($event)"></app-password-setup>
             }
           </div>
         </div>
