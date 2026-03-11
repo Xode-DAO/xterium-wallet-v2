@@ -214,6 +214,34 @@ export class SignTransactionPage implements OnInit {
     }
   }
 
+  // async replaceCurrentWallet(address: string, genesisHash: HexString): Promise<void> {
+  //   const decodedAddress = decodeURIComponent(address);
+  //   const selectedPublicKey = decodeAddress(decodedAddress);
+
+  //   const allWallets = await this.walletsService.getAllWallets();
+  //   if (allWallets.length > 0) {
+  //     const walletsByChain = allWallets.filter(wallet => wallet.chain.genesis_hash === genesisHash);
+  //     if (walletsByChain.length > 0) {
+  //       const walletsPublicAddresses = await Promise.all(
+  //         walletsByChain.map(wallet => this.encodePublicAddressByChainFormat(wallet.public_key, wallet.chain))
+  //       );
+
+  //       const index = walletsByChain.findIndex(wallet => {
+  //           const walletPublicKey = new Uint8Array(
+  //             wallet.public_key.split(',').map(byte => Number(byte.trim()))
+  //           );
+  //           return walletPublicKey.length === selectedPublicKey.length &&
+  //                 walletPublicKey.every((byte, i) => byte === selectedPublicKey[i]);
+  //       });
+
+  //       if (index >= 0) {
+  //         this.currentWallet = walletsByChain[index];
+  //         this.currentWalletPublicAddress = walletsPublicAddresses[index];
+  //       }
+  //     }
+  //   }
+  // }
+
   truncateAddress(address: string): string {
     return this.utilsService.truncateAddress(address);
   }
