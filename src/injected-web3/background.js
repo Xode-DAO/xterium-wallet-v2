@@ -211,12 +211,22 @@ async function handleConnectWeb3Accounts(message, sendResponse) {
     updatedWeb3Accounts = web3Accounts;
   } else {
     if (web3Accounts.length > 0) {
-      const newWeb3Account = web3Accounts.map((o) =>
-        o.origin === origin ? { ...message.payload, origin } : o,
-      );
+      const web3AccountPayload = message.payload;
+      if (web3AccountPayload.wallet_accounts.length === 0) {
+        const filteredWeb3Accounts = web3Accounts.filter(
+          (o) => o.origin !== origin,
+        );
 
-      await chrome.storage.local.set({ web3_accounts: newWeb3Account });
-      updatedWeb3Accounts = newWeb3Account;
+        await chrome.storage.local.set({ web3_accounts: filteredWeb3Accounts });
+        updatedWeb3Accounts = filteredWeb3Accounts;
+      } else {
+        const newWeb3Account = web3Accounts.map((o) =>
+          o.origin === origin ? { ...message.payload, origin } : o,
+        );
+
+        await chrome.storage.local.set({ web3_accounts: newWeb3Account });
+        updatedWeb3Accounts = newWeb3Account;
+      }
     } else {
       const newWeb3Account = message.payload;
 
@@ -234,8 +244,6 @@ async function handleConnectWeb3Accounts(message, sendResponse) {
     }));
 
     sendResponse(accounts);
-  } else {
-    sendResponse({ error: "Failed to connect accounts" });
   }
 
   if (connectWeb3AccountsWindowId) {

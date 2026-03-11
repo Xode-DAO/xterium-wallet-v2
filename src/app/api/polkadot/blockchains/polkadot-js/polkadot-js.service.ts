@@ -107,7 +107,6 @@ export abstract class PolkadotJsService {
         };
       }
     } catch (error) {
-      console.error('Error signing payload:', error);
       throw error;
     }
   }
@@ -155,7 +154,6 @@ export abstract class PolkadotJsService {
             subscriber.next(result);
 
             if (result.status.isInvalid || result.isError) {
-              console.error('Transaction error');
               subscriber.error(new Error('Transaction failed'));
               return;
             }
@@ -173,7 +171,6 @@ export abstract class PolkadotJsService {
                   errorMessage = dispatchError.toString();
                 }
 
-                console.error('Dispatch error:', errorMessage);
                 subscriber.error(new Error(errorMessage));
                 return;
               }
@@ -186,7 +183,6 @@ export abstract class PolkadotJsService {
 
           subscriptions.push(unsubscribe);
         } catch (error) {
-          console.error('Error in send:', error);
           subscriber.error(error);
         }
       })();

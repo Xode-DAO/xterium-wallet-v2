@@ -210,9 +210,7 @@ export class SwapPage implements OnInit {
 
     try {
 
-    } catch (error) {
-      console.error('Swap failed:', error);
-    } finally {
+    } catch (error) { } finally {
       this.isProcessing = false;
     }
   }

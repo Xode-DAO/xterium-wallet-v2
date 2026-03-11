@@ -97,9 +97,9 @@ export class PayPage implements OnInit {
 
     for (const tag of parentTags) {
       if (emv[tag]) {
-        const pan = emv[tag]['01']; 
+        const pan = emv[tag]['01'];
         if (pan && typeof pan === 'string') {
-          return pan.substring(0, 11); 
+          return pan.substring(0, 11);
         }
       }
     }
@@ -235,7 +235,6 @@ export class PayPage implements OnInit {
           });
 
         } catch (err) {
-          console.error('QR decode failed', err);
           const alert = await this.alertController.create({
             header: 'Invalid QR',
             message: 'Unable to decode the QR from the image.',
@@ -246,9 +245,7 @@ export class PayPage implements OnInit {
       };
 
       input.click();
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) { }
   }
 
   ngOnInit() {

@@ -1,10 +1,15 @@
 .transaction-history-content {
   .segments {
-    margin-top: 90px;
+    margin-top: 80px;
     font-weight: 600;
     color: #ffffff;
     padding-left: 26px;
     padding-right: 26px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
 
     ion-segment {
       --background: #333333;
@@ -32,6 +37,10 @@
         border-radius: 1.5rem;
       }
     }
+  }
+
+  .segment-view {
+    padding-top: 135px;
   }
 
   .payments-segment-content {
@@ -121,7 +130,7 @@
     }
 
     ion-card.transaction-card {
-      margin: 12px 0px;
+      margin: 0px 0px 12px 0px;
       border-radius: 1.5rem;
       background: #2a2a2a;
 
