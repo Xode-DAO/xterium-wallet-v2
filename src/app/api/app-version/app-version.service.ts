@@ -1,19 +1,20 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { App } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
+import packageJson from '../../../../package.json';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppVersionService {
-  private readonly githubUrl = 'https://api.github.com/repos/Xode-DAO/xterium-wallet-v2/tags';
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  constructor() { }
 
-  async getLatestVersion() {
-     return this.http.get<any[]>(this.githubUrl);
+ async getAppVersion(): Promise<string> { 
+    if (Capacitor.isNativePlatform()) { 
+      const info = await App.getInfo(); 
+      return info.version; 
+    } 
+    return packageJson.version; 
   }
-
 }

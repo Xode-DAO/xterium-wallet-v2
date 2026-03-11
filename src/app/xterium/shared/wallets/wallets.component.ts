@@ -213,6 +213,7 @@ export class WalletsComponent implements OnInit {
       newWallet.mnemonic_phrase = wallet.mnemonic_phrase;
       newWallet.public_key = wallet.public_key;
       newWallet.private_key = wallet.private_key;
+      newWallet.derivation_path = wallet.derivation_path;
 
       await this.walletsService.create(newWallet);
     }

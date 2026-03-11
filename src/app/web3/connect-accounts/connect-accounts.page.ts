@@ -272,9 +272,9 @@ export class ConnectAccountsPage implements OnInit {
     const web3WalletAccounts: Web3WalletAccounts = new Web3WalletAccounts();
 
     if (this.paramsOrigin) {
-      for (const wallet of this.checkedWrappedWalletAccounts) {
-        web3WalletAccounts.origin = this.paramsOrigin;
+      web3WalletAccounts.origin = this.paramsOrigin;
 
+      for (const wallet of this.checkedWrappedWalletAccounts) {
         wallet.wallet_account.address = this.encodePublicAddressByChainFormat(
           wallet.wallet_account.address,
           wallet.ss58Format

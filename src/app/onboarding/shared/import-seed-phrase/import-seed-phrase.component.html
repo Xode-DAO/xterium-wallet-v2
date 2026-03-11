@@ -14,10 +14,17 @@
       @for (word of walletMnemonicPhrase; track trackByIndex($index); let index = $index) {
       <ion-col size="6">
         <ion-list>
+          @if(isChromeExtension){
+          <ion-item class="primary-input-item">
+            <ion-input type="text" (paste)="handlePaste($event)" [(ngModel)]="walletMnemonicPhrase[index]" (ionInput)="trimInput(index)"
+              autocomplete="off"></ion-input>
+          </ion-item>
+          } @else {
           <ion-item class="primary-input-item">
             <ion-input type="text" [(ngModel)]="walletMnemonicPhrase[index]" (ionInput)="trimInput(index)"
               autocomplete="off"></ion-input>
           </ion-item>
+          }
         </ion-list>
       </ion-col>
       }

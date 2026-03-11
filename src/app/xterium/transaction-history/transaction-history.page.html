@@ -1,9 +1,9 @@
 <ion-content [fullscreen]="true" class="transaction-history-content">
   <div class="segments">
-    <ion-segment value="default" (ionChange)="segmentChanged($event)">
-      <ion-segment-button value="default" content-id="payments">
+    <ion-segment value="transfers" (ionChange)="segmentChanged($event)">
+      <!-- <ion-segment-button value="default" content-id="payments">
         <ion-label>{{ 'Payments' | translate }}</ion-label>
-      </ion-segment-button>
+      </ion-segment-button> -->
       <ion-segment-button value="transfers" content-id="transfers">
         <ion-label>{{ 'Transfers' | translate }}</ion-label>
       </ion-segment-button>
@@ -13,7 +13,7 @@
     </ion-segment>
   </div>
 
-  <ion-segment-view>
+  <ion-segment-view class="segment-view">
     <ion-segment-content id="payments" class="payments-segment-content">
       <div class="ion-padding-horizontal">
         <!-- <ion-grid>

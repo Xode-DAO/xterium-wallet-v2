@@ -262,7 +262,7 @@ export class TransactionHistoryPage implements OnInit {
   async fetchData(): Promise<void> {
     await this.getCurrentWallet();
 
-    await this.fetchPayments();
+    // await this.fetchPayments();
     await this.fetchTransfers();
     await this.fetchExtrinsics();
     await this.getLanguageCode();

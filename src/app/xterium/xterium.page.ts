@@ -37,13 +37,16 @@ import {
   timer,
   compass,
   chevronDownOutline,
+  send
 } from 'ionicons/icons';
 
-import { ChainsComponent } from "./shared/chains/chains.component";
 import { WalletsComponent } from "src/app/xterium/shared/wallets/wallets.component";
 import { NewWalletComponent } from "src/app/onboarding/shared/new-wallet/new-wallet.component";
 import { ImportSeedPhraseComponent } from "src/app/onboarding/shared/import-seed-phrase/import-seed-phrase.component";
 import { ImportFromBackupComponent } from "src/app/onboarding/shared/import-from-backup/import-from-backup.component";
+import { ChainsComponent } from "./shared/chains/chains.component";
+import { TokensComponent } from "src/app/xterium/shared/tokens/tokens.component"
+import { SendComponent } from "src/app/xterium/shared/send/send.component"
 import { NotificationsComponent } from './shared/notifications/notifications.component';
 import { SettingsComponent } from './shared/settings/settings.component';
 
@@ -61,13 +64,15 @@ import { LocalNotificationsService } from '../api/local-notifications/local-noti
 import { SettingsService } from '../api/settings/settings.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
+import { Balance } from 'src/models/balance.model';
 
 @Component({
   selector: 'app-xterium',
   templateUrl: './xterium.page.html',
   styleUrls: ['./xterium.page.scss'],
   standalone: true,
-  imports: [IonAvatar,
+  imports: [
+    IonAvatar,
     CommonModule,
     FormsModule,
     IonContent,
@@ -92,9 +97,13 @@ import { TranslatePipe } from '@ngx-translate/core';
     NewWalletComponent,
     ImportSeedPhraseComponent,
     ImportFromBackupComponent,
+    ChainsComponent,
+    TokensComponent,
+    SendComponent,
     NotificationsComponent,
     SettingsComponent,
-    TranslatePipe, ChainsComponent]
+    TranslatePipe,
+  ]
 })
 export class XteriumPage implements OnInit {
   @ViewChild('myWalletsModal', { read: IonModal }) myWalletsModal!: IonModal;
@@ -106,6 +115,9 @@ export class XteriumPage implements OnInit {
   @ViewChild('notificationsModal', { read: IonModal }) notificationsModal!: IonModal;
   @ViewChild('settingsModal', { read: IonModal }) settingsModal!: IonModal;
 
+  @ViewChild('balancesSelectTokenModal', { read: IonModal }) balancesSelectTokenModal!: IonModal;
+  @ViewChild('balancesSendModal', { read: IonModal }) balancesSendModal!: IonModal;
+
   constructor(
     private router: Router,
     private utilsService: UtilsService,
@@ -115,18 +127,7 @@ export class XteriumPage implements OnInit {
     private localNotificationsService: LocalNotificationsService,
     private settingsService: SettingsService,
   ) {
-    addIcons({
-      addCircle,
-      notificationsOutline,
-      settingsOutline,
-      close,
-      briefcase,
-      swapHorizontal,
-      qrCode,
-      timer,
-      compass,
-      chevronDownOutline,
-    });
+    addIcons({ notificationsOutline, settingsOutline, briefcase, send, timer, addCircle, close, chevronDownOutline, swapHorizontal, qrCode, compass, });
 
     this.initAuthentication();
   }
@@ -141,6 +142,10 @@ export class XteriumPage implements OnInit {
 
   unopenNotifications: number = 0;
   notifications: LocalNotification[] = [];
+
+  selectedBalance: Balance = new Balance();
+
+  refreshCounter: number = 0;
 
   async encodePublicAddressByChainFormat(publicKey: string, chain: Chain): Promise<string> {
     const publicKeyUint8 = new Uint8Array(
@@ -253,6 +258,21 @@ export class XteriumPage implements OnInit {
 
     this.createNewAccountModal.dismiss();
     this.importFromBackupModal.dismiss();
+  }
+
+  openBalancesSelectTokenModal() {
+    this.balancesSelectTokenModal.present();
+    this.refreshCounter++;
+  }
+
+  openBalancesSendModal(balance: Balance) {
+    this.selectedBalance = balance;
+    this.balancesSendModal.present();
+  }
+
+  onClickSend() {
+    this.balancesSelectTokenModal.dismiss();
+    this.balancesSendModal.dismiss();
   }
 
   async openNotificationsModal() {

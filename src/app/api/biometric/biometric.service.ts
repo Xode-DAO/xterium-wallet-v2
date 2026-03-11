@@ -36,7 +36,6 @@ export class BiometricService {
         type: this.biometricTypeToString(result.biometryType),
       };
     } catch (error) {
-      console.error('Biometric availability check error:', error);
       return { available: false };
     }
   }
@@ -57,7 +56,6 @@ export class BiometricService {
 
       return true;
     } catch (error) {
-      console.error('Biometric verification error:', error);
       return false;
     }
   }
@@ -79,7 +77,6 @@ export class BiometricService {
         server: this.SERVER_ID,
       });
     } catch (error) {
-      console.error('Biometric credential setting error:', error);
       throw error;
     }
   }
@@ -95,7 +92,6 @@ export class BiometricService {
         password: credentials.password
       };
     } catch (error) {
-      console.error('Biometric credential setting error:', error);
       throw error;
     }
   }

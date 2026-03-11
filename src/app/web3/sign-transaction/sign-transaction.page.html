@@ -209,7 +209,7 @@
         <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
           <h1 style="font-weight: bold">{{ 'Sign' | translate }}</h1>
           <span style="font-size: 15px;">
-            {{ 'To confirm this transaction, please authenticate using the method you have set up for your wallet.' |
+            {{ 'To confirm this action, please authenticate using the method you have set up for your wallet.' |
             translate }}
           </span>
         </div>
@@ -226,8 +226,7 @@
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'biometric') {
           <div class="biometric-unavailable">
             <p class="unavailable-text">
-              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device.
-              Please set up your biometric authentication again to continue.' | translate }}
+              {{ 'You\'ve previously set up biometric authentication, but it\'s currently unavailable on this device. Please set up your biometric authentication again to continue.' | translate }}
             </p>
           </div>
           } @else if (!isChromeExtension && !isBiometricAvailable && currentAuth?.type === 'pin') {

@@ -32,68 +32,82 @@ export abstract class PolkadotJsService {
   abstract getEstimatedFees(api: ApiPromise, extrinsicHex: string, publicKey: string, token: Token | null): Promise<number>;
 
   sign(api: ApiPromise, payload: SignerPayloadJSON | SignerPayloadRaw, walletSigner: WalletSigner): SignerResult {
-    let derivation_path = "";
-    if (walletSigner.derivation_path) {
-      derivation_path = walletSigner.derivation_path;
-    }
-
-    const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
-
-    if ('withSignedTransaction' in payload) {
-      const method = api.registry.createType('Call', payload.method);
-      const extrinsic = api.registry.createType('Extrinsic', { method }, { version: payload.version });
-
-      const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload, {
-        version: payload.version
-      });
-
-      const { signature } = extrinsicPayload.sign(pair);
-
-      extrinsic.addSignature(
-        payload.address,
-        signature,
-        {
-          blockHash: payload.blockHash,
-          era: payload.era,
-          genesisHash: payload.genesisHash,
-          method: payload.method,
-          nonce: payload.nonce,
-          specVersion: payload.specVersion,
-          tip: payload.tip,
-          transactionVersion: payload.transactionVersion,
-          assetId: payload.assetId,
-          mode: payload.mode,
-          metadataHash: payload.metadataHash,
-        }
-      );
-
-      const signedTx = extrinsic.toHex();
-
-      return {
-        id: 1,
-        signature: signature,
-        signedTransaction: payload.withSignedTransaction ? signedTx : undefined,
-      };
-    } else {
-      let u8aPayload: Uint8Array | string;
-
-      if ('data' in payload) {
-        if (typeof payload.data === 'string' && payload.data.startsWith('0x')) {
-          u8aPayload = payload.data;
-        } else {
-          u8aPayload = stringToHex(payload.data);
-        }
-      } else {
-        u8aPayload = (api.registry.createType('SignerPayload', payload) as any).toU8a({ method: true });
+    try {
+      let derivation_path = "";
+      if (walletSigner.derivation_path) {
+        derivation_path = walletSigner.derivation_path;
       }
 
-      const signature = pair.sign(u8aPayload);
+      console.log('Signing payload with wallet signer:', walletSigner);
 
-      return {
-        id: 1,
-        signature: u8aToHex(signature),
-      };
+      const keyring = new Keyring({ type: 'sr25519' });
+      const pair = keyring.addFromUri(walletSigner.mnemonic_phrase + derivation_path);
+
+      if ('withSignedTransaction' in payload) {
+        console.log('Signing payload with signed transaction:', payload);
+
+        const method = api.registry.createType('Call', payload.method);
+        const extrinsic = api.registry.createType('Extrinsic', { method }, { version: payload.version });
+
+        const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload, {
+          version: payload.version
+        });
+
+        const { signature } = extrinsicPayload.sign(pair);
+
+        extrinsic.addSignature(
+          payload.address,
+          signature,
+          {
+            blockHash: payload.blockHash,
+            era: payload.era,
+            genesisHash: payload.genesisHash,
+            method: payload.method,
+            nonce: payload.nonce,
+            specVersion: payload.specVersion,
+            tip: payload.tip,
+            transactionVersion: payload.transactionVersion,
+            assetId: payload.assetId,
+            mode: payload.mode,
+            metadataHash: payload.metadataHash,
+          }
+        );
+
+        const signedTx = extrinsic.toHex();
+
+        return {
+          id: 1,
+          signature: signature,
+          signedTransaction: payload.withSignedTransaction ? signedTx : undefined,
+        };
+      } else {
+        if ('data' in payload) {
+          let u8aPayload: Uint8Array | string;
+
+          if (typeof payload.data === 'string' && payload.data.startsWith('0x')) {
+            u8aPayload = payload.data;
+          } else {
+            u8aPayload = stringToHex(payload.data);
+          }
+
+          const signature = pair.sign(u8aPayload)
+
+          return {
+            id: 1,
+            signature: u8aToHex(signature),
+          };
+        }
+
+        const extrinsicPayload = api.registry.createType('ExtrinsicPayload', payload);
+        const { signature } = extrinsicPayload.sign(pair);
+
+        return {
+          id: 1,
+          signature: signature,
+        };
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -104,7 +118,7 @@ export abstract class PolkadotJsService {
     }
 
     const keyring = new Keyring({ type: 'sr25519' });
-    const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
+    const pair = keyring.addFromUri(walletSigner.mnemonic_phrase + derivation_path);
 
     const txBytes = hexToU8a(transactionHex);
     const call = api.createType('Extrinsic', txBytes);
@@ -131,7 +145,7 @@ export abstract class PolkadotJsService {
           }
 
           const keyring = new Keyring({ type: 'sr25519' });
-          const pair = keyring.addFromMnemonic(walletSigner.mnemonic_phrase + derivation_path);
+          const pair = keyring.addFromUri(walletSigner.mnemonic_phrase + derivation_path);
 
           const extrinsic = api.registry.createType('Extrinsic', transactionHex);
 
@@ -140,7 +154,6 @@ export abstract class PolkadotJsService {
             subscriber.next(result);
 
             if (result.status.isInvalid || result.isError) {
-              console.error('Transaction error');
               subscriber.error(new Error('Transaction failed'));
               return;
             }
@@ -158,7 +171,6 @@ export abstract class PolkadotJsService {
                   errorMessage = dispatchError.toString();
                 }
 
-                console.error('Dispatch error:', errorMessage);
                 subscriber.error(new Error(errorMessage));
                 return;
               }
@@ -171,7 +183,6 @@ export abstract class PolkadotJsService {
 
           subscriptions.push(unsubscribe);
         } catch (error) {
-          console.error('Error in send:', error);
           subscriber.error(error);
         }
       })();

@@ -41,7 +41,9 @@ import {
   logoChrome,
   logoGithub,
   logoDiscord,
-  starOutline
+  starOutline,
+  keypadOutline,
+  lockClosedOutline
 } from 'ionicons/icons';
 
 import { CurrencyComponent } from './currency/currency.component';
@@ -105,6 +107,8 @@ export class SettingsComponent implements OnInit {
   @ViewChild('currencyModal', { read: IonModal }) currencyModal!: IonModal;
   @ViewChild('languageModal', { read: IonModal }) languageModal!: IonModal;
   @ViewChild('confirmBiometricModal', { read: IonModal }) confirmBiometricModal!: IonModal;
+  @ViewChild('confirmChangePinModal', { read: IonModal }) confirmChangePinModal!: IonModal;
+   @ViewChild('confirmChangePasswordModal', { read: IonModal }) confirmChangePasswordModal!: IonModal;
 
   constructor(
     private environmentService: EnvironmentService,
@@ -136,6 +140,8 @@ export class SettingsComponent implements OnInit {
       logoGithub,
       logoDiscord,
       starOutline,
+      keypadOutline,
+      lockClosedOutline,
     });
   }
 
@@ -158,7 +164,12 @@ export class SettingsComponent implements OnInit {
   decryptedPin: string = '';
   decryptedBiometricCredentials: string = '';
 
-  latestTagName: string = '';
+  changePinState: 'pin' | 'setup-pin' | null = null;
+
+  decryptedPassword: string = '';
+  changePasswordState: 'password' | 'setup-password' | null = null;
+
+  appVersion: string = '';
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -433,6 +444,7 @@ export class SettingsComponent implements OnInit {
     }
 
     this.decryptedBiometricCredentials = '';
+    await this.getCurrentAuth();
     await this.confirmBiometricModal.dismiss();
 
     await this.biometricService.disableBiometric();
@@ -481,6 +493,7 @@ export class SettingsComponent implements OnInit {
     };
 
     this.decryptedPin = '';
+    await this.getCurrentAuth();
     await this.confirmBiometricModal.dismiss();
 
     const toast = await this.toastController.create({
@@ -497,6 +510,126 @@ export class SettingsComponent implements OnInit {
     if (auth) {
       this.currentAuth = auth;
     }
+  }
+
+  async changePinModal() {
+    await this.getCurrentAuth();
+    this.changePinState = 'pin';
+    await this.confirmChangePinModal.present()
+  }
+
+  async confirmPin(oldPin: string) {
+    this.decryptedPin = oldPin;
+    this.changePinState = 'setup-pin';
+  }
+
+  async onChangePinSetup(newPin: string) {
+    if (!newPin) {
+      const toast = await this.toastController.create({
+        message: 'PIN was not provided. Please try again.',
+        color: 'danger',
+        duration: 2000,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
+    const wallets = await this.walletsService.getAllWallets();
+
+    const decryptedWallets = await Promise.all(
+      wallets.map(async wallet => ({
+        id: wallet.id,
+        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, this.decryptedPin),
+        privateKey: await this.encryptionService.decrypt(wallet.private_key, this.decryptedPin)
+      }))
+    );
+
+    const encryptedPassword = await this.encryptionService.encrypt(newPin, newPin);
+    await this.authService.setupPassword(encryptedPassword, 'pin');
+
+    for (const wallet of decryptedWallets) {
+      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPin);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPin);
+
+      await this.walletsService.update(wallet.id, {
+        mnemonic_phrase: encryptedMnemonic,
+        private_key: encryptedPrivateKey
+      });
+    }
+   
+    this.decryptedPin = '';
+    await this.confirmChangePinModal.dismiss();
+
+    const toast = await this.toastController.create({
+      message: 'PIN changed successfully.',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+
+    await toast.present();
+  }
+
+  async changePasswordModal() {
+    await this.getCurrentAuth();
+    this.changePasswordState = 'password';
+    await this.confirmChangePasswordModal.present()
+  }
+
+  async confirmPassword(oldPassword: string) {
+    this.decryptedPassword = oldPassword;
+    this.changePasswordState = 'setup-password';
+  }
+
+  async onChangePasswordSetup(newPassword: string) {
+    if (!newPassword) {
+      const toast = await this.toastController.create({
+        message: 'Password was not provided. Please try again.',
+        color: 'danger',
+        duration: 2000,
+        position: 'top',
+      });
+
+      await toast.present();
+      return;
+    }
+
+    const wallets = await this.walletsService.getAllWallets();
+
+    const decryptedWallets = await Promise.all(
+      wallets.map(async wallet => ({
+        id: wallet.id,
+        mnemonic: await this.encryptionService.decrypt(wallet.mnemonic_phrase, this.decryptedPassword),
+        privateKey: await this.encryptionService.decrypt(wallet.private_key, this.decryptedPassword)
+      }))
+    );
+
+    const encryptedPassword = await this.encryptionService.encrypt(newPassword, newPassword);
+    await this.authService.setupPassword(encryptedPassword, 'password');
+
+    for (const wallet of decryptedWallets) {
+      const encryptedMnemonic = await this.encryptionService.encrypt(wallet.mnemonic, newPassword);
+      const encryptedPrivateKey = await this.encryptionService.encrypt(wallet.privateKey, newPassword);
+
+      await this.walletsService.update(wallet.id, {
+        mnemonic_phrase: encryptedMnemonic,
+        private_key: encryptedPrivateKey
+      });
+    }
+   
+    this.decryptedPassword = '';
+    await this.confirmChangePasswordModal.dismiss();
+
+    const toast = await this.toastController.create({
+      message: 'Password changed successfully.',
+      color: 'success',
+      duration: 1500,
+      position: 'top',
+    });
+
+    await toast.present();
   }
 
   rateUs() {
@@ -530,13 +663,6 @@ export class SettingsComponent implements OnInit {
     window.open('https://github.com/Xode-DAO/xterium-wallet-v2', '_blank');
   }
 
-  async loadLatestVersion() {
-    const observable = await this.appVersionService.getLatestVersion();
-    observable.subscribe((tags) => {
-      this.latestTagName = tags[0].name;
-    });
-  }
-  
   async fetchData(): Promise<void> {
     this.isChromeExtension = this.environmentService.isChromeExtension();
 
@@ -560,7 +686,7 @@ export class SettingsComponent implements OnInit {
       await this.settingsService.set(settings);
     }
 
-    await this.loadLatestVersion();
+    this.appVersion = await this.appVersionService.getAppVersion();
   }
 
   ngOnInit() {

@@ -115,9 +115,7 @@ export class MultipayxApiService {
           payments.push(newPayments);
         }
       }
-    } catch (error: any) {
-      console.error('Network or unknown error:', error);
-    }
+    } catch (error: any) { }
 
     return payments;
   }
@@ -142,7 +140,6 @@ export class MultipayxApiService {
 
       return [];
     } catch (error) {
-      console.error('Error fetching bank details:', error);
       return [];
     }
   }
@@ -167,7 +164,6 @@ export class MultipayxApiService {
 
       throw new Error('Failed to fetch currency rates');
     } catch (error) {
-      console.error('Error fetching currency conversion:', error);
       throw error;
     }
   }
