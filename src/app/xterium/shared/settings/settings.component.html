@@ -71,10 +71,12 @@
           </ion-item>
           }
 
+          @if (isChromeExtension) {
           <ion-item button lines="none" class="custom-buttons" (click)="goToConnectAccounts()">
             <ion-icon slot="start" name="link-outline"></ion-icon>
             <h2>{{ 'Connect Accounts' | translate }}</h2>
           </ion-item>
+          }
         </ion-list>
 
         <ion-list>
@@ -251,14 +253,18 @@
           </div>
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
             <h1 style="font-weight: bold">
-             @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
+            @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
               {{ 'Enter Pin' | translate }}
-              } 
+            }@else if (changePinState === 'setup-pin') {
+              {{ 'Enter New PIN' | translate }}
+              }
             </h1>
             <span style="font-size: 15px;">
-              @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
-              {{ 'Please enter your PIN.' | translate }}
-              }
+            @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
+            {{ 'Please enter your current PIN.' | translate }}
+            }@else if (changePinState === 'setup-pin') {
+            {{ 'Please enter a new PIN to secure your wallets.' | translate }}
+            }
             </span>
           </div>
           <div class="ion-padding-horizontal">
@@ -290,14 +296,18 @@
           </div>
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
             <h1 style="font-weight: bold">
-             @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
-              {{ 'Enter Password' | translate }}
-              } 
+            @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
+            {{ 'Enter Password' | translate }}
+            }@else if (changePasswordState === 'setup-password') {
+            {{ 'Enter New Password' | translate }}
+            }
             </h1>
             <span style="font-size: 15px;">
-              @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
-              {{ 'Please enter your password.' | translate }}
-              }
+            @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
+            {{ 'Please enter your current password.' | translate }}
+            }@else if (changePasswordState === 'setup-password') {
+            {{ 'Please enter a new password to secure your wallets.' | translate }}
+            }
             </span>
           </div>
           <div class="ion-padding-horizontal">

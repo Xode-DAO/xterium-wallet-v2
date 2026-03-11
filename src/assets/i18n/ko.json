@@ -192,5 +192,17 @@
   "About": "소개",
   "Website": "웹사이트",
   "Rate us": "평가하기",
-  "Support & Feedback": "지원 및 피드백"
+  "Support & Feedback": "지원 및 피드백",
+  "Change Pin": "PIN 변경",
+  "Change Password": "비밀번호 변경",
+  "Enter Password": "비밀번호 입력",
+  "Please enter your current password.": "현재 비밀번호를 입력해 주세요.",
+  "Please enter a new password to secure your wallets.": "지갑을 보호하기 위해 새 비밀번호를 입력해 주세요.",
+  "Enter New Password": "새 비밀번호 입력",
+  "Please enter your current PIN.": "현재 PIN을 입력해 주세요.",
+  "Enter New PIN": "새 PIN 입력",
+  "Please enter a new PIN to secure your wallets.": "지갑을 보호하기 위해 새 PIN을 입력해 주세요.",
+  "Create a password": "비밀번호 생성",
+  "Confirm your password": "비밀번호 확인",
+  "Enter your password": "비밀번호를 입력하세요"
 }

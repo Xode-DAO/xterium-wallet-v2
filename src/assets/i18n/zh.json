@@ -192,5 +192,17 @@
   "About": "关于",
   "Website": "官网",
   "Rate us": "为我们评分",
-  "Support & Feedback": "支持与反馈"
+  "Support & Feedback": "支持与反馈",
+  "Change Pin": "更改PIN",
+  "Change Password": "更改密码",
+  "Enter Password": "输入密码",
+  "Please enter your current password.": "请输入当前密码。",
+  "Please enter a new password to secure your wallets.": "请输入新的密码以保护您的钱包。",
+  "Enter New Password": "输入新密码",
+  "Please enter your current PIN.": "请输入当前PIN。",
+  "Enter New PIN": "输入新PIN",
+  "Please enter a new PIN to secure your wallets.": "请输入新的PIN以保护您的钱包。",
+  "Create a password": "创建密码",
+  "Confirm your password": "确认密码",
+  "Enter your password": "请输入密码"
 }

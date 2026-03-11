@@ -192,5 +192,17 @@
   "About": "アバウト",
   "Website": "ウェブサイト",
   "Rate us": "評価する",
-  "Support & Feedback": "サポートとフィードバック"
+  "Support & Feedback": "サポートとフィードバック",
+  "Change Pin": "PINを変更",
+  "Change Password": "パスワードを変更",
+  "Enter Password": "パスワードを入力",
+  "Please enter your current password.": "現在のパスワードを入力してください。",
+  "Please enter a new password to secure your wallets.": "ウォレットを保護するために新しいパスワードを入力してください。",
+  "Enter New Password": "新しいパスワードを入力",
+  "Please enter your current PIN.": "現在のPINを入力してください。",
+  "Enter New PIN": "新しいPINを入力",
+  "Please enter a new PIN to secure your wallets.": "ウォレットを保護するために新しいPINを入力してください。",
+  "Create a password": "パスワードを作成",
+  "Confirm your password": "パスワードを確認",
+  "Enter your password": "パスワードを入力"
 }

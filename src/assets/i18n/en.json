@@ -192,5 +192,17 @@
   "About": "About",
   "Website": "Website",
   "Rate us": "Rate us",
-  "Support & Feedback": "Support & Feedback"
+  "Support & Feedback": "Support & Feedback",
+  "Change Pin": "Change Pin",
+  "Change Password": "Change Password",
+  "Enter Password": "Enter Password",
+  "Please enter your current password.": "Please enter your current password.",
+  "Please enter a new password to secure your wallets.": "Please enter a new password to secure your wallets.",
+  "Enter New Password": "Enter New Password",
+  "Please enter your current PIN.": "Please enter your current PIN.",
+  "Enter New PIN": "Enter New PIN",
+  "Please enter a new PIN to secure your wallets.": "Please enter a new PIN to secure your wallets.",
+  "Create a password": "Create a password",
+  "Confirm your password": "Confirm your password",
+  "Enter your password": "Enter your password"
 }
