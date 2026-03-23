@@ -19,6 +19,8 @@ import { WalletsService } from './api/wallets/wallets.service';
 import { ChainsService } from './api/chains/chains.service';
 import { SettingsService } from 'src/app/api/settings/settings.service';
 
+import { SocialLogin } from '@capgo/capacitor-social-login';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -56,6 +58,7 @@ export class AppComponent {
       await this.initNotifications();
 
       this.initDeepLinks();
+      this.initSocialLogin();
 
       await this.initWalletsMetadata();
     });
@@ -111,5 +114,13 @@ export class AppComponent {
 
   initDeepLinks(): void {
     this.deepLinkService.initDeepLinks();
+  }
+
+  initSocialLogin(): void {
+    SocialLogin.initialize({
+      google: {
+        webClientId: '286376865428-s6lkp8q0c6vk68i5pq17d0skrvl3mhkg.apps.googleusercontent.com',
+      }
+    })
   }
 }

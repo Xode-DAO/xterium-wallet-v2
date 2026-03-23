@@ -24,7 +24,8 @@ import {
   AlertController,
   ToastController,
   ActionSheetController,
-  ModalController
+  ModalController,
+  IonSpinner
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -54,6 +55,7 @@ import { PasswordLoginComponent } from 'src/app/security/shared/password-login/p
 import { PasswordSetupComponent } from 'src/app/security/shared/password-setup/password-setup.component';
 import { BiometricLoginComponent } from 'src/app/security/shared/biometric-login/biometric-login.component';
 import { BiometricSetupComponent } from 'src/app/security/shared/biometric-setup/biometric-setup.component';
+import { BackupComponent } from '../backup/backup.component';
 
 import { Currency } from 'src/models/currency.model';
 import { LanguageTranslation } from 'src/models/language-translation.model';
@@ -69,6 +71,8 @@ import { EncryptionService } from 'src/app/api/encryption/encryption.service';
 import { AppVersionService } from 'src/app/api/app-version/app-version.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
+
+import { WalletBackupService } from 'src/app/api/wallet-backup/wallet-backup.service';
 
 @Component({
   selector: 'app-settings',
@@ -91,6 +95,7 @@ import { TranslatePipe } from '@ngx-translate/core';
     IonModal,
     IonToggle,
     IonLabel,
+    IonSpinner,
     CurrencyComponent,
     LanguageComponent,
     TranslatePipe,
@@ -100,15 +105,17 @@ import { TranslatePipe } from '@ngx-translate/core';
     PasswordSetupComponent,
     BiometricLoginComponent,
     BiometricSetupComponent,
+    BackupComponent,
   ]
 })
 
 export class SettingsComponent implements OnInit {
   @ViewChild('currencyModal', { read: IonModal }) currencyModal!: IonModal;
   @ViewChild('languageModal', { read: IonModal }) languageModal!: IonModal;
+  @ViewChild('backupModal', { read: IonModal }) backupModal!: IonModal;
   @ViewChild('confirmBiometricModal', { read: IonModal }) confirmBiometricModal!: IonModal;
   @ViewChild('confirmChangePinModal', { read: IonModal }) confirmChangePinModal!: IonModal;
-   @ViewChild('confirmChangePasswordModal', { read: IonModal }) confirmChangePasswordModal!: IonModal;
+  @ViewChild('confirmChangePasswordModal', { read: IonModal }) confirmChangePasswordModal!: IonModal;
 
   constructor(
     private environmentService: EnvironmentService,
@@ -122,7 +129,7 @@ export class SettingsComponent implements OnInit {
     private biometricService: BiometricService,
     private appVersionService: AppVersionService,
     private modalController: ModalController,
-    private router: Router, 
+    private router: Router,
     private platform: Platform
 
   ) {
@@ -169,7 +176,13 @@ export class SettingsComponent implements OnInit {
   decryptedPassword: string = '';
   changePasswordState: 'password' | 'setup-password' | null = null;
 
+  isBackupProcessing: boolean = false;
+
   appVersion: string = '';
+
+  async openBackupModal() {
+    this.backupModal.present();
+  }
 
   async confirmLogout() {
     const actionSheet = await this.actionSheetController.create({
@@ -281,7 +294,7 @@ export class SettingsComponent implements OnInit {
     if (settings) {
       settings.user_preferences.notifications_enabled = isEnabled;
       await this.settingsService.set(settings);
-      
+
       this.isNotificationsEnabled = isEnabled;
     }
   }
@@ -558,7 +571,7 @@ export class SettingsComponent implements OnInit {
         private_key: encryptedPrivateKey
       });
     }
-   
+
     this.decryptedPin = '';
     await this.confirmChangePinModal.dismiss();
 
@@ -618,7 +631,7 @@ export class SettingsComponent implements OnInit {
         private_key: encryptedPrivateKey
       });
     }
-   
+
     this.decryptedPassword = '';
     await this.confirmChangePasswordModal.dismiss();
 

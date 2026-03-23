@@ -1,0 +1,36 @@
+<ion-grid>
+  <ion-row class="ion-margin-top">
+    <ion-col size="12">
+      <ion-list>
+        <ion-item lines="none" class="pin-item">
+          <div class="pin-input-wrapper">
+            <ion-label position="stacked">{{ 'Enter your PIN:' | translate }}</ion-label>
+            <ion-input-otp length="6" type="number" fill="solid" class="pin-input" id="otpInput" [(ngModel)]="pinSetup"
+              (ionInput)="maskPin($event)" (ionInput)="onPinSetup($event)"></ion-input-otp>
+          </div>
+        </ion-item>
+        <ion-item lines="none" class="pin-item">
+          <div class="pin-input-wrapper">
+            <ion-label position="stacked">{{ 'Confirm your PIN:' | translate }}</ion-label>
+            <ion-input-otp length="6" type="number" fill="solid" class="pin-input" id="otpInput"
+              [(ngModel)]="confirmPinSetup" (ionInput)="maskPin($event)"
+              (ionInput)="onConfirmPinSetup($event)"></ion-input-otp>
+          </div>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-margin-top">
+    <ion-col size="12">
+      <div class="primary-button-wrapper">
+        <ion-button expand="block" class="ion-margin-bottom" size="default" (click)="setupPin()"
+          [disabled]="isProcessing">
+          @if (isProcessing) {
+          <ion-spinner name="lines" slot="start"></ion-spinner>
+          }
+          {{ isProcessing ? ('Processing...' | translate) : ('Set PIN' | translate) }}
+        </ion-button>
+      </div>
+    </ion-col>
+  </ion-row>
+</ion-grid>

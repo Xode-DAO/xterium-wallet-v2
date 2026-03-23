@@ -22,6 +22,10 @@ const config: CapacitorConfig = {
       style: "DARK",
       backgroundColor: "#1B1B1B",
     },
+    SocialLogin: {
+      googleAndroidClientId: '286376865428-i60dhiqac2o6s2njvarhistc74fq1097.apps.googleusercontent.com',
+      googleWebClientId: '286376865428-s6lkp8q0c6vk68i5pq17d0skrvl3mhkg.apps.googleusercontent.com',
+    }
   },
 };
 

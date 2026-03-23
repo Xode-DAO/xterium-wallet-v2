@@ -48,6 +48,17 @@
 
         <ion-list>
           <ion-label>{{ 'Accounts and Security' | translate }}</ion-label>
+
+          @if (!isChromeExtension) {
+          <ion-item button lines="none" class="custom-buttons" (click)="openBackupModal()">
+            <ion-icon slot="start" name="link-outline"></ion-icon>
+            <h2>{{ 'BackUp' | translate }}</h2>
+            @if (isBackupProcessing) {
+            <ion-spinner name="lines" style="color: white;" slot="end"></ion-spinner>
+            }
+          </ion-item>
+          }
+
           @if (!isChromeExtension) {
           <ion-item lines="none" class="custom-buttons">
             <ion-icon slot="start" name="finger-print-outline"></ion-icon>
@@ -87,7 +98,7 @@
           </ion-item>
         </ion-list>
 
-         <ion-list>
+        <ion-list>
           <ion-label>{{ 'Community' | translate }}</ion-label>
           <ion-item button lines="none" class="custom-buttons" (click)="goToDiscord()">
             <ion-icon slot="start" name="logo-discord"></ion-icon>
@@ -106,7 +117,7 @@
             <h2>{{ 'Github' | translate }}</h2>
           </ion-item>
         </ion-list>
-        
+
         <ion-list>
           <ion-item button lines="none" class="custom-buttons" (click)="confirmLogout()">
             <ion-icon slot="start" name="log-out-outline"></ion-icon>
@@ -168,6 +179,34 @@
     </ng-template>
   </ion-modal>
 
+  <ion-modal #backupModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false"
+    [keepContentsMounted]="true">
+    <ng-template>
+      <ion-toolbar class="main-modal-toolbar">
+        <ion-title>{{ 'Backup' | translate }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="backupModal.dismiss()">
+            <ion-icon name="close" style="color: white;"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-content>
+        <div class="modal-content-container">
+          <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
+            <h1 style="font-weight: bold">
+              {{ 'Set Your Backup PIN' | translate }}
+            </h1>
+            <span style="font-size: 15px;">
+              {{ 'Create a PIN to encrypt and protect your wallet backup.' | translate }}
+            </span>
+          </div>
+          <app-backup (onBackupComplete)="backupModal.dismiss()"
+            (onProcessingChange)="isBackupProcessing = $event"></app-backup>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
   <ion-modal #confirmBiometricModal [initialBreakpoint]="0.98" [breakpoints]="[0, 0.98]" [expandToScroll]="false"
     (didDismiss)="confirmBiometriclDismiss($event)">
     <ng-template>
@@ -206,7 +245,8 @@
               } @else if (biometricState === 'enabled' && currentAuth?.type === 'password') {
               {{ 'Please enter your password to enable biometric authentication.' | translate }}
               } @else if (biometricState === 'disabled' && currentAuth?.type === 'biometric') {
-              {{ 'Please authenticate using your biometric data or face recognition to disable biometric authentication.' | translate }}
+              {{ 'Please authenticate using your biometric data or face recognition to disable biometric
+              authentication.' | translate }}
               } @else if (biometricState === 'setup-pin') {
               {{ 'Set a PIN to secure your wallets after disabling biometric authentication.' | translate }}
               } @else if (biometricState === 'setup-password') {
@@ -253,18 +293,18 @@
           </div>
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
             <h1 style="font-weight: bold">
-            @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
+              @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
               {{ 'Enter Pin' | translate }}
-            }@else if (changePinState === 'setup-pin') {
+              }@else if (changePinState === 'setup-pin') {
               {{ 'Enter New PIN' | translate }}
               }
             </h1>
             <span style="font-size: 15px;">
-            @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
-            {{ 'Please enter your current PIN.' | translate }}
-            }@else if (changePinState === 'setup-pin') {
-            {{ 'Please enter a new PIN to secure your wallets.' | translate }}
-            }
+              @if (changePinState === 'pin' && currentAuth?.type === 'pin') {
+              {{ 'Please enter your current PIN.' | translate }}
+              }@else if (changePinState === 'setup-pin') {
+              {{ 'Please enter a new PIN to secure your wallets.' | translate }}
+              }
             </span>
           </div>
           <div class="ion-padding-horizontal">
@@ -296,18 +336,18 @@
           </div>
           <div class="ion-text-center ion-padding-start ion-padding-end ion-padding-bottom">
             <h1 style="font-weight: bold">
-            @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
-            {{ 'Enter Password' | translate }}
-            }@else if (changePasswordState === 'setup-password') {
-            {{ 'Enter New Password' | translate }}
-            }
+              @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
+              {{ 'Enter Password' | translate }}
+              }@else if (changePasswordState === 'setup-password') {
+              {{ 'Enter New Password' | translate }}
+              }
             </h1>
             <span style="font-size: 15px;">
-            @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
-            {{ 'Please enter your current password.' | translate }}
-            }@else if (changePasswordState === 'setup-password') {
-            {{ 'Please enter a new password to secure your wallets.' | translate }}
-            }
+              @if (changePasswordState === 'password' && currentAuth?.type === 'password') {
+              {{ 'Please enter your current password.' | translate }}
+              }@else if (changePasswordState === 'setup-password') {
+              {{ 'Please enter a new password to secure your wallets.' | translate }}
+              }
             </span>
           </div>
           <div class="ion-padding-horizontal">
