@@ -15,8 +15,9 @@ import {
   IonSpinner
 } from '@ionic/angular/standalone';
 
-import { TranslatePipe } from '@ngx-translate/core';
 import { WalletBackupService } from 'src/app/api/wallet-backup/wallet-backup.service';
+
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-backup',
@@ -123,5 +124,4 @@ export class BackupComponent implements OnInit {
   }
 
   ngOnInit() { }
-
 }

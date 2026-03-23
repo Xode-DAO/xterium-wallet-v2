@@ -72,8 +72,6 @@ import { AppVersionService } from 'src/app/api/app-version/app-version.service';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { WalletBackupService } from 'src/app/api/wallet-backup/wallet-backup.service';
-
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
